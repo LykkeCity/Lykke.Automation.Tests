@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Net;
 using Lykke.MatchingEngine.Connector.Services;
 
-namespace XUnitTestCommon
+namespace XUnitTestCommon.Consumers
 {
     public class MatchingEngineConsumer
     {

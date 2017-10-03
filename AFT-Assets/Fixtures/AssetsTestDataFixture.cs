@@ -1,11 +1,9 @@
 ﻿using Autofac;
 using Autofac.Core;
 using XUnitTestCommon;
+using XUnitTestCommon.Consumers;
 using FirstXUnitTest.DependencyInjection;
 using XUnitTestData.Domains.Assets;
-using FirstXUnitTest.DTOs;
-using XUnitTestCommon.Utils;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
