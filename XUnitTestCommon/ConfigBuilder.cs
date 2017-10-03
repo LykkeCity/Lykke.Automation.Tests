@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Lykke.SettingsReader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,23 +11,26 @@ namespace XUnitTestCommon
 {
     public sealed class ConfigBuilder
     {
-        private ConfigBuilder() { }
+        private readonly Lazy<IConfigurationRoot> lazyLocal;
 
-        private static readonly Lazy<IConfigurationRoot> lazyLocal =
-            new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().AddJsonFile("Config.json").Build());
+        public IConfigurationRoot LocalConfig { get { return lazyLocal.Value; } }
 
-        public static IConfigurationRoot LocalConfig { get { return lazyLocal.Value; } }
+        private readonly Lazy<IConfigurationRoot> lazy;
 
-        private static readonly Lazy<IConfigurationRoot> lazy =
-           new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder()
+        public IConfigurationRoot Config { get { return lazy.Value; } }
+
+        public ConfigBuilder(string TestItemName)
+        {
+            this.lazyLocal = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().AddJsonFile("Config.json").Build());
+            this.lazy = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder()
            .AddHttpJsonConfig(
-               LocalConfig["SettingsServiceURL"], 
+               LocalConfig["SettingsServiceURL"],
                LocalConfig["SettingsServiceAccessToken"],
                LocalConfig["SettingsServiceRootItemName"],
-               LocalConfig["SettingsServiceTestItemName"]
+               //LocalConfig["SettingsServiceTestItemName"]
+               TestItemName
                ).Build());
-
-        public static IConfigurationRoot Config { get { return lazy.Value; } }
+        }
 
     }
 }

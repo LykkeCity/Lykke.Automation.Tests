@@ -9,13 +9,22 @@ namespace XUnitTestCommon
 {
     public class ApiConsumer
     {
-        private static string baseUrl = ConfigBuilder.Config["BaseUrl"];
-        private static string baseAuthUrl = ConfigBuilder.Config["BaseUrlAuth"];
+        private ConfigBuilder _configBuilder;
 
-        private static RestClient client;
-        private static RestRequest request;
+        private string baseUrl;
+        private string baseAuthUrl;
 
-        public async static Task<Response> ExecuteRequest(string token, string path, Dictionary<string, string> queryParams, string body, Method method, string urlPreffix)
+        private RestClient client;
+        private RestRequest request;
+
+        public ApiConsumer(ConfigBuilder configBuilder)
+        {
+            this._configBuilder = configBuilder;
+            this.baseUrl = _configBuilder.Config["BaseUrl"];
+            this.baseAuthUrl = _configBuilder.Config["BaseUrlAuth"];
+        }
+
+        public async Task<Response> ExecuteRequest(string token, string path, Dictionary<string, string> queryParams, string body, Method method, string urlPreffix)
         {
             var uri = BuildUri(urlPreffix, baseUrl, path);
             client = new RestClient(uri);
@@ -38,7 +47,7 @@ namespace XUnitTestCommon
             return new Response(response.StatusCode, response.Content);
         }
 
-        public async static Task<TokenDTO> GetToken(User user)
+        public async Task<TokenDTO> GetToken(User user)
         {
             RestClient localClient = new RestClient(baseAuthUrl);
             RestRequest localRequest = new RestRequest("/api/Auth", Method.POST);
@@ -53,7 +62,7 @@ namespace XUnitTestCommon
             return token;
         }
 
-        private static void AddQueryParams(Dictionary<string, string> queryParams)
+        private void AddQueryParams(Dictionary<string, string> queryParams)
         {
             foreach (var param in queryParams)
             {
@@ -61,7 +70,7 @@ namespace XUnitTestCommon
             }
         }
 
-        private static Uri BuildUri(string urlPreffix, string baseUrl, string path, int? port = null)
+        private Uri BuildUri(string urlPreffix, string baseUrl, string path, int? port = null)
         {
             UriBuilder uriBuilder = new UriBuilder($"http://{urlPreffix}.{baseUrl}");
             uriBuilder.Path = path;

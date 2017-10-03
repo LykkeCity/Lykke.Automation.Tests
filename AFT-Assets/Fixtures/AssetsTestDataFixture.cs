@@ -35,14 +35,19 @@ namespace FirstXUnitTest.Fixtures
         public IDictionaryManager<IAssetCategory> AssetCategoryManager;
         public IDictionaryManager<IAssetAttributes> AssetAttributesManager;
 
-        //public AssetAttributesRepository AssetAttributesRepository;
+        public ApiConsumer Consumer;
 
         private Dictionary<string, string> emptyDict = new Dictionary<string, string>();
 
         private IContainer container;
 
+        private ConfigBuilder _configBuilder;
+
         public AssetsTestDataFixture()
         {
+            this._configBuilder = new ConfigBuilder("Assets");
+            this.Consumer = new ApiConsumer(this._configBuilder);
+
             prepareDependencyContainer();
             prepareTestData();
         }
@@ -50,15 +55,13 @@ namespace FirstXUnitTest.Fixtures
         private void prepareDependencyContainer()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new AssetsTestModule());
+            builder.RegisterModule(new AssetsTestModule(_configBuilder));
             this.container = builder.Build();
 
             this.AssetManager = prepareRepositoryManager<IAsset>();
             this.AssetDescriptionManager = prepareRepositoryManager<IAssetDescription>();
             this.AssetCategoryManager = prepareRepositoryManager<IAssetCategory>();
             this.AssetAttributesManager = prepareRepositoryManager<IAssetAttributes>();
-
-            //this.AssetAttributesRepository = (AssetAttributesRepository)this.container.Resolve<IDictionaryRepository<IAssetAttributes>>();
         }
 
         private IDictionaryManager<T> prepareRepositoryManager<T>() where T : IDictionaryItem
@@ -110,7 +113,7 @@ namespace FirstXUnitTest.Fixtures
             }).Result;
 
             this.AllAssetAttributesFromDB = assetsAttrFromDB.Cast<AssetAttributesEntity>().ToList();
-            this.TestAssetAttribute = AllAssetAttributesFromDB.Where(a => a.Id == "test").FirstOrDefault(); //PickRandom(AllAssetAttributesFromDB);
+            this.TestAssetAttribute = PickRandom(AllAssetAttributesFromDB);
 
 
             this.TestAttributeKey = "metadata";

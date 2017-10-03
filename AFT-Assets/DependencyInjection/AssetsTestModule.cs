@@ -8,7 +8,6 @@ using XUnitTestCommon;
 using XUnitTestData.Domains;
 using XUnitTestData.Domains.Assets;
 using Common.Log;
-using Lykke.SettingsReader;
 using System.Threading.Tasks;
 using XUnitTestData.Services;
 
@@ -16,17 +15,18 @@ namespace FirstXUnitTest.DependencyInjection
 {
     class AssetsTestModule : Module
     {
+        private ConfigBuilder _configBuilder;
 
-        public AssetsTestModule()
+        public AssetsTestModule(ConfigBuilder configBuilder)
         {
-            
+            this._configBuilder = configBuilder;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
             builder.Register(c => new AssetsRepository(
                     new AzureTableStorage<AssetEntity>(
-                        ConfigBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
+                        _configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
                 .As<IDictionaryRepository<IAsset>>();
 
             RegisterDictionaryManager<IAsset>(builder);
@@ -35,21 +35,21 @@ namespace FirstXUnitTest.DependencyInjection
 
             builder.Register(c => new AssetDescriptionRepository(
                     new AzureTableStorage<AssetDescriptionEntity>(
-                        ConfigBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
+                        _configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
                 .As<IDictionaryRepository<IAssetDescription>>();
 
             RegisterDictionaryManager<IAssetDescription>(builder);
 
             builder.Register(c => new AssetCategoryRepository(
                     new AzureTableStorage<AssetCategoryEntity>(
-                        ConfigBuilder.Config["DictionariesConnectionString"], "AssetCategories", null)))
+                        _configBuilder.Config["DictionariesConnectionString"], "AssetCategories", null)))
                 .As<IDictionaryRepository<IAssetCategory>>();
 
             RegisterDictionaryManager<IAssetCategory>(builder);
 
             builder.Register(c => new AssetAttributesRepository(
                     new AzureTableStorage<AssetAttributesEntity>(
-                        ConfigBuilder.Config["DictionariesConnectionString"], "AssetAttributes", null)))
+                        _configBuilder.Config["DictionariesConnectionString"], "AssetAttributes", null)))
                 .As<IDictionaryRepository<IAssetAttributes>>();
 
             RegisterDictionaryManager<IAssetAttributes>(builder);
@@ -66,7 +66,7 @@ namespace FirstXUnitTest.DependencyInjection
             builder.RegisterType<DictionaryManager<T>>()
                 .As<IDictionaryManager<T>>()
                 .WithParameter(new TypedParameter(typeof(TimeSpan), 
-                    TimeSpan.FromSeconds(Double.Parse(ConfigBuilder.Config["DictionaryCacheExpirationSeconds"]))))
+                    TimeSpan.FromSeconds(Double.Parse(_configBuilder.Config["DictionaryCacheExpirationSeconds"]))))
                 .SingleInstance();
         }
     }
