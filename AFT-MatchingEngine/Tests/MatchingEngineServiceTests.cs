@@ -31,6 +31,11 @@ namespace AFTMatchingEngine
 
             MeResponseModel test = await fixture.Consumer.Client.CashInOutAsync(newId.ToString(), "test", "test", 0);
             Assert.True(test.Status == MeStatusCodes.Ok);
+
+            //Assert.NotNull(fixture.allQueues);
+            //Assert.True(fixture.allQueues.Count > 0);
+            //Assert.NotNull(fixture.testQueue);
+            //Assert.Null(fixture.badTestQueue);
         }
 
     }

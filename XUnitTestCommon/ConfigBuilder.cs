@@ -27,7 +27,6 @@ namespace XUnitTestCommon
                LocalConfig["SettingsServiceURL"],
                LocalConfig["SettingsServiceAccessToken"],
                LocalConfig["SettingsServiceRootItemName"],
-               //LocalConfig["SettingsServiceTestItemName"]
                TestItemName
                ).Build());
         }
