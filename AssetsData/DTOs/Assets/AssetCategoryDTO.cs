@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FirstXUnitTest.DTOs.Assets
 {
-    class AssetCategoryDTO : BaseDTO
+    public class AssetCategoryDTO : BaseDTO
     {
         public string Id { get; set; }
         public string Name { get; set; }

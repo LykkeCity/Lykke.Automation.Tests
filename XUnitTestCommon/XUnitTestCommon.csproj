@@ -12,4 +12,10 @@
     <PackageReference Include="RestSharp.NetCore" Version="105.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

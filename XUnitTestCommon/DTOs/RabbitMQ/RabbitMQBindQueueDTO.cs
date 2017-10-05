@@ -4,7 +4,7 @@ using System.Text;
 
 namespace XUnitTestCommon.DTOs.RabbitMQ
 {
-    class RabbitMQBindQueueDTO
+    public class RabbitMQBindQueueDTO
     {
         public string routing_key { get; set; }
         public Arguments arguments { get; set; }

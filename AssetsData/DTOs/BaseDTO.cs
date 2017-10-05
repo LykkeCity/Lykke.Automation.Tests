@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FirstXUnitTest.DTOs
 {
-    class BaseDTO
+    public class BaseDTO
     {
     }
 }

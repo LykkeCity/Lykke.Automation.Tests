@@ -1,19 +1,15 @@
-using XUnitTestCommon;
 using FirstXUnitTest.DTOs;
 using FirstXUnitTest.DTOs.Assets;
-using XUnitTestCommon.Utils;
-using Newtonsoft.Json;
-using RestSharp;
-using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Linq;
-using Xunit;
 using FirstXUnitTest.Fixtures;
-using XUnitTestData.Repositories.Assets;
-using XUnitTestData.Domains.Assets;
+using FluentAssertions;
+using RestSharp;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Xunit;
+using XUnitTestCommon.Utils;
+using XUnitTestData.Repositories.Assets;
 
 namespace FirstXUnitTest
 {
@@ -30,7 +26,6 @@ namespace FirstXUnitTest
         {
             this.fixture = fixture;
         }
-
 
         #region All/Multiple assets
         [Fact]
