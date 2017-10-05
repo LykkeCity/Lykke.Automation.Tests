@@ -18,7 +18,8 @@ namespace XUnitTestCommon.RabbitMQ
         public static void Setup(ConfigBuilder configBuidler)
         {
             _config = configBuidler;
-            _client.BaseAddress = new Uri(_config.Config["RabbitMQBaseUrl"]);
+
+            _client.BaseAddress = new Uri("http://" + _config.Config["RabbitMQHost"] + ":" + _config.Config["RabbitMQPort"]);
 
             byte[] authBytes = new UTF8Encoding().GetBytes(_config.Config["RabbitMQUsername"] + ":" + _config.Config["RabbitMQPassword"]);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authBytes));

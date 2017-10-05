@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AFTMatchingEngine.DTOs;
+using Lykke.RabbitMqBroker.Subscriber;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -6,54 +8,60 @@ using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
 using XUnitTestCommon.DTOs.RabbitMQ;
 using XUnitTestCommon.RabbitMQ;
+using XUnitTestCommon.Utils;
 
 namespace AFTMatchingEngine.Fixtures
 {
     public class MatchingEngineTestDataFixture : IDisposable
     {
         public MatchingEngineConsumer Consumer;
+        public List<RabbitMQCashOperation> CashInOutMessages;
+
+        private RabbitMQSubscribtion<RabbitMQCashOperation> CashInOutSubscription;
         private ConfigBuilder _configBuilder;
 
-        //public List<RabbitMQHttpApiQueueResultDTO> allQueues;
-        //public RabbitMQHttpApiQueueResultDTO testQueue;
-        //public RabbitMQHttpApiQueueResultDTO badTestQueue;
-
-        //private string queueName = "lykke.cashinout.automation_functional_tests";
-        //private string exchangeName = "lykke.cashinout";
+        private List<string> _createdQueues;
 
         public MatchingEngineTestDataFixture()
         {
             this._configBuilder = new ConfigBuilder("MatchingEngine");
             prepareConsumer();
-
-            //RabbitMQHttpApiConsumer.Setup(_configBuilder);
-
-            //this.allQueues = null;
-            //this.allQueues = Task.Run(async () =>
-            //{
-            //    return await RabbitMQHttpApiConsumer.GetAllQueuesAsync("%2f");
-            //}).Result;
-
-            //this.testQueue = Task.Run(async () =>
-            //{
-            //    return await RabbitMQHttpApiConsumer.GetQueueByNameAsync("lykke.cashinout.TransactionsTracker");
-            //}).Result;
-
-            //this.badTestQueue = Task.Run(async () =>
-            //{
-            //    return await RabbitMQHttpApiConsumer.GetQueueByNameAsync("thisQueue.doesnot.exist.hopefully");
-            //}).Result;
-
-            //var test = Task.Run(async () => { return await RabbitMQHttpApiConsumer.GetAllNodesJson(); }).Result;
+            prepareRabbitQueues();
+            prepareRabbitMQConnection();
 
 
+        }
 
-            //bool IsCreated = Task.Run(async () => { return await RabbitMQHttpApiConsumer.CreateQueueAsync(queueName); }).Result;
-            //if (IsCreated)
-            //{
-            //    bool IsBinded = Task.Run(async () => { return await RabbitMQHttpApiConsumer.BindQueueAsync(exchangeName, queueName); }).Result;
-            //}
+        private void prepareRabbitMQConnection()
+        {
+            CashInOutMessages = new List<RabbitMQCashOperation>();
 
+            StringBuilder connectionstrinSb = new StringBuilder("amqp://");
+            connectionstrinSb.Append(_configBuilder.Config["RabbitMQUsername"]);
+            connectionstrinSb.Append(":");
+            connectionstrinSb.Append(_configBuilder.Config["RabbitMQPassword"]);
+            connectionstrinSb.Append("@");
+            connectionstrinSb.Append(_configBuilder.Config["RabbitMQHost"]);
+            connectionstrinSb.Append(":");
+            connectionstrinSb.Append(_configBuilder.Config["RabbitMQamqpPort"]);
+            connectionstrinSb.Append("/");
+            connectionstrinSb.Append("%2f"); //vhost
+
+
+            string nameOfSourceEndpoint = "cashinout";
+            string nameOfEndpoint = "automation_functional_tests";
+
+            RabbitMqSubscriptionSettings subscriberSettings =
+                RabbitMqSubscriptionSettings.CreateForSubscriber(connectionstrinSb.ToString(), nameOfSourceEndpoint, nameOfEndpoint);
+
+            subscriberSettings.MakeDurable();
+
+            //TODO: set queue argument instead of setting subscriber DeadLetter to none!!!!!!!!!
+            subscriberSettings.DeadLetterExchangeName = "";
+
+            CashInOutSubscription = new RabbitMQSubscribtion<RabbitMQCashOperation>(subscriberSettings);
+            CashInOutSubscription.SubscribeMessageHandler(handleCashInOutMessages);
+            CashInOutSubscription.Start();
         }
 
         private void prepareConsumer()
@@ -69,9 +77,58 @@ namespace AFTMatchingEngine.Fixtures
             }
         }
 
+        private void prepareRabbitQueues()
+        {
+            _createdQueues = new List<string>();
+            RabbitMQHttpApiConsumer.Setup(_configBuilder);
+
+            bool CashoutCreated = createQueue("lykke.cashinout", "lykke.cashinout.automation_functional_tests");
+        }
+
+        private bool createQueue(string exchangeName, string queueName)
+        {
+            RabbitMQHttpApiQueueResultDTO queueModel = Task.Run(async () =>
+            {
+                return await RabbitMQHttpApiConsumer.GetQueueByNameAsync(queueName);
+            }).Result;
+
+            if (queueModel != null)
+            {
+                Task.Run(async () => { return await RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName); });
+            }
+
+            bool IsBinded = false;
+
+            bool IsCreated = Task.Run(async () => { return await RabbitMQHttpApiConsumer.CreateQueueAsync(queueName); }).Result;
+            if (IsCreated)
+            {
+                IsBinded = Task.Run(async () => { return await RabbitMQHttpApiConsumer.BindQueueAsync(exchangeName, queueName); }).Result;
+            }
+
+            if (IsBinded)
+            {
+                _createdQueues.Add(queueName);
+            }
+
+            return IsBinded;
+        }
+
+        private Task handleCashInOutMessages(RabbitMQCashOperation msg)
+        {
+            CashInOutMessages.Add(msg);
+
+            return Task.FromResult<RabbitMQCashOperation>(msg);
+        }
+
         public void Dispose()
         {
-            //bool IsDeleted = Task.Run(async () => { return await RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName); }).Result;
+            CashInOutSubscription.Stop();
+
+            foreach (string queueName in _createdQueues)
+            {
+                Task.Run(async () => { return await RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName); });
+            }
+            
         }
     }
 }

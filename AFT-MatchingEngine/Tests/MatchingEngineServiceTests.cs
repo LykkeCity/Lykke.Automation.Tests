@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using AFTMatchingEngine.Fixtures;
 using Xunit;
-using RestSharp;
-using XUnitTestCommon;
 using Lykke.MatchingEngine.Connector.Abstractions.Models;
+using AFTMatchingEngine.DTOs;
+using System.Linq;
+using System.Threading;
 
 namespace AFTMatchingEngine
 {
@@ -27,15 +28,42 @@ namespace AFTMatchingEngine
         {
             Assert.NotNull(fixture.Consumer.Client);
             Assert.True(fixture.Consumer.Client.IsConnected);
-            Guid newId = Guid.NewGuid();
 
-            MeResponseModel test = await fixture.Consumer.Client.CashInOutAsync(newId.ToString(), "test", "test", 0);
-            Assert.True(test.Status == MeStatusCodes.Ok);
+            string newId = Guid.NewGuid().ToString();
+            string clientId = "test";
+            string assetId = "test";
+            double ammount = 0;
 
-            //Assert.NotNull(fixture.allQueues);
-            //Assert.True(fixture.allQueues.Count > 0);
-            //Assert.NotNull(fixture.testQueue);
-            //Assert.Null(fixture.badTestQueue);
+
+
+            MeResponseModel meResponse = await fixture.Consumer.Client.CashInOutAsync(newId, clientId, assetId, ammount);
+
+            Assert.True(meResponse.Status == MeStatusCodes.Ok);
+
+            RabbitMQCashOperation message = null;
+
+            bool messsegeIsIn = false;
+            while (!messsegeIsIn && fixture.CashInOutMessages.Count < 50)
+            {
+                message = fixture.CashInOutMessages.Where(m => m.id == newId).FirstOrDefault();
+
+                if (message != null)
+                {
+                    messsegeIsIn = true;
+                }
+                Thread.Sleep(100);
+            }
+
+            Assert.NotNull(message);
+
+            double parsedVolume = -1;
+            Double.TryParse(message.volume, out parsedVolume);
+
+            //Assert.Equal(message.id, newId);
+            Assert.Equal(message.clientId, clientId);
+            Assert.Equal(message.asset, assetId);
+            Assert.Equal(parsedVolume, ammount);
+
         }
 
     }
