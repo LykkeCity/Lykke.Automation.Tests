@@ -4,10 +4,9 @@ using System.Text;
 using AFTMatchingEngine.Fixtures;
 using Xunit;
 using Lykke.MatchingEngine.Connector.Abstractions.Models;
-using AFTMatchingEngine.DTOs;
+using AFTMatchingEngine.DTOs.RabbitMQ;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Diagnostics;
 
 namespace AFTMatchingEngine
@@ -42,7 +41,7 @@ namespace AFTMatchingEngine
             Assert.True(meResponse.Status == MeStatusCodes.Ok);
 
             Stopwatch stopWatch = new Stopwatch();
-            RabbitMQCashOperation message = null;
+            CashOperation message = null;
             bool messsegeIsIn = false;
 
             stopWatch.Start();

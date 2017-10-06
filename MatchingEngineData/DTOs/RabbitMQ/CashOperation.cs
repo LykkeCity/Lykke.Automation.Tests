@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AFTMatchingEngine.DTOs
+namespace AFTMatchingEngine.DTOs.RabbitMQ
 {
-    public class RabbitMQCashOperation
+    public class CashOperation
     {
         public string id { get; set; }
         public string clientId { get; set; }
-        public string dateTime { get; set; }
+        public DateTime dateTime { get; set; }
         public string volume { get; set; }
         public string asset { get; set; }
 

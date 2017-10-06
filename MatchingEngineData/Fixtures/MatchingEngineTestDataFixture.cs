@@ -1,9 +1,6 @@
-﻿using AFTMatchingEngine.DTOs;
-using Lykke.RabbitMqBroker.Subscriber;
+﻿using AFTMatchingEngine.DTOs.RabbitMQ;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
@@ -15,9 +12,9 @@ namespace AFTMatchingEngine.Fixtures
     public class MatchingEngineTestDataFixture : IDisposable
     {
         public MatchingEngineConsumer Consumer;
-        public List<RabbitMQCashOperation> CashInOutMessages;
+        public List<CashOperation> CashInOutMessages;
 
-        private RabbitMQConsumer<RabbitMQCashOperation> CashInOutSubscription;
+        private RabbitMQConsumer<CashOperation> CashInOutSubscription;
         private ConfigBuilder _configBuilder;
 
         private List<string> _createdQueues;
@@ -34,9 +31,9 @@ namespace AFTMatchingEngine.Fixtures
 
         private void prepareRabbitMQConnections()
         {
-            CashInOutMessages = new List<RabbitMQCashOperation>();
+            CashInOutMessages = new List<CashOperation>();
 
-            CashInOutSubscription = new RabbitMQConsumer<RabbitMQCashOperation>(
+            CashInOutSubscription = new RabbitMQConsumer<CashOperation>(
                 _configBuilder, "cashinout", "automation_functional_tests");
 
             CashInOutSubscription.SubscribeMessageHandler(handleCashInOutMessages);
@@ -104,7 +101,6 @@ namespace AFTMatchingEngine.Fixtures
             foreach (string queueName in _createdQueues)
             {
                 deleteTasks.Add(RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName));
-                //Task.Run(async () => { return await RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName); });
             }
 
             Task.WhenAll(deleteTasks).Wait();
@@ -113,7 +109,7 @@ namespace AFTMatchingEngine.Fixtures
 
         #region messageHandlers
 
-        private Task handleCashInOutMessages(RabbitMQCashOperation msg)
+        private Task handleCashInOutMessages(CashOperation msg)
         {
             CashInOutMessages.Add(msg);
             return Task.FromResult(msg);

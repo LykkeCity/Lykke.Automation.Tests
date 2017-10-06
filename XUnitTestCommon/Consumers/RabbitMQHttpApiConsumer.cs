@@ -29,11 +29,6 @@ namespace XUnitTestCommon.Consumers
                 new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        //public static async Task<string> GetAllNodesJson()
-        //{
-        //    return await ExecuteGetRequestAsync("/api/nodes");
-        //}
-
         public static async Task<bool> CreateQueueAsync(string name, string vhost = "%2f")
         {
             StringBuilder requestPathSb = new StringBuilder("/api/queues");
