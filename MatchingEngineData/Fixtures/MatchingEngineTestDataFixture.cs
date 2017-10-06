@@ -2,12 +2,12 @@
 using Lykke.RabbitMqBroker.Subscriber;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
 using XUnitTestCommon.DTOs.RabbitMQ;
-using XUnitTestCommon.RabbitMQ;
 using XUnitTestCommon.Utils;
 
 namespace AFTMatchingEngine.Fixtures
@@ -17,7 +17,7 @@ namespace AFTMatchingEngine.Fixtures
         public MatchingEngineConsumer Consumer;
         public List<RabbitMQCashOperation> CashInOutMessages;
 
-        private RabbitMQSubscribtion<RabbitMQCashOperation> CashInOutSubscription;
+        private RabbitMQConsumer<RabbitMQCashOperation> CashInOutSubscription;
         private ConfigBuilder _configBuilder;
 
         private List<string> _createdQueues;
@@ -27,39 +27,18 @@ namespace AFTMatchingEngine.Fixtures
             this._configBuilder = new ConfigBuilder("MatchingEngine");
             prepareConsumer();
             prepareRabbitQueues();
-            prepareRabbitMQConnection();
+            prepareRabbitMQConnections();
 
 
         }
 
-        private void prepareRabbitMQConnection()
+        private void prepareRabbitMQConnections()
         {
             CashInOutMessages = new List<RabbitMQCashOperation>();
 
-            StringBuilder connectionstrinSb = new StringBuilder("amqp://");
-            connectionstrinSb.Append(_configBuilder.Config["RabbitMQUsername"]);
-            connectionstrinSb.Append(":");
-            connectionstrinSb.Append(_configBuilder.Config["RabbitMQPassword"]);
-            connectionstrinSb.Append("@");
-            connectionstrinSb.Append(_configBuilder.Config["RabbitMQHost"]);
-            connectionstrinSb.Append(":");
-            connectionstrinSb.Append(_configBuilder.Config["RabbitMQamqpPort"]);
-            connectionstrinSb.Append("/");
-            connectionstrinSb.Append("%2f"); //vhost
+            CashInOutSubscription = new RabbitMQConsumer<RabbitMQCashOperation>(
+                _configBuilder, "cashinout", "automation_functional_tests");
 
-
-            string nameOfSourceEndpoint = "cashinout";
-            string nameOfEndpoint = "automation_functional_tests";
-
-            RabbitMqSubscriptionSettings subscriberSettings =
-                RabbitMqSubscriptionSettings.CreateForSubscriber(connectionstrinSb.ToString(), nameOfSourceEndpoint, nameOfEndpoint);
-
-            subscriberSettings.MakeDurable();
-
-            //TODO: set queue argument instead of setting subscriber DeadLetter to none!!!!!!!!!
-            subscriberSettings.DeadLetterExchangeName = "";
-
-            CashInOutSubscription = new RabbitMQSubscribtion<RabbitMQCashOperation>(subscriberSettings);
             CashInOutSubscription.SubscribeMessageHandler(handleCashInOutMessages);
             CashInOutSubscription.Start();
         }
@@ -69,7 +48,6 @@ namespace AFTMatchingEngine.Fixtures
             if (Int32.TryParse(_configBuilder.Config["Port"], out int port))
             {
                 Consumer = new MatchingEngineConsumer(_configBuilder.Config["BaseUrl"], port);
-                Consumer.Connect();
             }
             else
             {
@@ -82,10 +60,14 @@ namespace AFTMatchingEngine.Fixtures
             _createdQueues = new List<string>();
             RabbitMQHttpApiConsumer.Setup(_configBuilder);
 
-            bool CashoutCreated = createQueue("lykke.cashinout", "lykke.cashinout.automation_functional_tests");
+            List<Task<bool>> createQueueTasks = new List<Task<bool>>();
+            createQueueTasks.Add(createQueue("lykke.cashinout", "lykke.cashinout.automation_functional_tests"));
+
+
+            Task.WhenAll(createQueueTasks).Wait();
         }
 
-        private bool createQueue(string exchangeName, string queueName)
+        private async Task<bool> createQueue(string exchangeName, string queueName)
         {
             RabbitMQHttpApiQueueResultDTO queueModel = Task.Run(async () =>
             {
@@ -94,15 +76,15 @@ namespace AFTMatchingEngine.Fixtures
 
             if (queueModel != null)
             {
-                Task.Run(async () => { return await RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName); });
+                await RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName);
             }
 
             bool IsBinded = false;
 
-            bool IsCreated = Task.Run(async () => { return await RabbitMQHttpApiConsumer.CreateQueueAsync(queueName); }).Result;
+            bool IsCreated = await RabbitMQHttpApiConsumer.CreateQueueAsync(queueName);
             if (IsCreated)
             {
-                IsBinded = Task.Run(async () => { return await RabbitMQHttpApiConsumer.BindQueueAsync(exchangeName, queueName); }).Result;
+                IsBinded = await RabbitMQHttpApiConsumer.BindQueueAsync(exchangeName, queueName);
             }
 
             if (IsBinded)
@@ -113,22 +95,30 @@ namespace AFTMatchingEngine.Fixtures
             return IsBinded;
         }
 
-        private Task handleCashInOutMessages(RabbitMQCashOperation msg)
-        {
-            CashInOutMessages.Add(msg);
-
-            return Task.FromResult<RabbitMQCashOperation>(msg);
-        }
-
         public void Dispose()
         {
             CashInOutSubscription.Stop();
 
+            List<Task<bool>> deleteTasks = new List<Task<bool>>();
+
             foreach (string queueName in _createdQueues)
             {
-                Task.Run(async () => { return await RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName); });
+                deleteTasks.Add(RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName));
+                //Task.Run(async () => { return await RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName); });
             }
+
+            Task.WhenAll(deleteTasks).Wait();
             
         }
+
+        #region messageHandlers
+
+        private Task handleCashInOutMessages(RabbitMQCashOperation msg)
+        {
+            CashInOutMessages.Add(msg);
+            return Task.FromResult(msg);
+        }
+
+        #endregion
     }
 }

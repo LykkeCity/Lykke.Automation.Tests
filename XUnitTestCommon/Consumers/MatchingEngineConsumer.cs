@@ -19,6 +19,8 @@ namespace XUnitTestCommon.Consumers
         {
             _hostName = hostName;
             _port = port;
+
+            this.Connect();
         }
 
         public void Connect()

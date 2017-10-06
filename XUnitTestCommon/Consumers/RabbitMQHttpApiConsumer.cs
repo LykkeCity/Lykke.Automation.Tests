@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon.DTOs.RabbitMQ;
 
-namespace XUnitTestCommon.RabbitMQ
+namespace XUnitTestCommon.Consumers
 {
     public static class RabbitMQHttpApiConsumer
     {
