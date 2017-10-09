@@ -12,6 +12,7 @@ using XUnitTestData.Repositories.Assets;
 using System.Linq;
 using XUnitTestData.Services;
 using XUnitTestData.Domains;
+using XUnitTestCommon.Utils;
 
 namespace FirstXUnitTest.Fixtures
 {
@@ -56,34 +57,10 @@ namespace FirstXUnitTest.Fixtures
             builder.RegisterModule(new AssetsTestModule(_configBuilder));
             this.container = builder.Build();
 
-            this.AssetManager = prepareRepositoryManager<IAsset>();
-            this.AssetDescriptionManager = prepareRepositoryManager<IAssetDescription>();
-            this.AssetCategoryManager = prepareRepositoryManager<IAssetCategory>();
-            this.AssetAttributesManager = prepareRepositoryManager<IAssetAttributes>();
-        }
-
-        private IDictionaryManager<T> prepareRepositoryManager<T>() where T : IDictionaryItem
-        {
-            var repository = this.container.Resolve<IDictionaryRepository<T>>();
-            var cacheService = this.container.Resolve<IDictionaryCacheService<T>>();
-            var dateTimeProvider = new DateTimeProvider();
-
-
-            var manager = this.container.Resolve<IDictionaryManager<T>>(
-                new ResolvedParameter(
-                    (pi, ctx) => pi.ParameterType == typeof(IDictionaryRepository<T>) && pi.Name == "repository",
-                    (pi, ctx) => repository),
-
-                new ResolvedParameter(
-                    (pi, ctx) => pi.ParameterType == typeof(IDictionaryCacheService<T>) && pi.Name == "cache",
-                    (pi, ctx) => cacheService),
-
-                new ResolvedParameter(
-                    (pi, ctx) => pi.ParameterType == typeof(IDateTimeProvider) && pi.Name == "dateTimeProvider",
-                    (pi, ctx) => dateTimeProvider)
-                    );
-
-            return manager;
+            this.AssetManager = RepositoryUtils.PrepareRepositoryManager<IAsset>(this.container);
+            this.AssetDescriptionManager = RepositoryUtils.PrepareRepositoryManager<IAssetDescription>(this.container);
+            this.AssetCategoryManager = RepositoryUtils.PrepareRepositoryManager<IAssetCategory>(this.container);
+            this.AssetAttributesManager = RepositoryUtils.PrepareRepositoryManager<IAssetAttributes>(this.container);
         }
 
         private void prepareTestData()

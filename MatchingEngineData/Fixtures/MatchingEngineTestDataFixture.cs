@@ -5,7 +5,15 @@ using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
 using XUnitTestCommon.DTOs.RabbitMQ;
+using Autofac;
 using XUnitTestCommon.Utils;
+using MatchingEngineData.DependencyInjection;
+using XUnitTestData.Services;
+using XUnitTestData.Domains;
+using XUnitTestData.Repositories;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 
 namespace AFTMatchingEngine.Fixtures
 {
@@ -14,10 +22,16 @@ namespace AFTMatchingEngine.Fixtures
         public MatchingEngineConsumer Consumer;
         public List<CashOperation> CashInOutMessages;
 
+        public AccountRepository AccountRepository;
+
+        public string TestAccountId1;
+        public string TestAccountId2;
+
         private RabbitMQConsumer<CashOperation> CashInOutSubscription;
         private ConfigBuilder _configBuilder;
 
         private List<string> _createdQueues;
+        private IContainer container;
 
         public MatchingEngineTestDataFixture()
         {
@@ -25,8 +39,18 @@ namespace AFTMatchingEngine.Fixtures
             prepareConsumer();
             prepareRabbitQueues();
             prepareRabbitMQConnections();
+            prepareDependencyContainer();
 
+            prepareTestData();
+        }
 
+        private void prepareDependencyContainer()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new MatchingEngineTestModule(_configBuilder));
+            this.container = builder.Build();
+
+            this.AccountRepository = (AccountRepository)container.Resolve<IDictionaryRepository<IAccount>>();
         }
 
         private void prepareRabbitMQConnections()
@@ -90,6 +114,37 @@ namespace AFTMatchingEngine.Fixtures
             }
 
             return IsBinded;
+        }
+
+        private void prepareTestData()
+        {
+            TestAccountId1 = "AFTest_Client1";
+            TestAccountId2 = "AFTest_Client2";
+        }
+
+        public Task<CashOperation> WaitForRabbitMQ(string transactionId)
+        {
+            Stopwatch stopWatch = new Stopwatch();
+            CashOperation message = null;
+            bool messsegeIsIn = false;
+
+            stopWatch.Start();
+            while (!messsegeIsIn && stopWatch.Elapsed.TotalMilliseconds < 10000)
+            {
+                message = this.CashInOutMessages.Where(m => m.id == transactionId).FirstOrDefault();
+
+                if (message != null)
+                {
+                    messsegeIsIn = true;
+                }
+                else
+                {
+                    Thread.Sleep(100);
+                }
+            }
+            stopWatch.Stop();
+
+            return Task.FromResult(message);
         }
 
         public void Dispose()

@@ -5,6 +5,7 @@ using AFTMatchingEngine.Fixtures;
 using Xunit;
 using Lykke.MatchingEngine.Connector.Abstractions.Models;
 using AFTMatchingEngine.DTOs.RabbitMQ;
+using XUnitTestData.Repositories;
 using System.Linq;
 using System.Threading;
 using System.Diagnostics;
@@ -30,46 +31,94 @@ namespace AFTMatchingEngine
             Assert.NotNull(fixture.Consumer.Client);
             Assert.True(fixture.Consumer.Client.IsConnected);
 
-            //TODO
-            string newId = Guid.NewGuid().ToString();
-            string clientId = "test";
-            string assetId = "test";
-            double ammount = 0;
+            AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            Assert.NotNull(testAccount);
+
+            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.Asset == "LKK").FirstOrDefault();
+            Assert.NotNull(accountBalance);
+
+            double realBallance = accountBalance.Balance - accountBalance.Reserved;
 
 
-            MeResponseModel meResponse = await fixture.Consumer.Client.CashInOutAsync(newId, clientId, assetId, ammount);
-            Assert.True(meResponse.Status == MeStatusCodes.Ok);
 
-            Stopwatch stopWatch = new Stopwatch();
-            CashOperation message = null;
-            bool messsegeIsIn = false;
+            // Low Balance cashout test
+            double badCashOutAmmount = (realBallance + 0.1) * -1;
 
-            stopWatch.Start();
-            while (!messsegeIsIn && stopWatch.Elapsed.TotalMilliseconds < 10000)
-            {
-                message = fixture.CashInOutMessages.Where(m => m.id == newId).FirstOrDefault();
+            MeResponseModel meBadCashOutResponse = await fixture.Consumer.Client.CashInOutAsync(
+                Guid.NewGuid().ToString(), testAccount.Id, accountBalance.Asset, badCashOutAmmount);
 
-                if (message != null)
-                {
-                    messsegeIsIn = true;
-                }
-                else
-                {
-                    Thread.Sleep(100);
-                }
-            }
-            stopWatch.Stop();
+
+            Assert.True(meBadCashOutResponse.Status == MeStatusCodes.LowBalance);
+
+
+
+            // Good cashout test
+            string goodCashOutID = Guid.NewGuid().ToString();
+
+            double goodCashOutAmmount = (realBallance / 10) * -1;
+
+            MeResponseModel meGoodCashOutResponse = await fixture.Consumer.Client.CashInOutAsync(
+                goodCashOutID, testAccount.Id, accountBalance.Asset, goodCashOutAmmount);
+
+            Assert.True(meGoodCashOutResponse.Status == MeStatusCodes.Ok);
+
+            CashOperation message =  await fixture.WaitForRabbitMQ(goodCashOutID);
 
             Assert.NotNull(message);
 
-            double parsedVolume = -1;
-            Double.TryParse(message.volume, out parsedVolume);
+            Assert.Equal(message.clientId, testAccount.Id);
+            Assert.Equal(message.asset, accountBalance.Asset);
 
-            Assert.Equal(message.clientId, clientId);
-            Assert.Equal(message.asset, assetId);
-            Assert.Equal(parsedVolume, ammount);
+            double parsedVolume = -999999;
+            if (Double.TryParse(message.volume, out parsedVolume))
+            {
+                Assert.Equal(parsedVolume, goodCashOutAmmount);
+            }
+
+
+            //Cash In test
+            double cashInAmmount = goodCashOutAmmount * -1; //cash in the same ammount we cashed out
+            MeResponseModel meCashInResponse = await fixture.Consumer.Client.CashInOutAsync(
+                goodCashOutID, testAccount.Id, accountBalance.Asset, goodCashOutAmmount);
+
+
+            message = await fixture.WaitForRabbitMQ(goodCashOutID);
+
+            Assert.NotNull(message);
+
+            Assert.Equal(message.clientId, testAccount.Id);
+            Assert.Equal(message.asset, accountBalance.Asset);
+
+            parsedVolume = -999999;
+            if (Double.TryParse(message.volume, out parsedVolume))
+            {
+                Assert.Equal(parsedVolume, cashInAmmount);
+            }
+
+
+            //balances after cashout -> cashin with the same ammount should not differ
+
+            AccountEntity testAccountAfter = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            Assert.NotNull(testAccountAfter);
+
+            BalanceDTO accountBalanceAfter = testAccount.BalancesParsed.Where(b => b.Asset == "LKK").FirstOrDefault();
+            Assert.NotNull(accountBalanceAfter);
+
+            Assert.Equal(accountBalance.Balance, accountBalanceAfter.Balance);
 
         }
 
+        //[Fact]
+        //[Trait("Category", "Smoke")]
+        //public async void AddAsset()
+        //{
+        //    double ammount = 9.16;
+
+        //    AccountEntity testAccount1 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+        //    MeResponseModel meGoodResponse = await fixture.Consumer.Client.CashInOutAsync(
+        //        Guid.NewGuid().ToString(), testAccount1.Id, "LKK", ammount);
+
+        //    Assert.True(meGoodResponse.Status == MeStatusCodes.Ok);
+        //}
     }
 }

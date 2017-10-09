@@ -10,6 +10,7 @@ using XUnitTestData.Domains.Assets;
 using Common.Log;
 using System.Threading.Tasks;
 using XUnitTestData.Services;
+using XUnitTestCommon.Utils;
 
 namespace FirstXUnitTest.DependencyInjection
 {
@@ -29,7 +30,7 @@ namespace FirstXUnitTest.DependencyInjection
                         _configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
                 .As<IDictionaryRepository<IAsset>>();
 
-            RegisterDictionaryManager<IAsset>(builder);
+            RepositoryUtils.RegisterDictionaryManager<IAsset>(builder);
 
 
 
@@ -38,36 +39,23 @@ namespace FirstXUnitTest.DependencyInjection
                         _configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
                 .As<IDictionaryRepository<IAssetDescription>>();
 
-            RegisterDictionaryManager<IAssetDescription>(builder);
+            RepositoryUtils.RegisterDictionaryManager<IAssetDescription>(builder);
 
             builder.Register(c => new AssetCategoryRepository(
                     new AzureTableStorage<AssetCategoryEntity>(
                         _configBuilder.Config["DictionariesConnectionString"], "AssetCategories", null)))
                 .As<IDictionaryRepository<IAssetCategory>>();
 
-            RegisterDictionaryManager<IAssetCategory>(builder);
+            RepositoryUtils.RegisterDictionaryManager<IAssetCategory>(builder);
 
             builder.Register(c => new AssetAttributesRepository(
                     new AzureTableStorage<AssetAttributesEntity>(
                         _configBuilder.Config["DictionariesConnectionString"], "AssetAttributes", null)))
                 .As<IDictionaryRepository<IAssetAttributes>>();
 
-            RegisterDictionaryManager<IAssetAttributes>(builder);
+            RepositoryUtils.RegisterDictionaryManager<IAssetAttributes>(builder);
 
             base.Load(builder);
-        }
-
-        private void RegisterDictionaryManager<T>(ContainerBuilder builder) where T : IDictionaryItem
-        {
-            builder.RegisterType<DictionaryCacheService<T>>()
-                .As<IDictionaryCacheService<T>>()
-                .SingleInstance();
-
-            builder.RegisterType<DictionaryManager<T>>()
-                .As<IDictionaryManager<T>>()
-                .WithParameter(new TypedParameter(typeof(TimeSpan), 
-                    TimeSpan.FromSeconds(Double.Parse(_configBuilder.Config["DictionaryCacheExpirationSeconds"]))))
-                .SingleInstance();
         }
     }
 }
