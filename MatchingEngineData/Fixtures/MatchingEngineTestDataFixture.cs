@@ -29,12 +29,14 @@ namespace AFTMatchingEngine.Fixtures
 
         public string TestAccountId1;
         public string TestAccountId2;
-        public string TestAsset;
+        public string TestAsset1;
+        public string TestAsset2;
 
         private Dictionary<Type, List<IRabbitMQOperation>> RabbitMqMessages;
 
         private RabbitMQConsumer<CashOperation> CashInOutSubscription;
         private RabbitMQConsumer<CashTransferOperation> CashTransferSubscription;
+        private RabbitMQConsumer<CashSwapOperation> CashSwapSubscription;
 
         private ConfigBuilder _configBuilder;
 
@@ -77,6 +79,11 @@ namespace AFTMatchingEngine.Fixtures
                 _configBuilder, "transfers", "automation_functional_tests");
             CashTransferSubscription.SubscribeMessageHandler(handleOperationMessages);
             CashTransferSubscription.Start();
+
+            CashSwapSubscription = new RabbitMQConsumer<CashSwapOperation>(
+                _configBuilder, "cashswap", "automation_functional_tests");
+            CashSwapSubscription.SubscribeMessageHandler(handleOperationMessages);
+            CashSwapSubscription.Start();
         }
 
         private void prepareConsumer()
@@ -99,6 +106,7 @@ namespace AFTMatchingEngine.Fixtures
             List<Task<bool>> createQueueTasks = new List<Task<bool>>();
             createQueueTasks.Add(createQueue("lykke.cashinout", "lykke.cashinout.automation_functional_tests"));
             createQueueTasks.Add(createQueue("lykke.transfers", "lykke.transfers.automation_functional_tests"));
+            createQueueTasks.Add(createQueue("lykke.cashswap", "lykke.cashswap.automation_functional_tests"));
 
             Task.WhenAll(createQueueTasks).Wait();
         }
@@ -135,7 +143,8 @@ namespace AFTMatchingEngine.Fixtures
         {
             TestAccountId1 = "AFTest_Client1";
             TestAccountId2 = "AFTest_Client2";
-            TestAsset = "LKK";
+            TestAsset1 = "LKK";
+            TestAsset2 = "USD";
         }
 
         public Task<IRabbitMQOperation> WaitForRabbitMQ<T>(string transactionId)
@@ -160,6 +169,18 @@ namespace AFTMatchingEngine.Fixtures
             return Task.FromResult(message);
         }
 
+        private Task handleOperationMessages(IRabbitMQOperation msg)
+        {
+            if (!RabbitMqMessages.ContainsKey(msg.GetType()))
+            {
+                RabbitMqMessages[msg.GetType()] = new List<IRabbitMQOperation>();
+            }
+
+            RabbitMqMessages[msg.GetType()].Add(msg);
+
+            return Task.FromResult(msg);
+        }
+
         public void Dispose()
         {
             CashInOutSubscription.Stop();
@@ -173,20 +194,6 @@ namespace AFTMatchingEngine.Fixtures
 
             Task.WhenAll(deleteTasks).Wait();
             
-        }
-
-        private Task handleOperationMessages(IRabbitMQOperation msg)
-        {
-            if (!RabbitMqMessages.ContainsKey(msg.GetType()))
-            {
-                RabbitMqMessages[msg.GetType()] = new List<IRabbitMQOperation>();
-            }
-
-            RabbitMqMessages[msg.GetType()].Add(msg);
-
-            return Task.FromResult(msg);
-
-
         }
     }
 }

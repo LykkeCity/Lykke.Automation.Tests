@@ -23,10 +23,10 @@ namespace XUnitTestData.Repositories.MatchingEngine
 
         public double Amount1 { get; set; }
         public double Amount2 { get; set; }
-        public double AssetId1 { get; set; }
-        public double AssetId2 { get; set; }
-        public double ClientId1 { get; set; }
-        public double ClientId2 { get; set; }
+        public string AssetId1 { get; set; }
+        public string AssetId2 { get; set; }
+        public string ClientId1 { get; set; }
+        public string ClientId2 { get; set; }
 
     }
 
@@ -44,6 +44,11 @@ namespace XUnitTestData.Repositories.MatchingEngine
         public async Task<IEnumerable<ICashSwap>> GetAllAsync()
         {
             return (await _tableStorage.GetDataAsync());
+        }
+
+        public async Task<IEnumerable<ICashSwap>> GetAllAsync(string externalId)
+        {
+            return (_tableStorage.Where(a => a.ExternalId == externalId).ToList());
         }
 
         public async Task<ICashSwap> TryGetAsync(string externalId)

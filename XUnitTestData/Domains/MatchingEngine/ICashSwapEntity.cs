@@ -8,10 +8,10 @@ namespace XUnitTestData.Domains.MatchingEngine
         double Amount1 { get; set; }
         double Amount2 { get; set; }
         string AssetId { get; set; }
-        double AssetId1 { get; set; }
-        double AssetId2 { get; set; }
-        double ClientId1 { get; set; }
-        double ClientId2 { get; set; }
+        string AssetId1 { get; set; }
+        string AssetId2 { get; set; }
+        string ClientId1 { get; set; }
+        string ClientId2 { get; set; }
         DateTime DateTime { get; set; }
         string ExternalId { get; set; }
         string FromClientId { get; set; }
