@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MatchingEngineData.DTOs.RabbitMQ
 {
-    class CashSwapOperation
+    class CashSwapOperation : IRabbitMQOperation
     {
         public string id { get; set; }
         public DateTime dateTime { get; set; }

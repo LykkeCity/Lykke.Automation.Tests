@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MatchingEngineData.DTOs.RabbitMQ
 {
-    public class BalanceUpdate
+    public class BalanceUpdate : IRabbitMQOperation
     {
         public string id { get; set; }
         public string type { get; set; }

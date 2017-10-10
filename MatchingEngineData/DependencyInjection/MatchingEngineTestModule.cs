@@ -8,6 +8,8 @@ using XUnitTestData.Services;
 using XUnitTestData.Repositories;
 using XUnitTestCommon.Utils;
 using AzureStorage.Tables;
+using XUnitTestData.Repositories.MatchingEngine;
+using XUnitTestData.Domains.MatchingEngine;
 
 namespace MatchingEngineData.DependencyInjection
 {
@@ -26,6 +28,11 @@ namespace MatchingEngineData.DependencyInjection
                     new AzureTableStorage<AccountEntity>(
                         _configBuilder.Config["BalancesInfoConnectionString"], "Accounts", null)))
                 .As<IDictionaryRepository<IAccount>>();
+
+            builder.Register(c => new CashSwapRepository(
+                    new AzureTableStorage<CashSwapEntity>(
+                        _configBuilder.Config["BalancesInfoConnectionString"], "SwapOperationsCash", null)))
+                .As<IDictionaryRepository<ICashSwap>>();
 
             //RepositoryUtils.RegisterDictionaryManager<IAccount>(builder);
 

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AFTMatchingEngine.DTOs.RabbitMQ
+namespace MatchingEngineData.DTOs.RabbitMQ
 {
-    public class CashOperation
+    public class CashOperation : IRabbitMQOperation
     {
         public string id { get; set; }
         public string clientId { get; set; }
