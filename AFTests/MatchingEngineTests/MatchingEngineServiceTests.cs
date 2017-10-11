@@ -10,6 +10,8 @@ using System.Threading;
 using System.Diagnostics;
 using MatchingEngineData.DTOs.RabbitMQ;
 using XUnitTestData.Repositories.MatchingEngine;
+using XUnitTestData.Repositories.Assets;
+using XUnitTestCommon;
 
 namespace AFTMatchingEngine
 {
@@ -325,6 +327,140 @@ namespace AFTMatchingEngine
             Assert.True(accountBalance1Asset2.Balance == checkAccountBalance1Asset2.Balance);
             Assert.True(accountBalance2Asset1.Balance == checkAccountBalance2Asset1.Balance);
             Assert.True(accountBalance2Asset2.Balance == checkAccountBalance2Asset2.Balance);
+
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        public async void UpdateBalance()
+        {
+            Assert.NotNull(fixture.Consumer.Client);
+            Assert.True(fixture.Consumer.Client.IsConnected);
+
+            AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            Assert.NotNull(testAccount);
+            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+            Assert.NotNull(accountBalance);
+
+
+
+            //Execute balance update
+            double newBalance = accountBalance.Balance + 1.0;
+            string balanceUpdateId = Guid.NewGuid().ToString();
+            await fixture.Consumer.Client.UpdateBalanceAsync(balanceUpdateId, fixture.TestAccountId1, fixture.TestAsset1, newBalance);
+
+            BalanceUpdate message = (BalanceUpdate)await fixture.WaitForRabbitMQ<BalanceUpdate>(balanceUpdateId);
+            Assert.True(message.type == "BALANCE_UPDATE");
+
+            BalanceUpdate.ClientBalanceUpdate balance = message.balances.Where(m => m.id == fixture.TestAccountId1).FirstOrDefault();
+            Assert.True(balance != null);
+            Assert.True(balance.asset == fixture.TestAsset1);
+            Assert.True(balance.oldBalance == accountBalance.Balance);
+            Assert.True(balance.newBalance == newBalance);
+            Assert.True(balance.oldReserved == balance.newReserved);
+
+            AccountEntity checkTestAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            BalanceDTO checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+
+            Assert.True(checkAccountBalance.Balance == newBalance);
+
+            //reverse balance update
+            string reverseBalanceUpdateId = Guid.NewGuid().ToString();
+            await fixture.Consumer.Client.UpdateBalanceAsync(reverseBalanceUpdateId, fixture.TestAccountId1, fixture.TestAsset1, accountBalance.Balance);
+
+            message = (BalanceUpdate)await fixture.WaitForRabbitMQ<BalanceUpdate>(reverseBalanceUpdateId);
+            Assert.True(message.type == "BALANCE_UPDATE");
+
+            balance = message.balances.Where(m => m.id == fixture.TestAccountId1).FirstOrDefault();
+            Assert.True(balance != null);
+            Assert.True(balance.asset == fixture.TestAsset1);
+            Assert.True(balance.oldBalance == newBalance);
+            Assert.True(balance.newBalance == accountBalance.Balance);
+            Assert.True(balance.oldReserved == balance.newReserved);
+
+            checkTestAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+
+            Assert.True(checkAccountBalance.Balance == accountBalance.Balance);
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        public async void SellLimitOrderTest() // and CancelLimitOrder
+        {
+            AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            Assert.NotNull(testAccount);
+            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+            Assert.NotNull(accountBalance);
+
+            string limitOrderID = Guid.NewGuid().ToString();
+
+            Random random = new Random();
+            double amount = 0.2;
+            double price = random.Next(10,999);
+
+
+            MeResponseModel LimitOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
+                limitOrderID, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Sell, amount, price);
+            Assert.True(LimitOrderResponse.Status == MeStatusCodes.Ok);
+
+            AccountEntity checkTestAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            BalanceDTO checkAccountBalance = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+
+            Assert.True(Math.Round(checkAccountBalance.Reserved, 2) == Math.Round(accountBalance.Reserved + amount, 2));
+
+            //OrderBook message = (OrderBook)await fixture.WaitForRabbitMQ<OrderBook>(limitOrderID);
+            //Assert.NotNull(message);
+            //Assert.True(message.assetPair == fixture.TestAssetPair.Id);
+            //Assert.True(message.isBuy == true);
+            //Assert.True(message.prices.FirstOrDefault().clientId == fixture.TestAccountId1);
+            //Assert.True(message.prices.FirstOrDefault().price == price);
+            //Assert.True(message.prices.FirstOrDefault().volume == amount);
+
+
+            MeResponseModel LimitOrderCancelResponse = await fixture.Consumer.Client.CancelLimitOrderAsync(limitOrderID);
+            Assert.True(LimitOrderCancelResponse.Status == MeStatusCodes.Ok);
+
+            checkTestAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            checkAccountBalance = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+
+            Assert.True(checkAccountBalance.Reserved == accountBalance.Reserved);
+
+            //fixture.Consumer.Client.HandleMarketOrderAsync()
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        public async void BuyLimitOrderTest() // and CancelLimitOrder
+        {
+            AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            Assert.NotNull(testAccount);
+            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset2).FirstOrDefault();
+            Assert.NotNull(accountBalance);
+
+            string limitOrderID = Guid.NewGuid().ToString();
+
+            Random random = new Random();
+            double amount = 0.01;
+            double price = random.NextDouble() / 100;
+
+
+            MeResponseModel LimitOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
+                limitOrderID, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Buy, amount, price);
+            Assert.True(LimitOrderResponse.Status == MeStatusCodes.Ok);
+
+            AccountEntity checkTestAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            BalanceDTO checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset2).FirstOrDefault();
+
+            Assert.True(Math.Round(checkAccountBalance.Reserved, 2) > Math.Round(accountBalance.Reserved, 2));//TODO calculate price
+
+            MeResponseModel LimitOrderCancelResponse = await fixture.Consumer.Client.CancelLimitOrderAsync(limitOrderID);
+            Assert.True(LimitOrderCancelResponse.Status == MeStatusCodes.Ok);
+
+            checkTestAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset2).FirstOrDefault();
+
+            Assert.True(checkAccountBalance.Reserved == accountBalance.Reserved);
 
         }
 

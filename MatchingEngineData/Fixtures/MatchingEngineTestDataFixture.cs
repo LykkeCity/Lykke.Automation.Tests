@@ -16,6 +16,8 @@ using System.Threading;
 using MatchingEngineData.DTOs.RabbitMQ;
 using XUnitTestData.Repositories.MatchingEngine;
 using XUnitTestData.Domains.MatchingEngine;
+using XUnitTestData.Domains.Assets;
+using XUnitTestData.Repositories.Assets;
 
 namespace AFTMatchingEngine.Fixtures
 {
@@ -26,17 +28,22 @@ namespace AFTMatchingEngine.Fixtures
         //public IDictionaryManager<IAccount> AccountManager;
         public AccountRepository AccountRepository;
         public CashSwapRepository CashSwapRepository;
+        private IDictionaryManager<IAssetPair> AssetPairsManager;
 
         public string TestAccountId1;
         public string TestAccountId2;
         public string TestAsset1;
         public string TestAsset2;
 
+        public AssetPairEntity TestAssetPair;
+
         private Dictionary<Type, List<IRabbitMQOperation>> RabbitMqMessages;
 
         private RabbitMQConsumer<CashOperation> CashInOutSubscription;
         private RabbitMQConsumer<CashTransferOperation> CashTransferSubscription;
         private RabbitMQConsumer<CashSwapOperation> CashSwapSubscription;
+        private RabbitMQConsumer<BalanceUpdate> BalanceUpdateSubscription;
+        private RabbitMQConsumer<OrderBook> OrderBookSubscription;
 
         private ConfigBuilder _configBuilder;
 
@@ -63,6 +70,7 @@ namespace AFTMatchingEngine.Fixtures
             //this.AccountManager = RepositoryUtils.PrepareRepositoryManager<IAccount>(this.container);
             this.AccountRepository = (AccountRepository)this.container.Resolve<IDictionaryRepository<IAccount>>();
             this.CashSwapRepository = (CashSwapRepository)this.container.Resolve<IDictionaryRepository<ICashSwap>>();
+            this.AssetPairsManager = RepositoryUtils.PrepareRepositoryManager<IAssetPair>(this.container);
         }
 
         private void prepareRabbitMQConnections()
@@ -84,6 +92,16 @@ namespace AFTMatchingEngine.Fixtures
                 _configBuilder, "cashswap", "automation_functional_tests");
             CashSwapSubscription.SubscribeMessageHandler(handleOperationMessages);
             CashSwapSubscription.Start();
+
+            BalanceUpdateSubscription = new RabbitMQConsumer<BalanceUpdate>(
+                _configBuilder, "balanceupdate", "automation_functional_tests");
+            BalanceUpdateSubscription.SubscribeMessageHandler(handleOperationMessages);
+            BalanceUpdateSubscription.Start();
+
+            OrderBookSubscription = new RabbitMQConsumer<OrderBook>(
+                _configBuilder, "orderbook", "automation_functional_tests");
+            OrderBookSubscription.SubscribeMessageHandler(handleOperationMessages);
+            OrderBookSubscription.Start();
         }
 
         private void prepareConsumer()
@@ -107,6 +125,8 @@ namespace AFTMatchingEngine.Fixtures
             createQueueTasks.Add(createQueue("lykke.cashinout", "lykke.cashinout.automation_functional_tests"));
             createQueueTasks.Add(createQueue("lykke.transfers", "lykke.transfers.automation_functional_tests"));
             createQueueTasks.Add(createQueue("lykke.cashswap", "lykke.cashswap.automation_functional_tests"));
+            createQueueTasks.Add(createQueue("lykke.balanceupdate", "lykke.balanceupdate.automation_functional_tests"));
+            createQueueTasks.Add(createQueue("lykke.orderbook", "lykke.orderbook.automation_functional_tests"));
 
             Task.WhenAll(createQueueTasks).Wait();
         }
@@ -145,6 +165,11 @@ namespace AFTMatchingEngine.Fixtures
             TestAccountId2 = "AFTest_Client2";
             TestAsset1 = "LKK";
             TestAsset2 = "USD";
+
+            this.TestAssetPair = (AssetPairEntity)Task.Run(async () =>
+            {
+                return await this.AssetPairsManager.TryGetAsync(TestAsset1 + TestAsset2);
+            }).Result;
         }
 
         public Task<IRabbitMQOperation> WaitForRabbitMQ<T>(string transactionId)
@@ -153,11 +178,12 @@ namespace AFTMatchingEngine.Fixtures
             IRabbitMQOperation message = default(IRabbitMQOperation);
 
             stopWatch.Start();
-            while (message == default(IRabbitMQOperation) && stopWatch.Elapsed.TotalMilliseconds < 10000)
+            while (message == default(IRabbitMQOperation) && stopWatch.Elapsed.TotalMilliseconds < 20000)
             {
                 if (RabbitMqMessages.ContainsKey(typeof(T)))
                 {
-                    message = RabbitMqMessages[typeof(T)].Where(m => m.id == transactionId).FirstOrDefault();
+                    var rabbotMessagesCopy = RabbitMqMessages[typeof(T)].ToList(); //avoid read/write lock
+                    message = rabbotMessagesCopy.Where(m => m.id == transactionId).FirstOrDefault();
                 }
                 if (message == default(IRabbitMQOperation))
                 {

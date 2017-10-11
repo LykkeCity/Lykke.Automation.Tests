@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace MatchingEngineData.DTOs.RabbitMQ
 {
-    public class OrderBook
+    public class OrderBook : IRabbitMQOperation
     {
+        public string id => (prices.FirstOrDefault() ?? new VolumePrice()).id; //TODO
         public string assetPair { get; set; }
         public bool isBuy { get; set; }
         public DateTime timestamp { get; set; }
@@ -14,8 +16,10 @@ namespace MatchingEngineData.DTOs.RabbitMQ
 
         public class VolumePrice
         {
-            public string volume { get; set; }
-            public string price { get; set; }
+            public string id { get; set; }
+            public string clientId { get; set; }
+            public double volume { get; set; }
+            public double price { get; set; }
         }
     }
 }
