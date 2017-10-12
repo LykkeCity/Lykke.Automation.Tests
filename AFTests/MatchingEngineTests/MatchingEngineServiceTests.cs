@@ -386,6 +386,7 @@ namespace AFTMatchingEngine
 
         [Fact]
         [Trait("Category", "Smoke")]
+        [Trait("Category", "LimitOrders")]
         public async void SellLimitOrderTest() // and CancelLimitOrder
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
@@ -397,15 +398,20 @@ namespace AFTMatchingEngine
 
             Random random = new Random();
             double amount = 0.2;
-            double price = random.Next(10,999);
+            double price = random.Next(100, 999);
 
+            //Attempt bad sell
+            MeResponseModel badOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
+                Guid.NewGuid().ToString(), fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Sell, accountBalance.Balance + 10, price);
+            Assert.False(badOrderResponse.Status == MeStatusCodes.Ok);
 
+            //Attempt proper sell
             MeResponseModel LimitOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
                 limitOrderID, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Sell, amount, price);
             Assert.True(LimitOrderResponse.Status == MeStatusCodes.Ok);
 
             AccountEntity checkTestAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
-            BalanceDTO checkAccountBalance = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+            BalanceDTO checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
 
             Assert.True(Math.Round(checkAccountBalance.Reserved, 2) == Math.Round(accountBalance.Reserved + amount, 2));
 
@@ -417,12 +423,12 @@ namespace AFTMatchingEngine
             //Assert.True(message.prices.FirstOrDefault().price == price);
             //Assert.True(message.prices.FirstOrDefault().volume == amount);
 
-
+            //Cancel the proper sell
             MeResponseModel LimitOrderCancelResponse = await fixture.Consumer.Client.CancelLimitOrderAsync(limitOrderID);
             Assert.True(LimitOrderCancelResponse.Status == MeStatusCodes.Ok);
 
             checkTestAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
-            checkAccountBalance = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+            checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
 
             Assert.True(checkAccountBalance.Reserved == accountBalance.Reserved);
 
@@ -431,6 +437,7 @@ namespace AFTMatchingEngine
 
         [Fact]
         [Trait("Category", "Smoke")]
+        [Trait("Category", "LimitOrders")]
         public async void BuyLimitOrderTest() // and CancelLimitOrder
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
@@ -444,7 +451,12 @@ namespace AFTMatchingEngine
             double amount = 0.01;
             double price = random.NextDouble() / 100;
 
+            //Attempt bad buy
+            MeResponseModel badOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
+                limitOrderID, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Buy, accountBalance.Balance + 10, 2);
+            Assert.False(badOrderResponse.Status == MeStatusCodes.Ok);
 
+            //Attempt proper buy
             MeResponseModel LimitOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
                 limitOrderID, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Buy, amount, price);
             Assert.True(LimitOrderResponse.Status == MeStatusCodes.Ok);
@@ -454,6 +466,7 @@ namespace AFTMatchingEngine
 
             Assert.True(Math.Round(checkAccountBalance.Reserved, 2) > Math.Round(accountBalance.Reserved, 2));//TODO calculate price
 
+            //Cancel proper buy
             MeResponseModel LimitOrderCancelResponse = await fixture.Consumer.Client.CancelLimitOrderAsync(limitOrderID);
             Assert.True(LimitOrderCancelResponse.Status == MeStatusCodes.Ok);
 
@@ -464,16 +477,82 @@ namespace AFTMatchingEngine
 
         }
 
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "LimitOrders")]
+        public async void HandleMarketOrder()
+        {
+            string marketOrderId = Guid.NewGuid().ToString();
+            double volume = 0.5;
+            string marketOrderResponse = await fixture.Consumer.Client.HandleMarketOrderAsync(marketOrderId, fixture.TestAssetPair.Id, OrderAction.Buy, volume, true);
+            Assert.NotNull(marketOrderResponse);
+        }
+
+        //[Fact]
+        //[Trait("Category", "Smoke")]
+        //[Trait("Category", "LimitOrders")]
+        //public async void SellBuyLimitOrderTest() //transaction between the 2 test accoutns
+        //{
+        //    AccountEntity testAccount1 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+        //    Assert.NotNull(testAccount1);
+        //    BalanceDTO accountBalance1 = testAccount1.BalancesParsed.Where(b => b.Asset == fixture.TestAsset2).FirstOrDefault();
+        //    Assert.NotNull(accountBalance1);
+
+        //    AccountEntity testAccount2 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId2);
+        //    Assert.NotNull(testAccount2);
+        //    BalanceDTO accountBalance2 = testAccount2.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+        //    Assert.NotNull(accountBalance2);
+
+        //    string limitOrderIDBuy = Guid.NewGuid().ToString();
+        //    string limitOrderIDSell = Guid.NewGuid().ToString();
+
+        //    Random random = new Random();
+        //    double amount = 0.1;
+        //    //double buyPrice = 0.01;//random.NextDouble() / 100;
+        //    //double buyvalue = Math.Round(amount * buyPrice, 2); //todo;
+        //    double sellPrice = 100; //random.Next(100,900);
+        //    double sellvalue = amount * sellPrice;
+
+        //    MeResponseModel SellLimitOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
+        //        limitOrderIDSell, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Sell, amount, sellPrice, true);
+
+        //    Assert.True(SellLimitOrderResponse.Status == MeStatusCodes.Ok);
+
+        //    //AccountEntity checkTestAccount1 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+        //    //BalanceDTO checkAccountBalance1 = checkTestAccount1.BalancesParsed.Where(b => b.Asset == fixture.TestAsset2).FirstOrDefault();
+
+        //    //Assert.True(Math.Round(checkAccountBalance1.Reserved, 2) == Math.Round(accountBalance1.Reserved + amount, 2)); // todo
+
+
+
+        //    MeResponseModel BuyLimitOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
+        //        limitOrderIDBuy, fixture.TestAccountId2, fixture.TestAssetPair.Id, OrderAction.Buy, amount, sellPrice, true);
+
+        //    Assert.True(BuyLimitOrderResponse.Status == MeStatusCodes.Ok);
+
+        //    //MeResponseModel HandleLimitOrderResponse = await fixture.Consumer.Client.HandleMarketOrderAsync()
+
+        //    //checkTestAccount1 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+        //    //checkAccountBalance1 = checkTestAccount1.BalancesParsed.Where(b => b.Asset == fixture.TestAsset2).FirstOrDefault();
+
+        //    //AccountEntity checkTestAccount2 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId2);
+        //    //BalanceDTO checkAccountBalance2 = checkTestAccount2.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+
+        //    //Assert.True(Math.Round(checkAccountBalance1.Reserved, 2) == Math.Round(accountBalance1.Reserved + amount, 2)); // todo
+        //    //Assert.True(Math.Round(checkAccountBalance2.Balance, 2) == Math.Round(accountBalance2.Balance - buyprice, 2)); // todo
+
+        //}
+
         //[Fact]
         //[Trait("Category", "Smoke")]
         //public async void AddAsset()
         //{
-        //    double ammount = 2.00;
+        //    await fixture.Consumer.Client.UpdateBalanceAsync(
+        //        Guid.NewGuid().ToString(), fixture.TestAccountId1, fixture.TestAsset2, 106.65);
 
-        //    MeResponseModel meGoodResponse = await fixture.Consumer.Client.CashInOutAsync(
-        //        Guid.NewGuid().ToString(), fixture.TestAccountId2, "USD", ammount);
+        //    await fixture.Consumer.Client.UpdateBalanceAsync(
+        //        Guid.NewGuid().ToString(), fixture.TestAccountId2, fixture.TestAsset2, 103.31);
 
-        //    Assert.True(meGoodResponse.Status == MeStatusCodes.Ok);
         //}
     }
 }

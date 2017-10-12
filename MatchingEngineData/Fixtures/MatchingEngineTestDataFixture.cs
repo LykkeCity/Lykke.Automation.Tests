@@ -210,16 +210,22 @@ namespace AFTMatchingEngine.Fixtures
         public void Dispose()
         {
             CashInOutSubscription.Stop();
+            CashTransferSubscription.Stop();
+            CashSwapSubscription.Stop();
+            BalanceUpdateSubscription.Stop();
+            OrderBookSubscription.Stop();
 
-            List<Task<bool>> deleteTasks = new List<Task<bool>>();
-
-            foreach (string queueName in _createdQueues)
+            if (_createdQueues != null)
             {
-                deleteTasks.Add(RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName));
-            }
+                List<Task<bool>> deleteTasks = new List<Task<bool>>();
 
-            Task.WhenAll(deleteTasks).Wait();
-            
+                foreach (string queueName in _createdQueues)
+                {
+                    deleteTasks.Add(RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName));
+                }
+
+                Task.WhenAll(deleteTasks).Wait();
+            }
         }
     }
 }
