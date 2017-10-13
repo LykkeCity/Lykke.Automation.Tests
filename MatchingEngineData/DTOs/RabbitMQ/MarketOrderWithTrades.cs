@@ -6,7 +6,7 @@ namespace MatchingEngineData.DTOs.RabbitMQ
 {
     public class MarketOrderWithTrades : IRabbitMQOperation
     {
-        public string id => order.id;
+        //public string id => order.id;
         public MarketOrder order { get; set; }
         public List<TradeInfo> trades { get; set; }
 

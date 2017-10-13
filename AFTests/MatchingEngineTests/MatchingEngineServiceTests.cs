@@ -64,7 +64,7 @@ namespace AFTMatchingEngine
 
             Assert.True(meGoodCashOutResponse.Status == MeStatusCodes.Ok);
 
-            CashOperation message = (CashOperation)await fixture.WaitForRabbitMQ<CashOperation>(goodCashOutID);
+            CashOperation message = (CashOperation)await fixture.WaitForRabbitMQ<CashOperation>(o => o.id == goodCashOutID);
 
             Assert.NotNull(message);
 
@@ -89,7 +89,7 @@ namespace AFTMatchingEngine
 
             Assert.True(meCashInResponse.Status == MeStatusCodes.Ok);
 
-            message = (CashOperation)await fixture.WaitForRabbitMQ<CashOperation>(cashInID);
+            message = (CashOperation)await fixture.WaitForRabbitMQ<CashOperation>(o => o.id == cashInID);
 
             Assert.NotNull(message);
 
@@ -149,7 +149,7 @@ namespace AFTMatchingEngine
             Assert.NotNull(transferResponse);
             Assert.True(transferResponse.Status == MeStatusCodes.Ok);
 
-            CashTransferOperation message = (CashTransferOperation)await fixture.WaitForRabbitMQ<CashTransferOperation>(transferId);
+            CashTransferOperation message = (CashTransferOperation)await fixture.WaitForRabbitMQ<CashTransferOperation>(o => o.id == transferId);
             Assert.NotNull(message);
             Assert.True(message.asset == fixture.TestAsset1);
             Assert.True(message.fromClientId == testAccount1.Id);
@@ -180,7 +180,7 @@ namespace AFTMatchingEngine
             Assert.NotNull(transferBackResponse);
             Assert.True(transferBackResponse.Status == MeStatusCodes.Ok);
 
-            message = (CashTransferOperation)await fixture.WaitForRabbitMQ<CashTransferOperation>(transferBackId);
+            message = (CashTransferOperation)await fixture.WaitForRabbitMQ<CashTransferOperation>(o => o.id == transferBackId);
             Assert.NotNull(message);
             Assert.True(message.asset == fixture.TestAsset1);
             Assert.True(message.fromClientId == testAccount2.Id);
@@ -250,7 +250,7 @@ namespace AFTMatchingEngine
 
             Assert.True(swapReseponse.Status == MeStatusCodes.Ok);
 
-            CashSwapOperation message = (CashSwapOperation)await fixture.WaitForRabbitMQ<CashSwapOperation>(swapId);
+            CashSwapOperation message = (CashSwapOperation)await fixture.WaitForRabbitMQ<CashSwapOperation>(o => o.id == swapId);
 
             Assert.True(message.asset1 == fixture.TestAsset1);
             Assert.True(message.asset2 == fixture.TestAsset2);
@@ -294,7 +294,7 @@ namespace AFTMatchingEngine
 
             Assert.True(swapBackReseponse.Status == MeStatusCodes.Ok);
 
-            message = (CashSwapOperation)await fixture.WaitForRabbitMQ<CashSwapOperation>(swapBackId);
+            message = (CashSwapOperation)await fixture.WaitForRabbitMQ<CashSwapOperation>(o => o.id == swapBackId);
 
             Assert.True(message.asset1 == fixture.TestAsset1);
             Assert.True(message.asset2 == fixture.TestAsset2);
@@ -349,7 +349,7 @@ namespace AFTMatchingEngine
             string balanceUpdateId = Guid.NewGuid().ToString();
             await fixture.Consumer.Client.UpdateBalanceAsync(balanceUpdateId, fixture.TestAccountId1, fixture.TestAsset1, newBalance);
 
-            BalanceUpdate message = (BalanceUpdate)await fixture.WaitForRabbitMQ<BalanceUpdate>(balanceUpdateId);
+            BalanceUpdate message = (BalanceUpdate)await fixture.WaitForRabbitMQ<BalanceUpdate>(o => o.id == balanceUpdateId);
             Assert.True(message.type == "BALANCE_UPDATE");
 
             BalanceUpdate.ClientBalanceUpdate balance = message.balances.Where(m => m.id == fixture.TestAccountId1).FirstOrDefault();
@@ -368,7 +368,7 @@ namespace AFTMatchingEngine
             string reverseBalanceUpdateId = Guid.NewGuid().ToString();
             await fixture.Consumer.Client.UpdateBalanceAsync(reverseBalanceUpdateId, fixture.TestAccountId1, fixture.TestAsset1, accountBalance.Balance);
 
-            message = (BalanceUpdate)await fixture.WaitForRabbitMQ<BalanceUpdate>(reverseBalanceUpdateId);
+            message = (BalanceUpdate)await fixture.WaitForRabbitMQ<BalanceUpdate>(o => o.id == reverseBalanceUpdateId);
             Assert.True(message.type == "BALANCE_UPDATE");
 
             balance = message.balances.Where(m => m.id == fixture.TestAccountId1).FirstOrDefault();
@@ -395,6 +395,7 @@ namespace AFTMatchingEngine
             Assert.NotNull(accountBalance);
 
             string limitOrderID = Guid.NewGuid().ToString();
+            string badLimitOrderID = Guid.NewGuid().ToString();
 
             Random random = new Random();
             double amount = 0.2;
@@ -402,8 +403,20 @@ namespace AFTMatchingEngine
 
             //Attempt bad sell
             MeResponseModel badOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
-                Guid.NewGuid().ToString(), fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Sell, accountBalance.Balance + 10, price);
+                badLimitOrderID, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Sell, accountBalance.Balance + 10, price);
             Assert.False(badOrderResponse.Status == MeStatusCodes.Ok);
+
+            LimitOrdersResponse badMessage = (LimitOrdersResponse)await fixture.WaitForRabbitMQ<LimitOrdersResponse>(
+                o => o.orders.Any(m => m.order.externalId == badLimitOrderID && m.order.status == "NotEnoughFunds"));
+            Assert.NotNull(badMessage);
+
+            LimitOrders badSubMessage = badMessage.orders.Where(m => m.order.externalId == badLimitOrderID && m.order.status == "NotEnoughFunds").FirstOrDefault();
+            Assert.NotNull(badSubMessage);
+            Assert.True(badSubMessage.order.clientId == fixture.TestAccountId1);
+            Assert.True(badSubMessage.order.assetPairId == fixture.TestAssetPair.Id);
+            Assert.True(badSubMessage.order.volume == (accountBalance.Balance + 10) * -1);
+            Assert.True(badSubMessage.order.price == price);
+
 
             //Attempt proper sell
             MeResponseModel LimitOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
@@ -415,13 +428,19 @@ namespace AFTMatchingEngine
 
             Assert.True(Math.Round(checkAccountBalance.Reserved, 2) == Math.Round(accountBalance.Reserved + amount, 2));
 
-            //OrderBook message = (OrderBook)await fixture.WaitForRabbitMQ<OrderBook>(limitOrderID);
-            //Assert.NotNull(message);
-            //Assert.True(message.assetPair == fixture.TestAssetPair.Id);
-            //Assert.True(message.isBuy == true);
-            //Assert.True(message.prices.FirstOrDefault().clientId == fixture.TestAccountId1);
-            //Assert.True(message.prices.FirstOrDefault().price == price);
-            //Assert.True(message.prices.FirstOrDefault().volume == amount);
+
+            LimitOrdersResponse message = (LimitOrdersResponse)await fixture.WaitForRabbitMQ<LimitOrdersResponse>(
+                o => o.orders.Any(m => m.order.externalId == limitOrderID && m.order.status == "InOrderBook"));
+            Assert.NotNull(message);
+
+            LimitOrders subMessage = message.orders.Where(m => m.order.externalId == limitOrderID && m.order.status == "InOrderBook").FirstOrDefault();
+            Assert.NotNull(subMessage);
+            Assert.True(subMessage.order.clientId == fixture.TestAccountId1);
+            Assert.True(subMessage.order.assetPairId == fixture.TestAssetPair.Id);
+            Assert.True(subMessage.order.volume == amount * -1);
+            Assert.True(subMessage.order.price == price);
+
+
 
             //Cancel the proper sell
             MeResponseModel LimitOrderCancelResponse = await fixture.Consumer.Client.CancelLimitOrderAsync(limitOrderID);
@@ -432,7 +451,16 @@ namespace AFTMatchingEngine
 
             Assert.True(checkAccountBalance.Reserved == accountBalance.Reserved);
 
-            //fixture.Consumer.Client.HandleMarketOrderAsync()
+            LimitOrdersResponse cancelMessage = (LimitOrdersResponse)await fixture.WaitForRabbitMQ<LimitOrdersResponse>(
+                o => o.orders.Any(m => m.order.externalId == limitOrderID && m.order.status == "Cancelled"));
+            Assert.NotNull(cancelMessage);
+
+            LimitOrders cancelSubMessage = cancelMessage.orders.Where(m => m.order.externalId == limitOrderID && m.order.status == "Cancelled").FirstOrDefault();
+            Assert.NotNull(cancelSubMessage);
+            Assert.True(cancelSubMessage.order.clientId == fixture.TestAccountId1);
+            Assert.True(cancelSubMessage.order.assetPairId == fixture.TestAssetPair.Id);
+            Assert.True(cancelSubMessage.order.volume == amount * -1);
+            Assert.True(cancelSubMessage.order.price == price);
         }
 
         [Fact]
@@ -446,6 +474,7 @@ namespace AFTMatchingEngine
             Assert.NotNull(accountBalance);
 
             string limitOrderID = Guid.NewGuid().ToString();
+            string badLimitOrderID = Guid.NewGuid().ToString();
 
             Random random = new Random();
             double amount = 0.01;
@@ -453,8 +482,20 @@ namespace AFTMatchingEngine
 
             //Attempt bad buy
             MeResponseModel badOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
-                limitOrderID, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Buy, accountBalance.Balance + 10, 2);
+                badLimitOrderID, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Buy, accountBalance.Balance + 10, 2);
             Assert.False(badOrderResponse.Status == MeStatusCodes.Ok);
+
+            LimitOrdersResponse badMessage = (LimitOrdersResponse)await fixture.WaitForRabbitMQ<LimitOrdersResponse>(
+                o => o.orders.Any(m => m.order.externalId == badLimitOrderID && m.order.status == "NotEnoughFunds"));
+            Assert.NotNull(badMessage);
+
+            LimitOrders badSubMessage = badMessage.orders.Where(m => m.order.externalId == badLimitOrderID && m.order.status == "NotEnoughFunds").FirstOrDefault();
+            Assert.NotNull(badSubMessage);
+            Assert.True(badSubMessage.order.clientId == fixture.TestAccountId1);
+            Assert.True(badSubMessage.order.assetPairId == fixture.TestAssetPair.Id);
+            Assert.True(badSubMessage.order.volume == accountBalance.Balance + 10);
+            //Assert.True(badSubMessage.order.price == price);
+
 
             //Attempt proper buy
             MeResponseModel LimitOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
@@ -466,6 +507,19 @@ namespace AFTMatchingEngine
 
             Assert.True(Math.Round(checkAccountBalance.Reserved, 2) > Math.Round(accountBalance.Reserved, 2));//TODO calculate price
 
+
+            LimitOrdersResponse message = (LimitOrdersResponse)await fixture.WaitForRabbitMQ<LimitOrdersResponse>(
+                o => o.orders.Any(m => m.order.externalId == limitOrderID && m.order.status == "InOrderBook"));
+            Assert.NotNull(message);
+
+            LimitOrders subMessage = message.orders.Where(m => m.order.externalId == limitOrderID && m.order.status == "InOrderBook").FirstOrDefault();
+            Assert.NotNull(subMessage);
+            Assert.True(subMessage.order.clientId == fixture.TestAccountId1);
+            Assert.True(subMessage.order.assetPairId == fixture.TestAssetPair.Id);
+            Assert.True(subMessage.order.volume == amount);
+            Assert.True(subMessage.order.price == price);
+
+
             //Cancel proper buy
             MeResponseModel LimitOrderCancelResponse = await fixture.Consumer.Client.CancelLimitOrderAsync(limitOrderID);
             Assert.True(LimitOrderCancelResponse.Status == MeStatusCodes.Ok);
@@ -475,18 +529,29 @@ namespace AFTMatchingEngine
 
             Assert.True(checkAccountBalance.Reserved == accountBalance.Reserved);
 
+            LimitOrdersResponse cancelMessage = (LimitOrdersResponse)await fixture.WaitForRabbitMQ<LimitOrdersResponse>(
+                o => o.orders.Any(m => m.order.externalId == limitOrderID && m.order.status == "Cancelled"));
+            Assert.NotNull(cancelMessage);
+
+            LimitOrders cancelSubMessage = cancelMessage.orders.Where(m => m.order.externalId == limitOrderID && m.order.status == "Cancelled").FirstOrDefault();
+            Assert.NotNull(cancelSubMessage);
+            Assert.True(cancelSubMessage.order.clientId == fixture.TestAccountId1);
+            Assert.True(cancelSubMessage.order.assetPairId == fixture.TestAssetPair.Id);
+            Assert.True(cancelSubMessage.order.volume == amount);
+            Assert.True(cancelSubMessage.order.price == price);
+
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "LimitOrders")]
-        public async void HandleMarketOrder()
-        {
-            string marketOrderId = Guid.NewGuid().ToString();
-            double volume = 0.5;
-            string marketOrderResponse = await fixture.Consumer.Client.HandleMarketOrderAsync(marketOrderId, fixture.TestAssetPair.Id, OrderAction.Buy, volume, true);
-            Assert.NotNull(marketOrderResponse);
-        }
+        //[Fact]
+        //[Trait("Category", "Smoke")]
+        //[Trait("Category", "LimitOrders")]
+        //public async void HandleMarketOrder()
+        //{
+        //    string marketOrderId = Guid.NewGuid().ToString();
+        //    double volume = 0.5;
+        //    string marketOrderResponse = await fixture.Consumer.Client.HandleMarketOrderAsync(marketOrderId, fixture.TestAssetPair.Id, OrderAction.Buy, volume, true);
+        //    Assert.NotNull(marketOrderResponse);
+        //}
 
         //[Fact]
         //[Trait("Category", "Smoke")]
@@ -506,12 +571,12 @@ namespace AFTMatchingEngine
         //    string limitOrderIDBuy = Guid.NewGuid().ToString();
         //    string limitOrderIDSell = Guid.NewGuid().ToString();
 
-        //    Random random = new Random();
+        //    //Random random = new Random();
         //    double amount = 0.1;
         //    //double buyPrice = 0.01;//random.NextDouble() / 100;
         //    //double buyvalue = Math.Round(amount * buyPrice, 2); //todo;
         //    double sellPrice = 100; //random.Next(100,900);
-        //    double sellvalue = amount * sellPrice;
+        //    //double sellvalue = amount * sellPrice;
 
         //    MeResponseModel SellLimitOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
         //        limitOrderIDSell, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Sell, amount, sellPrice, true);
@@ -523,10 +588,10 @@ namespace AFTMatchingEngine
 
         //    //Assert.True(Math.Round(checkAccountBalance1.Reserved, 2) == Math.Round(accountBalance1.Reserved + amount, 2)); // todo
 
-
+        //    Thread.Sleep(1000);
 
         //    MeResponseModel BuyLimitOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
-        //        limitOrderIDBuy, fixture.TestAccountId2, fixture.TestAssetPair.Id, OrderAction.Buy, amount, sellPrice, true);
+        //        limitOrderIDBuy, fixture.TestAccountId2, fixture.TestAssetPair.Id, OrderAction.Buy, amount, sellPrice + 10, true);
 
         //    Assert.True(BuyLimitOrderResponse.Status == MeStatusCodes.Ok);
 

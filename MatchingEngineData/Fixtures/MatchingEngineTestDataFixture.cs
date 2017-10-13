@@ -18,6 +18,7 @@ using XUnitTestData.Repositories.MatchingEngine;
 using XUnitTestData.Domains.MatchingEngine;
 using XUnitTestData.Domains.Assets;
 using XUnitTestData.Repositories.Assets;
+using System.Linq.Expressions;
 
 namespace AFTMatchingEngine.Fixtures
 {
@@ -39,11 +40,13 @@ namespace AFTMatchingEngine.Fixtures
 
         private Dictionary<Type, List<IRabbitMQOperation>> RabbitMqMessages;
 
+        private int waitForRabbitMQMessage;
+
         private RabbitMQConsumer<CashOperation> CashInOutSubscription;
         private RabbitMQConsumer<CashTransferOperation> CashTransferSubscription;
         private RabbitMQConsumer<CashSwapOperation> CashSwapSubscription;
         private RabbitMQConsumer<BalanceUpdate> BalanceUpdateSubscription;
-        private RabbitMQConsumer<OrderBook> OrderBookSubscription;
+        private RabbitMQConsumer<LimitOrdersResponse> LimitOrderSubscription;
 
         private ConfigBuilder _configBuilder;
 
@@ -98,10 +101,15 @@ namespace AFTMatchingEngine.Fixtures
             BalanceUpdateSubscription.SubscribeMessageHandler(handleOperationMessages);
             BalanceUpdateSubscription.Start();
 
-            OrderBookSubscription = new RabbitMQConsumer<OrderBook>(
-                _configBuilder, "orderbook", "automation_functional_tests");
-            OrderBookSubscription.SubscribeMessageHandler(handleOperationMessages);
-            OrderBookSubscription.Start();
+            LimitOrderSubscription = new RabbitMQConsumer<LimitOrdersResponse>(
+                _configBuilder, "limitorders.clients", "automation_functional_tests");
+            LimitOrderSubscription.SubscribeMessageHandler(handleOperationMessages);
+            LimitOrderSubscription.Start();
+
+            //OrderBookSubscription = new RabbitMQConsumer<OrderBook>(
+            //    _configBuilder, "orderbook", "automation_functional_tests");
+            //OrderBookSubscription.SubscribeMessageHandler(handleOperationMessages);
+            //OrderBookSubscription.Start();
         }
 
         private void prepareConsumer()
@@ -121,12 +129,14 @@ namespace AFTMatchingEngine.Fixtures
             _createdQueues = new List<string>();
             RabbitMQHttpApiConsumer.Setup(_configBuilder);
 
+            waitForRabbitMQMessage = 20000;
+
             List<Task<bool>> createQueueTasks = new List<Task<bool>>();
             createQueueTasks.Add(createQueue("lykke.cashinout", "lykke.cashinout.automation_functional_tests"));
             createQueueTasks.Add(createQueue("lykke.transfers", "lykke.transfers.automation_functional_tests"));
             createQueueTasks.Add(createQueue("lykke.cashswap", "lykke.cashswap.automation_functional_tests"));
             createQueueTasks.Add(createQueue("lykke.balanceupdate", "lykke.balanceupdate.automation_functional_tests"));
-            createQueueTasks.Add(createQueue("lykke.orderbook", "lykke.orderbook.automation_functional_tests"));
+            createQueueTasks.Add(createQueue("lykke.limitorders.clients", "lykke.limitorders.clients.automation_functional_tests"));
 
             Task.WhenAll(createQueueTasks).Wait();
         }
@@ -172,18 +182,18 @@ namespace AFTMatchingEngine.Fixtures
             }).Result;
         }
 
-        public Task<IRabbitMQOperation> WaitForRabbitMQ<T>(string transactionId)
+        public Task<IRabbitMQOperation> WaitForRabbitMQ<T>(Func<T, bool> lambda) where T : IRabbitMQOperation
         {
             Stopwatch stopWatch = new Stopwatch();
             IRabbitMQOperation message = default(IRabbitMQOperation);
 
             stopWatch.Start();
-            while (message == default(IRabbitMQOperation) && stopWatch.Elapsed.TotalMilliseconds < 20000)
+            while (message == default(IRabbitMQOperation) && stopWatch.Elapsed.TotalMilliseconds < waitForRabbitMQMessage)
             {
                 if (RabbitMqMessages.ContainsKey(typeof(T)))
                 {
-                    var rabbotMessagesCopy = RabbitMqMessages[typeof(T)].ToList(); //avoid read/write lock
-                    message = rabbotMessagesCopy.Where(m => m.id == transactionId).FirstOrDefault();
+                    List<T> rabbotMessagesCopy = RabbitMqMessages[typeof(T)].Cast<T>().ToList(); //avoid read/write lock
+                    message = rabbotMessagesCopy.Where(lambda).FirstOrDefault();
                 }
                 if (message == default(IRabbitMQOperation))
                 {
@@ -209,14 +219,14 @@ namespace AFTMatchingEngine.Fixtures
 
         public void Dispose()
         {
-            CashInOutSubscription.Stop();
-            CashTransferSubscription.Stop();
-            CashSwapSubscription.Stop();
-            BalanceUpdateSubscription.Stop();
-            OrderBookSubscription.Stop();
-
             if (_createdQueues != null)
             {
+                CashInOutSubscription.Stop();
+                CashTransferSubscription.Stop();
+                CashSwapSubscription.Stop();
+                BalanceUpdateSubscription.Stop();
+                LimitOrderSubscription.Stop();
+
                 List<Task<bool>> deleteTasks = new List<Task<bool>>();
 
                 foreach (string queueName in _createdQueues)
