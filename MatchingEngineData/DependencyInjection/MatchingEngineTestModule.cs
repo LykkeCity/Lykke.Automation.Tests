@@ -43,6 +43,13 @@ namespace MatchingEngineData.DependencyInjection
 
             RepositoryUtils.RegisterDictionaryManager<IAssetPair>(builder);
 
+            builder.Register(c => new MarketOrdersRepository(
+                    new AzureTableStorage<MarketOrderEntity>(
+                        _configBuilder.Config["BalancesInfoConnectionString"], "MarketOrders", null)))
+                .As<IDictionaryRepository<IMarketOrderEntity>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IMarketOrderEntity>(builder);
+
             //RepositoryUtils.RegisterDictionaryManager<IAccount>(builder);
 
         }

@@ -12,7 +12,7 @@ namespace XUnitTestCommon.Consumers
     {
         private RabbitMqSubscriber<T> _connector;
 
-        public RabbitMQConsumer(ConfigBuilder configBuilder, string sourceEndpoint, string endpoint)
+        public RabbitMQConsumer(ConfigBuilder configBuilder, string sourceEndpoint, string endpoint, Func<T, Task> callback)
         {
             string connectionString = getConnectionStringFromConfig(configBuilder);
 
@@ -20,9 +20,11 @@ namespace XUnitTestCommon.Consumers
                 RabbitMqSubscriptionSettings.CreateForSubscriber(connectionString, sourceEndpoint, endpoint);
 
             subscriberSettings.MakeDurable();
-            subscriberSettings.DeadLetterExchangeName = "";//todo
+            subscriberSettings.DeadLetterExchangeName = "";
 
             Setup(subscriberSettings);
+            SubscribeMessageHandler(callback);
+            Start();
 
         }
 

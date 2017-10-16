@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Globalization;
 using AFTMatchingEngine.Fixtures;
 using Xunit;
 using Lykke.MatchingEngine.Connector.Abstractions.Models;
@@ -71,7 +72,7 @@ namespace AFTMatchingEngine
             Assert.Equal(message.clientId, testAccount.Id);
             Assert.Equal(message.asset, accountBalance.Asset);
 
-            if (Double.TryParse(message.volume, out double parsedVolume))
+            if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedVolume))
             {
                 Assert.Equal(parsedVolume, goodCashOutAmmount);
             }
@@ -96,7 +97,7 @@ namespace AFTMatchingEngine
             Assert.Equal(message.clientId, testAccount.Id);
             Assert.Equal(message.asset, accountBalance.Asset);
 
-            if (Double.TryParse(message.volume, out parsedVolume))
+            if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out parsedVolume))
             {
                 Assert.Equal(parsedVolume, cashInAmmount);
             }
@@ -154,7 +155,7 @@ namespace AFTMatchingEngine
             Assert.True(message.asset == fixture.TestAsset1);
             Assert.True(message.fromClientId == testAccount1.Id);
             Assert.True(message.toClientId == testAccount2.Id);
-            if (Double.TryParse(message.volume, out double parsedMsgAmount))
+            if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedMsgAmount))
                 Assert.True(parsedMsgAmount == transferAmount);
 
             CashSwapEntity checkCashSwapOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(transferId);
@@ -185,7 +186,7 @@ namespace AFTMatchingEngine
             Assert.True(message.asset == fixture.TestAsset1);
             Assert.True(message.fromClientId == testAccount2.Id);
             Assert.True(message.toClientId == testAccount1.Id);
-            if (Double.TryParse(message.volume, out parsedMsgAmount))
+            if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out parsedMsgAmount))
                 Assert.True(parsedMsgAmount == transferAmount);
 
             CashSwapEntity checkCashSwapBackOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(transferBackId);
@@ -256,9 +257,9 @@ namespace AFTMatchingEngine
             Assert.True(message.asset2 == fixture.TestAsset2);
             Assert.True(message.clientId1 == testAccount1.Id);
             Assert.True(message.clientId2 == testAccount2.Id);
-            if (Double.TryParse(message.volume1, out double parsedVolume))
+            if (Double.TryParse(message.volume1, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedVolume))
                 Assert.True(parsedVolume == swapAmount1);
-            if (Double.TryParse(message.volume2, out parsedVolume))
+            if (Double.TryParse(message.volume2, NumberStyles.Float, CultureInfo.InvariantCulture, out parsedVolume))
                 Assert.True(parsedVolume == swapAmount2);
 
             CashSwapEntity checkCashSwapOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(swapId);
@@ -300,9 +301,9 @@ namespace AFTMatchingEngine
             Assert.True(message.asset2 == fixture.TestAsset2);
             Assert.True(message.clientId1 == testAccount2.Id);
             Assert.True(message.clientId2 == testAccount1.Id);
-            if (Double.TryParse(message.volume1, out parsedVolume))
+            if (Double.TryParse(message.volume1, NumberStyles.Float, CultureInfo.InvariantCulture, out parsedVolume))
                 Assert.True(parsedVolume == swapAmount1);
-            if (Double.TryParse(message.volume2, out parsedVolume))
+            if (Double.TryParse(message.volume2, NumberStyles.Float, CultureInfo.InvariantCulture, out parsedVolume))
                 Assert.True(parsedVolume == swapAmount2);
 
             checkCashSwapOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(swapBackId);
@@ -542,16 +543,165 @@ namespace AFTMatchingEngine
 
         }
 
-        //[Fact]
-        //[Trait("Category", "Smoke")]
-        //[Trait("Category", "LimitOrders")]
-        //public async void HandleMarketOrder()
-        //{
-        //    string marketOrderId = Guid.NewGuid().ToString();
-        //    double volume = 0.5;
-        //    string marketOrderResponse = await fixture.Consumer.Client.HandleMarketOrderAsync(marketOrderId, fixture.TestAssetPair.Id, OrderAction.Buy, volume, true);
-        //    Assert.NotNull(marketOrderResponse);
-        //}
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "LimitOrders")]
+        public async void HandleMarketOrderBuy()
+        {
+            AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            Assert.NotNull(testAccount);
+            BalanceDTO accountBalance1 = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+            Assert.NotNull(accountBalance1);
+            BalanceDTO accountBalance2 = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset2).FirstOrDefault();
+            Assert.NotNull(accountBalance2);
+
+            string marketOrderId = Guid.NewGuid().ToString();
+            double volume = 0.2;
+            bool isStraight = true;
+            double reservedVolume = 0.0;
+
+            //Attempt proper buy
+            string marketOrderResponse = await fixture.Consumer.Client.HandleMarketOrderAsync(
+                marketOrderId, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Buy, volume, isStraight, reservedVolume);
+                                                                       
+            Assert.NotNull(marketOrderResponse);
+
+            MarketOrderWithTrades message = (MarketOrderWithTrades)await fixture.WaitForRabbitMQ<MarketOrderWithTrades>(
+                o => o.order.externalId == marketOrderId);
+        
+            Assert.NotNull(message);
+            Assert.True(message.order.id == marketOrderResponse);
+            Assert.True(message.order.clientId == fixture.TestAccountId1);
+            Assert.True(message.order.assetPairId == fixture.TestAssetPair.Id);
+            Assert.True(message.order.straight == isStraight);
+            Assert.True(message.order.volume == volume);
+            Assert.True(message.order.reservedLimitVolume == reservedVolume);
+
+            Assert.True(message.order.status == "Matched");
+
+            double sumOfLimitVolumes = 0.0;
+            double sumOfMarketVolumes = 0.0;
+            double currentPrice = 0.0;
+
+            foreach (var trade in message.trades)
+            {
+                Assert.True(trade.limitAsset == fixture.TestAsset1);
+                Assert.True(trade.marketAsset == fixture.TestAsset2);
+                Assert.True(trade.marketClientId == fixture.TestAccountId1);
+
+                if (double.TryParse(trade.limitVolume, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedLimitVolume) &&
+                    double.TryParse(trade.marketVolume, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedMarketVolume) &&
+                    double.TryParse(trade.price, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedPrice))
+                {
+                    sumOfLimitVolumes += parsedLimitVolume;
+                    sumOfMarketVolumes += parsedMarketVolume;
+                    currentPrice = parsedPrice;
+                    Assert.True(Math.Round(parsedMarketVolume, 2) == Math.Round(parsedLimitVolume * parsedPrice, 2));
+                }
+            }
+
+            Assert.True(sumOfLimitVolumes == volume);
+
+            //check MarketOrders table
+            MarketOrderEntity marketOrderDBRecord = (MarketOrderEntity)await fixture.MarketOrdersRepository.TryGetAsync(marketOrderResponse);
+            Assert.NotNull(marketOrderDBRecord);
+
+            Assert.True(marketOrderDBRecord.AssetPairId == fixture.TestAssetPair.Id);
+            Assert.True(marketOrderDBRecord.ClientId == fixture.TestAccountId1);
+            Assert.True(marketOrderDBRecord.Price == currentPrice);
+            Assert.True(marketOrderDBRecord.Status == "Matched");
+            Assert.True(marketOrderDBRecord.Straight == true);
+            Assert.True(marketOrderDBRecord.Volume == volume);
+
+            //check account balance change
+            AccountEntity checkTestAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            BalanceDTO checkAccountBalance1 = checkTestAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+            BalanceDTO checkAccountBalance2 = checkTestAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset2).FirstOrDefault();
+
+            Assert.True(Math.Round(checkAccountBalance1.Balance - accountBalance1.Balance, 2) == Math.Round(sumOfLimitVolumes, 2));
+            Assert.True(Math.Round(checkAccountBalance2.Balance - accountBalance2.Balance, 2) == Math.Round(sumOfMarketVolumes * -1, 2));
+
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "LimitOrders")]
+        public async void HandleMarketOrderSell()
+        {
+            AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            Assert.NotNull(testAccount);
+            BalanceDTO accountBalance1 = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+            Assert.NotNull(accountBalance1);
+            BalanceDTO accountBalance2 = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset2).FirstOrDefault();
+            Assert.NotNull(accountBalance2);
+
+            string marketOrderId = Guid.NewGuid().ToString();
+            double volume = 0.1;
+            bool isStraight = true;
+            double reservedVolume = 0.0;
+
+            //Attempt proper buy
+            string marketOrderResponse = await fixture.Consumer.Client.HandleMarketOrderAsync(
+                marketOrderId, fixture.TestAccountId1, fixture.TestAssetPair.Id, OrderAction.Sell, volume, isStraight, reservedVolume);
+
+            Assert.NotNull(marketOrderResponse);
+
+            MarketOrderWithTrades message = (MarketOrderWithTrades)await fixture.WaitForRabbitMQ<MarketOrderWithTrades>(
+                o => o.order.externalId == marketOrderId);
+
+            Assert.NotNull(message);
+            Assert.True(message.order.id == marketOrderResponse);
+            Assert.True(message.order.clientId == fixture.TestAccountId1);
+            Assert.True(message.order.assetPairId == fixture.TestAssetPair.Id);
+            Assert.True(message.order.straight == isStraight);
+            Assert.True(message.order.volume == volume * -1);
+            Assert.True(message.order.reservedLimitVolume == reservedVolume);
+
+            Assert.True(message.order.status == "Matched");
+
+            double sumOfLimitVolumes = 0.0;
+            double sumOfMarketVolumes = 0.0;
+            double currentPrice = 0.0;
+
+            foreach (var trade in message.trades)
+            {
+                Assert.True(trade.limitAsset == fixture.TestAsset2);
+                Assert.True(trade.marketAsset == fixture.TestAsset1);
+                Assert.True(trade.marketClientId == fixture.TestAccountId1);
+
+                if (double.TryParse(trade.limitVolume, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedLimitVolume) &&
+                    double.TryParse(trade.marketVolume, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedMarketVolume) &&
+                    double.TryParse(trade.price, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedPrice))
+                {
+                    sumOfLimitVolumes += parsedLimitVolume;
+                    sumOfMarketVolumes += parsedMarketVolume;
+                    currentPrice = parsedPrice;
+                    Assert.True(Math.Round(parsedLimitVolume, 2) == Math.Round(parsedMarketVolume * parsedPrice, 2));
+                }
+            }
+
+            Assert.True(sumOfMarketVolumes == volume);
+
+            //check MarketOrders table
+            MarketOrderEntity marketOrderDBRecord = (MarketOrderEntity)await fixture.MarketOrdersRepository.TryGetAsync(marketOrderResponse);
+            Assert.NotNull(marketOrderDBRecord);
+
+            Assert.True(marketOrderDBRecord.AssetPairId == fixture.TestAssetPair.Id);
+            Assert.True(marketOrderDBRecord.ClientId == fixture.TestAccountId1);
+            Assert.True(marketOrderDBRecord.Price == currentPrice);
+            Assert.True(marketOrderDBRecord.Status == "Matched");
+            Assert.True(marketOrderDBRecord.Straight == true);
+            Assert.True(marketOrderDBRecord.Volume == volume * -1);
+
+            //check accoutn balance change
+            AccountEntity checkTestAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
+            BalanceDTO checkAccountBalance1 = checkTestAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
+            BalanceDTO checkAccountBalance2 = checkTestAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset2).FirstOrDefault();
+
+            Assert.True(Math.Round(checkAccountBalance1.Balance - accountBalance1.Balance, 2) == Math.Round(sumOfMarketVolumes * -1, 2));
+            Assert.True(Math.Round(checkAccountBalance2.Balance - accountBalance2.Balance, 2) == Math.Round(sumOfLimitVolumes, 2));
+
+        }
 
         //[Fact]
         //[Trait("Category", "Smoke")]

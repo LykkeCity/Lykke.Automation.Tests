@@ -29,6 +29,8 @@ namespace AFTMatchingEngine.Fixtures
         //public IDictionaryManager<IAccount> AccountManager;
         public AccountRepository AccountRepository;
         public CashSwapRepository CashSwapRepository;
+        public MarketOrdersRepository MarketOrdersRepository;
+
         private IDictionaryManager<IAssetPair> AssetPairsManager;
 
         public string TestAccountId1;
@@ -47,6 +49,7 @@ namespace AFTMatchingEngine.Fixtures
         private RabbitMQConsumer<CashSwapOperation> CashSwapSubscription;
         private RabbitMQConsumer<BalanceUpdate> BalanceUpdateSubscription;
         private RabbitMQConsumer<LimitOrdersResponse> LimitOrderSubscription;
+        private RabbitMQConsumer<MarketOrderWithTrades> TradesOrderSubscription;
 
         private ConfigBuilder _configBuilder;
 
@@ -74,6 +77,8 @@ namespace AFTMatchingEngine.Fixtures
             this.AccountRepository = (AccountRepository)this.container.Resolve<IDictionaryRepository<IAccount>>();
             this.CashSwapRepository = (CashSwapRepository)this.container.Resolve<IDictionaryRepository<ICashSwap>>();
             this.AssetPairsManager = RepositoryUtils.PrepareRepositoryManager<IAssetPair>(this.container);
+            this.MarketOrdersRepository = (MarketOrdersRepository)this.container.Resolve<IDictionaryRepository<IMarketOrderEntity>>();
+            //this.MarketOrdersManager = RepositoryUtils.PrepareRepositoryManager<IMarketOrderEntity>(this.container);
         }
 
         private void prepareRabbitMQConnections()
@@ -81,35 +86,23 @@ namespace AFTMatchingEngine.Fixtures
             RabbitMqMessages = new Dictionary<Type, List<IRabbitMQOperation>>();
 
             CashInOutSubscription = new RabbitMQConsumer<CashOperation>(
-                _configBuilder, "cashinout", "automation_functional_tests");
-
-            CashInOutSubscription.SubscribeMessageHandler(handleOperationMessages);
-            CashInOutSubscription.Start();
+                _configBuilder, "cashinout", "automation_functional_tests", handleOperationMessages);
 
             CashTransferSubscription = new RabbitMQConsumer<CashTransferOperation>(
-                _configBuilder, "transfers", "automation_functional_tests");
-            CashTransferSubscription.SubscribeMessageHandler(handleOperationMessages);
-            CashTransferSubscription.Start();
+                _configBuilder, "transfers", "automation_functional_tests", handleOperationMessages);
 
             CashSwapSubscription = new RabbitMQConsumer<CashSwapOperation>(
-                _configBuilder, "cashswap", "automation_functional_tests");
-            CashSwapSubscription.SubscribeMessageHandler(handleOperationMessages);
-            CashSwapSubscription.Start();
+                _configBuilder, "cashswap", "automation_functional_tests", handleOperationMessages);
 
             BalanceUpdateSubscription = new RabbitMQConsumer<BalanceUpdate>(
-                _configBuilder, "balanceupdate", "automation_functional_tests");
-            BalanceUpdateSubscription.SubscribeMessageHandler(handleOperationMessages);
-            BalanceUpdateSubscription.Start();
+                _configBuilder, "balanceupdate", "automation_functional_tests", handleOperationMessages);
 
             LimitOrderSubscription = new RabbitMQConsumer<LimitOrdersResponse>(
-                _configBuilder, "limitorders.clients", "automation_functional_tests");
-            LimitOrderSubscription.SubscribeMessageHandler(handleOperationMessages);
-            LimitOrderSubscription.Start();
+                _configBuilder, "limitorders.clients", "automation_functional_tests", handleOperationMessages);
 
-            //OrderBookSubscription = new RabbitMQConsumer<OrderBook>(
-            //    _configBuilder, "orderbook", "automation_functional_tests");
-            //OrderBookSubscription.SubscribeMessageHandler(handleOperationMessages);
-            //OrderBookSubscription.Start();
+            TradesOrderSubscription = new RabbitMQConsumer<MarketOrderWithTrades>(
+                _configBuilder, "trades", "automation_functional_tests", handleOperationMessages);
+
         }
 
         private void prepareConsumer()
@@ -137,6 +130,7 @@ namespace AFTMatchingEngine.Fixtures
             createQueueTasks.Add(createQueue("lykke.cashswap", "lykke.cashswap.automation_functional_tests"));
             createQueueTasks.Add(createQueue("lykke.balanceupdate", "lykke.balanceupdate.automation_functional_tests"));
             createQueueTasks.Add(createQueue("lykke.limitorders.clients", "lykke.limitorders.clients.automation_functional_tests"));
+            createQueueTasks.Add(createQueue("lykke.trades", "lykke.trades.automation_functional_tests"));
 
             Task.WhenAll(createQueueTasks).Wait();
         }
@@ -226,6 +220,7 @@ namespace AFTMatchingEngine.Fixtures
                 CashSwapSubscription.Stop();
                 BalanceUpdateSubscription.Stop();
                 LimitOrderSubscription.Stop();
+                TradesOrderSubscription.Stop();
 
                 List<Task<bool>> deleteTasks = new List<Task<bool>>();
 

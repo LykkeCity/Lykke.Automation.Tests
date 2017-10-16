@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 
 namespace MatchingEngineData.DTOs.RabbitMQ
 {
@@ -42,7 +40,7 @@ namespace MatchingEngineData.DTOs.RabbitMQ
             public string oppositeOrderExternalId { get; set; }
             public string oppositeAsset { get; set; }
             public string oppositeClientId { get; set; }
-            public String oppositeVolume { get; set; }
+            public string oppositeVolume { get; set; }
         }
     }
 }
