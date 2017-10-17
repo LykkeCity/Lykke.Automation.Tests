@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FirstXUnitTest.DTOs.Assets
 {
-    class AssetDescriptionDTO : BaseDTO
+    public class AssetDescriptionDTO : BaseDTO
     {
         public string Id { get; set; }
         public string AssetId { get; set; }
@@ -18,13 +18,13 @@ namespace FirstXUnitTest.DTOs.Assets
         public string FullName { get; set; }
     }
 
-    //class AssetDescriptionReturnDTO : BaseDTO
+    //public class AssetDescriptionReturnDTO : BaseDTO
     //{
     //    public List<AssetDescriptionDTO> Descriptions { get; set; }
     //    public object errorResponse { get; set; }
     //}
 
-    class AssetDescriptionBodyParamDTO : BaseDTO
+    public class AssetDescriptionBodyParamDTO : BaseDTO
     {
         public List<string> Ids { get; set; }
 

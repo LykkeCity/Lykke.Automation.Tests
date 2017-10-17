@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FirstXUnitTest.DTOs
 {
-    class AssetDTO : BaseDTO
+    public class AssetDTO : BaseDTO
     {
         public string Id { get; set; }
         public string BlockChainId { get; set; }

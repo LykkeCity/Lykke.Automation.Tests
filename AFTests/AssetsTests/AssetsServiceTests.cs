@@ -1,19 +1,15 @@
-using XUnitTestCommon;
 using FirstXUnitTest.DTOs;
 using FirstXUnitTest.DTOs.Assets;
-using XUnitTestCommon.Utils;
-using Newtonsoft.Json;
-using RestSharp;
-using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Linq;
-using Xunit;
 using FirstXUnitTest.Fixtures;
-using XUnitTestData.Repositories.Assets;
-using XUnitTestData.Domains.Assets;
+using FluentAssertions;
+using RestSharp;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Xunit;
+using XUnitTestCommon.Utils;
+using XUnitTestData.Repositories.Assets;
 
 namespace FirstXUnitTest
 {
@@ -31,7 +27,6 @@ namespace FirstXUnitTest
             this.fixture = fixture;
         }
 
-
         #region All/Multiple assets
         [Fact]
         [Trait("Category", "Smoke")]
@@ -39,7 +34,7 @@ namespace FirstXUnitTest
         public async void GetAllAssets()
         {
             // Get all assets
-            var response = await ApiConsumer.ExecuteRequest(null, "/api/assets", emptyDict, null, Method.GET, urlPreffix);
+            var response = await fixture.Consumer.ExecuteRequest(null, "/api/assets", emptyDict, null, Method.GET, urlPreffix);
 
             Assert.True(response.Status == HttpStatusCode.OK, "Actual status code is not OK");
             Assert.NotNull(response.ResponseJson);
@@ -61,7 +56,7 @@ namespace FirstXUnitTest
         public async void GetAllAssetsExtended()
         {
             // Get all assets extended
-            var response = await ApiConsumer.ExecuteRequest(null, "/api/assets/extended", emptyDict, null, Method.GET, urlPreffix);
+            var response = await fixture.Consumer.ExecuteRequest(null, "/api/assets/extended", emptyDict, null, Method.GET, urlPreffix);
 
             Assert.True(response.Status == HttpStatusCode.OK, "Actual status code is not OK");
             Assert.NotNull(response.ResponseJson);
@@ -80,7 +75,7 @@ namespace FirstXUnitTest
         public async void GetAllAssetsCategories()
         {
             // Get all assets categories
-            var response = await ApiConsumer.ExecuteRequest(null, "/api/assets/categories", emptyDict, null, Method.GET, urlPreffix);
+            var response = await fixture.Consumer.ExecuteRequest(null, "/api/assets/categories", emptyDict, null, Method.GET, urlPreffix);
 
             Assert.True(response.Status == HttpStatusCode.OK, "Actual status code is not OK");
             Assert.NotNull(response.ResponseJson);
@@ -110,7 +105,7 @@ namespace FirstXUnitTest
                 bodyParam.Ids.Add(entity.Id);
             }
 
-            var response = await ApiConsumer.ExecuteRequest(null, "/api/assets/description", emptyDict, 
+            var response = await fixture.Consumer.ExecuteRequest(null, "/api/assets/description", emptyDict, 
                 JsonUtils.SerializeObject(bodyParam), Method.POST, urlPreffix);
 
             Assert.True(response.Status == HttpStatusCode.OK, "Actual status code is not OK");
@@ -136,8 +131,9 @@ namespace FirstXUnitTest
         [Trait("Category", "Smoke")]
         [Trait("Category", "SingleAsset")]
         public async void GetSingleAsset()
-        {   
-            var response = await ApiConsumer.ExecuteRequest(null, "/api/assets/" + fixture.TestAsset.Id,
+        {
+            
+            var response = await fixture.Consumer.ExecuteRequest(null, "/api/assets/" + fixture.TestAsset.Id,
                 emptyDict, null, Method.GET, urlPreffix);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -154,7 +150,7 @@ namespace FirstXUnitTest
         [Trait("Category", "SingleAsset")]
         public async void GetSingleAssetAttributes()
         {
-            var response = await ApiConsumer.ExecuteRequest(null, "/api/assets/" + fixture.TestAssetAttribute.AssetId + "/attributes", 
+            var response = await fixture.Consumer.ExecuteRequest(null, "/api/assets/" + fixture.TestAssetAttribute.AssetId + "/attributes", 
                 emptyDict, null, Method.GET, urlPreffix);
 
             // Assert the status code is OK
@@ -175,7 +171,7 @@ namespace FirstXUnitTest
             var testDbAttribute = fixture.TestAssetAttribute.Attributes.FirstOrDefault();
             Assert.NotNull(testDbAttribute);
 
-            var response = await ApiConsumer.ExecuteRequest(null, "/api/assets/" + fixture.TestAssetAttribute.AssetId + "/attributes/" + testDbAttribute.Key,
+            var response = await fixture.Consumer.ExecuteRequest(null, "/api/assets/" + fixture.TestAssetAttribute.AssetId + "/attributes/" + testDbAttribute.Key,
                 emptyDict, null, Method.GET, urlPreffix);
 
             // Assert the status code is OK
@@ -195,7 +191,7 @@ namespace FirstXUnitTest
         [Trait("Category", "SingleAsset")]
         public async void GetSingleAssetCategories()
         {
-            var response = await ApiConsumer.ExecuteRequest(null, "/api/assets/" + fixture.TestAsset.Id + "/categories", 
+            var response = await fixture.Consumer.ExecuteRequest(null, "/api/assets/" + fixture.TestAsset.Id + "/categories", 
                 emptyDict, null, Method.GET, urlPreffix);
 
             // Assert the status code is OK
@@ -216,7 +212,7 @@ namespace FirstXUnitTest
         [Trait("Category", "SingleAsset")]
         public async void GetSingleAssetExtended()
         {
-            var response = await ApiConsumer.ExecuteRequest(null, "/api/assets/" + fixture.TestAsset.Id + "/extended", 
+            var response = await fixture.Consumer.ExecuteRequest(null, "/api/assets/" + fixture.TestAsset.Id + "/extended", 
                 emptyDict, null, Method.GET, urlPreffix);
 
             // Assert the status code is OK
