@@ -5,7 +5,6 @@ namespace MatchingEngineData.DTOs.RabbitMQ
 {
     public class OrderBook : IRabbitMQOperation
     {
-        //public string id => (prices.FirstOrDefault() ?? new VolumePrice()).id; //TODO
         public string assetPair { get; set; }
         public bool isBuy { get; set; }
         public DateTime timestamp { get; set; }

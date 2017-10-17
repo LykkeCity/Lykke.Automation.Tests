@@ -45,12 +45,16 @@ namespace MatchingEngineData.DependencyInjection
 
             builder.Register(c => new MarketOrdersRepository(
                     new AzureTableStorage<MarketOrderEntity>(
-                        _configBuilder.Config["BalancesInfoConnectionString"], "MarketOrders", null)))
+                        _configBuilder.Config["LimitOrdersConnectionString"], "MarketOrders", null)))
                 .As<IDictionaryRepository<IMarketOrderEntity>>();
 
-            RepositoryUtils.RegisterDictionaryManager<IMarketOrderEntity>(builder);
+            //RepositoryUtils.RegisterDictionaryManager<IMarketOrderEntity>(builder);
 
-            //RepositoryUtils.RegisterDictionaryManager<IAccount>(builder);
+            builder.Register(c => new LimitOrderRepository(
+                new AzureTableStorage<LimitOrderEntity>(
+                    _configBuilder.Config["LimitOrdersConnectionString"], "LimitOrders", null)))
+                .As<IDictionaryRepository<ILimitOrderEntity>>();
+
 
         }
     }

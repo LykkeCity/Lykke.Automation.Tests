@@ -30,6 +30,7 @@ namespace AFTMatchingEngine.Fixtures
         public AccountRepository AccountRepository;
         public CashSwapRepository CashSwapRepository;
         public MarketOrdersRepository MarketOrdersRepository;
+        public LimitOrderRepository LimitOrdersRepository;
 
         private IDictionaryManager<IAssetPair> AssetPairsManager;
 
@@ -37,6 +38,8 @@ namespace AFTMatchingEngine.Fixtures
         public string TestAccountId2;
         public string TestAsset1;
         public string TestAsset2;
+
+        public int AssetPrecission;
 
         public AssetPairEntity TestAssetPair;
 
@@ -73,12 +76,11 @@ namespace AFTMatchingEngine.Fixtures
             builder.RegisterModule(new MatchingEngineTestModule(_configBuilder));
             this.container = builder.Build();
 
-            //this.AccountManager = RepositoryUtils.PrepareRepositoryManager<IAccount>(this.container);
             this.AccountRepository = (AccountRepository)this.container.Resolve<IDictionaryRepository<IAccount>>();
             this.CashSwapRepository = (CashSwapRepository)this.container.Resolve<IDictionaryRepository<ICashSwap>>();
             this.AssetPairsManager = RepositoryUtils.PrepareRepositoryManager<IAssetPair>(this.container);
             this.MarketOrdersRepository = (MarketOrdersRepository)this.container.Resolve<IDictionaryRepository<IMarketOrderEntity>>();
-            //this.MarketOrdersManager = RepositoryUtils.PrepareRepositoryManager<IMarketOrderEntity>(this.container);
+            this.LimitOrdersRepository = (LimitOrderRepository)this.container.Resolve<IDictionaryRepository<ILimitOrderEntity>>();
         }
 
         private void prepareRabbitMQConnections()
@@ -122,7 +124,9 @@ namespace AFTMatchingEngine.Fixtures
             _createdQueues = new List<string>();
             RabbitMQHttpApiConsumer.Setup(_configBuilder);
 
-            waitForRabbitMQMessage = 20000;
+            
+            if(!Int32.TryParse(_configBuilder.Config["RabbitMQMessageWait"], out waitForRabbitMQMessage))
+                waitForRabbitMQMessage = 20000;
 
             List<Task<bool>> createQueueTasks = new List<Task<bool>>();
             createQueueTasks.Add(createQueue("lykke.cashinout", "lykke.cashinout.automation_functional_tests"));
@@ -169,6 +173,9 @@ namespace AFTMatchingEngine.Fixtures
             TestAccountId2 = "AFTest_Client2";
             TestAsset1 = "LKK";
             TestAsset2 = "USD";
+
+            if (!Int32.TryParse(_configBuilder.Config["AssetPrecission"], out AssetPrecission))
+                AssetPrecission = 2;
 
             this.TestAssetPair = (AssetPairEntity)Task.Run(async () =>
             {
