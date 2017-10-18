@@ -1,0 +1,8 @@
+version: '3'
+      
+services:
+  wallet-functional-tests:
+    image: wallet-functional-tests
+    build:
+      context: ./AFTests
+      dockerfile: Dockerfile
