@@ -164,7 +164,7 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
+        [Fact(Skip = "Skip due to problems with creating lots of assets")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetsPost")]
         [Trait("Category", "AssetsDelete")]
@@ -201,7 +201,7 @@ namespace AFTests.AssetsTests
             Assert.Null(entityDeleted);
         }
 
-        [Fact]
+        [Fact(Skip = "Skip due to problems with creating lots of assets")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetsPut")]
         public async void EditAsset()
