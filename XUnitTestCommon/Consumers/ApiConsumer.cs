@@ -13,6 +13,7 @@ namespace XUnitTestCommon.Consumers
 
         private string baseUrl;
         private string baseAuthUrl;
+        private string urlPrefix;
 
         private RestClient client;
         private RestRequest request;
@@ -22,11 +23,12 @@ namespace XUnitTestCommon.Consumers
             this._configBuilder = configBuilder;
             this.baseUrl = _configBuilder.Config["BaseUrl"];
             this.baseAuthUrl = _configBuilder.Config["BaseUrlAuth"];
+            this.urlPrefix = "assets";
         }
 
-        public async Task<Response> ExecuteRequest(string token, string path, Dictionary<string, string> queryParams, string body, Method method, string urlPreffix)
+        public async Task<Response> ExecuteRequest(string token, string path, Dictionary<string, string> queryParams, string body, Method method, string urlPreffix = null)
         {
-            var uri = BuildUri(urlPreffix, baseUrl, path);
+            var uri = BuildUri(urlPreffix ?? this.urlPrefix, baseUrl, path);
             client = new RestClient(uri);
             request = new RestRequest(method);
 
