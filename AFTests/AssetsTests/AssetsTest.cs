@@ -185,15 +185,15 @@ namespace AFTests.AssetsTests
             });
 
             AssetDTO testAsset = Mapper.Map<AssetDTO>(fixture.TestAsset);
-            AssetDTO testAssetUpdateed = testAsset;
+            AssetDTO testAssetUpdated = testAsset;
             testAsset.Id = testAsset.Id + "_AutoTest";
-            testAssetUpdateed.Name = testAssetUpdateed.Name + "_AutoTest";
+            testAssetUpdated.Name = testAssetUpdated.Name + "_AutoTest";
 
             string createUrl = fixture.ApiEndpointNames["assets"];
             string deleteUrl = fixture.ApiEndpointNames["assets"] + "/" + testAsset.Id;
 
             string createParam = JsonUtils.SerializeObject(testAsset);
-            string updateParam = JsonUtils.SerializeObject(testAssetUpdateed);
+            string updateParam = JsonUtils.SerializeObject(testAssetUpdated);
             string deleteParam = JsonUtils.SerializeObject(new { id = testAsset.Id });
 
             //create asset
@@ -226,7 +226,7 @@ namespace AFTests.AssetsTests
 
         #region asset attributes
 
-        [Fact(Skip = "Skip due to problems with creating lots of assets")]
+        [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetAttributes")]
         [Trait("Category", "AssetsAttributesGet")]
@@ -284,7 +284,7 @@ namespace AFTests.AssetsTests
             Assert.True(fixture.TestAssetAttribute.Value == parsedResponse.Value);
         }
 
-        [Fact]
+        [Fact(Skip = "Skip due to problems with creating lots of assets")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetAttributes")]
         [Trait("Category", "AssetsAttributesPost")]
@@ -371,7 +371,7 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
+        [Fact(Skip = "Skip due to problems with creating lots of assets")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetCategories")]
         [Trait("Category", "AssetCategoriesGet")]
@@ -492,7 +492,7 @@ namespace AFTests.AssetsTests
             Assert.False(badParsedResponse);
         }
 
-        [Fact]
+        [Fact(Skip = "Skip due to problems with creating lots of assets")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetExtendedInfos")]
         [Trait("Category", "AssetExtendedInfoPost")]
