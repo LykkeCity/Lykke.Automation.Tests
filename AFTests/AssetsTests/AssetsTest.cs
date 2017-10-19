@@ -171,7 +171,7 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
+        [Fact(Skip = "Skip due to problems with creating lots of assets")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "Assets")]
         [Trait("Category", "AssetsPost")]
@@ -226,7 +226,7 @@ namespace AFTests.AssetsTests
 
         #region asset attributes
 
-        [Fact]
+        [Fact(Skip = "Skip due to problems with creating lots of assets")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetAttributes")]
         [Trait("Category", "AssetsAttributesGet")]

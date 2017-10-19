@@ -21,4 +21,10 @@
     <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Dockerfile">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
