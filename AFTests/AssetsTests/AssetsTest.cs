@@ -167,20 +167,24 @@ namespace AFTests.AssetsTests
         [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetsPost")]
+        [Trait("Category", "AssetsPut")]
         [Trait("Category", "AssetsDelete")]
-        public async void CreateDeleteAsset()
+        public async void CreateUpdateDeleteAsset()
         {
             Mapper.Initialize(cfg => {
                 cfg.CreateMap<AssetEntity, AssetDTO>();
             });
 
             AssetDTO testAsset = Mapper.Map<AssetDTO>(fixture.TestAsset);
+            AssetDTO testAssetUpdateed = testAsset;
             testAsset.Id = testAsset.Id + "_AutoTest";
+            testAssetUpdateed.Name = testAssetUpdateed.Name + "_AutoTest";
 
             string createUrl = endpointBaseName;
             string deleteUrl = endpointBaseName + "/" + testAsset.Id;
 
             string createParam = JsonUtils.SerializeObject(testAsset);
+            string updateParam = JsonUtils.SerializeObject(testAssetUpdateed);
             string deleteParam = JsonUtils.SerializeObject(new { id = testAsset.Id });
 
             //create asset
@@ -192,6 +196,15 @@ namespace AFTests.AssetsTests
             entity.ShouldBeEquivalentTo(testAsset, o => o
             .ExcludingMissingMembers());
 
+            //Update assset
+            var updateResponse = await fixture.Consumer.ExecuteRequest(null, endpointBaseName, emptyDict, updateParam, Method.PUT);
+            Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
+
+            await fixture.AssetManager.UpdateCacheAsync();
+            AssetEntity entityUpdateed = await fixture.AssetManager.TryGetAsync(testAsset.Id) as AssetEntity;
+            entityUpdateed.ShouldBeEquivalentTo(testAsset, o => o
+            .ExcludingMissingMembers());
+
             //delete asset
             var deleteResponse = await fixture.Consumer.ExecuteRequest(null, deleteUrl, emptyDict, deleteParam, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
@@ -201,43 +214,43 @@ namespace AFTests.AssetsTests
             Assert.Null(entityDeleted);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetsPut")]
-        public async void EditAsset()
-        {
-            Mapper.Initialize(cfg => {
-                cfg.CreateMap<AssetEntity, AssetDTO>();
-            });
+        //[Fact]
+        //[Trait("Category", "Smoke")]
+        //[Trait("Category", "AssetsPut")]
+        //public async void UpdateAsset()
+        //{
+        //    Mapper.Initialize(cfg => {
+        //        cfg.CreateMap<AssetEntity, AssetDTO>();
+        //    });
 
-            AssetDTO testAsset = Mapper.Map<AssetDTO>(fixture.TestAsset);
-            string originalName = testAsset.Name;
-            testAsset.Name = testAsset.Name + "_AutoTest";
+        //    AssetDTO testAsset = Mapper.Map<AssetDTO>(fixture.TestAsset);
+        //    string originalName = testAsset.Name;
+        //    testAsset.Name = testAsset.Name + "_AutoTest";
 
-            string editParam = JsonUtils.SerializeObject(testAsset);
+        //    string UpdateParam = JsonUtils.SerializeObject(testAsset);
 
-            //edit asset
-            var response = await fixture.Consumer.ExecuteRequest(null, endpointBaseName, emptyDict, editParam, Method.PUT);
-            //Assert.True(response.Status == HttpStatusCode.Created);
+        //    //Update asset
+        //    var response = await fixture.Consumer.ExecuteRequest(null, endpointBaseName, emptyDict, UpdateParam, Method.PUT);
+        //    //Assert.True(response.Status == HttpStatusCode.Created);
 
-            await fixture.AssetManager.UpdateCacheAsync();
-            AssetEntity entity = await fixture.AssetManager.TryGetAsync(testAsset.Id) as AssetEntity;
-            entity.ShouldBeEquivalentTo(testAsset, o => o
-            .ExcludingMissingMembers());
+        //    await fixture.AssetManager.UpdateCacheAsync();
+        //    AssetEntity entity = await fixture.AssetManager.TryGetAsync(testAsset.Id) as AssetEntity;
+        //    entity.ShouldBeEquivalentTo(testAsset, o => o
+        //    .ExcludingMissingMembers());
 
 
-            //edit asset to original state
-            testAsset.Name = originalName;
-            editParam = JsonUtils.SerializeObject(testAsset);
-            var sdcondResponse = await fixture.Consumer.ExecuteRequest(null, endpointBaseName, emptyDict, editParam, Method.PUT);
-            //Assert.True(response.Status == HttpStatusCode.Created);
+        //    //Update asset to original state
+        //    testAsset.Name = originalName;
+        //    UpdateParam = JsonUtils.SerializeObject(testAsset);
+        //    var sdcondResponse = await fixture.Consumer.ExecuteRequest(null, endpointBaseName, emptyDict, UpdateParam, Method.PUT);
+        //    //Assert.True(response.Status == HttpStatusCode.Created);
 
-            await fixture.AssetManager.UpdateCacheAsync();
-            entity = await fixture.AssetManager.TryGetAsync(testAsset.Id) as AssetEntity;
-            entity.ShouldBeEquivalentTo(fixture.TestAsset, o => o
-            .ExcludingMissingMembers()
-            .Excluding(e => e.Timestamp)
-            .Excluding(e => e.ETag));
-        }
+        //    await fixture.AssetManager.UpdateCacheAsync();
+        //    entity = await fixture.AssetManager.TryGetAsync(testAsset.Id) as AssetEntity;
+        //    entity.ShouldBeEquivalentTo(fixture.TestAsset, o => o
+        //    .ExcludingMissingMembers()
+        //    .Excluding(e => e.Timestamp)
+        //    .Excluding(e => e.ETag));
+        //}
     }
 }

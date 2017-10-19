@@ -27,7 +27,8 @@ namespace FirstXUnitTest.Fixtures
         public string TestAttributeKey;
 
         public IDictionaryManager<IAsset> AssetManager;
-        public IDictionaryManager<IAssetAttributes> AssetAttributesManager;
+        public AssetAttributesRepository AssetAttributesRepository;
+        private IDictionaryManager<IAssetAttributes> AssetAttributesManager;
 
         public ApiConsumer Consumer;
 
@@ -54,6 +55,7 @@ namespace FirstXUnitTest.Fixtures
 
             this.AssetManager = RepositoryUtils.PrepareRepositoryManager<IAsset>(this.container);
             this.AssetAttributesManager = RepositoryUtils.PrepareRepositoryManager<IAssetAttributes>(this.container);
+            this.AssetAttributesRepository = (AssetAttributesRepository)this.container.Resolve<IDictionaryRepository<IAssetAttributes>>();
         }
 
         private void prepareTestData()
