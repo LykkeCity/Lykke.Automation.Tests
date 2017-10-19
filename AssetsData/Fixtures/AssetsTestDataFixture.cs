@@ -2,7 +2,7 @@
 using Autofac.Core;
 using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
-using FirstXUnitTest.DependencyInjection;
+using AssetsData.DependencyInjection;
 using XUnitTestData.Domains.Assets;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using XUnitTestData.Services;
 using XUnitTestData.Domains;
 using XUnitTestCommon.Utils;
 
-namespace FirstXUnitTest.Fixtures
+namespace AssetsData.Fixtures
 {
     public class AssetsTestDataFixture : IDisposable
     {
@@ -30,14 +30,19 @@ namespace FirstXUnitTest.Fixtures
         public List<AssetCategoryEntity> AllAssetCategoriesFromDB;
         public AssetCategoryEntity TestAssetCategory;
 
+        public List<AssetGroupEntity> AllAssetGroupsFromDB;
+        public AssetGroupEntity TestAssetGroup;
+
         public string TestAttributeKey;
 
         public IDictionaryManager<IAsset> AssetManager;
         public IDictionaryManager<IAssetExtendedInfo> AssetExtendedInfosManager;
         public IDictionaryManager<IAssetCategory> AssetCategoryManager;
         public IDictionaryManager<IAssetAttributes> AssetAttributesManager;
+        public IDictionaryManager<IAssetGroup> AssetGroupsManager;
 
         public AssetAttributesRepository AssetAttributesRepository;
+        public AssetGroupsRepository AssetGroupsRepository;
 
         public ApiConsumer Consumer;
         public Dictionary<string, string> ApiEndpointNames;
@@ -67,7 +72,9 @@ namespace FirstXUnitTest.Fixtures
             this.AssetExtendedInfosManager = RepositoryUtils.PrepareRepositoryManager<IAssetExtendedInfo>(this.container);
             this.AssetCategoryManager = RepositoryUtils.PrepareRepositoryManager<IAssetCategory>(this.container);
             this.AssetAttributesManager = RepositoryUtils.PrepareRepositoryManager<IAssetAttributes>(this.container);
+            this.AssetGroupsManager = RepositoryUtils.PrepareRepositoryManager<IAssetGroup>(this.container);
             this.AssetAttributesRepository = (AssetAttributesRepository)this.container.Resolve<IDictionaryRepository<IAssetAttributes>>();
+            this.AssetGroupsRepository = (AssetGroupsRepository)this.container.Resolve<IDictionaryRepository<IAssetGroup>>();
         }
 
         private void prepareTestData()
@@ -77,6 +84,7 @@ namespace FirstXUnitTest.Fixtures
             ApiEndpointNames["assetAttributes"] = "/api/v2/asset-attributes";
             ApiEndpointNames["assetCategories"] = "/api/v2/asset-categories";
             ApiEndpointNames["assetExtendedInfos"] = "/api/v2/asset-extended-infos";
+            ApiEndpointNames["assetGroups"] = "/api/v2/asset-groups";
 
             var assetsFromDB = Task.Run(async () =>
             {
@@ -102,6 +110,7 @@ namespace FirstXUnitTest.Fixtures
 
             this.AllAssetAttributesFromDB = assetsAttrFromDB.Cast<AssetAttributesEntity>().ToList();
             this.TestAssetAttribute = PickRandom(AllAssetAttributesFromDB);
+            this.TestAttributeKey = "metadata";
 
             var assetsCatsFromDB = Task.Run(async () =>
             {
@@ -111,7 +120,13 @@ namespace FirstXUnitTest.Fixtures
             this.AllAssetCategoriesFromDB = assetsCatsFromDB.Cast<AssetCategoryEntity>().ToList();
             this.TestAssetCategory = PickRandom(AllAssetCategoriesFromDB);
 
-            this.TestAttributeKey = "metadata";
+            var assetsGroupsFromDB = Task.Run(async () =>
+            {
+                return await AssetGroupsManager.GetAllAsync();
+            }).Result;
+
+            this.AllAssetGroupsFromDB = assetsGroupsFromDB.Cast<AssetGroupEntity>().ToList();
+            this.TestAssetGroup = PickRandom(AllAssetGroupsFromDB);
         }
 
         private T PickRandom<T>(List<T> model)

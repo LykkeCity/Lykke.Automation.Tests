@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FirstXUnitTest.DTOs.Assets
+namespace AssetsData.DTOs.Assets
 {
     public class AssetExtendedDTO : BaseDTO
     {

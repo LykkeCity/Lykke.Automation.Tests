@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using XUnitTestData.Services;
 using XUnitTestCommon.Utils;
 
-namespace FirstXUnitTest.DependencyInjection
+namespace AssetsData.DependencyInjection
 {
     class AssetsTestModule : Module
     {
@@ -54,6 +54,13 @@ namespace FirstXUnitTest.DependencyInjection
                 .As<IDictionaryRepository<IAssetAttributes>>();
 
             RepositoryUtils.RegisterDictionaryManager<IAssetAttributes>(builder);
+
+            builder.Register(c => new AssetGroupsRepository(
+                    new AzureTableStorage<AssetGroupEntity>(
+                        _configBuilder.Config["MainConnectionString"], "AssetGroups", null)))
+                .As<IDictionaryRepository<IAssetGroup>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IAssetGroup>(builder);
 
             base.Load(builder);
         }

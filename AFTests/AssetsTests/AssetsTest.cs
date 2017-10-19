@@ -1,16 +1,13 @@
-﻿using AutoMapper;
-using FirstXUnitTest.DTOs;
-using FirstXUnitTest.DTOs.Assets;
-using FirstXUnitTest.Fixtures;
+﻿using AssetsData.DTOs.Assets;
+using AutoMapper;
+using AssetsData.DTOs;
+using AssetsData.Fixtures;
 using FluentAssertions;
-using FluentAssertions.Equivalency;
 using RestSharp;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using Xunit;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
@@ -561,16 +558,76 @@ namespace AFTests.AssetsTests
 
         #region asset groups
 
-        //[Fact]
-        //[Trait("Category", "Smoke")]
-        //[Trait("Category", "AssetGroups")]
-        //[Trait("Category", "AssetGroupsGet")]
-        //public async void GetAllAssetGroups()
-        //{
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetGroups")]
+        [Trait("Category", "AssetGroupsGet")]
+        public async void GetAllAssetGroups()
+        {
+            string url = fixture.ApiEndpointNames["assetGroups"];
 
+            var response = await fixture.Consumer.ExecuteRequest(null, url, emptyDict, null, Method.GET);
+            Assert.True(response.Status == HttpStatusCode.OK);
 
-        //}
+            List<AssetGroupDTO> parsedResponse = JsonUtils.DeserializeJson<List<AssetGroupDTO>>(response.ResponseJson);
+            Assert.NotNull(parsedResponse);
 
+            fixture.AllAssetGroupsFromDB.Should().HaveSameCount(parsedResponse);
+            for (int i = 0; i < fixture.AllAssetGroupsFromDB.Count; i++)
+            {
+                fixture.AllAssetGroupsFromDB[i].ShouldBeEquivalentTo(parsedResponse[i], o => o
+                .ExcludingMissingMembers());
+            }
+
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetGroups")]
+        [Trait("Category", "AssetGroupsGet")]
+        public async void GetSingleAssetGroups()
+        {
+            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id;
+
+            var response = await fixture.Consumer.ExecuteRequest(null, url, emptyDict, null, Method.GET);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            AssetGroupDTO parsedResponse = JsonUtils.DeserializeJson<AssetGroupDTO>(response.ResponseJson);
+            Assert.NotNull(parsedResponse);
+
+            fixture.TestAssetGroup.ShouldBeEquivalentTo(parsedResponse, o => o
+            .ExcludingMissingMembers());
+
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetGroups")]
+        [Trait("Category", "AssetGroupsGet")]
+        public async void GetAssetGroupAssetIDs()
+        {
+            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id + "/asset-ids";
+
+            var response = await fixture.Consumer.ExecuteRequest(null, url, emptyDict, null, Method.GET);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            List<string> parsedResponse = JsonUtils.DeserializeJson<List<string>>(response.ResponseJson);
+            Assert.NotNull(parsedResponse);
+
+            var entities = await fixture.AssetGroupsRepository.GetGroupAssetIDsAsync(fixture.TestAssetGroup.Id);
+            List<string> assetIds = entities.Select(e => e.Id).ToList();
+
+            assetIds.Should().HaveSameCount(parsedResponse);
+
+            for (int i = 0; i < assetIds.Count; i++)
+            {
+                Assert.True(assetIds[i] == parsedResponse[i]);
+            }
+            
+
+        }
+
+        //GetGroupAssetIDsAsync
         #endregion
     }
 }
