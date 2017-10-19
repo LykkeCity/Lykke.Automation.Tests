@@ -34,12 +34,12 @@ namespace FirstXUnitTest.DependencyInjection
 
 
 
-            builder.Register(c => new AssetDescriptionRepository(
-                    new AzureTableStorage<AssetDescriptionEntity>(
+            builder.Register(c => new AssetExtendedInfosRepository(
+                    new AzureTableStorage<AssetExtendedInfosEntity>(
                         _configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
-                .As<IDictionaryRepository<IAssetDescription>>();
+                .As<IDictionaryRepository<IAssetExtendedInfo>>();
 
-            RepositoryUtils.RegisterDictionaryManager<IAssetDescription>(builder);
+            RepositoryUtils.RegisterDictionaryManager<IAssetExtendedInfo>(builder);
 
             builder.Register(c => new AssetCategoryRepository(
                     new AzureTableStorage<AssetCategoryEntity>(

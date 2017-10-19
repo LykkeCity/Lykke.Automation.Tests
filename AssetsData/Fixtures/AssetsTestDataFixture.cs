@@ -21,20 +21,26 @@ namespace FirstXUnitTest.Fixtures
         public List<AssetEntity> AllAssetsFromDB;
         public AssetEntity TestAsset;
 
-        public List<AssetDescriptionEntity> AllAssetDescriptionsFromDB;
-        public AssetDescriptionEntity TestAssetDescription;
+        public List<AssetExtendedInfosEntity> AllAssetExtendedInfosFromDB;
+        public AssetExtendedInfosEntity TestAssetExtendedInfo;
 
-        //public List<AssetAttributesEntity> AllAssetAttributesFromDB;
-        //public AssetAttributesEntity TestAssetAttribute;
+        public List<AssetAttributesEntity> AllAssetAttributesFromDB;
+        public AssetAttributesEntity TestAssetAttribute;
+
+        public List<AssetCategoryEntity> AllAssetCategoriesFromDB;
+        public AssetCategoryEntity TestAssetCategory;
 
         public string TestAttributeKey;
 
         public IDictionaryManager<IAsset> AssetManager;
-        //public IDictionaryManager<IAssetDescription> AssetDescriptionManager;
-        //public IDictionaryManager<IAssetCategory> AssetCategoryManager;
-        //public IDictionaryManager<IAssetAttributes> AssetAttributesManager;
+        public IDictionaryManager<IAssetExtendedInfo> AssetExtendedInfosManager;
+        public IDictionaryManager<IAssetCategory> AssetCategoryManager;
+        public IDictionaryManager<IAssetAttributes> AssetAttributesManager;
+
+        public AssetAttributesRepository AssetAttributesRepository;
 
         public ApiConsumer Consumer;
+        public Dictionary<string, string> ApiEndpointNames;
 
         private Dictionary<string, string> emptyDict = new Dictionary<string, string>();
 
@@ -58,13 +64,20 @@ namespace FirstXUnitTest.Fixtures
             this.container = builder.Build();
 
             this.AssetManager = RepositoryUtils.PrepareRepositoryManager<IAsset>(this.container);
-            //this.AssetDescriptionManager = RepositoryUtils.PrepareRepositoryManager<IAssetDescription>(this.container);
-            //this.AssetCategoryManager = RepositoryUtils.PrepareRepositoryManager<IAssetCategory>(this.container);
-            //this.AssetAttributesManager = RepositoryUtils.PrepareRepositoryManager<IAssetAttributes>(this.container);
+            this.AssetExtendedInfosManager = RepositoryUtils.PrepareRepositoryManager<IAssetExtendedInfo>(this.container);
+            this.AssetCategoryManager = RepositoryUtils.PrepareRepositoryManager<IAssetCategory>(this.container);
+            this.AssetAttributesManager = RepositoryUtils.PrepareRepositoryManager<IAssetAttributes>(this.container);
+            this.AssetAttributesRepository = (AssetAttributesRepository)this.container.Resolve<IDictionaryRepository<IAssetAttributes>>();
         }
 
         private void prepareTestData()
         {
+            this.ApiEndpointNames = new Dictionary<string, string>();
+            ApiEndpointNames["assets"] = "/api/v2/assets";
+            ApiEndpointNames["assetAttributes"] = "/api/v2/asset-attributes";
+            ApiEndpointNames["assetCategories"] = "/api/v2/asset-categories";
+            ApiEndpointNames["assetExtendedInfos"] = "/api/v2/asset-extended-infos";
+
             var assetsFromDB = Task.Run(async () =>
             {
                 return await AssetManager.GetAllAsync();
@@ -74,24 +87,31 @@ namespace FirstXUnitTest.Fixtures
 
             this.TestAsset = PickRandom(AllAssetsFromDB);
 
-            //var assetsDescsFromDB = Task.Run(async () =>
-            //{
-            //    return await AssetDescriptionManager.GetAllAsync();
-            //}).Result;
+            var assetsDescsFromDB = Task.Run(async () =>
+            {
+                return await AssetExtendedInfosManager.GetAllAsync();
+            }).Result;
 
-            //this.AllAssetDescriptionsFromDB = assetsDescsFromDB.Cast<AssetDescriptionEntity>().ToList();
-            //this.TestAssetDescription = PickRandom(AllAssetDescriptionsFromDB);
+            this.AllAssetExtendedInfosFromDB = assetsDescsFromDB.Cast<AssetExtendedInfosEntity>().ToList();
+            this.TestAssetExtendedInfo = PickRandom(AllAssetExtendedInfosFromDB);
 
-            //var assetsAttrFromDB = Task.Run(async () =>
-            //{
-            //    return await AssetAttributesManager.GetAllAsync();
-            //}).Result;
+            var assetsAttrFromDB = Task.Run(async () =>
+            {
+                return await AssetAttributesManager.GetAllAsync();
+            }).Result;
 
-            //this.AllAssetAttributesFromDB = assetsAttrFromDB.Cast<AssetAttributesEntity>().ToList();
-            //this.TestAssetAttribute = PickRandom(AllAssetAttributesFromDB);
+            this.AllAssetAttributesFromDB = assetsAttrFromDB.Cast<AssetAttributesEntity>().ToList();
+            this.TestAssetAttribute = PickRandom(AllAssetAttributesFromDB);
 
+            var assetsCatsFromDB = Task.Run(async () =>
+            {
+                return await AssetCategoryManager.GetAllAsync();
+            }).Result;
+            
+            this.AllAssetCategoriesFromDB = assetsCatsFromDB.Cast<AssetCategoryEntity>().ToList();
+            this.TestAssetCategory = PickRandom(AllAssetCategoriesFromDB);
 
-            //this.TestAttributeKey = "metadata";
+            this.TestAttributeKey = "metadata";
         }
 
         private T PickRandom<T>(List<T> model)
