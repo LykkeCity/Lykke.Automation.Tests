@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using XUnitTestCommon.Utils;
 
 namespace XUnitTestCommon.DTOs
 {
@@ -8,13 +9,17 @@ namespace XUnitTestCommon.DTOs
     {
         public string Email { get; set; }
         public string Password { get; set; }
+        public string ClientInfo { get; set; }
+        public string PartnerId { get; set; }
 
         public User() { }
 
-        public User(string email, string password)
+        public User(string email, string password, string clientInfo, string partnerId)
         {
-            this.Email = email;
-            this.Password = password;
+            Email = email;
+            Password = password;
+            ClientInfo = clientInfo;
+            PartnerId = partnerId;
         }
     }
 }

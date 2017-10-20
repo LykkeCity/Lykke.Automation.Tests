@@ -4,6 +4,8 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using XUnitTestCommon.Utils;
+using System.Net;
 
 namespace XUnitTestCommon.Consumers
 {
@@ -11,9 +13,16 @@ namespace XUnitTestCommon.Consumers
     {
         private ConfigBuilder _configBuilder;
 
+        private string urlPrefix;
         private string baseUrl;
         private string baseAuthUrl;
-        private string urlPrefix;
+        private bool isSecure;
+        private string authPath;
+        private int authTokenTimeout;
+        private DateTime tokenUpdateTime;
+
+        private User authentication;
+        private string authToken;
 
         private RestClient client;
         private RestRequest request;
@@ -21,14 +30,47 @@ namespace XUnitTestCommon.Consumers
         public ApiConsumer(ConfigBuilder configBuilder)
         {
             this._configBuilder = configBuilder;
+            this.urlPrefix = _configBuilder.Config["UrlPefix"];
             this.baseUrl = _configBuilder.Config["BaseUrl"];
             this.baseAuthUrl = _configBuilder.Config["BaseUrlAuth"];
-            this.urlPrefix = "assets";
+            this.authPath = _configBuilder.Config["AuthPath"];
+
+            if (bool.TryParse(_configBuilder.Config["IsHttps"], out bool isHttps))
+            {
+                this.isSecure = isHttps;
+            }
+            else
+            {
+                this.isSecure = false;
+            }
+
+            if (Int32.TryParse(_configBuilder.Config["AuthTokenTimeout"], out int timeout))
+                this.authTokenTimeout = timeout;
+            else
+                this.authTokenTimeout = 60000;
+
+            if (_configBuilder.Config["AuthEmail"] != "")
+            {
+                this.authentication = new User(
+                    _configBuilder.Config["AuthEmail"],
+                    _configBuilder.Config["AuthPassword"],
+                    _configBuilder.Config["AuthClientInfo"],
+                    _configBuilder.Config["AuthPartnerId"]);
+
+                if (!Task.Run(async () => { return await UpdateToken(); }).Result)
+                {
+                    throw new Exception("couldn't update token");
+                }
+            }
+            else
+            {
+                this.authentication = null;
+            }
         }
 
-        public async Task<Response> ExecuteRequest(string token, string path, Dictionary<string, string> queryParams, string body, Method method, string urlPreffix = null)
+        public async Task<Response> ExecuteRequest(string path, Dictionary<string, string> queryParams, string body, Method method)
         {
-            var uri = BuildUri(urlPreffix ?? this.urlPrefix, baseUrl, path);
+            var uri = BuildUri(urlPrefix, baseUrl, path);
             client = new RestClient(uri);
             request = new RestRequest(method);
 
@@ -38,9 +80,16 @@ namespace XUnitTestCommon.Consumers
             {
                 request.AddParameter("application/json", body, ParameterType.RequestBody);
             }
-            if (token != null)
+            if (authentication != null)
             {
-                request.AddParameter("Authorization", "Bearer " + token, ParameterType.RequestBody);
+                if (DateTime.UtcNow.Subtract(tokenUpdateTime).TotalMilliseconds >= authTokenTimeout)
+                {
+                    if (!await UpdateToken())
+                    {
+                        throw new Exception("couldn't update token");
+                    }
+                }
+                request.AddParameter("Authorization", "Bearer " + this.authToken, ParameterType.HttpHeader);
             }
 
 
@@ -49,19 +98,62 @@ namespace XUnitTestCommon.Consumers
             return new Response(response.StatusCode, response.Content);
         }
 
-        public async Task<TokenDTO> GetToken(User user)
+        //public async Task<Response> ExecuteRequest(string token, string path, Dictionary<string, string> queryParams, string body, Method method, string urlPreffix = null)
+        //{
+        //    var uri = BuildUri(urlPreffix ?? this.urlPrefix, baseUrl, path);
+        //    client = new RestClient(uri);
+        //    request = new RestRequest(method);
+
+        //    AddQueryParams(queryParams);
+
+        //    if (body != null)
+        //    {
+        //        request.AddParameter("application/json", body, ParameterType.RequestBody);
+        //    }
+        //    if (token != null)
+        //    {
+        //        request.AddParameter("Authorization", "Bearer " + token, ParameterType.RequestBody);
+        //    }
+
+
+        //    var response = await client.ExecuteAsync(request);
+
+        //    return new Response(response.StatusCode, response.Content);
+        //}
+
+        private async Task<string> GetToken()
         {
             RestClient localClient = new RestClient(baseAuthUrl);
-            RestRequest localRequest = new RestRequest("/api/Auth", Method.POST);
+            RestRequest localRequest = new RestRequest(authPath, Method.POST);
 
-            var body = "{\"Email\": \"" + user.Email + "\", \"Password\": \"" + user.Password + "\" }";
+            var body = JsonUtils.SerializeObject(authentication);
 
             localRequest.AddParameter("application/json", body, ParameterType.RequestBody);
 
             var authResponse = await localClient.ExecuteAsync(localRequest);
+
             var token = JsonConvert.DeserializeObject<TokenDTO>(authResponse.Content);
 
-            return token;
+            if (authResponse.StatusCode != HttpStatusCode.OK)
+            {
+                throw new ArgumentException("Could not get token with the provided credentials", new ArgumentException(token.message));
+            }
+
+            return token.AccessToken;
+        }
+
+        private async Task<bool> UpdateToken()
+        {
+            try
+            {
+                this.authToken = await GetToken();
+                this.tokenUpdateTime = DateTime.UtcNow;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private void AddQueryParams(Dictionary<string, string> queryParams)
@@ -74,7 +166,10 @@ namespace XUnitTestCommon.Consumers
 
         private Uri BuildUri(string urlPreffix, string baseUrl, string path, int? port = null)
         {
-            UriBuilder uriBuilder = new UriBuilder($"http://{urlPreffix}.{baseUrl}");
+            string protocol = "http";
+            if (this.isSecure)
+                protocol = "https";
+            UriBuilder uriBuilder = new UriBuilder($"{protocol}://{urlPreffix}.{baseUrl}");
             uriBuilder.Path = path;
             if (port != null)
             {
