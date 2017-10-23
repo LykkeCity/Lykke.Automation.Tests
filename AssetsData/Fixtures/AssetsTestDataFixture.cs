@@ -93,7 +93,7 @@ namespace AssetsData.Fixtures
 
             this.AllAssetsFromDB = assetsFromDB.Cast<AssetEntity>().ToList();
 
-            this.TestAsset = PickRandom(AllAssetsFromDB);
+            this.TestAsset = EnumerableUtils.PickRandom(AllAssetsFromDB);
 
             var assetsDescsFromDB = Task.Run(async () =>
             {
@@ -101,7 +101,7 @@ namespace AssetsData.Fixtures
             }).Result;
 
             this.AllAssetExtendedInfosFromDB = assetsDescsFromDB.Cast<AssetExtendedInfosEntity>().ToList();
-            this.TestAssetExtendedInfo = PickRandom(AllAssetExtendedInfosFromDB);
+            this.TestAssetExtendedInfo = EnumerableUtils.PickRandom(AllAssetExtendedInfosFromDB);
 
             var assetsAttrFromDB = Task.Run(async () =>
             {
@@ -109,7 +109,7 @@ namespace AssetsData.Fixtures
             }).Result;
 
             this.AllAssetAttributesFromDB = assetsAttrFromDB.Cast<AssetAttributesEntity>().ToList();
-            this.TestAssetAttribute = PickRandom(AllAssetAttributesFromDB);
+            this.TestAssetAttribute = EnumerableUtils.PickRandom(AllAssetAttributesFromDB);
             this.TestAttributeKey = "metadata";
 
             var assetsCatsFromDB = Task.Run(async () =>
@@ -118,7 +118,7 @@ namespace AssetsData.Fixtures
             }).Result;
             
             this.AllAssetCategoriesFromDB = assetsCatsFromDB.Cast<AssetCategoryEntity>().ToList();
-            this.TestAssetCategory = PickRandom(AllAssetCategoriesFromDB);
+            this.TestAssetCategory = EnumerableUtils.PickRandom(AllAssetCategoriesFromDB);
 
             var assetsGroupsFromDB = Task.Run(async () =>
             {
@@ -126,14 +126,7 @@ namespace AssetsData.Fixtures
             }).Result;
 
             this.AllAssetGroupsFromDB = assetsGroupsFromDB.Cast<AssetGroupEntity>().ToList();
-            this.TestAssetGroup = PickRandom(AllAssetGroupsFromDB);
-        }
-
-        private T PickRandom<T>(List<T> model)
-        {
-            Random rnd = new Random();
-            int randomInt = rnd.Next(model.Count);
-            return model[randomInt];
+            this.TestAssetGroup = EnumerableUtils.PickRandom(AllAssetGroupsFromDB);
         }
 
         public void Dispose()

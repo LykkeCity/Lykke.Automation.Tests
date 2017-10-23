@@ -98,29 +98,6 @@ namespace XUnitTestCommon.Consumers
             return new Response(response.StatusCode, response.Content);
         }
 
-        //public async Task<Response> ExecuteRequest(string token, string path, Dictionary<string, string> queryParams, string body, Method method, string urlPreffix = null)
-        //{
-        //    var uri = BuildUri(urlPreffix ?? this.urlPrefix, baseUrl, path);
-        //    client = new RestClient(uri);
-        //    request = new RestRequest(method);
-
-        //    AddQueryParams(queryParams);
-
-        //    if (body != null)
-        //    {
-        //        request.AddParameter("application/json", body, ParameterType.RequestBody);
-        //    }
-        //    if (token != null)
-        //    {
-        //        request.AddParameter("Authorization", "Bearer " + token, ParameterType.RequestBody);
-        //    }
-
-
-        //    var response = await client.ExecuteAsync(request);
-
-        //    return new Response(response.StatusCode, response.Content);
-        //}
-
         private async Task<string> GetToken()
         {
             RestClient localClient = new RestClient(baseAuthUrl);

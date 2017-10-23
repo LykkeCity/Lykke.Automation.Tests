@@ -187,6 +187,7 @@ namespace AFTests.AssetsTests
             AssetDTO testAsset = Mapper.Map<AssetDTO>(fixture.TestAsset);
             AssetDTO testAssetUpdated = testAsset;
             testAsset.Id = testAsset.Id + "_AutoTest";
+            //testAsset.id
             testAssetUpdated.Name = testAssetUpdated.Name + "_AutoTest";
 
             string createUrl = fixture.ApiEndpointNames["assets"];

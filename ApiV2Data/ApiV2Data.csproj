@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DependencyInjection\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
   </ItemGroup>
 
