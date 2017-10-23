@@ -32,9 +32,6 @@ namespace AFTMatchingEngine
         [Trait("Category", "Smoke")]
         public async void CashInOut()
         {
-            Assert.NotNull(fixture.Consumer.Client);
-            Assert.True(fixture.Consumer.Client.IsConnected);
-
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
             BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
@@ -119,9 +116,6 @@ namespace AFTMatchingEngine
         [Trait("Category", "Smoke")]
         public async void CashTransfer()
         {
-            Assert.NotNull(fixture.Consumer.Client);
-            Assert.True(fixture.Consumer.Client.IsConnected);
-
             AccountEntity testAccount1 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount1);
             BalanceDTO accountBalance1 = testAccount1.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
@@ -210,9 +204,6 @@ namespace AFTMatchingEngine
         [Trait("Category", "Smoke")]
         public async void CashSwap()
         {
-            Assert.NotNull(fixture.Consumer.Client);
-            Assert.True(fixture.Consumer.Client.IsConnected);
-
             AccountEntity testAccount1 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount1);
             BalanceDTO accountBalance1Asset1 = testAccount1.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
@@ -335,9 +326,6 @@ namespace AFTMatchingEngine
         [Trait("Category", "Smoke")]
         public async void UpdateBalance()
         {
-            Assert.NotNull(fixture.Consumer.Client);
-            Assert.True(fixture.Consumer.Client.IsConnected);
-
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
             BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
@@ -625,7 +613,8 @@ namespace AFTMatchingEngine
                     sumOfLimitVolumes += parsedLimitVolume;
                     sumOfMarketVolumes += parsedMarketVolume;
                     currentPrice = parsedPrice;
-                    Assert.True(Math.Round(parsedMarketVolume, fixture.AssetPrecission) == Math.Round(parsedLimitVolume * parsedPrice, fixture.AssetPrecission));
+                    Assert.True(Math.Round(parsedMarketVolume, fixture.AssetPrecission, MidpointRounding.AwayFromZero) ==
+                                Math.Round(parsedLimitVolume * parsedPrice, fixture.AssetPrecission, MidpointRounding.AwayFromZero));
                 }
             }
 
@@ -731,7 +720,8 @@ namespace AFTMatchingEngine
                     sumOfLimitVolumes += parsedLimitVolume;
                     sumOfMarketVolumes += parsedMarketVolume;
                     currentPrice = parsedPrice;
-                    Assert.True(Math.Round(parsedLimitVolume, fixture.AssetPrecission) == Math.Round(parsedMarketVolume * parsedPrice, fixture.AssetPrecission));
+                    Assert.True(Math.Round(parsedLimitVolume, fixture.AssetPrecission, MidpointRounding.AwayFromZero) ==
+                                Math.Round(parsedMarketVolume * parsedPrice, fixture.AssetPrecission, MidpointRounding.AwayFromZero));
                 }
             }
 
