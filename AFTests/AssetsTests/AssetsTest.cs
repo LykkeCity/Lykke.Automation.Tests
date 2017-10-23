@@ -187,8 +187,9 @@ namespace AFTests.AssetsTests
             AssetDTO testAsset = Mapper.Map<AssetDTO>(fixture.TestAsset);
             AssetDTO testAssetUpdated = testAsset;
             testAsset.Id = testAsset.Id + "_AutoTest";
-            //testAsset.id
-            testAssetUpdated.Name = testAssetUpdated.Name + "_AutoTest";
+            testAsset.Name += "_AutoTest";
+            testAsset.BlockChainAssetId += "_AutoTest";
+            testAssetUpdated.Name += "_AutoTestEdit";
 
             string createUrl = fixture.ApiEndpointNames["assets"];
             string deleteUrl = fixture.ApiEndpointNames["assets"] + "/" + testAsset.Id;
@@ -387,6 +388,7 @@ namespace AFTests.AssetsTests
 
             AssetCategoryDTO newCategory = Mapper.Map<AssetCategoryDTO>(fixture.TestAssetCategory);
             newCategory.Id += "_AutoTest";
+            newCategory.Name += "_AutoTest";
             string createParam = JsonUtils.SerializeObject(newCategory);
 
             AssetCategoryDTO updateCategory = new AssetCategoryDTO()
@@ -510,6 +512,7 @@ namespace AFTests.AssetsTests
 
             AssetExtendedInfoDTO newExtendedInfo = Mapper.Map<AssetExtendedInfoDTO>(fixture.TestAssetExtendedInfo);
             newExtendedInfo.Id += "_AutoTest";
+            newExtendedInfo.FullName += "_AutoTest";
             string createParam = JsonUtils.SerializeObject(newExtendedInfo);
 
             AssetExtendedInfoDTO updateExtendedInfo = new AssetExtendedInfoDTO()
