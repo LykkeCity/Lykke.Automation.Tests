@@ -13,6 +13,7 @@ using MatchingEngineData.DTOs.RabbitMQ;
 using XUnitTestData.Repositories.MatchingEngine;
 using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using XUnitTestCommon.Utils;
 
 namespace AFTMatchingEngine
 {
@@ -613,15 +614,12 @@ namespace AFTMatchingEngine
                     sumOfLimitVolumes += parsedLimitVolume;
                     sumOfMarketVolumes += parsedMarketVolume;
                     currentPrice = parsedPrice;
-                    Assert.True(Math.Round(parsedMarketVolume, fixture.AssetPrecission, MidpointRounding.AwayFromZero) ==
-                                Math.Round(parsedLimitVolume * parsedPrice, fixture.AssetPrecission, MidpointRounding.AwayFromZero));
+                    Assert.True(MathUtils.RoundUp(parsedMarketVolume, fixture.AssetPrecission) ==
+                                MathUtils.RoundUp(parsedLimitVolume * parsedPrice, fixture.AssetPrecission));
                 }
             }
 
             Assert.True(sumOfLimitVolumes == volume);
-
-            //Wait for trades job to add entry to DB
-            //Thread.Sleep(2000);
 
             //check MarketOrders table
             MarketOrderEntity marketOrderDBRecord = (MarketOrderEntity)await fixture.MarketOrdersRepository.TryGetAsync(marketOrderResponse);
@@ -720,15 +718,12 @@ namespace AFTMatchingEngine
                     sumOfLimitVolumes += parsedLimitVolume;
                     sumOfMarketVolumes += parsedMarketVolume;
                     currentPrice = parsedPrice;
-                    Assert.True(Math.Round(parsedLimitVolume, fixture.AssetPrecission, MidpointRounding.AwayFromZero) ==
-                                Math.Round(parsedMarketVolume * parsedPrice, fixture.AssetPrecission, MidpointRounding.AwayFromZero));
+                    Assert.True(MathUtils.RoundDown(parsedLimitVolume, fixture.AssetPrecission) ==
+                                MathUtils.RoundDown(parsedMarketVolume * parsedPrice, fixture.AssetPrecission));
                 }
             }
 
             Assert.True(sumOfMarketVolumes == volume);
-
-            //Wait for trades job to add entry to DB
-            //Thread.Sleep(2000);
 
             //check MarketOrders table
             MarketOrderEntity marketOrderDBRecord = (MarketOrderEntity)await fixture.MarketOrdersRepository.TryGetAsync(marketOrderResponse);
@@ -753,16 +748,5 @@ namespace AFTMatchingEngine
             Assert.True(Math.Round(checkAccountBalance2.Balance - accountBalance2.Balance, fixture.AssetPrecission) == Math.Round(sumOfLimitVolumes, fixture.AssetPrecission));
 
         }
-
-        //[Fact]
-        //public async void AddAsset()
-        //{
-        //    await fixture.Consumer.Client.UpdateBalanceAsync(
-        //        Guid.NewGuid().ToString(), fixture.TestAccountId1, fixture.TestAsset2, 106.65);
-
-        //    await fixture.Consumer.Client.UpdateBalanceAsync(
-        //        Guid.NewGuid().ToString(), fixture.TestAccountId2, fixture.TestAsset2, 103.31);
-
-        //}
     }
 }
