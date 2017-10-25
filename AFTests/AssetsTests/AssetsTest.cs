@@ -285,43 +285,47 @@ namespace AFTests.AssetsTests
             Assert.True(fixture.TestAssetAttribute.Value == parsedResponse.Value);
         }
 
-        [Fact(Skip = "Skip due to problems with creating lots of assets")]
+        [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetAttributes")]
         [Trait("Category", "AssetsAttributesPost")]
-        [Trait("Category", "AssetsAttributesPut")]
-        [Trait("Category", "AssetsAttributesDelete")]
-        public async void CreateUpdateDeleteAssetAttribute()
+        public async void CreateAssetAttribute()
         {
-            string newKey = fixture.TestAssetAttribute.Key + "_AutoTest";
-            string newValue = "autotest";
-            string updateValue = newValue + "_autotest";
-            string createUrl = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttribute.AssetId;
-            string deleteUrl = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttribute.AssetId + "/" + newKey;
-            string createParameter = JsonUtils.SerializeObject(
-                new AssetAttributeDTO() { Key = newKey, Value = newValue });
+            AssetAttributeIdentityDTO newAssetAttr = await fixture.CreateTestAssetAttribute();
+            Assert.NotNull(newAssetAttr);
+
+            var checkDb = await fixture.AssetAttributesRepository.TryGetAsync(newAssetAttr.AssetId, newAssetAttr.Key);
+            Assert.True(checkDb.Value == newAssetAttr.Value);
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetAttributes")]
+        [Trait("Category", "AssetsAttributesPut")]
+        public async void UpdateAssetAttribute()
+        {
+            string updateUrl = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttributeUpdate.AssetId;
+            string updateValue = fixture.TestAssetAttributeUpdate.Value + "_AutoTestEdit";
             string updateParameter = JsonUtils.SerializeObject(
-                new AssetAttributeDTO() { Key = newKey, Value = updateValue });
-
-            //create asset attribute
-            var response = await fixture.Consumer.ExecuteRequest(createUrl, emptyDict, createParameter, Method.POST);
-            Assert.True(response.Status == HttpStatusCode.Created);
-
-            var checkDb = await fixture.AssetAttributesRepository.TryGetAsync(fixture.TestAssetAttribute.AssetId, newKey);
-            Assert.True(checkDb.Value == newValue);
-
-            //create asset attribute
-            var updateResponse = await fixture.Consumer.ExecuteRequest(createUrl, emptyDict, updateParameter, Method.PUT);
+                new AssetAttributeDTO() { Key = fixture.TestAssetAttributeUpdate.Key, Value = updateValue });
+            var updateResponse = await fixture.Consumer.ExecuteRequest(updateUrl, emptyDict, updateParameter, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
-            var checkDbUpdated = await fixture.AssetAttributesRepository.TryGetAsync(fixture.TestAssetAttribute.AssetId, newKey);
+            var checkDbUpdated = await fixture.AssetAttributesRepository.TryGetAsync(fixture.TestAssetAttributeUpdate.AssetId, fixture.TestAssetAttributeUpdate.Key);
             Assert.True(checkDbUpdated.Value == updateValue);
+        }
 
-            //delte the new attribute
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetAttributes")]
+        [Trait("Category", "AssetsAttributesDelete")]
+        public async void DeleteAssetAttribute()
+        {
+            string deleteUrl = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttributeDelete.AssetId + "/" + fixture.TestAssetAttributeDelete.Key;
             var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, emptyDict, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            var checkDbDeleted = await fixture.AssetAttributesRepository.TryGetAsync(fixture.TestAssetAttribute.AssetId, newKey);
+            var checkDbDeleted = await fixture.AssetAttributesRepository.TryGetAsync(fixture.TestAssetAttributeDelete.AssetId, fixture.TestAssetAttributeDelete.Key);
             Assert.Null(checkDbDeleted);
         }
         #endregion

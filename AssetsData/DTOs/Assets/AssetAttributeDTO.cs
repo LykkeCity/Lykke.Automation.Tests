@@ -10,6 +10,13 @@ namespace AssetsData.DTOs.Assets
         public string Value { get; set; }
     }
 
+    public class AssetAttributeIdentityDTO : BaseDTO
+    {
+        public string AssetId { get; set; }
+        public string Key { get; set; }
+        public string Value { get; set; }
+    }
+
     public class AssetAttributesReturnDTO : BaseDTO
     {
         public string AssetID { get; set; }

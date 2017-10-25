@@ -17,6 +17,7 @@ using AutoMapper;
 using AssetsData.DTOs;
 using RestSharp;
 using System.Net;
+using AssetsData.DTOs.Assets;
 
 namespace AssetsData.Fixtures
 {
@@ -31,6 +32,8 @@ namespace AssetsData.Fixtures
 
         public List<AssetAttributesEntity> AllAssetAttributesFromDB;
         public AssetAttributesEntity TestAssetAttribute;
+        public AssetAttributeIdentityDTO TestAssetAttributeUpdate;
+        public AssetAttributeIdentityDTO TestAssetAttributeDelete;
 
         public List<AssetCategoryEntity> AllAssetCategoriesFromDB;
         public AssetCategoryEntity TestAssetCategory;
@@ -53,6 +56,8 @@ namespace AssetsData.Fixtures
         public Dictionary<string, string> ApiEndpointNames;
 
         private List<string> AssetsToDelete;
+        private List<AssetAttributeIdentityDTO> AssetAtributesToDelete;
+        private List<string> AssetCategoriesToDelete;
 
         private Dictionary<string, string> emptyDict = new Dictionary<string, string>();
 
@@ -87,6 +92,9 @@ namespace AssetsData.Fixtures
         private async Task prepareTestData()
         {
             this.AssetsToDelete = new List<string>();
+            this.AssetAtributesToDelete = new List<AssetAttributeIdentityDTO>();
+            this.AssetCategoriesToDelete = new List<string>();
+
             this.ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["assets"] = "/api/v2/assets";
             ApiEndpointNames["assetAttributes"] = "/api/v2/asset-attributes";
@@ -101,20 +109,23 @@ namespace AssetsData.Fixtures
             var assetsGroupsFromDB = AssetGroupsManager.GetAllAsync();
 
             this.AllAssetsFromDB = (await assetsFromDB).Cast<AssetEntity>().ToList();
-            this.AllAssetExtendedInfosFromDB = (await AssetExtInfoFromDB).Cast<AssetExtendedInfosEntity>().ToList();
 
             this.TestAsset = EnumerableUtils.PickRandom(AllAssetsFromDB);
             this.TestAssetUpdate = await CreateTestAsset();
             this.TestAssetDelete = await CreateTestAsset(false);
 
+            this.AllAssetExtendedInfosFromDB = (await AssetExtInfoFromDB).Cast<AssetExtendedInfosEntity>().ToList();
             this.TestAssetExtendedInfo = EnumerableUtils.PickRandom(AllAssetExtendedInfosFromDB);
+
 
             this.AllAssetAttributesFromDB = (await assetsAttrFromDB).Cast<AssetAttributesEntity>().ToList();
             this.TestAssetAttribute = EnumerableUtils.PickRandom(AllAssetAttributesFromDB);
-            this.TestAttributeKey = "metadata";
 
-            
-            
+            this.TestAssetAttributeUpdate = await CreateTestAssetAttribute();
+            this.TestAssetAttributeDelete = await CreateTestAssetAttribute(false);
+
+
+
             this.AllAssetCategoriesFromDB = (await assetsCatsFromDB).Cast<AssetCategoryEntity>().ToList();
             this.TestAssetCategory = EnumerableUtils.PickRandom(AllAssetCategoriesFromDB);
 
@@ -167,6 +178,7 @@ namespace AssetsData.Fixtures
                 AssetsToDelete.Add(newAssetDTO.Id);
             }
 
+            //add (fake) entities so tests pass when checking against the list
             AssetEntity entity = Mapper.Map<AssetEntity>(newAssetDTO);
             entity.RowKey = newAssetDTO.Id;
             AllAssetsFromDB.Add(entity);
@@ -184,6 +196,59 @@ namespace AssetsData.Fixtures
             {
                 return false;
             }
+            return true;
+        }
+
+        public async Task<AssetAttributeIdentityDTO> CreateTestAssetAttribute(bool deleteWithDispose = true)
+        {
+            AssetAttributesEntity testAssetAttr = EnumerableUtils.PickRandom(AllAssetAttributesFromDB);
+
+            string createUrl = ApiEndpointNames["assetAttributes"] + "/" + testAssetAttr.AssetId;
+            string newKey = testAssetAttr.Key + "_AutoTest";
+            string newValue = "autotest";
+
+            AssetAttributeDTO createParameter = new AssetAttributeDTO() { Key = newKey, Value = newValue };
+
+            var response = await Consumer.ExecuteRequest(createUrl, emptyDict, JsonUtils.SerializeObject(createParameter), Method.POST);
+            if (response.Status != HttpStatusCode.Created)
+            {
+                return null;
+            }
+
+            AssetAttributeIdentityDTO returnModel = new AssetAttributeIdentityDTO()
+            {
+                AssetId = testAssetAttr.AssetId,
+                Key = newKey,
+                Value = newValue
+            };
+
+            if (deleteWithDispose)
+            {
+                this.AssetAtributesToDelete.Add(returnModel);
+            }
+
+            //add (fake) entities so tests pass when checking against the list
+            AssetAttributesEntity attrEntity = new AssetAttributesEntity()
+            {
+                AssetId = testAssetAttr.AssetId,
+                Key = newKey,
+                Value = newValue
+            };
+            AllAssetAttributesFromDB.Add(attrEntity);
+
+            return returnModel;
+        }
+
+        public async Task<bool> DeleteTestAssetAttribute(string assetId, string key)
+        {
+            string deleteUrl = ApiEndpointNames["assetAttributes"] + "/" + assetId + "/" + key;
+
+            var deleteResponse = await Consumer.ExecuteRequest(deleteUrl, emptyDict, null, Method.DELETE);
+            if (deleteResponse.Status != HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+
             return true;
         }
 
