@@ -32,8 +32,6 @@ namespace XUnitTestCommon.Consumers
             this._configBuilder = configBuilder;
             this.urlPrefix = _configBuilder.Config["UrlPefix"];
             this.baseUrl = _configBuilder.Config["BaseUrl"];
-            this.baseAuthUrl = _configBuilder.Config["BaseUrlAuth"];
-            this.authPath = _configBuilder.Config["AuthPath"];
 
             if (bool.TryParse(_configBuilder.Config["IsHttps"], out bool isHttps))
             {
@@ -44,13 +42,17 @@ namespace XUnitTestCommon.Consumers
                 this.isSecure = false;
             }
 
-            if (Int32.TryParse(_configBuilder.Config["AuthTokenTimeout"], out int timeout))
-                this.authTokenTimeout = timeout;
-            else
-                this.authTokenTimeout = 60000;
-
-            if (_configBuilder.Config["AuthEmail"] != "")
+            //authentication
+            if (_configBuilder.Config["BaseUrlAuth"] != null)
             {
+                this.baseAuthUrl = _configBuilder.Config["BaseUrlAuth"];
+                this.authPath = _configBuilder.Config["AuthPath"];
+
+                if (Int32.TryParse(_configBuilder.Config["AuthTokenTimeout"], out int timeout))
+                    this.authTokenTimeout = timeout;
+                else
+                    this.authTokenTimeout = 60000;
+
                 this.authentication = new User(
                     _configBuilder.Config["AuthEmail"],
                     _configBuilder.Config["AuthPassword"],
