@@ -37,7 +37,8 @@ namespace AssetsData.Fixtures
 
         public List<AssetCategoryEntity> AllAssetCategoriesFromDB;
         public AssetCategoryEntity TestAssetCategory;
-
+        public AssetCategoryDTO TestAssetCategoryUpdate;
+        public AssetCategoryDTO TestAssetCategoryDelete;
         public List<AssetGroupEntity> AllAssetGroupsFromDB;
         public AssetGroupEntity TestAssetGroup;
 
@@ -109,7 +110,6 @@ namespace AssetsData.Fixtures
             var assetsGroupsFromDB = AssetGroupsManager.GetAllAsync();
 
             this.AllAssetsFromDB = (await assetsFromDB).Cast<AssetEntity>().ToList();
-
             this.TestAsset = EnumerableUtils.PickRandom(AllAssetsFromDB);
             this.TestAssetUpdate = await CreateTestAsset();
             this.TestAssetDelete = await CreateTestAsset(false);
@@ -120,16 +120,15 @@ namespace AssetsData.Fixtures
 
             this.AllAssetAttributesFromDB = (await assetsAttrFromDB).Cast<AssetAttributesEntity>().ToList();
             this.TestAssetAttribute = EnumerableUtils.PickRandom(AllAssetAttributesFromDB);
-
             this.TestAssetAttributeUpdate = await CreateTestAssetAttribute();
             this.TestAssetAttributeDelete = await CreateTestAssetAttribute(false);
 
-
-
             this.AllAssetCategoriesFromDB = (await assetsCatsFromDB).Cast<AssetCategoryEntity>().ToList();
             this.TestAssetCategory = EnumerableUtils.PickRandom(AllAssetCategoriesFromDB);
+            this.TestAssetCategoryUpdate = await CreateTestAssetCategory();
+            this.TestAssetCategoryDelete = await CreateTestAssetCategory(false);
 
-            
+
 
             this.AllAssetGroupsFromDB = (await assetsGroupsFromDB).Cast<AssetGroupEntity>().ToList();
             this.TestAssetGroup = EnumerableUtils.PickRandom(AllAssetGroupsFromDB);
@@ -140,12 +139,13 @@ namespace AssetsData.Fixtures
         {
             List<Task<bool>> deleteTasks = new List<Task<bool>>();
 
-            foreach (string assetId in AssetsToDelete)
-            {
-                deleteTasks.Add(DeleteTestAsset(assetId));
-            }
+            foreach (string assetId in AssetsToDelete) { deleteTasks.Add(DeleteTestAsset(assetId)); }
+            foreach (AssetAttributeIdentityDTO attrDTO in AssetAtributesToDelete) { deleteTasks.Add(DeleteTestAssetAttribute(attrDTO.AssetId, attrDTO.Key)); }
+            foreach (string catId in AssetCategoriesToDelete) { deleteTasks.Add(DeleteTestAssetCategory(catId)); }
             Task.WhenAll(deleteTasks).Wait();
         }
+
+
 
         #region Create / Delete methods
 
@@ -251,6 +251,54 @@ namespace AssetsData.Fixtures
 
             return true;
         }
+
+        public async Task<AssetCategoryDTO> CreateTestAssetCategory(bool deleteWithDispose = true)
+        {
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<AssetCategoryEntity, AssetCategoryDTO>();
+                cfg.CreateMap<AssetCategoryDTO, AssetCategoryEntity>();
+            });
+
+            string url = ApiEndpointNames["assetCategories"];
+
+            AssetCategoryDTO newCategory = Mapper.Map<AssetCategoryDTO>(EnumerableUtils.PickRandom(AllAssetCategoriesFromDB));
+            newCategory.Id += "_AutoTest";
+            newCategory.Name += "_AutoTest";
+            string createParam = JsonUtils.SerializeObject(newCategory);
+
+            var response = await Consumer.ExecuteRequest(url, emptyDict, createParam, Method.POST);
+            if (response.Status != HttpStatusCode.Created)
+            {
+                return null;
+            }
+
+            if (deleteWithDispose)
+            {
+                this.AssetCategoriesToDelete.Add(newCategory.Id);
+            }
+
+            //add (fake) entities so tests pass when checking against the list
+            AssetCategoryEntity entity = Mapper.Map<AssetCategoryEntity>(newCategory);
+            entity.RowKey = newCategory.Id;
+            AllAssetCategoriesFromDB.Add(entity);
+
+            return newCategory;
+        }
+
+        public async Task<bool> DeleteTestAssetCategory(string id)
+        {
+            string deleteUrl = ApiEndpointNames["assetCategories"] + "/" + id;
+            var deleteResponse = await Consumer.ExecuteRequest(deleteUrl, emptyDict, null, Method.DELETE);
+
+            if(deleteResponse.Status != HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            return true;
+        }
+
+
 
         #endregion
     }
