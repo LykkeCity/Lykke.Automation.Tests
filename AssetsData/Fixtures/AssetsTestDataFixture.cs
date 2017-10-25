@@ -27,8 +27,11 @@ namespace AssetsData.Fixtures
         public AssetEntity TestAsset;
         public AssetDTO TestAssetUpdate;
         public AssetDTO TestAssetDelete;
+
         public List<AssetExtendedInfosEntity> AllAssetExtendedInfosFromDB;
         public AssetExtendedInfosEntity TestAssetExtendedInfo;
+        public AssetExtendedInfoDTO TestAssetExtendedInfoUpdate;
+        public AssetExtendedInfoDTO TestAssetExtendedInfoDelete;
 
         public List<AssetAttributesEntity> AllAssetAttributesFromDB;
         public AssetAttributesEntity TestAssetAttribute;
@@ -39,6 +42,7 @@ namespace AssetsData.Fixtures
         public AssetCategoryEntity TestAssetCategory;
         public AssetCategoryDTO TestAssetCategoryUpdate;
         public AssetCategoryDTO TestAssetCategoryDelete;
+
         public List<AssetGroupEntity> AllAssetGroupsFromDB;
         public AssetGroupEntity TestAssetGroup;
 
@@ -59,6 +63,7 @@ namespace AssetsData.Fixtures
         private List<string> AssetsToDelete;
         private List<AssetAttributeIdentityDTO> AssetAtributesToDelete;
         private List<string> AssetCategoriesToDelete;
+        private List<string> AssetExtendedInfosToDelete;
 
         private Dictionary<string, string> emptyDict = new Dictionary<string, string>();
 
@@ -95,6 +100,7 @@ namespace AssetsData.Fixtures
             this.AssetsToDelete = new List<string>();
             this.AssetAtributesToDelete = new List<AssetAttributeIdentityDTO>();
             this.AssetCategoriesToDelete = new List<string>();
+            this.AssetExtendedInfosToDelete = new List<string>();
 
             this.ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["assets"] = "/api/v2/assets";
@@ -116,7 +122,8 @@ namespace AssetsData.Fixtures
 
             this.AllAssetExtendedInfosFromDB = (await AssetExtInfoFromDB).Cast<AssetExtendedInfosEntity>().ToList();
             this.TestAssetExtendedInfo = EnumerableUtils.PickRandom(AllAssetExtendedInfosFromDB);
-
+            this.TestAssetExtendedInfoUpdate = await CreateTestAssetExtendedInfo();
+            this.TestAssetExtendedInfoDelete = await CreateTestAssetExtendedInfo(false);
 
             this.AllAssetAttributesFromDB = (await assetsAttrFromDB).Cast<AssetAttributesEntity>().ToList();
             this.TestAssetAttribute = EnumerableUtils.PickRandom(AllAssetAttributesFromDB);
@@ -142,6 +149,8 @@ namespace AssetsData.Fixtures
             foreach (string assetId in AssetsToDelete) { deleteTasks.Add(DeleteTestAsset(assetId)); }
             foreach (AssetAttributeIdentityDTO attrDTO in AssetAtributesToDelete) { deleteTasks.Add(DeleteTestAssetAttribute(attrDTO.AssetId, attrDTO.Key)); }
             foreach (string catId in AssetCategoriesToDelete) { deleteTasks.Add(DeleteTestAssetCategory(catId)); }
+            foreach (string infoId in AssetExtendedInfosToDelete) { deleteTasks.Add(DeleteTestAssetExtendedInfo(infoId)); }
+
             Task.WhenAll(deleteTasks).Wait();
         }
 
@@ -298,7 +307,51 @@ namespace AssetsData.Fixtures
             return true;
         }
 
+        public async Task<AssetExtendedInfoDTO> CreateTestAssetExtendedInfo(bool deleteWithDispose = true)
+        {
+            string url = ApiEndpointNames["assetExtendedInfos"];
 
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<AssetExtendedInfosEntity, AssetExtendedInfoDTO>();
+                cfg.CreateMap<AssetExtendedInfoDTO, AssetExtendedInfosEntity>();
+            });
+
+            AssetExtendedInfoDTO newExtendedInfo = Mapper.Map<AssetExtendedInfoDTO>(EnumerableUtils.PickRandom(AllAssetExtendedInfosFromDB));
+            newExtendedInfo.Id += "_AutoTest";
+            newExtendedInfo.FullName += "_AutoTest";
+            string createParam = JsonUtils.SerializeObject(newExtendedInfo);
+
+            var response = await Consumer.ExecuteRequest(url, emptyDict, createParam, Method.POST);
+            if(response.Status != HttpStatusCode.Created)
+            {
+                return null;
+            }
+
+            if (deleteWithDispose)
+            {
+                this.AssetExtendedInfosToDelete.Add(newExtendedInfo.Id);
+            }
+
+            AssetExtendedInfosEntity entity = Mapper.Map<AssetExtendedInfosEntity>(newExtendedInfo);
+            entity.RowKey = newExtendedInfo.Id;
+            AllAssetExtendedInfosFromDB.Add(entity);
+            //add (fake) entities so tests pass when checking against the list
+
+            return newExtendedInfo;
+        }
+
+        public async Task<bool> DeleteTestAssetExtendedInfo(string id)
+        {
+            string deleteUrl = ApiEndpointNames["assetExtendedInfos"] + "/" + id;
+            var deleteResponse = await Consumer.ExecuteRequest(deleteUrl, emptyDict, null, Method.DELETE);
+
+            if (deleteResponse.Status != HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            return true;
+        }
 
         #endregion
     }

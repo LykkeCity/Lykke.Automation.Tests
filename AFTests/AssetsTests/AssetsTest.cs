@@ -457,8 +457,9 @@ namespace AFTests.AssetsTests
 
             for (int i = 0; i < fixture.AllAssetExtendedInfosFromDB.Count; i++)
             {
-                fixture.AllAssetExtendedInfosFromDB[i].ShouldBeEquivalentTo(parsedResponse[i], o => o
-                .ExcludingMissingMembers());
+                fixture.AllAssetExtendedInfosFromDB[i].ShouldBeEquivalentTo(
+                    parsedResponse.Where(a => a.Id == fixture.AllAssetExtendedInfosFromDB[i].Id)
+                    , o => o.ExcludingMissingMembers());
             }
         }
 
@@ -500,64 +501,63 @@ namespace AFTests.AssetsTests
             Assert.False(badParsedResponse);
         }
 
-        [Fact(Skip = "Skip due to problems with creating lots of assets")]
+        [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetExtendedInfos")]
         [Trait("Category", "AssetExtendedInfoPost")]
-        [Trait("Category", "AssetExtendedInfoPut")]
-        [Trait("Category", "AssetExtendedInfoDelete")]
-        public async void CreateUpdateDeleteAssetExtendedInfo()
+        public async void CreateAssetExtendedInfo()
         {
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<AssetExtendedInfosEntity, AssetExtendedInfoDTO>();
-            });
+            AssetExtendedInfoDTO createdInfo = await fixture.CreateTestAssetExtendedInfo();
+            Assert.NotNull(createdInfo);
 
+            await fixture.AssetExtendedInfosManager.UpdateCacheAsync();
+            AssetExtendedInfosEntity checkDbCreated = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(createdInfo.Id);
+            checkDbCreated.ShouldBeEquivalentTo(createdInfo, o => o
+            .ExcludingMissingMembers());
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetExtendedInfos")]
+        [Trait("Category", "AssetExtendedInfoPut")]
+        public async void UpdateAssetExtendedInfo()
+        {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"];
-
-            AssetExtendedInfoDTO newExtendedInfo = Mapper.Map<AssetExtendedInfoDTO>(fixture.TestAssetExtendedInfo);
-            newExtendedInfo.Id += "_AutoTest";
-            newExtendedInfo.FullName += "_AutoTest";
-            string createParam = JsonUtils.SerializeObject(newExtendedInfo);
 
             AssetExtendedInfoDTO updateExtendedInfo = new AssetExtendedInfoDTO()
             {
-                Id = newExtendedInfo.Id,
-                AssetClass = newExtendedInfo.AssetClass,
-                AssetDescriptionUrl = newExtendedInfo.AssetDescriptionUrl,
-                Description = newExtendedInfo.Description,
-                FullName = newExtendedInfo.FullName + "_autotest",
-                MarketCapitalization = newExtendedInfo.MarketCapitalization,
-                NumberOfCoins = newExtendedInfo.NumberOfCoins,
-                PopIndex = newExtendedInfo.PopIndex
+                Id = fixture.TestAssetExtendedInfoUpdate.Id,
+                AssetClass = fixture.TestAssetExtendedInfoUpdate.AssetClass,
+                AssetDescriptionUrl = fixture.TestAssetExtendedInfoUpdate.AssetDescriptionUrl,
+                Description = fixture.TestAssetExtendedInfoUpdate.Description,
+                FullName = fixture.TestAssetExtendedInfoUpdate.FullName + "_autotestt",
+                MarketCapitalization = fixture.TestAssetExtendedInfoUpdate.MarketCapitalization,
+                NumberOfCoins = fixture.TestAssetExtendedInfoUpdate.NumberOfCoins,
+                PopIndex = fixture.TestAssetExtendedInfoUpdate.PopIndex
             };
             string updateParam = JsonUtils.SerializeObject(updateExtendedInfo);
 
-            //create extended info
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, createParam, Method.POST);
-            Assert.True(response.Status == HttpStatusCode.Created);
-
-            await fixture.AssetExtendedInfosManager.UpdateCacheAsync();
-            AssetExtendedInfosEntity checkDbCreated = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(newExtendedInfo.Id);
-            checkDbCreated.ShouldBeEquivalentTo(createParam, o => o
-            .ExcludingMissingMembers());
-
-            //update extended info
             var updateResponse = await fixture.Consumer.ExecuteRequest(url, emptyDict, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetExtendedInfosManager.UpdateCacheAsync();
-            AssetExtendedInfosEntity checkDbUpdated = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(newExtendedInfo.Id);
+            AssetExtendedInfosEntity checkDbUpdated = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(fixture.TestAssetExtendedInfoUpdate.Id);
             checkDbUpdated.ShouldBeEquivalentTo(updateParam, o => o
             .ExcludingMissingMembers());
+        }
 
-            //delete extended info
-            string deleteUrl = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + newExtendedInfo.Id;
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetExtendedInfos")]
+        [Trait("Category", "AssetExtendedInfoDelete")]
+        public async void DeleteAssetExtendedInfo()
+        {
+            string deleteUrl = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfoDelete.Id;
             var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, emptyDict, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetExtendedInfosManager.UpdateCacheAsync();
-            AssetExtendedInfosEntity checkDbDeleted = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(newExtendedInfo.Id);
+            AssetExtendedInfosEntity checkDbDeleted = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(fixture.TestAssetExtendedInfoDelete.Id);
             Assert.Null(checkDbDeleted);
         }
 
