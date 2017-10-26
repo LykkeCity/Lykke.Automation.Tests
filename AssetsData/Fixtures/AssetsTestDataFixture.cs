@@ -66,6 +66,7 @@ namespace AssetsData.Fixtures
         private List<string> AssetExtendedInfosToDelete;
 
         private Dictionary<string, string> emptyDict = new Dictionary<string, string>();
+        private Random random = new Random();
 
         private IContainer container;
 
@@ -187,11 +188,6 @@ namespace AssetsData.Fixtures
                 AssetsToDelete.Add(newAssetDTO.Id);
             }
 
-            //add (fake) entities so tests pass when checking against the list
-            AssetEntity entity = Mapper.Map<AssetEntity>(newAssetDTO);
-            entity.RowKey = newAssetDTO.Id;
-            AllAssetsFromDB.Add(entity);
-
             return newAssetDTO;
         }
 
@@ -213,8 +209,8 @@ namespace AssetsData.Fixtures
             AssetAttributesEntity testAssetAttr = EnumerableUtils.PickRandom(AllAssetAttributesFromDB);
 
             string createUrl = ApiEndpointNames["assetAttributes"] + "/" + testAssetAttr.AssetId;
-            string newKey = testAssetAttr.Key + "_AutoTest";
-            string newValue = "autotest";
+            string newKey = testAssetAttr.Key + random.Next(1000,9999).ToString() + "_AutoTest";
+            string newValue = random.Next(1000, 9999).ToString() + "_autotest";
 
             AssetAttributeDTO createParameter = new AssetAttributeDTO() { Key = newKey, Value = newValue };
 
@@ -235,15 +231,6 @@ namespace AssetsData.Fixtures
             {
                 this.AssetAtributesToDelete.Add(returnModel);
             }
-
-            //add (fake) entities so tests pass when checking against the list
-            AssetAttributesEntity attrEntity = new AssetAttributesEntity()
-            {
-                AssetId = testAssetAttr.AssetId,
-                Key = newKey,
-                Value = newValue
-            };
-            AllAssetAttributesFromDB.Add(attrEntity);
 
             return returnModel;
         }
@@ -272,8 +259,8 @@ namespace AssetsData.Fixtures
             string url = ApiEndpointNames["assetCategories"];
 
             AssetCategoryDTO newCategory = Mapper.Map<AssetCategoryDTO>(EnumerableUtils.PickRandom(AllAssetCategoriesFromDB));
-            newCategory.Id += "_AutoTest";
-            newCategory.Name += "_AutoTest";
+            newCategory.Id += random.Next(1000,9999).ToString() +  "_AutoTest";
+            newCategory.Name += random.Next(1000, 9999).ToString() + "_AutoTest";
             string createParam = JsonUtils.SerializeObject(newCategory);
 
             var response = await Consumer.ExecuteRequest(url, emptyDict, createParam, Method.POST);
@@ -286,11 +273,6 @@ namespace AssetsData.Fixtures
             {
                 this.AssetCategoriesToDelete.Add(newCategory.Id);
             }
-
-            //add (fake) entities so tests pass when checking against the list
-            AssetCategoryEntity entity = Mapper.Map<AssetCategoryEntity>(newCategory);
-            entity.RowKey = newCategory.Id;
-            AllAssetCategoriesFromDB.Add(entity);
 
             return newCategory;
         }
@@ -332,11 +314,6 @@ namespace AssetsData.Fixtures
             {
                 this.AssetExtendedInfosToDelete.Add(newExtendedInfo.Id);
             }
-
-            AssetExtendedInfosEntity entity = Mapper.Map<AssetExtendedInfosEntity>(newExtendedInfo);
-            entity.RowKey = newExtendedInfo.Id;
-            AllAssetExtendedInfosFromDB.Add(entity);
-            //add (fake) entities so tests pass when checking against the list
 
             return newExtendedInfo;
         }
