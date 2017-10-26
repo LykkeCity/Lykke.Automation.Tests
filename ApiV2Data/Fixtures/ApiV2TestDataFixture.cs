@@ -92,11 +92,10 @@ namespace ApiV2Data.Fixtures
         public async Task<PledgeDTO> CreateTestPledge(bool deleteWithDispose = true)
         {
             string url = ApiEndpointNames["Pledges"];
-            Random random = new Random();
             CreatePledgeDTO newPledge = new CreatePledgeDTO()
             {
-                CO2Footprint = random.Next(100, 100000),
-                ClimatePositiveValue = random.Next(100, 100000)
+                CO2Footprint = Helpers.Random.Next(100, 100000),
+                ClimatePositiveValue = Helpers.Random.Next(100, 100000)
             };
 
             string createParam = JsonUtils.SerializeObject(newPledge);

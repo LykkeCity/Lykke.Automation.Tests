@@ -387,10 +387,9 @@ namespace AFTMatchingEngine
             string limitOrderID = Guid.NewGuid().ToString();
             string badLimitOrderID = Guid.NewGuid().ToString();
 
-            Random random = new Random();
             double amount = 0.2;
-            double price = random.Next(100, 999);
-            double matchedPrice = random.NextDouble();
+            double price = Helpers.Random.Next(100, 999);
+            double matchedPrice = Helpers.Random.NextDouble();
 
             //Attempt bad sell
             MeResponseModel badOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(
@@ -475,9 +474,8 @@ namespace AFTMatchingEngine
             string limitOrderID = Guid.NewGuid().ToString();
             string badLimitOrderID = Guid.NewGuid().ToString();
 
-            Random random = new Random();
             double amount = 0.01;
-            double price = random.NextDouble() / 100;
+            double price = Helpers.Random.NextDouble() / 100;
 
             //Attempt bad buy
             MeResponseModel badOrderResponse = await fixture.Consumer.Client.PlaceLimitOrderAsync(

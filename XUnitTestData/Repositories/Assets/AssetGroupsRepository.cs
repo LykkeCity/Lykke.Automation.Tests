@@ -37,6 +37,12 @@ namespace XUnitTestData.Repositories.Assets
             return await _tableStorage.GetDataAsync(partitionKey);
         }
 
+        public async Task<IEnumerable<IAssetGroup>> GetGroupClientIDsAsync(string groupName)
+        {
+            string partitionKey = "ClientGroupLink_" + groupName;
+            return await _tableStorage.GetDataAsync(partitionKey);
+        }
+
         public async Task<IAssetGroup> TryGetAsync(string id)
         {
             string partitionKey = AssetGroupEntity.GeneratePartitionKey();
