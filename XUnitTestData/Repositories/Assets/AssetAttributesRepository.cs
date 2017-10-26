@@ -73,6 +73,14 @@ namespace XUnitTestData.Repositories.Assets
             return new KeyValue { Key = entity.Key, Value = entity.Value };
         }
 
+        public async Task<IAssetAttributesKeyValue> TryGetAsync(string assetId, string key)
+        {
+            var entity = await _tableStorage.GetDataAsync(assetId, key);
+            if (entity == null)
+                return null;
+            return new KeyValue { Key = entity.Key, Value = entity.Value };
+        }
+
         public async Task<IAssetAttributesKeyValue[]> GetAllAsync(string assetId)
         {
             var entities = await _tableStorage.GetDataAsync(assetId);

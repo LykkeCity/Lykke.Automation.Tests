@@ -65,8 +65,16 @@ namespace XUnitTestCommon.Config
 
         public override bool TryGet(string key, out string value)
         {
-            value = _config[key];
-            return true;
+            if (_config.TryGetValue(key, out string val))
+            {
+                value = val;
+                return true;
+            }
+            else
+            {
+                value = null;
+                return false;
+            }
         }
     }
 }

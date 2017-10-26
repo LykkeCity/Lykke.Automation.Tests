@@ -2,10 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FirstXUnitTest.DTOs.Assets
+namespace AssetsData.DTOs.Assets
 {
     public class AssetAttributeDTO : BaseDTO
     {
+        public string Key { get; set; }
+        public string Value { get; set; }
+    }
+
+    public class AssetAttributeIdentityDTO : BaseDTO
+    {
+        public string AssetId { get; set; }
         public string Key { get; set; }
         public string Value { get; set; }
     }
