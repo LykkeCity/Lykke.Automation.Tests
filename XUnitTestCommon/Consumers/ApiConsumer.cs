@@ -43,7 +43,7 @@ namespace XUnitTestCommon.Consumers
             }
 
             //authentication
-            if (_configBuilder.Config["BaseUrlAuth"] != null)
+            if (_configBuilder.Config["BaseUrlAuth"] != null && _configBuilder.Config["BaseUrlAuth"] != "")
             {
                 this.baseAuthUrl = _configBuilder.Config["BaseUrlAuth"];
                 this.authPath = _configBuilder.Config["AuthPath"];

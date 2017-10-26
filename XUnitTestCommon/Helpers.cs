@@ -4,7 +4,7 @@ using System.Text;
 
 namespace XUnitTestCommon
 {
-    class Helpers
+    public class Helpers
     {
         public static Dictionary<string, string> EmptyDictionary = new Dictionary<string, string>();
     }

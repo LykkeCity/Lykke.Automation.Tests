@@ -37,8 +37,13 @@ namespace AFTests.ApiV2
             List<PledgeDTO> parsedResponseAll = JsonUtils.DeserializeJson<List<PledgeDTO>>(allResponse.ResponseJson);
             for (int i = 0; i < fixture.AllPledgesFromDB.Count; i++)
             {
-                fixture.AllPledgesFromDB[i].ShouldBeEquivalentTo(parsedResponseAll[i], o => o
-                .ExcludingMissingMembers());
+                if (fixture.AllPledgesFromDB[i].Id != fixture.TestPledgeUpdate.Id &&
+                    fixture.AllPledgesFromDB[i].Id != fixture.TestPledgeDelete.Id)
+                {
+                    fixture.AllPledgesFromDB[i].ShouldBeEquivalentTo(
+                        parsedResponseAll.Where(p => p.Id == fixture.AllPledgesFromDB[i].Id).FirstOrDefault(),
+                        o => o.ExcludingMissingMembers());
+                }
             }
         }
 
@@ -62,51 +67,57 @@ namespace AFTests.ApiV2
         [Trait("Category", "Smoke")]
         [Trait("Category", "Pledges")]
         [Trait("Category", "PledgesPost")]
-        [Trait("Category", "PledgesPut")]
-        [Trait("Category", "PledgesDelete")]
-        public async void CreateUpdateDeletePledge()
+        public async void CreatePledge()
         {
-            string url = fixture.ApiEndpointNames["Pledges"];
 
-            //create pledge
-            Random random = new Random();
-            CreatePledgeDTO newPledge = new CreatePledgeDTO()
-            {
-                CO2Footprint = random.Next(100, 100000),
-                ClimatePositiveValue = random.Next(100, 100000)
-            };
-
-            string createParam = JsonUtils.SerializeObject(newPledge);
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, createParam, Method.POST);
-            Assert.True(response.Status == HttpStatusCode.OK);
-            PledgeDTO createdPledge = JsonUtils.DeserializeJson<PledgeDTO>(response.ResponseJson);
+            PledgeDTO createdPledge = await fixture.CreateTestPledge();
             Assert.NotNull(createdPledge);
 
             PledgeEntity createdPledgeEntity = (PledgeEntity)await fixture.PledgeRepository.TryGetAsync(createdPledge.Id);
             createdPledgeEntity.ShouldBeEquivalentTo(createdPledge, o => o
             .ExcludingMissingMembers());
+        }
 
-            //Edit pledge
-            CreatePledgeDTO editPledge = new CreatePledgeDTO();
-            editPledge.CO2Footprint = random.Next(100, 100000);
-            editPledge.ClimatePositiveValue = random.Next(100, 100000);
-            string editPledgeUrl = url + "/" + createdPledge.Id;
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "Pledges")]
+        [Trait("Category", "PledgesPut")]
+        public async void UpdatePledge()
+        {
+            Random random = new Random();
+
+            PledgeDTO editPledge = new PledgeDTO()
+            {
+                Id = fixture.TestPledgeUpdate.Id,
+                ClientId = fixture.TestClientId,
+                CO2Footprint = random.Next(100, 100000),
+                ClimatePositiveValue = random.Next(100, 100000)
+            };
+
+            string editPledgeUrl = fixture.ApiEndpointNames["Pledges"];
             string editParam = JsonUtils.SerializeObject(editPledge);
             var editResponse = await fixture.Consumer.ExecuteRequest(editPledgeUrl, emptyDict, editParam, Method.PUT);
-            Assert.True(editResponse.Status == HttpStatusCode.OK);
+            //Assert.True(editResponse.Status == HttpStatusCode.OK);
             PledgeDTO parsedEditResponse = JsonUtils.DeserializeJson<PledgeDTO>(editResponse.ResponseJson);
 
-            PledgeEntity editedPledgeEntity = (PledgeEntity)await fixture.PledgeRepository.TryGetAsync(createdPledge.Id);
+            PledgeEntity editedPledgeEntity = (PledgeEntity)await fixture.PledgeRepository.TryGetAsync(fixture.TestPledgeUpdate.Id);
             editedPledgeEntity.ShouldBeEquivalentTo(parsedEditResponse, o => o
             .ExcludingMissingMembers()
             .Excluding(p => p.ClientId));
+        }
 
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "Pledges")]
+        [Trait("Category", "PledgesDelete")]
+        public async void DeletePledge()
+        {
+            string deletePledgeUrl = fixture.ApiEndpointNames["Pledges"] + "/" + fixture.TestPledgeDelete.Id;
 
-            //Delete pledge
-            var deleteResponse = await fixture.Consumer.ExecuteRequest(editPledgeUrl, emptyDict, null, Method.DELETE);
-            Assert.True(deleteResponse.Status == HttpStatusCode.OK);
+            var deleteResponse = await fixture.Consumer.ExecuteRequest(deletePledgeUrl, emptyDict, null, Method.DELETE);
+            Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            PledgeEntity deletedPledgeEntity = (PledgeEntity)await fixture.PledgeRepository.TryGetAsync(createdPledge.Id);
+            PledgeEntity deletedPledgeEntity = (PledgeEntity)await fixture.PledgeRepository.TryGetAsync(fixture.TestPledgeDelete.Id);
             Assert.Null(deletedPledgeEntity);
         }
     }

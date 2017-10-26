@@ -44,13 +44,15 @@ namespace AFTests.AssetsTests
 
             List<AssetDTO> parsedResponse = JsonUtils.DeserializeJson<List<AssetDTO>>(response.ResponseJson);
 
-            fixture.AllAssetsFromDB.Should().HaveSameCount(parsedResponse);
-
             for (int i = 0; i < fixture.AllAssetsFromDB.Count; i++)
             {
-                fixture.AllAssetsFromDB[i].ShouldBeEquivalentTo(
-                    parsedResponse.Where(a => a.Id == fixture.AllAssetsFromDB[i].Id).FirstOrDefault(),
-                    o => o.ExcludingMissingMembers().Excluding(m => m.PartnerIds));
+                if (fixture.AllAssetsFromDB[i].Id != fixture.TestAssetUpdate.Id &&
+                    fixture.AllAssetsFromDB[i].Id != fixture.TestAssetDelete.Id)
+                {
+                    fixture.AllAssetsFromDB[i].ShouldBeEquivalentTo(
+                        parsedResponse.Where(a => a.Id == fixture.AllAssetsFromDB[i].Id).FirstOrDefault(),
+                        o => o.ExcludingMissingMembers().Excluding(m => m.PartnerIds));
+                }
             }
         }
 
@@ -245,12 +247,12 @@ namespace AFTests.AssetsTests
 
             List<AssetAttributesReturnDTO> parsedResponse = JsonUtils.DeserializeJson<List<AssetAttributesReturnDTO>>(response.ResponseJson);
 
-            fixture.AllAssetAttributesFromDB.Should().HaveSameCount(parsedResponse);
 
             for (int i = 0; i < fixture.AllAssetAttributesFromDB.Count; i++)
             {
                 fixture.AllAssetAttributesFromDB[i].ShouldBeEquivalentTo(parsedResponse[i], o => o
-                .ExcludingMissingMembers());
+                .ExcludingMissingMembers()
+                .Excluding(a => a.Attributes));
             }
         }
 
@@ -350,12 +352,14 @@ namespace AFTests.AssetsTests
 
             List<AssetCategoryDTO> parsedResponse = JsonUtils.DeserializeJson<List<AssetCategoryDTO>>(response.ResponseJson);
 
-            parsedResponse.Should().HaveSameCount(fixture.AllAssetCategoriesFromDB);
-
             for (int i = 0; i < fixture.AllAssetCategoriesFromDB.Count; i++)
             {
-                fixture.AllAssetCategoriesFromDB[i].ShouldBeEquivalentTo(parsedResponse.Where(p => p.Id == fixture.AllAssetCategoriesFromDB[i].Id).FirstOrDefault()
-                , o => o.ExcludingMissingMembers());
+                if (fixture.AllAssetCategoriesFromDB[i].Id != fixture.TestAssetCategoryUpdate.Id &&
+                    fixture.AllAssetCategoriesFromDB[i].Id != fixture.TestAssetCategoryDelete.Id)
+                {
+                    fixture.AllAssetCategoriesFromDB[i].ShouldBeEquivalentTo(parsedResponse.Where(p => p.Id == fixture.AllAssetCategoriesFromDB[i].Id).FirstOrDefault()
+                    , o => o.ExcludingMissingMembers());
+                }
             }
         }
 
@@ -453,13 +457,15 @@ namespace AFTests.AssetsTests
             List<AssetExtendedInfoDTO> parsedResponse = JsonUtils.DeserializeJson<List<AssetExtendedInfoDTO>>(response.ResponseJson);
             Assert.NotNull(parsedResponse);
 
-            fixture.AllAssetExtendedInfosFromDB.Should().HaveSameCount(parsedResponse);
-
             for (int i = 0; i < fixture.AllAssetExtendedInfosFromDB.Count; i++)
             {
-                fixture.AllAssetExtendedInfosFromDB[i].ShouldBeEquivalentTo(
-                    parsedResponse.Where(a => a.Id == fixture.AllAssetExtendedInfosFromDB[i].Id)
-                    , o => o.ExcludingMissingMembers());
+                if (fixture.AllAssetExtendedInfosFromDB[i].Id != fixture.TestAssetExtendedInfoUpdate.Id &&
+                    fixture.AllAssetExtendedInfosFromDB[i].Id != fixture.TestAssetExtendedInfoDelete.Id)
+                {
+                    fixture.AllAssetExtendedInfosFromDB[i].ShouldBeEquivalentTo(
+                        parsedResponse.Where(a => a.Id == fixture.AllAssetExtendedInfosFromDB[i].Id)
+                        , o => o.ExcludingMissingMembers());
+                }
             }
         }
 

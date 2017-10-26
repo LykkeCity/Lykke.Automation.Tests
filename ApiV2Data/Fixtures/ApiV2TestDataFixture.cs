@@ -1,5 +1,6 @@
 ﻿using ApiV2Data.DependencyInjection;
 using Autofac;
+using AutoMapper;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -22,12 +23,19 @@ namespace ApiV2Data.Fixtures
         private ConfigBuilder _configBuilder;
         private IContainer container;
 
+        private List<string> PledgesToDelete;
+
+        public string TestClientId;
+
         public PledgesRepository PledgeRepository;
         public List<PledgeEntity> AllPledgesFromDB;
         public PledgeEntity TestPledge;
+        public PledgeDTO TestPledgeUpdate;
+        public PledgeDTO TestPledgeDelete;
 
         public Dictionary<string, string> ApiEndpointNames;
         public ApiConsumer Consumer;
+
 
         public ApiV2TestDataFixture()
         {
@@ -35,7 +43,7 @@ namespace ApiV2Data.Fixtures
             this.Consumer = new ApiConsumer(this._configBuilder);
 
             prepareDependencyContainer();
-            prepareTestData();
+            prepareTestData().Wait();
         }
 
         private void prepareDependencyContainer()
@@ -47,46 +55,78 @@ namespace ApiV2Data.Fixtures
             this.PledgeRepository = (PledgesRepository)this.container.Resolve<IDictionaryRepository<IPledgeEntity>>();
         }
 
-        private void prepareTestData()
+        private async Task prepareTestData()
         {
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<PledgeEntity, PledgeDTO>();
+                cfg.CreateMap<PledgeDTO, PledgeEntity>();
+            });
+
             ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["Pledges"] = "/api/pledges";
 
+            PledgesToDelete = new List<string>();
+            TestClientId = this._configBuilder.Config["AuthClientId"];
+
             var pledgesFromDB = Task.Run(async () => { return await this.PledgeRepository.GetAllByClientAsync(this._configBuilder.Config["AuthClientId"]); }).Result;
             this.AllPledgesFromDB = pledgesFromDB.Cast<PledgeEntity>().ToList();
-
-            //create a test pledge of none exist
-            if (AllPledgesFromDB.Count == 0)
-            {
-                string url = ApiEndpointNames["Pledges"];
-                Random random = new Random();
-                CreatePledgeDTO newPledge = new CreatePledgeDTO()
-                {
-                    CO2Footprint = random.Next(100, 100000),
-                    ClimatePositiveValue = random.Next(100, 100000)
-                };
-
-                string createParam = JsonUtils.SerializeObject(newPledge);
-                Response response = Task.Run(async () => { return await Consumer.ExecuteRequest(url, new Dictionary<string, string>(), createParam, Method.POST); }).Result;
-                if (response.Status == HttpStatusCode.OK) //.Created
-                {
-                    throw new Exception("Couldn't create test pledge");
-                }
-                else
-                {
-                    pledgesFromDB = Task.Run(async () => { return await this.PledgeRepository.GetAllByClientAsync(this._configBuilder.Config["AuthClientId"]); }).Result;
-                    this.AllPledgesFromDB = pledgesFromDB.Cast<PledgeEntity>().ToList();
-                }
-            }
-
             this.TestPledge = EnumerableUtils.PickRandom(AllPledgesFromDB);
+
+            this.TestPledgeUpdate = await CreateTestPledge();
+            this.TestPledgeDelete = await CreateTestPledge(false);
 
 
         }
 
         public void Dispose()
         {
-            
+            List<Task<bool>> deleteTasks = new List<Task<bool>>();
+            foreach (string pledgeId in PledgesToDelete) { deleteTasks.Add(DeleteTestPledge(pledgeId)); }
+
+            Task.WhenAll(deleteTasks).Wait();
         }
+
+        #region Create / Delete methods
+
+        public async Task<PledgeDTO> CreateTestPledge(bool deleteWithDispose = true)
+        {
+            string url = ApiEndpointNames["Pledges"];
+            Random random = new Random();
+            CreatePledgeDTO newPledge = new CreatePledgeDTO()
+            {
+                CO2Footprint = random.Next(100, 100000),
+                ClimatePositiveValue = random.Next(100, 100000)
+            };
+
+            string createParam = JsonUtils.SerializeObject(newPledge);
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            if (response.Status != HttpStatusCode.Created)
+            {
+                return null;
+            }
+
+            PledgeDTO returnDTO = JsonUtils.DeserializeJson<PledgeDTO>(response.ResponseJson);
+
+            if (deleteWithDispose)
+            {
+                PledgesToDelete.Add(returnDTO.Id);
+            }
+
+            return returnDTO;
+        }
+
+        public async Task<bool> DeleteTestPledge(string id)
+        {
+            string deletePledgeUrl = ApiEndpointNames["Pledges"] + "/" + id;
+            var deleteResponse = await Consumer.ExecuteRequest(deletePledgeUrl, Helpers.EmptyDictionary, null, Method.DELETE);
+            if (deleteResponse.Status != HttpStatusCode.OK)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        #endregion
     }
 }
