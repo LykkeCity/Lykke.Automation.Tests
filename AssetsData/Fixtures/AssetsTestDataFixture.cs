@@ -23,6 +23,7 @@ namespace AssetsData.Fixtures
 {
     public class AssetsTestDataFixture : IDisposable
     {
+        #region fields
         public List<AssetEntity> AllAssetsFromDB;
         public AssetEntity TestAsset;
         public AssetDTO TestAssetUpdate;
@@ -45,8 +46,17 @@ namespace AssetsData.Fixtures
 
         public List<AssetGroupEntity> AllAssetGroupsFromDB;
         public AssetGroupEntity TestAssetGroup;
+        public AssetGroupDTO TestAssetGroupUpdate;
+        public AssetGroupDTO TestAssetGroupDelete;
 
-        public string TestAttributeKey;
+        public AssetGroupDTO TestGroupForGroupRelationAdd;
+        public AssetDTO TestAssetForGroupRelationAdd;
+        public AssetGroupDTO TestGroupForGroupRelationDelete;
+        public AssetDTO TestAssetForGroupRelationDelete;
+        public AssetGroupDTO TestGroupForClientRelationAdd;
+        public AssetGroupDTO TestGroupForClientRelationDelete;
+
+        public string TestAccountId;
 
         public IDictionaryManager<IAsset> AssetManager;
         public IDictionaryManager<IAssetExtendedInfo> AssetExtendedInfosManager;
@@ -57,13 +67,16 @@ namespace AssetsData.Fixtures
         public AssetAttributesRepository AssetAttributesRepository;
         public AssetGroupsRepository AssetGroupsRepository;
 
-        public ApiConsumer Consumer;
-        public Dictionary<string, string> ApiEndpointNames;
-
         private List<string> AssetsToDelete;
         private List<AssetAttributeIdentityDTO> AssetAtributesToDelete;
         private List<string> AssetCategoriesToDelete;
         private List<string> AssetExtendedInfosToDelete;
+        private List<string> AssetGroupsToDelete;
+
+        #endregion
+
+        public ApiConsumer Consumer;
+        public Dictionary<string, string> ApiEndpointNames;
 
         private IContainer container;
 
@@ -108,10 +121,11 @@ namespace AssetsData.Fixtures
 
             });
 
-                this.AssetsToDelete = new List<string>();
+            this.AssetsToDelete = new List<string>();
             this.AssetAtributesToDelete = new List<AssetAttributeIdentityDTO>();
             this.AssetCategoriesToDelete = new List<string>();
             this.AssetExtendedInfosToDelete = new List<string>();
+            this.AssetGroupsToDelete = new List<string>();
 
             this.ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["assets"] = "/api/v2/assets";
@@ -146,11 +160,18 @@ namespace AssetsData.Fixtures
             this.TestAssetCategoryUpdate = await CreateTestAssetCategory();
             this.TestAssetCategoryDelete = await CreateTestAssetCategory(false);
 
-
-
             this.AllAssetGroupsFromDB = (await assetsGroupsFromDB).Cast<AssetGroupEntity>().ToList();
             this.TestAssetGroup = EnumerableUtils.PickRandom(AllAssetGroupsFromDB);
+            this.TestAssetGroupUpdate = await CreateTestAssetGroup();
+            this.TestAssetGroupDelete = await CreateTestAssetGroup(false);
 
+            this.TestGroupForGroupRelationAdd = await CreateTestAssetGroup();
+            this.TestAssetForGroupRelationAdd = await CreateTestAsset();
+            this.TestGroupForGroupRelationDelete = await CreateTestAssetGroup();
+            this.TestAssetForGroupRelationDelete = await CreateTestAsset();
+            this.TestGroupForClientRelationAdd = await CreateTestAssetGroup();
+            this.TestGroupForClientRelationDelete = await CreateTestAssetGroup();
+            this.TestAccountId = "AFT_Client1";
         }
 
         public void Dispose()
@@ -161,6 +182,7 @@ namespace AssetsData.Fixtures
             foreach (AssetAttributeIdentityDTO attrDTO in AssetAtributesToDelete) { deleteTasks.Add(DeleteTestAssetAttribute(attrDTO.AssetId, attrDTO.Key)); }
             foreach (string catId in AssetCategoriesToDelete) { deleteTasks.Add(DeleteTestAssetCategory(catId)); }
             foreach (string infoId in AssetExtendedInfosToDelete) { deleteTasks.Add(DeleteTestAssetExtendedInfo(infoId)); }
+            foreach (string groupName in AssetGroupsToDelete) { deleteTasks.Add(DeleteTestAssetGroup(groupName)); }
 
             Task.WhenAll(deleteTasks).Wait();
         }
@@ -173,10 +195,10 @@ namespace AssetsData.Fixtures
         {
             AssetDTO newAssetDTO = Mapper.Map<AssetDTO>(EnumerableUtils.PickRandom(AllAssetsFromDB));
 
-            newAssetDTO.Id += "_AutoTest";
-            newAssetDTO.Name += "_AutoTest";
-            newAssetDTO.BlockChainAssetId += "_AutoTest";
-            newAssetDTO.BlockChainId += "_AutoTest";
+            newAssetDTO.Id += Helpers.Random.Next(1000,9999).ToString() + "_AutoTest";
+            newAssetDTO.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            newAssetDTO.BlockChainAssetId += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            newAssetDTO.BlockChainId += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
 
             string createUrl = ApiEndpointNames["assets"];
             string createParam = JsonUtils.SerializeObject(newAssetDTO);
@@ -292,8 +314,8 @@ namespace AssetsData.Fixtures
             string url = ApiEndpointNames["assetExtendedInfos"];
 
             AssetExtendedInfoDTO newExtendedInfo = Mapper.Map<AssetExtendedInfoDTO>(EnumerableUtils.PickRandom(AllAssetExtendedInfosFromDB));
-            newExtendedInfo.Id += "_AutoTest";
-            newExtendedInfo.FullName += "_AutoTest";
+            newExtendedInfo.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            newExtendedInfo.FullName += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             string createParam = JsonUtils.SerializeObject(newExtendedInfo);
 
             var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
@@ -322,7 +344,7 @@ namespace AssetsData.Fixtures
             return true;
         }
 
-        public async Task<AssetGroupDTO> CreateTestAssetGroup(bool deleteWithDispose)
+        public async Task<AssetGroupDTO> CreateTestAssetGroup(bool deleteWithDispose = true)
         {
             string url = ApiEndpointNames["assetGroups"];
 
@@ -338,7 +360,7 @@ namespace AssetsData.Fixtures
 
             if (deleteWithDispose)
             {
-                //todo
+                AssetGroupsToDelete.Add(newAssetGroup.Name);
             }
 
             return newAssetGroup;

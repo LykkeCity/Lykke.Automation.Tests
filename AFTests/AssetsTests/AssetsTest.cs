@@ -46,13 +46,9 @@ namespace AFTests.AssetsTests
 
             for (int i = 0; i < fixture.AllAssetsFromDB.Count; i++)
             {
-                if (fixture.AllAssetsFromDB[i].Id != fixture.TestAssetUpdate.Id &&
-                    fixture.AllAssetsFromDB[i].Id != fixture.TestAssetDelete.Id)
-                {
-                    fixture.AllAssetsFromDB[i].ShouldBeEquivalentTo(
-                        parsedResponse.Where(a => a.Id == fixture.AllAssetsFromDB[i].Id).FirstOrDefault(),
-                        o => o.ExcludingMissingMembers().Excluding(m => m.PartnerIds));
-                }
+                fixture.AllAssetsFromDB[i].ShouldBeEquivalentTo(
+                    parsedResponse.Where(a => a.Id == fixture.AllAssetsFromDB[i].Id).FirstOrDefault(),
+                    o => o.ExcludingMissingMembers().Excluding(m => m.PartnerIds));
             }
         }
 
@@ -198,8 +194,8 @@ namespace AFTests.AssetsTests
         {
             string updateUrl = fixture.ApiEndpointNames["assets"];
             AssetDTO updateParamAsset = fixture.TestAssetUpdate;
-            updateParamAsset.Name += "_AutoTestEdit";
-            updateParamAsset.DefinitionUrl += "_AutoTest";
+            updateParamAsset.Name += Helpers.Random.Next(1000,9999).ToString() + "_AutoTestEdit";
+            updateParamAsset.DefinitionUrl += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
 
             string updateParam = JsonUtils.SerializeObject(updateParamAsset);
 
@@ -355,12 +351,8 @@ namespace AFTests.AssetsTests
 
             for (int i = 0; i < fixture.AllAssetCategoriesFromDB.Count; i++)
             {
-                if (fixture.AllAssetCategoriesFromDB[i].Id != fixture.TestAssetCategoryUpdate.Id &&
-                    fixture.AllAssetCategoriesFromDB[i].Id != fixture.TestAssetCategoryDelete.Id)
-                {
-                    fixture.AllAssetCategoriesFromDB[i].ShouldBeEquivalentTo(parsedResponse.Where(p => p.Id == fixture.AllAssetCategoriesFromDB[i].Id).FirstOrDefault()
-                    , o => o.ExcludingMissingMembers());
-                }
+                fixture.AllAssetCategoriesFromDB[i].ShouldBeEquivalentTo(parsedResponse.Where(p => p.Id == fixture.AllAssetCategoriesFromDB[i].Id).FirstOrDefault()
+                , o => o.ExcludingMissingMembers());
             }
         }
 
@@ -460,13 +452,9 @@ namespace AFTests.AssetsTests
 
             for (int i = 0; i < fixture.AllAssetExtendedInfosFromDB.Count; i++)
             {
-                if (fixture.AllAssetExtendedInfosFromDB[i].Id != fixture.TestAssetExtendedInfoUpdate.Id &&
-                    fixture.AllAssetExtendedInfosFromDB[i].Id != fixture.TestAssetExtendedInfoDelete.Id)
-                {
-                    fixture.AllAssetExtendedInfosFromDB[i].ShouldBeEquivalentTo(
-                        parsedResponse.Where(a => a.Id == fixture.AllAssetExtendedInfosFromDB[i].Id)
-                        , o => o.ExcludingMissingMembers());
-                }
+                fixture.AllAssetExtendedInfosFromDB[i].ShouldBeEquivalentTo(
+                    parsedResponse.Where(a => a.Id == fixture.AllAssetExtendedInfosFromDB[i].Id)
+                    , o => o.ExcludingMissingMembers());
             }
         }
 
@@ -588,11 +576,10 @@ namespace AFTests.AssetsTests
             List<AssetGroupDTO> parsedResponse = JsonUtils.DeserializeJson<List<AssetGroupDTO>>(response.ResponseJson);
             Assert.NotNull(parsedResponse);
 
-            fixture.AllAssetGroupsFromDB.Should().HaveSameCount(parsedResponse);
             for (int i = 0; i < fixture.AllAssetGroupsFromDB.Count; i++)
             {
-                fixture.AllAssetGroupsFromDB[i].ShouldBeEquivalentTo(parsedResponse[i], o => o
-                .ExcludingMissingMembers());
+                fixture.AllAssetGroupsFromDB[i].ShouldBeEquivalentTo(parsedResponse.Where(g => g.Name == fixture.AllAssetGroupsFromDB[i].Name).FirstOrDefault(),
+                    o => o.ExcludingMissingMembers());
             }
 
         }
@@ -633,8 +620,6 @@ namespace AFTests.AssetsTests
             var entities = await fixture.AssetGroupsRepository.GetGroupAssetIDsAsync(fixture.TestAssetGroup.Id);
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
-            assetIds.Should().HaveSameCount(parsedResponse);
-
             for (int i = 0; i < assetIds.Count; i++)
             {
                 Assert.True(assetIds[i] == parsedResponse[i]);
@@ -660,13 +645,141 @@ namespace AFTests.AssetsTests
             var entities = await fixture.AssetGroupsRepository.GetGroupClientIDsAsync(fixture.TestAssetGroup.Id);
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
-            assetIds.Should().HaveSameCount(parsedResponse);
-
             for (int i = 0; i < assetIds.Count; i++)
             {
                 Assert.True(assetIds[i] == parsedResponse[i]);
             }
         }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetGroups")]
+        [Trait("Category", "AssetGroupsPost")]
+        public async void CreateAssetGroup()
+        {
+            AssetGroupDTO createdGroup = await fixture.CreateTestAssetGroup();
+            Assert.NotNull(createdGroup);
+
+            await fixture.AssetGroupsManager.UpdateCacheAsync();
+            AssetGroupEntity entity = await fixture.AssetGroupsManager.TryGetAsync(createdGroup.Name) as AssetGroupEntity;
+            entity.ShouldBeEquivalentTo(createdGroup, o => o
+            .ExcludingMissingMembers());
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetGroups")]
+        [Trait("Category", "AssetGroupsPut")]
+        public async void UpdateAssetGroup()
+        {
+            string url = fixture.ApiEndpointNames["assetGroups"];
+
+            AssetGroupDTO editGroup = new AssetGroupDTO()
+            {
+                Name = fixture.TestAssetGroupUpdate.Name,
+                IsIosDevice = !fixture.TestAssetGroupUpdate.IsIosDevice,
+                ClientsCanCashInViaBankCards = fixture.TestAssetGroupUpdate.ClientsCanCashInViaBankCards,
+                SwiftDepositEnabled = fixture.TestAssetGroupUpdate.SwiftDepositEnabled
+            };
+            string editParam = JsonUtils.SerializeObject(editGroup);
+
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
+            Assert.True(response.Status == HttpStatusCode.NoContent);
+
+            await fixture.AssetGroupsManager.UpdateCacheAsync();
+            AssetGroupEntity entity = await fixture.AssetGroupsManager.TryGetAsync(editGroup.Name) as AssetGroupEntity;
+            entity.ShouldBeEquivalentTo(editGroup, o => o
+            .ExcludingMissingMembers());
+
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetGroups")]
+        [Trait("Category", "AssetGroupsDelete")]
+        public async void DeleteAssetGroup()
+        {
+            string deleteUrl = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroupDelete.Name;
+            var response = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
+            Assert.True(response.Status == HttpStatusCode.NoContent);
+
+            await fixture.AssetGroupsManager.UpdateCacheAsync();
+            AssetGroupEntity entity = await fixture.AssetGroupsManager.TryGetAsync(fixture.TestAssetGroupDelete.Name) as AssetGroupEntity;
+            Assert.Null(entity);
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetGroups")]
+        [Trait("Category", "AssetGroupsPost")]
+        public async void AddAssetToAssetGroup()
+        {
+            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForGroupRelationAdd.Name + "/assets/" + fixture.TestAssetForGroupRelationAdd.Id;
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
+            Assert.True(response.Status == HttpStatusCode.NoContent);
+
+            var entities = await fixture.AssetGroupsRepository.GetGroupAssetIDsAsync(fixture.TestGroupForGroupRelationAdd.Name);
+            List<string> assetIds = entities.Select(e => e.Id).ToList();
+
+            Assert.True(assetIds.Count == 1);
+            Assert.True(assetIds[0] == fixture.TestAssetForGroupRelationAdd.Id);
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetGroups")]
+        [Trait("Category", "AssetGroupsPost")]
+        public async void RemoveAssetFromAssetGroup()
+        {
+            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForGroupRelationDelete.Name + "/assets/" + fixture.TestAssetForGroupRelationDelete.Id;
+            var createResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
+            Assert.True(createResponse.Status == HttpStatusCode.NoContent);
+
+            var deleteResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+            Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
+
+            var entities = await fixture.AssetGroupsRepository.GetGroupAssetIDsAsync(fixture.TestGroupForGroupRelationDelete.Name);
+            List<string> assetIds = entities.Select(e => e.Id).ToList();
+
+            Assert.True(assetIds.Count == 0);
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetGroups")]
+        [Trait("Category", "AssetGroupsPost")]
+        public async void AddClientToAssetGroup()
+        {
+            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForClientRelationAdd.Name + "/clients/" + fixture.TestAccountId;
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
+            Assert.True(response.Status == HttpStatusCode.NoContent);
+
+            var entities = await fixture.AssetGroupsRepository.GetGroupClientIDsAsync(fixture.TestGroupForClientRelationAdd.Name);
+            List<string> assetIds = entities.Select(e => e.Id).ToList();
+
+            Assert.True(assetIds.Count == 1);
+            Assert.True(assetIds[0] == fixture.TestAccountId);
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetGroups")]
+        [Trait("Category", "AssetGroupsPost")]
+        public async void RemoveClientFromAssetGroup()
+        {
+            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForClientRelationDelete.Name + "/clients/" + fixture.TestAccountId;
+            var createResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
+            Assert.True(createResponse.Status == HttpStatusCode.NoContent);
+
+            var deleteResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+            Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
+
+            var entities = await fixture.AssetGroupsRepository.GetGroupClientIDsAsync(fixture.TestGroupForClientRelationDelete.Name);
+            List<string> assetIds = entities.Select(e => e.Id).ToList();
+
+            Assert.True(assetIds.Count == 0);
+        }
+
 
         #endregion
     }
