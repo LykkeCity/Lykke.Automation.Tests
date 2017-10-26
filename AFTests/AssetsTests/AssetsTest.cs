@@ -11,6 +11,7 @@ using System.Reflection;
 using Xunit;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
+using XUnitTestCommon;
 
 namespace AFTests.AssetsTests
 {
@@ -20,7 +21,6 @@ namespace AFTests.AssetsTests
     public class AssetsTest : IClassFixture<AssetsTestDataFixture>
     {
         private AssetsTestDataFixture fixture;
-        private Dictionary<string, string> emptyDict = new Dictionary<string, string>();
 
         public AssetsTest(AssetsTestDataFixture fixture)
         {
@@ -37,7 +37,7 @@ namespace AFTests.AssetsTests
         {
             // Get all assets
             string url = fixture.ApiEndpointNames["assets"];
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK, "Actual status code is not OK");
             Assert.NotNull(response.ResponseJson);
@@ -63,7 +63,7 @@ namespace AFTests.AssetsTests
         public async void GetSingleAsset()
         {
             string url = fixture.ApiEndpointNames["assets"] + "/" + fixture.TestAsset.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
@@ -71,7 +71,8 @@ namespace AFTests.AssetsTests
             AssetDTO parsedResponse = JsonUtils.DeserializeJson<AssetDTO>(response.ResponseJson);
 
             fixture.TestAsset.ShouldBeEquivalentTo(parsedResponse, options => options
-                .ExcludingMissingMembers());
+                .ExcludingMissingMembers()
+                .Excluding(a => a.PartnerIds));
         }
 
         [Fact]
@@ -81,7 +82,7 @@ namespace AFTests.AssetsTests
         public async void CheckIfAssetExists()
         {
             string url = fixture.ApiEndpointNames["assets"] + "/" + fixture.TestAsset.Id + "/exists";
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
@@ -98,7 +99,7 @@ namespace AFTests.AssetsTests
         public async void GetDefault()
         {
             string url = fixture.ApiEndpointNames["assets"] + "/default";
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
@@ -152,7 +153,7 @@ namespace AFTests.AssetsTests
             else
                 url = disableUrl;
 
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, parameter, Method.POST);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, parameter, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetManager.UpdateCacheAsync();
@@ -164,7 +165,7 @@ namespace AFTests.AssetsTests
             else
                 url = disableUrl;
 
-            var responseAfter = await fixture.Consumer.ExecuteRequest(enableUrl, emptyDict, parameter, Method.POST);
+            var responseAfter = await fixture.Consumer.ExecuteRequest(enableUrl, Helpers.EmptyDictionary, parameter, Method.POST);
             Assert.True(responseAfter.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetManager.UpdateCacheAsync();
@@ -202,7 +203,7 @@ namespace AFTests.AssetsTests
 
             string updateParam = JsonUtils.SerializeObject(updateParamAsset);
 
-            var updateResponse = await fixture.Consumer.ExecuteRequest(updateUrl, emptyDict, updateParam, Method.PUT);
+            var updateResponse = await fixture.Consumer.ExecuteRequest(updateUrl, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetManager.UpdateCacheAsync();
@@ -222,7 +223,7 @@ namespace AFTests.AssetsTests
             string deleteUrl = fixture.ApiEndpointNames["assets"] + "/" + fixture.TestAssetDelete.Id;
             string deleteParam = JsonUtils.SerializeObject(new { id = fixture.TestAssetDelete.Id });
 
-            var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, emptyDict, deleteParam, Method.DELETE);
+            var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, deleteParam, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetManager.UpdateCacheAsync();
@@ -240,7 +241,7 @@ namespace AFTests.AssetsTests
         public async void GetAllAssetAttributes()
         {
             string url = fixture.ApiEndpointNames["assetAttributes"];
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
@@ -263,7 +264,7 @@ namespace AFTests.AssetsTests
         public async void GetSingleAssetAttributes()
         {
             string url = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttribute.AssetId;
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
@@ -281,7 +282,7 @@ namespace AFTests.AssetsTests
         public async void GetSingleAssetAttribute()
         {
             string url = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttribute.AssetId + "/" + fixture.TestAssetAttribute.Key;
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
@@ -314,7 +315,7 @@ namespace AFTests.AssetsTests
             string updateValue = fixture.TestAssetAttributeUpdate.Value + "_AutoTestEdit";
             string updateParameter = JsonUtils.SerializeObject(
                 new AssetAttributeDTO() { Key = fixture.TestAssetAttributeUpdate.Key, Value = updateValue });
-            var updateResponse = await fixture.Consumer.ExecuteRequest(updateUrl, emptyDict, updateParameter, Method.PUT);
+            var updateResponse = await fixture.Consumer.ExecuteRequest(updateUrl, Helpers.EmptyDictionary, updateParameter, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
             var checkDbUpdated = await fixture.AssetAttributesRepository.TryGetAsync(fixture.TestAssetAttributeUpdate.AssetId, fixture.TestAssetAttributeUpdate.Key);
@@ -328,7 +329,7 @@ namespace AFTests.AssetsTests
         public async void DeleteAssetAttribute()
         {
             string deleteUrl = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttributeDelete.AssetId + "/" + fixture.TestAssetAttributeDelete.Key;
-            var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, emptyDict, null, Method.DELETE);
+            var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
             var checkDbDeleted = await fixture.AssetAttributesRepository.TryGetAsync(fixture.TestAssetAttributeDelete.AssetId, fixture.TestAssetAttributeDelete.Key);
@@ -345,7 +346,7 @@ namespace AFTests.AssetsTests
         public async void GetAllAssetCategories()
         {
             string url = fixture.ApiEndpointNames["assetCategories"];
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
@@ -370,7 +371,7 @@ namespace AFTests.AssetsTests
         public async void GetSingleAssetCategory()
         {
             string url = fixture.ApiEndpointNames["assetCategories"] + "/" + fixture.TestAssetCategory.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
@@ -417,7 +418,7 @@ namespace AFTests.AssetsTests
             };
             string updateParam = JsonUtils.SerializeObject(updateCategory);
 
-            var updateResponse = await fixture.Consumer.ExecuteRequest(url, emptyDict, updateParam, Method.PUT);
+            var updateResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetCategoryManager.UpdateCacheAsync();
@@ -433,7 +434,7 @@ namespace AFTests.AssetsTests
         public async void DeleteAssetCategory()
         {
             string deleteUrl = fixture.ApiEndpointNames["assetCategories"] + "/" + fixture.TestAssetCategoryDelete.Id;
-            var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, emptyDict, null, Method.DELETE);
+            var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetCategoryManager.UpdateCacheAsync();
@@ -451,7 +452,7 @@ namespace AFTests.AssetsTests
         public async void GetAllAssetExtendedInfos()
         {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"];
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             List<AssetExtendedInfoDTO> parsedResponse = JsonUtils.DeserializeJson<List<AssetExtendedInfoDTO>>(response.ResponseJson);
@@ -476,7 +477,7 @@ namespace AFTests.AssetsTests
         public async void GetSingleAssetExtendedInfo()
         {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfo.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             AssetExtendedInfoDTO parsedResponse = JsonUtils.DeserializeJson<AssetExtendedInfoDTO>(response.ResponseJson);
@@ -493,14 +494,14 @@ namespace AFTests.AssetsTests
         public async void CheckIfAssetExtendedInfoExists()
         {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfo.Id + "/exists";
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             bool parsedResponse = JsonUtils.DeserializeJson<bool>(response.ResponseJson);
             Assert.NotNull(parsedResponse);
             Assert.True(parsedResponse);
 
             string badUrl = fixture.ApiEndpointNames["assetExtendedInfos"] + "/AutoTestAssetThatDoesntExist/exists";
-            var badResponse = await fixture.Consumer.ExecuteRequest(badUrl, emptyDict, null, Method.GET);
+            var badResponse = await fixture.Consumer.ExecuteRequest(badUrl, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(badResponse);
             bool badParsedResponse = JsonUtils.DeserializeJson<bool>(badResponse.ResponseJson);
             Assert.NotNull(badParsedResponse);
@@ -543,7 +544,7 @@ namespace AFTests.AssetsTests
             };
             string updateParam = JsonUtils.SerializeObject(updateExtendedInfo);
 
-            var updateResponse = await fixture.Consumer.ExecuteRequest(url, emptyDict, updateParam, Method.PUT);
+            var updateResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetExtendedInfosManager.UpdateCacheAsync();
@@ -559,7 +560,7 @@ namespace AFTests.AssetsTests
         public async void DeleteAssetExtendedInfo()
         {
             string deleteUrl = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfoDelete.Id;
-            var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, emptyDict, null, Method.DELETE);
+            var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetExtendedInfosManager.UpdateCacheAsync();
@@ -581,7 +582,7 @@ namespace AFTests.AssetsTests
         {
             string url = fixture.ApiEndpointNames["assetGroups"];
 
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             List<AssetGroupDTO> parsedResponse = JsonUtils.DeserializeJson<List<AssetGroupDTO>>(response.ResponseJson);
@@ -604,7 +605,7 @@ namespace AFTests.AssetsTests
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id;
 
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             AssetGroupDTO parsedResponse = JsonUtils.DeserializeJson<AssetGroupDTO>(response.ResponseJson);
@@ -623,7 +624,7 @@ namespace AFTests.AssetsTests
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id + "/asset-ids";
 
-            var response = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             List<string> parsedResponse = JsonUtils.DeserializeJson<List<string>>(response.ResponseJson);
@@ -642,7 +643,31 @@ namespace AFTests.AssetsTests
 
         }
 
-        //GetGroupAssetIDsAsync
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetGroups")]
+        [Trait("Category", "AssetGroupsGet")]
+        public async void GetAssetGroupClientIDs()
+        {
+            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id + "/client-ids";
+
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            List<string> parsedResponse = JsonUtils.DeserializeJson<List<string>>(response.ResponseJson);
+            Assert.NotNull(parsedResponse);
+
+            var entities = await fixture.AssetGroupsRepository.GetGroupClientIDsAsync(fixture.TestAssetGroup.Id);
+            List<string> assetIds = entities.Select(e => e.Id).ToList();
+
+            assetIds.Should().HaveSameCount(parsedResponse);
+
+            for (int i = 0; i < assetIds.Count; i++)
+            {
+                Assert.True(assetIds[i] == parsedResponse[i]);
+            }
+        }
+
         #endregion
     }
 }

@@ -65,9 +65,6 @@ namespace AssetsData.Fixtures
         private List<string> AssetCategoriesToDelete;
         private List<string> AssetExtendedInfosToDelete;
 
-        private Dictionary<string, string> emptyDict = new Dictionary<string, string>();
-        private Random random = new Random();
-
         private IContainer container;
 
         private ConfigBuilder _configBuilder;
@@ -98,7 +95,20 @@ namespace AssetsData.Fixtures
 
         private async Task prepareTestData()
         {
-            this.AssetsToDelete = new List<string>();
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<AssetEntity, AssetDTO>();
+                cfg.CreateMap<AssetDTO, AssetEntity>();
+                cfg.CreateMap<AssetCategoryEntity, AssetCategoryDTO>();
+                cfg.CreateMap<AssetCategoryDTO, AssetCategoryEntity>();
+                cfg.CreateMap<AssetExtendedInfosEntity, AssetExtendedInfoDTO>();
+                cfg.CreateMap<AssetExtendedInfoDTO, AssetExtendedInfosEntity>();
+                cfg.CreateMap<AssetGroupDTO, AssetGroupEntity>();
+                cfg.CreateMap<AssetGroupEntity, AssetGroupDTO>();
+
+            });
+
+                this.AssetsToDelete = new List<string>();
             this.AssetAtributesToDelete = new List<AssetAttributeIdentityDTO>();
             this.AssetCategoriesToDelete = new List<string>();
             this.AssetExtendedInfosToDelete = new List<string>();
@@ -161,12 +171,6 @@ namespace AssetsData.Fixtures
 
         public async Task<AssetDTO> CreateTestAsset(bool deleteWithDispose = true)
         {
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<AssetEntity, AssetDTO>();
-                cfg.CreateMap<AssetDTO, AssetEntity>();
-            });
-
             AssetDTO newAssetDTO = Mapper.Map<AssetDTO>(EnumerableUtils.PickRandom(AllAssetsFromDB));
 
             newAssetDTO.Id += "_AutoTest";
@@ -177,7 +181,7 @@ namespace AssetsData.Fixtures
             string createUrl = ApiEndpointNames["assets"];
             string createParam = JsonUtils.SerializeObject(newAssetDTO);
 
-            var response = await Consumer.ExecuteRequest(createUrl, emptyDict, createParam, Method.POST);
+            var response = await Consumer.ExecuteRequest(createUrl, Helpers.EmptyDictionary, createParam, Method.POST);
             if (response.Status != HttpStatusCode.Created)
             {
                 return null;
@@ -196,7 +200,7 @@ namespace AssetsData.Fixtures
             string deleteUrl = ApiEndpointNames["assets"] + "/" + id;
             string deleteParam = JsonUtils.SerializeObject(new { id = id });
 
-            var deleteResponse = await Consumer.ExecuteRequest(deleteUrl, emptyDict, deleteParam, Method.DELETE);
+            var deleteResponse = await Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, deleteParam, Method.DELETE);
             if (deleteResponse.Status != HttpStatusCode.NoContent)
             {
                 return false;
@@ -209,12 +213,12 @@ namespace AssetsData.Fixtures
             AssetAttributesEntity testAssetAttr = EnumerableUtils.PickRandom(AllAssetAttributesFromDB);
 
             string createUrl = ApiEndpointNames["assetAttributes"] + "/" + testAssetAttr.AssetId;
-            string newKey = testAssetAttr.Key + random.Next(1000,9999).ToString() + "_AutoTest";
-            string newValue = random.Next(1000, 9999).ToString() + "_autotest";
+            string newKey = testAssetAttr.Key + Helpers.Random.Next(1000,9999).ToString() + "_AutoTest";
+            string newValue = Helpers.Random.Next(1000, 9999).ToString() + "_autotest";
 
             AssetAttributeDTO createParameter = new AssetAttributeDTO() { Key = newKey, Value = newValue };
 
-            var response = await Consumer.ExecuteRequest(createUrl, emptyDict, JsonUtils.SerializeObject(createParameter), Method.POST);
+            var response = await Consumer.ExecuteRequest(createUrl, Helpers.EmptyDictionary, JsonUtils.SerializeObject(createParameter), Method.POST);
             if (response.Status != HttpStatusCode.Created)
             {
                 return null;
@@ -239,7 +243,7 @@ namespace AssetsData.Fixtures
         {
             string deleteUrl = ApiEndpointNames["assetAttributes"] + "/" + assetId + "/" + key;
 
-            var deleteResponse = await Consumer.ExecuteRequest(deleteUrl, emptyDict, null, Method.DELETE);
+            var deleteResponse = await Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             if (deleteResponse.Status != HttpStatusCode.NoContent)
             {
                 return false;
@@ -250,20 +254,14 @@ namespace AssetsData.Fixtures
 
         public async Task<AssetCategoryDTO> CreateTestAssetCategory(bool deleteWithDispose = true)
         {
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<AssetCategoryEntity, AssetCategoryDTO>();
-                cfg.CreateMap<AssetCategoryDTO, AssetCategoryEntity>();
-            });
-
             string url = ApiEndpointNames["assetCategories"];
 
             AssetCategoryDTO newCategory = Mapper.Map<AssetCategoryDTO>(EnumerableUtils.PickRandom(AllAssetCategoriesFromDB));
-            newCategory.Id += random.Next(1000,9999).ToString() +  "_AutoTest";
-            newCategory.Name += random.Next(1000, 9999).ToString() + "_AutoTest";
+            newCategory.Id += Helpers.Random.Next(1000,9999).ToString() +  "_AutoTest";
+            newCategory.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             string createParam = JsonUtils.SerializeObject(newCategory);
 
-            var response = await Consumer.ExecuteRequest(url, emptyDict, createParam, Method.POST);
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
             if (response.Status != HttpStatusCode.Created)
             {
                 return null;
@@ -280,7 +278,7 @@ namespace AssetsData.Fixtures
         public async Task<bool> DeleteTestAssetCategory(string id)
         {
             string deleteUrl = ApiEndpointNames["assetCategories"] + "/" + id;
-            var deleteResponse = await Consumer.ExecuteRequest(deleteUrl, emptyDict, null, Method.DELETE);
+            var deleteResponse = await Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
 
             if(deleteResponse.Status != HttpStatusCode.NoContent)
             {
@@ -293,18 +291,12 @@ namespace AssetsData.Fixtures
         {
             string url = ApiEndpointNames["assetExtendedInfos"];
 
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<AssetExtendedInfosEntity, AssetExtendedInfoDTO>();
-                cfg.CreateMap<AssetExtendedInfoDTO, AssetExtendedInfosEntity>();
-            });
-
             AssetExtendedInfoDTO newExtendedInfo = Mapper.Map<AssetExtendedInfoDTO>(EnumerableUtils.PickRandom(AllAssetExtendedInfosFromDB));
             newExtendedInfo.Id += "_AutoTest";
             newExtendedInfo.FullName += "_AutoTest";
             string createParam = JsonUtils.SerializeObject(newExtendedInfo);
 
-            var response = await Consumer.ExecuteRequest(url, emptyDict, createParam, Method.POST);
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
             if(response.Status != HttpStatusCode.Created)
             {
                 return null;
@@ -321,9 +313,43 @@ namespace AssetsData.Fixtures
         public async Task<bool> DeleteTestAssetExtendedInfo(string id)
         {
             string deleteUrl = ApiEndpointNames["assetExtendedInfos"] + "/" + id;
-            var deleteResponse = await Consumer.ExecuteRequest(deleteUrl, emptyDict, null, Method.DELETE);
+            var deleteResponse = await Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
 
             if (deleteResponse.Status != HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<AssetGroupDTO> CreateTestAssetGroup(bool deleteWithDispose)
+        {
+            string url = ApiEndpointNames["assetGroups"];
+
+            AssetGroupDTO newAssetGroup = Mapper.Map<AssetGroupDTO>(EnumerableUtils.PickRandom(AllAssetGroupsFromDB));
+            newAssetGroup.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+
+            string createParam = JsonUtils.SerializeObject(newAssetGroup);
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            if (response.Status != HttpStatusCode.Created)
+            {
+                return null;
+            }
+
+            if (deleteWithDispose)
+            {
+                //todo
+            }
+
+            return newAssetGroup;
+        }
+
+        public async Task<bool> DeleteTestAssetGroup(string name)
+        {
+            string deleteUrl = ApiEndpointNames["assetGroups"] + "/" + name;
+            var response = await Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
+
+            if (response.Status != HttpStatusCode.NoContent)
             {
                 return false;
             }

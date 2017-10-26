@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Xunit;
+using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.ApiV2;
 
@@ -18,7 +19,6 @@ namespace AFTests.ApiV2
     public class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>
     {
         private ApiV2TestDataFixture fixture;
-        private Dictionary<string, string> emptyDict = new Dictionary<string, string>();
 
         public ApiV2Tests(ApiV2TestDataFixture fixture)
         {
@@ -32,7 +32,7 @@ namespace AFTests.ApiV2
         public async void GetAllPledges()
         {
             string url = fixture.ApiEndpointNames["Pledges"];
-            var allResponse = await fixture.Consumer.ExecuteRequest(url, emptyDict, null, Method.GET);
+            var allResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(allResponse.Status == HttpStatusCode.OK);
             List<PledgeDTO> parsedResponseAll = JsonUtils.DeserializeJson<List<PledgeDTO>>(allResponse.ResponseJson);
             for (int i = 0; i < fixture.AllPledgesFromDB.Count; i++)
@@ -55,7 +55,7 @@ namespace AFTests.ApiV2
         {
             string getSingleUrl = fixture.ApiEndpointNames["Pledges"] + "/" + fixture.TestPledge.Id;
 
-            var singleResponse = await fixture.Consumer.ExecuteRequest(getSingleUrl, emptyDict, null, Method.GET);
+            var singleResponse = await fixture.Consumer.ExecuteRequest(getSingleUrl, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(singleResponse.Status == HttpStatusCode.OK);
             PledgeDTO parsedResponseSingle = JsonUtils.DeserializeJson<PledgeDTO>(singleResponse.ResponseJson);
             fixture.TestPledge.ShouldBeEquivalentTo(parsedResponseSingle, o => o
@@ -84,19 +84,17 @@ namespace AFTests.ApiV2
         [Trait("Category", "PledgesPut")]
         public async void UpdatePledge()
         {
-            Random random = new Random();
-
             PledgeDTO editPledge = new PledgeDTO()
             {
                 Id = fixture.TestPledgeUpdate.Id,
                 ClientId = fixture.TestClientId,
-                CO2Footprint = random.Next(100, 100000),
-                ClimatePositiveValue = random.Next(100, 100000)
+                CO2Footprint = Helpers.Random.Next(100, 100000),
+                ClimatePositiveValue = Helpers.Random.Next(100, 100000)
             };
 
             string editPledgeUrl = fixture.ApiEndpointNames["Pledges"];
             string editParam = JsonUtils.SerializeObject(editPledge);
-            var editResponse = await fixture.Consumer.ExecuteRequest(editPledgeUrl, emptyDict, editParam, Method.PUT);
+            var editResponse = await fixture.Consumer.ExecuteRequest(editPledgeUrl, Helpers.EmptyDictionary, editParam, Method.PUT);
             //Assert.True(editResponse.Status == HttpStatusCode.OK);
             PledgeDTO parsedEditResponse = JsonUtils.DeserializeJson<PledgeDTO>(editResponse.ResponseJson);
 
@@ -114,7 +112,7 @@ namespace AFTests.ApiV2
         {
             string deletePledgeUrl = fixture.ApiEndpointNames["Pledges"] + "/" + fixture.TestPledgeDelete.Id;
 
-            var deleteResponse = await fixture.Consumer.ExecuteRequest(deletePledgeUrl, emptyDict, null, Method.DELETE);
+            var deleteResponse = await fixture.Consumer.ExecuteRequest(deletePledgeUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
             PledgeEntity deletedPledgeEntity = (PledgeEntity)await fixture.PledgeRepository.TryGetAsync(fixture.TestPledgeDelete.Id);
