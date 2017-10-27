@@ -55,13 +55,17 @@ namespace AssetsData.Fixtures
         public AssetDTO TestAssetForGroupRelationDelete;
         public AssetGroupDTO TestGroupForClientRelationAdd;
         public AssetGroupDTO TestGroupForClientRelationDelete;
+        public string TestAccountId;
 
         public List<AssetPairEntity> AllAssetPairsFromDB;
         public AssetPairEntity TestAssetPair;
         public AssetPairDTO TestAssetPairUpdate;
         public AssetPairDTO TestAssetPairDelete;
 
-        public string TestAccountId;
+        public List<AssetSettingsEntity> AllAssetSettingsFromDB;
+        public AssetSettingsEntity TestAssetSettings;
+        public AssetSettingsDTO TestAssetSettingsUpdate;
+        public AssetSettingsDTO TestAssetSettingsDelete;
 
         public IDictionaryManager<IAsset> AssetManager;
         public IDictionaryManager<IAssetExtendedInfo> AssetExtendedInfosManager;
@@ -69,6 +73,7 @@ namespace AssetsData.Fixtures
         public IDictionaryManager<IAssetAttributes> AssetAttributesManager;
         public IDictionaryManager<IAssetGroup> AssetGroupsManager;
         public IDictionaryManager<IAssetPair> AssetPairManager;
+        public IDictionaryManager<IAssetSettings> AssetSettingsManager;
 
         public AssetAttributesRepository AssetAttributesRepository;
         public AssetGroupsRepository AssetGroupsRepository;
@@ -111,6 +116,7 @@ namespace AssetsData.Fixtures
             this.AssetAttributesRepository = (AssetAttributesRepository)this.container.Resolve<IDictionaryRepository<IAssetAttributes>>();
             this.AssetGroupsRepository = (AssetGroupsRepository)this.container.Resolve<IDictionaryRepository<IAssetGroup>>();
             this.AssetPairManager = RepositoryUtils.PrepareRepositoryManager<IAssetPair>(this.container);
+            this.AssetSettingsManager = RepositoryUtils.PrepareRepositoryManager<IAssetSettings>(this.container);
         }
 
         private async Task prepareTestData()
@@ -144,6 +150,7 @@ namespace AssetsData.Fixtures
             ApiEndpointNames["assetExtendedInfos"] = "/api/v2/asset-extended-infos";
             ApiEndpointNames["assetGroups"] = "/api/v2/asset-groups";
             ApiEndpointNames["assetPairs"] = "/api/v2/asset-pairs";
+            ApiEndpointNames["assetSettings"] = "/api/v2/asset-settings";
 
             var assetsFromDB = AssetManager.GetAllAsync();
             var AssetExtInfoFromDB = AssetExtendedInfosManager.GetAllAsync();
@@ -151,6 +158,7 @@ namespace AssetsData.Fixtures
             var assetsCatsFromDB = AssetCategoryManager.GetAllAsync();
             var assetsGroupsFromDB = AssetGroupsManager.GetAllAsync();
             var assetPairsFromDB = AssetPairManager.GetAllAsync();
+            var assetSettingsFromDB = AssetSettingsManager.GetAllAsync();
 
             this.AllAssetsFromDB = (await assetsFromDB).Cast<AssetEntity>().ToList();
             this.TestAsset = EnumerableUtils.PickRandom(AllAssetsFromDB);
@@ -189,6 +197,11 @@ namespace AssetsData.Fixtures
             this.TestGroupForClientRelationAdd = await CreateTestAssetGroup();
             this.TestGroupForClientRelationDelete = await CreateTestAssetGroup();
             this.TestAccountId = "AFT_Client1";
+
+            this.AllAssetSettingsFromDB = (await assetSettingsFromDB).Cast<AssetSettingsEntity>().ToList();
+            this.TestAssetSettings = EnumerableUtils.PickRandom(AllAssetSettingsFromDB);
+            //TestAssetSettingsUpdate
+            //TestAssetSettingsDelete
         }
 
         public void Dispose()

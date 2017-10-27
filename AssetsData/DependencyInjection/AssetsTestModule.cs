@@ -69,6 +69,13 @@ namespace AssetsData.DependencyInjection
 
             RepositoryUtils.RegisterDictionaryManager<IAssetPair>(builder);
 
+            builder.Register(c => new AssetSettingsRepository(
+                    new AzureTableStorage<AssetSettingsEntity>(
+                        _configBuilder.Config["DictionariesConnectionString"], "AssetSettings", null)))
+                .As<IDictionaryRepository<IAssetSettings>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IAssetSettings>(builder);
+
             base.Load(builder);
         }
     }
