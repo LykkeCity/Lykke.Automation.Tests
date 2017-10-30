@@ -12,6 +12,7 @@ using Xunit;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -161,7 +162,7 @@ namespace AFTests.AssetsTests
             else
                 url = disableUrl;
 
-            var responseAfter = await fixture.Consumer.ExecuteRequest(enableUrl, Helpers.EmptyDictionary, parameter, Method.POST);
+            var responseAfter = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, parameter, Method.POST);
             Assert.True(responseAfter.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetManager.UpdateCacheAsync();
@@ -906,7 +907,7 @@ namespace AFTests.AssetsTests
         #endregion
 
         #region Asset settings
-        [Fact(Skip="Test will fail due to mismatch in data types")]
+        [Fact(Skip = "Test will fail due to mismatch in data types")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetSettings")]
         [Trait("Category", "AssetSettingsGet")]
@@ -948,5 +949,78 @@ namespace AFTests.AssetsTests
         }
 
         #endregion
+
+        #region clients
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetClients")]
+        [Trait("Category", "AssetClientsGet")]
+        public async void GetClientAssetIDs()
+        {
+            string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/asset-ids";
+            Dictionary<string, string> queryParams = new Dictionary<string, string>();
+            queryParams["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString();
+
+            var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            List<string> parsedResponse = JsonUtils.DeserializeJson<List<string>>(response.ResponseJson);
+            parsedResponse.Should().HaveCount(1);
+            Assert.True(parsedResponse[0] == fixture.TestAssetForClientEndpoint.Id);
+
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetClients")]
+        [Trait("Category", "AssetClientsGet")]
+        public async void GetClientSwiftDepositOption()
+        {
+            string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/swift-deposit-enabled";
+            Dictionary<string, string> queryParams = new Dictionary<string, string>();
+            queryParams["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString();
+
+            var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            bool parsedResponse = JsonUtils.DeserializeJson<bool>(response.ResponseJson);
+            Assert.True(parsedResponse == fixture.TestGroupForClientEndpoint.SwiftDepositEnabled);
+
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetClients")]
+        [Trait("Category", "AssetClientsGet")]
+        public async void GetClientCashInBankOption()
+        {
+            string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/cash-in-via-bank-card-enabled";
+            Dictionary<string, string> queryParams = new Dictionary<string, string>();
+            queryParams["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString();
+
+            var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            bool parsedResponse = JsonUtils.DeserializeJson<bool>(response.ResponseJson);
+            Assert.True(parsedResponse == fixture.TestGroupForClientEndpoint.ClientsCanCashInViaBankCards);
+
+        }
+
+        #endregion
+
+        //[Fact]
+        //public async void CleanUp()
+        //{
+        //    var allAutoTestAssets = fixture.AllAssetsFromDB.Where(a => a.Id.EndsWith("_AutoTest")).ToList();
+        //    var allAutoTestAssetGroups = fixture.AllAssetGroupsFromDB.Where(a => a.Name.EndsWith("_AutoTest")).ToList();
+        //    var allAutoTestAssetPairs = fixture.AllAssetPairsFromDB.Where(a => a.Name.EndsWith("_AutoTest")).ToList();
+
+        //    List<Task<bool>> deleteTasks = new List<Task<bool>>();
+        //    foreach (var asset in allAutoTestAssets) { deleteTasks.Add(fixture.DeleteTestAsset(asset.Id)); }
+        //    foreach (var group in allAutoTestAssetGroups) { deleteTasks.Add(fixture.DeleteTestAssetGroup(group.Name)); }
+        //    foreach (var pair in allAutoTestAssetPairs) { deleteTasks.Add(fixture.DeleteTestAssetPair(pair.Id)); }
+
+        //    Task.WhenAll(deleteTasks).Wait();
+        //}
     }
 }

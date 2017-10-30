@@ -56,6 +56,9 @@ namespace AssetsData.Fixtures
         public AssetGroupDTO TestGroupForClientRelationAdd;
         public AssetGroupDTO TestGroupForClientRelationDelete;
         public string TestAccountId;
+        public AssetGroupDTO TestGroupForClientEndpoint;
+        public AssetDTO TestAssetForClientEndpoint;
+        public string TestAccountIdForClientEndpoint;
 
         public List<AssetPairEntity> AllAssetPairsFromDB;
         public AssetPairEntity TestAssetPair;
@@ -151,6 +154,7 @@ namespace AssetsData.Fixtures
             ApiEndpointNames["assetGroups"] = "/api/v2/asset-groups";
             ApiEndpointNames["assetPairs"] = "/api/v2/asset-pairs";
             ApiEndpointNames["assetSettings"] = "/api/v2/asset-settings";
+            ApiEndpointNames["assetClients"] = "/api/v2/clients";
 
             var assetsFromDB = AssetManager.GetAllAsync();
             var AssetExtInfoFromDB = AssetExtendedInfosManager.GetAllAsync();
@@ -163,32 +167,32 @@ namespace AssetsData.Fixtures
             this.AllAssetsFromDB = (await assetsFromDB).Cast<AssetEntity>().ToList();
             this.TestAsset = EnumerableUtils.PickRandom(AllAssetsFromDB);
             this.TestAssetUpdate = await CreateTestAsset();
-            this.TestAssetDelete = await CreateTestAsset(false);
+            this.TestAssetDelete = await CreateTestAsset();
 
             this.AllAssetExtendedInfosFromDB = (await AssetExtInfoFromDB).Cast<AssetExtendedInfosEntity>().ToList();
             this.TestAssetExtendedInfo = EnumerableUtils.PickRandom(AllAssetExtendedInfosFromDB);
             this.TestAssetExtendedInfoUpdate = await CreateTestAssetExtendedInfo();
-            this.TestAssetExtendedInfoDelete = await CreateTestAssetExtendedInfo(false);
+            this.TestAssetExtendedInfoDelete = await CreateTestAssetExtendedInfo();
 
             this.AllAssetAttributesFromDB = (await assetsAttrFromDB).Cast<AssetAttributesEntity>().ToList();
             this.TestAssetAttribute = EnumerableUtils.PickRandom(AllAssetAttributesFromDB);
             this.TestAssetAttributeUpdate = await CreateTestAssetAttribute();
-            this.TestAssetAttributeDelete = await CreateTestAssetAttribute(false);
+            this.TestAssetAttributeDelete = await CreateTestAssetAttribute();
 
             this.AllAssetCategoriesFromDB = (await assetsCatsFromDB).Cast<AssetCategoryEntity>().ToList();
             this.TestAssetCategory = EnumerableUtils.PickRandom(AllAssetCategoriesFromDB);
             this.TestAssetCategoryUpdate = await CreateTestAssetCategory();
-            this.TestAssetCategoryDelete = await CreateTestAssetCategory(false);
+            this.TestAssetCategoryDelete = await CreateTestAssetCategory();
 
             this.AllAssetGroupsFromDB = (await assetsGroupsFromDB).Cast<AssetGroupEntity>().ToList();
             this.TestAssetGroup = EnumerableUtils.PickRandom(AllAssetGroupsFromDB);
             this.TestAssetGroupUpdate = await CreateTestAssetGroup();
-            this.TestAssetGroupDelete = await CreateTestAssetGroup(false);
+            this.TestAssetGroupDelete = await CreateTestAssetGroup();
 
             this.AllAssetPairsFromDB = (await assetPairsFromDB).Cast<AssetPairEntity>().ToList();
             this.TestAssetPair = EnumerableUtils.PickRandom(AllAssetPairsFromDB);
             this.TestAssetPairUpdate = await CreateTestAssetPair();
-            this.TestAssetPairDelete = await CreateTestAssetPair(false);
+            this.TestAssetPairDelete = await CreateTestAssetPair();
 
             this.TestGroupForGroupRelationAdd = await CreateTestAssetGroup();
             this.TestAssetForGroupRelationAdd = await CreateTestAsset();
@@ -196,12 +200,21 @@ namespace AssetsData.Fixtures
             this.TestAssetForGroupRelationDelete = await CreateTestAsset();
             this.TestGroupForClientRelationAdd = await CreateTestAssetGroup();
             this.TestGroupForClientRelationDelete = await CreateTestAssetGroup();
-            this.TestAccountId = "AFT_Client1";
+            this.TestAccountId = "AFTest_Client1";
+
+            this.TestGroupForClientEndpoint = await CreateTestAssetGroup();
+            this.TestAssetForClientEndpoint = await CreateTestAsset();
+            this.TestAccountIdForClientEndpoint = "AFTest_Client2";
+            await AddClientToGroup(TestAccountIdForClientEndpoint, TestGroupForClientEndpoint.Name);
+            await AddAssetToGroup(TestAssetForClientEndpoint.Id, TestGroupForClientEndpoint.Name);
 
             this.AllAssetSettingsFromDB = (await assetSettingsFromDB).Cast<AssetSettingsEntity>().ToList();
             this.TestAssetSettings = EnumerableUtils.PickRandom(AllAssetSettingsFromDB);
             //TestAssetSettingsUpdate
             //TestAssetSettingsDelete
+
+
+
         }
 
         public void Dispose()
@@ -222,7 +235,7 @@ namespace AssetsData.Fixtures
 
         #region Create / Delete methods
 
-        public async Task<AssetDTO> CreateTestAsset(bool deleteWithDispose = true)
+        public async Task<AssetDTO> CreateTestAsset()
         {
             AssetDTO newAssetDTO = Mapper.Map<AssetDTO>(EnumerableUtils.PickRandom(AllAssetsFromDB));
 
@@ -240,10 +253,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            if (deleteWithDispose)
-            {
-                AssetsToDelete.Add(newAssetDTO.Id);
-            }
+            AssetsToDelete.Add(newAssetDTO.Id);
 
             return newAssetDTO;
         }
@@ -261,7 +271,7 @@ namespace AssetsData.Fixtures
             return true;
         }
 
-        public async Task<AssetAttributeIdentityDTO> CreateTestAssetAttribute(bool deleteWithDispose = true)
+        public async Task<AssetAttributeIdentityDTO> CreateTestAssetAttribute()
         {
             AssetAttributesEntity testAssetAttr = EnumerableUtils.PickRandom(AllAssetAttributesFromDB);
 
@@ -284,10 +294,7 @@ namespace AssetsData.Fixtures
                 Value = newValue
             };
 
-            if (deleteWithDispose)
-            {
-                this.AssetAtributesToDelete.Add(returnModel);
-            }
+            this.AssetAtributesToDelete.Add(returnModel);
 
             return returnModel;
         }
@@ -305,7 +312,7 @@ namespace AssetsData.Fixtures
             return true;
         }
 
-        public async Task<AssetCategoryDTO> CreateTestAssetCategory(bool deleteWithDispose = true)
+        public async Task<AssetCategoryDTO> CreateTestAssetCategory()
         {
             string url = ApiEndpointNames["assetCategories"];
 
@@ -320,10 +327,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            if (deleteWithDispose)
-            {
-                this.AssetCategoriesToDelete.Add(newCategory.Id);
-            }
+            this.AssetCategoriesToDelete.Add(newCategory.Id);
 
             return newCategory;
         }
@@ -355,10 +359,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            if (deleteWithDispose)
-            {
-                this.AssetExtendedInfosToDelete.Add(newExtendedInfo.Id);
-            }
+            this.AssetExtendedInfosToDelete.Add(newExtendedInfo.Id);
 
             return newExtendedInfo;
         }
@@ -375,7 +376,7 @@ namespace AssetsData.Fixtures
             return true;
         }
 
-        public async Task<AssetGroupDTO> CreateTestAssetGroup(bool deleteWithDispose = true)
+        public async Task<AssetGroupDTO> CreateTestAssetGroup()
         {
             string url = ApiEndpointNames["assetGroups"];
 
@@ -389,12 +390,23 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            if (deleteWithDispose)
-            {
-                AssetGroupsToDelete.Add(newAssetGroup.Name);
-            }
+            AssetGroupsToDelete.Add(newAssetGroup.Name);
 
             return newAssetGroup;
+        }
+
+        public async Task<bool> AddClientToGroup(string clientId, string groupName)
+        {
+            string url = ApiEndpointNames["assetGroups"] + "/" + groupName + "/clients/" + clientId;
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
+            return response.Status == HttpStatusCode.NoContent;
+        }
+
+        public async Task<bool> AddAssetToGroup(string assetId, string groupName)
+        {
+            string url = ApiEndpointNames["assetGroups"] + "/" + groupName + "/assets/" + assetId;
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
+            return response.Status == HttpStatusCode.NoContent;
         }
 
         public async Task<bool> DeleteTestAssetGroup(string name)
@@ -409,7 +421,7 @@ namespace AssetsData.Fixtures
             return true;
         }
 
-        public async Task<AssetPairDTO> CreateTestAssetPair(bool deleteWithDispose = true)
+        public async Task<AssetPairDTO> CreateTestAssetPair()
         {
             string url = ApiEndpointNames["assetPairs"];
             AssetPairEntity templateEntity = EnumerableUtils.PickRandom(AllAssetPairsFromDB);
@@ -426,10 +438,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            if (deleteWithDispose)
-            {
-                AssetPairsToDelete.Add(createDTO.Id);
-            }
+            AssetPairsToDelete.Add(createDTO.Id);
 
             return createDTO;
         }
