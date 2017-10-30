@@ -83,6 +83,13 @@ namespace AssetsData.DependencyInjection
 
             RepositoryUtils.RegisterDictionaryManager<IAssetIssuers>(builder);
 
+            builder.Register(c => new MarginAssetPairsRepository(
+                    new AzureTableStorage<MarginAssetPairsEntity>(
+                        _configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
+                .As<IDictionaryRepository<IMarginAssetPairs>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IMarginAssetPairs>(builder);
+
             base.Load(builder);
         }
     }

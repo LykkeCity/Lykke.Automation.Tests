@@ -26,6 +26,8 @@ namespace AssetsData.Fixtures
                 cfg.CreateMap<AssetGroupEntity, AssetGroupDTO>();
                 cfg.CreateMap<AssetPairDTO, AssetPairEntity>();
                 cfg.CreateMap<AssetPairEntity, AssetPairDTO>();
+                cfg.CreateMap<AssetIssuerDTO, AssetIssuersEntity>();
+                cfg.CreateMap<AssetIssuersEntity, AssetIssuerDTO>();
 
             });
 
@@ -35,6 +37,7 @@ namespace AssetsData.Fixtures
             this.AssetExtendedInfosToDelete = new List<string>();
             this.AssetGroupsToDelete = new List<string>();
             this.AssetPairsToDelete = new List<string>();
+            this.AssetIssuersToDelete = new List<string>();
 
             this.ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["assets"] = "/api/v2/assets";
@@ -47,6 +50,7 @@ namespace AssetsData.Fixtures
             ApiEndpointNames["assetClients"] = "/api/v2/clients";
             ApiEndpointNames["assetIsAlive"] = "/api/IsAlive";
             ApiEndpointNames["assetIssuers"] = "/api/v2/issuers";
+            ApiEndpointNames["marginAssetPairs"] = "/api/v2/margin-asset-pairs";
 
             var assetsFromDB = AssetManager.GetAllAsync();
             var AssetExtInfoFromDB = AssetExtendedInfosManager.GetAllAsync();
@@ -56,6 +60,7 @@ namespace AssetsData.Fixtures
             var assetPairsFromDB = AssetPairManager.GetAllAsync();
             var assetSettingsFromDB = AssetSettingsManager.GetAllAsync();
             var assetIssuersFromDB = AssetIssuersManager.GetAllAsync();
+            var marginAssetPairsFromDB = MarginAssetPairManager.GetAllAsync();
 
             this.AllAssetsFromDB = (await assetsFromDB).Cast<AssetEntity>().ToList();
             this.TestAsset = EnumerableUtils.PickRandom(AllAssetsFromDB);
@@ -107,7 +112,12 @@ namespace AssetsData.Fixtures
             //TestAssetSettingsDelete
 
             this.AllAssetIssuersFromDB = (await assetIssuersFromDB).Cast<AssetIssuersEntity>().ToList();
+            this.TestAssetIssuer = EnumerableUtils.PickRandom(AllAssetIssuersFromDB);
+            this.TestAssetIssuerUpdate = await CreateTestAssetIssuer();
+            this.TestAssetIssuerDelete = await CreateTestAssetIssuer();
 
+            this.AllMarginAssetPairsFromDB = (await marginAssetPairsFromDB).Cast<MarginAssetPairsEntity>().ToList();
+            this.TestMarginAssetPair = EnumerableUtils.PickRandom(AllMarginAssetPairsFromDB);
         }
     }
 }

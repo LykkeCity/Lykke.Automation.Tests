@@ -57,6 +57,12 @@ namespace AssetsData.Fixtures
         public AssetSettingsDTO TestAssetSettingsDelete;
 
         public List<AssetIssuersEntity> AllAssetIssuersFromDB;
+        public AssetIssuersEntity TestAssetIssuer;
+        public AssetIssuerDTO TestAssetIssuerUpdate;
+        public AssetIssuerDTO TestAssetIssuerDelete;
+
+        public List<MarginAssetPairsEntity> AllMarginAssetPairsFromDB;
+        public MarginAssetPairsEntity TestMarginAssetPair;
 
         public IDictionaryManager<IAsset> AssetManager;
         public IDictionaryManager<IAssetExtendedInfo> AssetExtendedInfosManager;
@@ -66,6 +72,7 @@ namespace AssetsData.Fixtures
         public IDictionaryManager<IAssetPair> AssetPairManager;
         public IDictionaryManager<IAssetSettings> AssetSettingsManager;
         public IDictionaryManager<IAssetIssuers> AssetIssuersManager;
+        public IDictionaryManager<IMarginAssetPairs> MarginAssetPairManager;
         public AssetAttributesRepository AssetAttributesRepository;
         public AssetGroupsRepository AssetGroupsRepository;
 
@@ -75,5 +82,6 @@ namespace AssetsData.Fixtures
         private List<string> AssetExtendedInfosToDelete;
         private List<string> AssetGroupsToDelete;
         private List<string> AssetPairsToDelete;
+        private List<string> AssetIssuersToDelete;
     }
 }

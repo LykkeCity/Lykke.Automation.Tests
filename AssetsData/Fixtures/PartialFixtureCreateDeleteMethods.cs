@@ -232,5 +232,39 @@ namespace AssetsData.Fixtures
             }
             return true;
         }
+
+        public async Task<AssetIssuerDTO> CreateTestAssetIssuer()
+        {
+            string url = ApiEndpointNames["assetIssuers"];
+            AssetIssuersEntity templateEntity = EnumerableUtils.PickRandom(AllAssetIssuersFromDB);
+            AssetIssuerDTO createDTO = Mapper.Map<AssetIssuerDTO>(templateEntity);
+
+            createDTO.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            createDTO.IconUrl += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            createDTO.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            string createParam = JsonUtils.SerializeObject(createDTO);
+
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            if (response.Status != HttpStatusCode.Created)
+            {
+                return null;
+            }
+
+            AssetIssuersToDelete.Add(createDTO.Id);
+
+            return createDTO;
+        }
+
+        public async Task<bool> DeleteTestAssetIssuer(string id)
+        {
+            string url = ApiEndpointNames["assetIssuers"] + "/" + id;
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+
+            if (response.Status != HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

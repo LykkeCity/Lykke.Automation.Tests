@@ -1,6 +1,9 @@
 ﻿using AssetsData.Fixtures;
 using RestSharp;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 using XUnitTestCommon;
 
@@ -40,11 +43,14 @@ namespace AFTests.AssetsTests
         //    var allAutoTestAssets = fixture.AllAssetsFromDB.Where(a => a.Id.EndsWith("_AutoTest")).ToList();
         //    var allAutoTestAssetGroups = fixture.AllAssetGroupsFromDB.Where(a => a.Name.EndsWith("_AutoTest")).ToList();
         //    var allAutoTestAssetPairs = fixture.AllAssetPairsFromDB.Where(a => a.Name.EndsWith("_AutoTest")).ToList();
+        //    var allAutoTestIssuers = fixture.AllAssetIssuersFromDB.Where(a => a.Id.EndsWith("_AutoTest")).ToList();
+
 
         //    List<Task<bool>> deleteTasks = new List<Task<bool>>();
         //    foreach (var asset in allAutoTestAssets) { deleteTasks.Add(fixture.DeleteTestAsset(asset.Id)); }
         //    foreach (var group in allAutoTestAssetGroups) { deleteTasks.Add(fixture.DeleteTestAssetGroup(group.Name)); }
         //    foreach (var pair in allAutoTestAssetPairs) { deleteTasks.Add(fixture.DeleteTestAssetPair(pair.Id)); }
+        //    foreach (var issuer in allAutoTestIssuers) { deleteTasks.Add(fixture.DeleteTestAssetIssuer(issuer.Id)); }
 
         //    Task.WhenAll(deleteTasks).Wait();
         //}
