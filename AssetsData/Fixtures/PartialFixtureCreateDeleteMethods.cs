@@ -303,5 +303,76 @@ namespace AssetsData.Fixtures
             }
             return true;
         }
+
+        public async Task<MarginAssetDTO> CreateTestMarginAsset()
+        {
+            string url = ApiEndpointNames["marginAssets"];
+            MarginAssetEntity templateEntity = EnumerableUtils.PickRandom(AllMarginAssetsFromDB);
+            MarginAssetDTO createDTO = Mapper.Map<MarginAssetDTO>(templateEntity);
+
+            createDTO.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            createDTO.IdIssuer += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            createDTO.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            createDTO.Accuracy = Helpers.Random.Next(2, 8);
+            createDTO.DustLimit = Helpers.Random.NextDouble();
+            createDTO.Multiplier = Helpers.Random.NextDouble();
+            string createParam = JsonUtils.SerializeObject(createDTO);
+
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            if (response.Status != HttpStatusCode.Created)
+            {
+                return null;
+            }
+
+            MarginAssetsToDelete.Add(createDTO.Id);
+
+            return createDTO;
+        }
+
+        public async Task<bool> DeleteTestMarginAsset(string id)
+        {
+            string url = ApiEndpointNames["marginAssets"] + "/" + id;
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+
+            if (response.Status != HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<MarginIssuerDTO> CreateTestMarginIssuer()
+        {
+            string url = ApiEndpointNames["marginIssuers"];
+            MarginIssuerEntity templateEntity = EnumerableUtils.PickRandom(AllMarginIssuersFromDB);
+            MarginIssuerDTO createDTO = Mapper.Map<MarginIssuerDTO>(templateEntity);
+
+            createDTO.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            createDTO.IconUrl += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            createDTO.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            string createParam = JsonUtils.SerializeObject(createDTO);
+
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            if (response.Status != HttpStatusCode.OK) //HttpStatusCode.Created
+            {
+                return null;
+            }
+
+            MarginIssuersToDelete.Add(createDTO.Id);
+
+            return createDTO;
+        }
+
+        public async Task<bool> DeleteTestMarginIssuer(string id)
+        {
+            string url = ApiEndpointNames["marginIssuers"] + "/" + id;
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+
+            if (response.Status != HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

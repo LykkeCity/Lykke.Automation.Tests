@@ -66,6 +66,16 @@ namespace AssetsData.Fixtures
         public MarginAssetPairDTO TestMarginAssetPairUpdate;
         public MarginAssetPairDTO TestMarginAssetPairDelete;
 
+        public List<MarginAssetEntity> AllMarginAssetsFromDB;
+        public MarginAssetEntity TestMarginAsset;
+        public MarginAssetDTO TestMarginAssetUpdate;
+        public MarginAssetDTO TestMarginAssetDelete;
+
+        public List<MarginIssuerEntity> AllMarginIssuersFromDB;
+        public MarginIssuerEntity TestMarginIssuer;
+        public MarginIssuerDTO TestMarginIssuerUpdate;
+        public MarginIssuerDTO TestMarginIssuerDelete;
+
         public IDictionaryManager<IAsset> AssetManager;
         public IDictionaryManager<IAssetExtendedInfo> AssetExtendedInfosManager;
         public IDictionaryManager<IAssetCategory> AssetCategoryManager;
@@ -75,6 +85,8 @@ namespace AssetsData.Fixtures
         public IDictionaryManager<IAssetSettings> AssetSettingsManager;
         public IDictionaryManager<IAssetIssuers> AssetIssuersManager;
         public IDictionaryManager<IMarginAssetPairs> MarginAssetPairManager;
+        public IDictionaryManager<IMarginAsset> MarginAssetManager;
+        public IDictionaryManager<IMarginIssuer> MarginIssuerManager;
         public AssetAttributesRepository AssetAttributesRepository;
         public AssetGroupsRepository AssetGroupsRepository;
 
@@ -86,5 +98,7 @@ namespace AssetsData.Fixtures
         private List<string> AssetPairsToDelete;
         private List<string> AssetIssuersToDelete;
         private List<string> MarginAssetPairsToDelete;
+        private List<string> MarginAssetsToDelete;
+        private List<string> MarginIssuersToDelete;
     }
 }

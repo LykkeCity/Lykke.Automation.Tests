@@ -48,6 +48,8 @@ namespace AssetsData.Fixtures
             this.AssetSettingsManager = RepositoryUtils.PrepareRepositoryManager<IAssetSettings>(this.container);
             this.AssetIssuersManager = RepositoryUtils.PrepareRepositoryManager<IAssetIssuers>(this.container);
             this.MarginAssetPairManager = RepositoryUtils.PrepareRepositoryManager<IMarginAssetPairs>(this.container);
+            this.MarginAssetManager = RepositoryUtils.PrepareRepositoryManager<IMarginAsset>(this.container);
+            this.MarginIssuerManager = RepositoryUtils.PrepareRepositoryManager<IMarginIssuer>(this.container);
         }
 
         public void Dispose()
@@ -62,6 +64,8 @@ namespace AssetsData.Fixtures
             foreach (string pairId in AssetPairsToDelete) { deleteTasks.Add(DeleteTestAssetPair(pairId)); }
             foreach (string issuerId in AssetIssuersToDelete) { deleteTasks.Add(DeleteTestAssetIssuer(issuerId)); }
             foreach (string pairId in MarginAssetPairsToDelete) { deleteTasks.Add(DeleteTestMarginAssetPair(pairId)); }
+            foreach (string assetId in MarginAssetsToDelete) { deleteTasks.Add(DeleteTestMarginAsset(assetId)); }
+            foreach (string issuerId in MarginIssuersToDelete) { deleteTasks.Add(DeleteTestMarginIssuer(issuerId)); }
 
             Task.WhenAll(deleteTasks).Wait();
         }
