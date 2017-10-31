@@ -28,6 +28,8 @@ namespace AssetsData.Fixtures
                 cfg.CreateMap<AssetPairEntity, AssetPairDTO>();
                 cfg.CreateMap<AssetIssuerDTO, AssetIssuersEntity>();
                 cfg.CreateMap<AssetIssuersEntity, AssetIssuerDTO>();
+                cfg.CreateMap<MarginAssetPairDTO, MarginAssetPairsEntity>();
+                cfg.CreateMap<MarginAssetPairsEntity, MarginAssetPairDTO>();
 
             });
 
@@ -38,6 +40,7 @@ namespace AssetsData.Fixtures
             this.AssetGroupsToDelete = new List<string>();
             this.AssetPairsToDelete = new List<string>();
             this.AssetIssuersToDelete = new List<string>();
+            this.MarginAssetPairsToDelete = new List<string>();
 
             this.ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["assets"] = "/api/v2/assets";
@@ -118,6 +121,8 @@ namespace AssetsData.Fixtures
 
             this.AllMarginAssetPairsFromDB = (await marginAssetPairsFromDB).Cast<MarginAssetPairsEntity>().ToList();
             this.TestMarginAssetPair = EnumerableUtils.PickRandom(AllMarginAssetPairsFromDB);
+            this.TestMarginAssetPairUpdate = await CreateTestMarginAssetPair();
+            this.TestMarginAssetPairDelete = await CreateTestMarginAssetPair();
         }
     }
 }

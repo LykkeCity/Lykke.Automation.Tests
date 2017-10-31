@@ -63,6 +63,8 @@ namespace AssetsData.Fixtures
 
         public List<MarginAssetPairsEntity> AllMarginAssetPairsFromDB;
         public MarginAssetPairsEntity TestMarginAssetPair;
+        public MarginAssetPairDTO TestMarginAssetPairUpdate;
+        public MarginAssetPairDTO TestMarginAssetPairDelete;
 
         public IDictionaryManager<IAsset> AssetManager;
         public IDictionaryManager<IAssetExtendedInfo> AssetExtendedInfosManager;
@@ -83,5 +85,6 @@ namespace AssetsData.Fixtures
         private List<string> AssetGroupsToDelete;
         private List<string> AssetPairsToDelete;
         private List<string> AssetIssuersToDelete;
+        private List<string> MarginAssetPairsToDelete;
     }
 }
