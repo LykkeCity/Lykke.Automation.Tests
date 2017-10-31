@@ -104,6 +104,11 @@ namespace AssetsData.DependencyInjection
 
             RepositoryUtils.RegisterDictionaryManager<IMarginIssuer>(builder);
 
+            builder.Register(c => new WatchListRepository(
+                    new AzureTableStorage<WatchListEntity>(
+                        _configBuilder.Config["DictionariesConnectionString"], "WatchLists", null)))
+                .As<IDictionaryRepository<IWatchList>>();
+
             base.Load(builder);
         }
     }

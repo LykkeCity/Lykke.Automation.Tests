@@ -76,6 +76,12 @@ namespace AssetsData.Fixtures
         public MarginIssuerDTO TestMarginIssuerUpdate;
         public MarginIssuerDTO TestMarginIssuerDelete;
 
+        public List<WatchListEntity> AllWatchListsFromDB;
+        public List<WatchListEntity> AllWatchListsFromDBPredefined;
+        public WatchListEntity TestWatchListPredefined;
+
+        public List<WatchListEntity> AllWatchListsFromDBCustom;
+
         public IDictionaryManager<IAsset> AssetManager;
         public IDictionaryManager<IAssetExtendedInfo> AssetExtendedInfosManager;
         public IDictionaryManager<IAssetCategory> AssetCategoryManager;
@@ -89,6 +95,7 @@ namespace AssetsData.Fixtures
         public IDictionaryManager<IMarginIssuer> MarginIssuerManager;
         public AssetAttributesRepository AssetAttributesRepository;
         public AssetGroupsRepository AssetGroupsRepository;
+        public WatchListRepository WatchListRepository;
 
         private List<string> AssetsToDelete;
         private List<AssetAttributeIdentityDTO> AssetAtributesToDelete;

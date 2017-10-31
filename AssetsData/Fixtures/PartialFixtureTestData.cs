@@ -34,6 +34,8 @@ namespace AssetsData.Fixtures
                 cfg.CreateMap<MarginAssetEntity, MarginAssetDTO>();
                 cfg.CreateMap<MarginIssuerDTO, MarginIssuerEntity>();
                 cfg.CreateMap<MarginIssuerEntity, MarginIssuerDTO>();
+                cfg.CreateMap<WatchListDTO, WatchListEntity>();
+                cfg.CreateMap<WatchListEntity, WatchListDTO>();
 
             });
 
@@ -62,6 +64,7 @@ namespace AssetsData.Fixtures
             ApiEndpointNames["marginAssetPairs"] = "/api/v2/margin-asset-pairs";
             ApiEndpointNames["marginAssets"] = "/api/v2/margin-assets";
             ApiEndpointNames["marginIssuers"] = "/api/v2/margin-issuers";
+            ApiEndpointNames["watchList"] = "/api/v2/watch-lists";
 
             var assetsFromDB = AssetManager.GetAllAsync();
             var AssetExtInfoFromDB = AssetExtendedInfosManager.GetAllAsync();
@@ -74,6 +77,7 @@ namespace AssetsData.Fixtures
             var marginAssetPairsFromDB = MarginAssetPairManager.GetAllAsync();
             var marginAssetsFromDB = MarginAssetManager.GetAllAsync();
             var marginIssuersFromDB = MarginIssuerManager.GetAllAsync();
+            var watchListsFromDB = WatchListRepository.GetAllAsync();
 
             this.AllAssetsFromDB = (await assetsFromDB).Cast<AssetEntity>().ToList();
             this.TestAsset = EnumerableUtils.PickRandom(AllAssetsFromDB);
@@ -143,6 +147,12 @@ namespace AssetsData.Fixtures
             this.TestMarginIssuer = EnumerableUtils.PickRandom(AllMarginIssuersFromDB);
             this.TestMarginIssuerUpdate = await CreateTestMarginIssuer();
             this.TestMarginIssuerDelete = await CreateTestMarginIssuer();
+
+            this.AllWatchListsFromDB = (await watchListsFromDB).Cast<WatchListEntity>().ToList();
+            this.AllWatchListsFromDBPredefined = AllWatchListsFromDB.Where(e => e.PartitionKey == "PublicWatchList").ToList();
+            this.TestWatchListPredefined = EnumerableUtils.PickRandom(AllWatchListsFromDBPredefined);
+
+            this.AllWatchListsFromDBCustom = AllWatchListsFromDB.Where(e => e.PartitionKey != "PublicWatchList").ToList();
         }
     }
 }

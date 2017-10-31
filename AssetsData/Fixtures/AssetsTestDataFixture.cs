@@ -50,6 +50,7 @@ namespace AssetsData.Fixtures
             this.MarginAssetPairManager = RepositoryUtils.PrepareRepositoryManager<IMarginAssetPairs>(this.container);
             this.MarginAssetManager = RepositoryUtils.PrepareRepositoryManager<IMarginAsset>(this.container);
             this.MarginIssuerManager = RepositoryUtils.PrepareRepositoryManager<IMarginIssuer>(this.container);
+            this.WatchListRepository = (WatchListRepository)this.container.Resolve<IDictionaryRepository<IWatchList>>();
         }
 
         public void Dispose()
