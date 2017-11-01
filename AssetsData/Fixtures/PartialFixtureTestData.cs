@@ -14,7 +14,7 @@ namespace AssetsData.Fixtures
     {
         private async Task prepareTestData()
         {
-            Mapper.Initialize(cfg =>
+            MapperConfiguration config = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<AssetEntity, AssetDTO>();
                 cfg.CreateMap<AssetDTO, AssetEntity>();
@@ -39,6 +39,8 @@ namespace AssetsData.Fixtures
 
             });
 
+            this.mapper = config.CreateMapper();
+
             this.AssetsToDelete = new List<string>();
             this.AssetAtributesToDelete = new List<AssetAttributeIdentityDTO>();
             this.AssetCategoriesToDelete = new List<string>();
@@ -49,6 +51,7 @@ namespace AssetsData.Fixtures
             this.MarginAssetPairsToDelete = new List<string>();
             this.MarginAssetsToDelete = new List<string>();
             this.MarginIssuersToDelete = new List<string>();
+            this.WatchListsToDelete = new Dictionary<string, string>();
 
             this.ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["assets"] = "/api/v2/assets";
@@ -151,8 +154,13 @@ namespace AssetsData.Fixtures
             this.AllWatchListsFromDB = (await watchListsFromDB).Cast<WatchListEntity>().ToList();
             this.AllWatchListsFromDBPredefined = AllWatchListsFromDB.Where(e => e.PartitionKey == "PublicWatchList").ToList();
             this.TestWatchListPredefined = EnumerableUtils.PickRandom(AllWatchListsFromDBPredefined);
+            this.TestWatchListPredefinedUpdate = await CreateTestWatchList();
+            this.TestWatchListPredefinedDelete = await CreateTestWatchList();
 
             this.AllWatchListsFromDBCustom = AllWatchListsFromDB.Where(e => e.PartitionKey != "PublicWatchList").ToList();
+            this.TestWatchListCustom = EnumerableUtils.PickRandom(AllWatchListsFromDBCustom);
+            this.TestWatchListCustomUpdate = await CreateTestWatchList(TestAccountId);
+            this.TestWatchListCustomDelete = await CreateTestWatchList(TestAccountId);
         }
     }
 }

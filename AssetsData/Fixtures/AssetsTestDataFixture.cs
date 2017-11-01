@@ -10,6 +10,7 @@ using XUnitTestData.Repositories.Assets;
 using XUnitTestData.Domains;
 using XUnitTestCommon.Utils;
 using AssetsData.DTOs.Assets;
+using AutoMapper;
 
 namespace AssetsData.Fixtures
 {
@@ -18,6 +19,7 @@ namespace AssetsData.Fixtures
         public ApiConsumer Consumer;
         public Dictionary<string, string> ApiEndpointNames;
 
+        private IMapper mapper;
         private IContainer container;
 
         private ConfigBuilder _configBuilder;
@@ -67,6 +69,7 @@ namespace AssetsData.Fixtures
             foreach (string pairId in MarginAssetPairsToDelete) { deleteTasks.Add(DeleteTestMarginAssetPair(pairId)); }
             foreach (string assetId in MarginAssetsToDelete) { deleteTasks.Add(DeleteTestMarginAsset(assetId)); }
             foreach (string issuerId in MarginIssuersToDelete) { deleteTasks.Add(DeleteTestMarginIssuer(issuerId)); }
+            foreach (KeyValuePair<string, string> watchListIDs in WatchListsToDelete) { deleteTasks.Add(DeleteTestWatchList(watchListIDs)); }
 
             Task.WhenAll(deleteTasks).Wait();
         }

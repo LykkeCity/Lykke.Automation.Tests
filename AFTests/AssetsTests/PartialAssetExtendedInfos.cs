@@ -32,7 +32,7 @@ namespace AFTests.AssetsTests
             for (int i = 0; i < fixture.AllAssetExtendedInfosFromDB.Count; i++)
             {
                 fixture.AllAssetExtendedInfosFromDB[i].ShouldBeEquivalentTo(
-                    parsedResponse.Where(a => a.Id == fixture.AllAssetExtendedInfosFromDB[i].Id)
+                    parsedResponse.Where(a => a.Id == fixture.AllAssetExtendedInfosFromDB[i].Id).FirstOrDefault()
                     , o => o.ExcludingMissingMembers());
             }
         }

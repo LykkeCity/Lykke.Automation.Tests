@@ -8,6 +8,7 @@ using AssetsData.DTOs;
 using RestSharp;
 using System.Net;
 using AssetsData.DTOs.Assets;
+using System.Collections.Generic;
 
 namespace AssetsData.Fixtures
 {
@@ -15,7 +16,7 @@ namespace AssetsData.Fixtures
     {
         public async Task<AssetDTO> CreateTestAsset()
         {
-            AssetDTO newAssetDTO = Mapper.Map<AssetDTO>(EnumerableUtils.PickRandom(AllAssetsFromDB));
+            AssetDTO newAssetDTO = this.mapper.Map<AssetDTO>(EnumerableUtils.PickRandom(AllAssetsFromDB));
 
             newAssetDTO.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             newAssetDTO.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
@@ -94,7 +95,7 @@ namespace AssetsData.Fixtures
         {
             string url = ApiEndpointNames["assetCategories"];
 
-            AssetCategoryDTO newCategory = Mapper.Map<AssetCategoryDTO>(EnumerableUtils.PickRandom(AllAssetCategoriesFromDB));
+            AssetCategoryDTO newCategory = this.mapper.Map<AssetCategoryDTO>(EnumerableUtils.PickRandom(AllAssetCategoriesFromDB));
             newCategory.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             newCategory.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             string createParam = JsonUtils.SerializeObject(newCategory);
@@ -126,7 +127,7 @@ namespace AssetsData.Fixtures
         {
             string url = ApiEndpointNames["assetExtendedInfos"];
 
-            AssetExtendedInfoDTO newExtendedInfo = Mapper.Map<AssetExtendedInfoDTO>(EnumerableUtils.PickRandom(AllAssetExtendedInfosFromDB));
+            AssetExtendedInfoDTO newExtendedInfo = this.mapper.Map<AssetExtendedInfoDTO>(EnumerableUtils.PickRandom(AllAssetExtendedInfosFromDB));
             newExtendedInfo.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             newExtendedInfo.FullName += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             string createParam = JsonUtils.SerializeObject(newExtendedInfo);
@@ -158,7 +159,7 @@ namespace AssetsData.Fixtures
         {
             string url = ApiEndpointNames["assetGroups"];
 
-            AssetGroupDTO newAssetGroup = Mapper.Map<AssetGroupDTO>(EnumerableUtils.PickRandom(AllAssetGroupsFromDB));
+            AssetGroupDTO newAssetGroup = this.mapper.Map<AssetGroupDTO>(EnumerableUtils.PickRandom(AllAssetGroupsFromDB));
             newAssetGroup.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
 
             string createParam = JsonUtils.SerializeObject(newAssetGroup);
@@ -203,7 +204,7 @@ namespace AssetsData.Fixtures
         {
             string url = ApiEndpointNames["assetPairs"];
             AssetPairEntity templateEntity = EnumerableUtils.PickRandom(AllAssetPairsFromDB);
-            AssetPairDTO createDTO = Mapper.Map<AssetPairDTO>(templateEntity);
+            AssetPairDTO createDTO = this.mapper.Map<AssetPairDTO>(templateEntity);
 
             createDTO.Id = templateEntity.Id + Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             createDTO.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
@@ -237,7 +238,7 @@ namespace AssetsData.Fixtures
         {
             string url = ApiEndpointNames["assetIssuers"];
             AssetIssuersEntity templateEntity = EnumerableUtils.PickRandom(AllAssetIssuersFromDB);
-            AssetIssuerDTO createDTO = Mapper.Map<AssetIssuerDTO>(templateEntity);
+            AssetIssuerDTO createDTO = this.mapper.Map<AssetIssuerDTO>(templateEntity);
 
             createDTO.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             createDTO.IconUrl += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
@@ -271,7 +272,7 @@ namespace AssetsData.Fixtures
         {
             string url = ApiEndpointNames["marginAssetPairs"];
             MarginAssetPairsEntity templateEntity = EnumerableUtils.PickRandom(AllMarginAssetPairsFromDB);
-            MarginAssetPairDTO createDTO = Mapper.Map<MarginAssetPairDTO>(templateEntity);
+            MarginAssetPairDTO createDTO = this.mapper.Map<MarginAssetPairDTO>(templateEntity);
 
             createDTO.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             createDTO.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
@@ -308,7 +309,7 @@ namespace AssetsData.Fixtures
         {
             string url = ApiEndpointNames["marginAssets"];
             MarginAssetEntity templateEntity = EnumerableUtils.PickRandom(AllMarginAssetsFromDB);
-            MarginAssetDTO createDTO = Mapper.Map<MarginAssetDTO>(templateEntity);
+            MarginAssetDTO createDTO = this.mapper.Map<MarginAssetDTO>(templateEntity);
 
             createDTO.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             createDTO.IdIssuer += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
@@ -345,7 +346,7 @@ namespace AssetsData.Fixtures
         {
             string url = ApiEndpointNames["marginIssuers"];
             MarginIssuerEntity templateEntity = EnumerableUtils.PickRandom(AllMarginIssuersFromDB);
-            MarginIssuerDTO createDTO = Mapper.Map<MarginIssuerDTO>(templateEntity);
+            MarginIssuerDTO createDTO = this.mapper.Map<MarginIssuerDTO>(templateEntity);
 
             createDTO.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             createDTO.IconUrl += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
@@ -372,6 +373,76 @@ namespace AssetsData.Fixtures
             {
                 return false;
             }
+            return true;
+        }
+
+        public async Task<WatchListDTO> CreateTestWatchList(string clientId = null)
+        {
+            string url = ApiEndpointNames["watchList"];
+            Dictionary<string, string> queryParams = new Dictionary<string, string>();
+            bool readOnlyValue = true;
+            if (clientId == null)
+            {
+                url += "/predefined";
+            }
+            else
+            {
+                url += "/custom";
+                queryParams.Add("userId", clientId);
+                readOnlyValue = false;
+            }
+
+            WatchListEntity tempalteEntity = EnumerableUtils.PickRandom(AllWatchListsFromDB);
+            WatchListDTO createDTO = new WatchListDTO()
+            {
+                Id = tempalteEntity.Id,
+                Name = tempalteEntity.Name,
+                ReadOnly = tempalteEntity.ReadOnly,
+                Order = tempalteEntity.Order,
+                AssetIds = tempalteEntity.AssetIDsList
+            };
+
+            createDTO.Id += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            createDTO.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            createDTO.ReadOnly = readOnlyValue;
+            string createParam = JsonUtils.SerializeObject(createDTO);
+
+            var response = await Consumer.ExecuteRequest(url, queryParams, createParam, Method.POST);
+
+            if (response.Status != HttpStatusCode.Created)
+            {
+                return null;
+            }
+
+            WatchListsToDelete.Add(createDTO.Id, clientId);
+
+            return createDTO;
+        }
+
+        public async Task<bool> DeleteTestWatchList(KeyValuePair<string, string> WatchListIDs)
+        {
+            string watchListId = WatchListIDs.Key;
+            string clientId = WatchListIDs.Value;
+            Dictionary<string, string> queryParams = new Dictionary<string, string>();
+
+            string url = ApiEndpointNames["watchList"];
+            if (clientId == null)
+            {
+                url += "/predefined";
+            }
+            else
+            {
+                url += "/custom";
+                queryParams.Add("userId", clientId);
+            }
+            url += "/" + watchListId;
+
+            var response = await Consumer.ExecuteRequest(url, queryParams, null, Method.DELETE);
+            if (response.Status != HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+
             return true;
         }
     }

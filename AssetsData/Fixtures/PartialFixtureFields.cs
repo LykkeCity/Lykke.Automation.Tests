@@ -78,9 +78,13 @@ namespace AssetsData.Fixtures
 
         public List<WatchListEntity> AllWatchListsFromDB;
         public List<WatchListEntity> AllWatchListsFromDBPredefined;
-        public WatchListEntity TestWatchListPredefined;
-
         public List<WatchListEntity> AllWatchListsFromDBCustom;
+        public WatchListEntity TestWatchListPredefined;
+        public WatchListDTO TestWatchListPredefinedUpdate;
+        public WatchListDTO TestWatchListPredefinedDelete;
+        public WatchListEntity TestWatchListCustom;
+        public WatchListDTO TestWatchListCustomUpdate;
+        public WatchListDTO TestWatchListCustomDelete;
 
         public IDictionaryManager<IAsset> AssetManager;
         public IDictionaryManager<IAssetExtendedInfo> AssetExtendedInfosManager;
@@ -107,5 +111,6 @@ namespace AssetsData.Fixtures
         private List<string> MarginAssetPairsToDelete;
         private List<string> MarginAssetsToDelete;
         private List<string> MarginIssuersToDelete;
+        private Dictionary<string, string> WatchListsToDelete;
     }
 }

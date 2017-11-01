@@ -57,12 +57,6 @@ namespace ApiV2Data.Fixtures
 
         private async Task prepareTestData()
         {
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<PledgeEntity, PledgeDTO>();
-                cfg.CreateMap<PledgeDTO, PledgeEntity>();
-            });
-
             ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["Pledges"] = "/api/pledges";
 

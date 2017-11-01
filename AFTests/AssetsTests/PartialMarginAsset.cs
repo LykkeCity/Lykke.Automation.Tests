@@ -32,7 +32,7 @@ namespace AFTests.AssetsTests
 
             foreach (MarginAssetEntity entity in fixture.AllMarginAssetsFromDB)
             {
-                entity.ShouldBeEquivalentTo(parsedResponse.Where(a => a.Id == entity.Id), o => o
+                entity.ShouldBeEquivalentTo(parsedResponse.Where(a => a.Id == entity.Id).FirstOrDefault(), o => o
                 .ExcludingMissingMembers());
             }
         }
