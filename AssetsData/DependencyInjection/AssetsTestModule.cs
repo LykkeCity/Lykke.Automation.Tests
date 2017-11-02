@@ -62,6 +62,53 @@ namespace AssetsData.DependencyInjection
 
             RepositoryUtils.RegisterDictionaryManager<IAssetGroup>(builder);
 
+            builder.Register(c => new AssetPairsRepository(
+                    new AzureTableStorage<AssetPairEntity>(
+                        _configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
+                .As<IDictionaryRepository<IAssetPair>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IAssetPair>(builder);
+
+            builder.Register(c => new AssetSettingsRepository(
+                    new AzureTableStorage<AssetSettingsEntity>(
+                        _configBuilder.Config["DictionariesConnectionString"], "AssetSettings", null)))
+                .As<IDictionaryRepository<IAssetSettings>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IAssetSettings>(builder);
+
+            builder.Register(c => new AssetIssuersRepository(
+                    new AzureTableStorage<AssetIssuersEntity>(
+                        _configBuilder.Config["DictionariesConnectionString"], "AssetIssuers", null)))
+                .As<IDictionaryRepository<IAssetIssuers>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IAssetIssuers>(builder);
+
+            builder.Register(c => new MarginAssetPairsRepository(
+                    new AzureTableStorage<MarginAssetPairsEntity>(
+                        _configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
+                .As<IDictionaryRepository<IMarginAssetPairs>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IMarginAssetPairs>(builder);
+
+            builder.Register(c => new MarginAssetRepository(
+                    new AzureTableStorage<MarginAssetEntity>(
+                        _configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
+                .As<IDictionaryRepository<IMarginAsset>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IMarginAsset>(builder);
+
+            builder.Register(c => new MarginIssuerRepository(
+                    new AzureTableStorage<MarginIssuerEntity>(
+                        _configBuilder.Config["DictionariesConnectionString"], "AssetIssuers", null)))
+                .As<IDictionaryRepository<IMarginIssuer>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IMarginIssuer>(builder);
+
+            builder.Register(c => new WatchListRepository(
+                    new AzureTableStorage<WatchListEntity>(
+                        _configBuilder.Config["DictionariesConnectionString"], "WatchLists", null)))
+                .As<IDictionaryRepository<IWatchList>>();
+
             base.Load(builder);
         }
     }
