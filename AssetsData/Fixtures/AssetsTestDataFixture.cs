@@ -19,7 +19,7 @@ namespace AssetsData.Fixtures
         public ApiConsumer Consumer;
         public Dictionary<string, string> ApiEndpointNames;
 
-        private IMapper mapper;
+        public IMapper mapper;
         private IContainer container;
 
         private ConfigBuilder _configBuilder;

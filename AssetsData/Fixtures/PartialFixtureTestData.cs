@@ -36,7 +36,8 @@ namespace AssetsData.Fixtures
                 cfg.CreateMap<MarginIssuerEntity, MarginIssuerDTO>();
                 cfg.CreateMap<WatchListDTO, WatchListEntity>();
                 cfg.CreateMap<WatchListEntity, WatchListDTO>();
-
+                cfg.CreateMap<AssetSettingsDTO, AssetSettingsEntity>();
+                cfg.CreateMap<AssetSettingsEntity, AssetSettingsDTO>();
             });
 
             this.mapper = config.CreateMapper();

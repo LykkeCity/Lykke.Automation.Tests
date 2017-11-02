@@ -16,18 +16,27 @@ namespace XUnitTestData.Repositories.Assets
             return "Asset";
         }
 
-        public string Id => RowKey;
+        public string Id
+        {
+            get { return RowKey; }
+            set { this.RowKey = value; }
+        }
+        public string Asset
+        {
+            get { return RowKey; }
+            set { this.RowKey = value; }
+        }
         public string CashinCoef { get; set; }
         public string ChangeWallet { get; set; }
         public string Dust { get; set; }
         public string HotWallet { get; set; }
+        public string MaxBalance { get; set; }
         public int MaxOutputsCount { get; set; }
         public int MaxOutputsCountInTx { get; set; }
         public string MinBalance { get; set; }
         public int MinOutputsCount { get; set; }
         public string OutputSize { get; set; }
         public int PrivateIncrement { get; set; }
-        public string MaxBalance { get; set; }
     }
 
     public class AssetSettingsRepository : IDictionaryRepository<IAssetSettings>

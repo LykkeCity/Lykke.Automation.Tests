@@ -7,6 +7,7 @@ using System.Net;
 using Xunit;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
+using XUnitTestData.Repositories.Assets;
 
 namespace AFTests.AssetsTests
 {
@@ -14,7 +15,7 @@ namespace AFTests.AssetsTests
     [Trait("Category", "AssetsService")]
     public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
     {
-        [Fact(Skip = "Test will fail due to mismatch in data types")]
+        [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetSettings")]
         [Trait("Category", "AssetSettingsGet")]
@@ -27,15 +28,17 @@ namespace AFTests.AssetsTests
 
             AllAssetSettingsDTO parsedRseponse = JsonUtils.DeserializeJson<AllAssetSettingsDTO>(response.ResponseJson);
 
-            for (int i = 0; i < fixture.AllAssetSettingsFromDB.Count; i++)
+            foreach (AssetSettingsEntity entity in fixture.AllAssetSettingsFromDB)
             {
-                fixture.AllAssetSettingsFromDB[i].ShouldBeEquivalentTo(
-                    parsedRseponse.Items.Where(p => p.Id == fixture.AllAssetSettingsFromDB[i].Id).FirstOrDefault(),
-                    o => o.ExcludingMissingMembers());
+                AssetSettingsDTO parsedSettings = fixture.mapper.Map<AssetSettingsDTO>(entity);
+                AssetSettingsDTO responseItem = parsedRseponse.Items.Where(s => s.Id == parsedSettings.Id).FirstOrDefault();
+                responseItem.NormalizeNumberStrings(parsedSettings);
+
+                parsedSettings.ShouldBeEquivalentTo(responseItem);
             }
         }
 
-        [Fact(Skip = "Test will fail due to mismatch in data types")]
+        [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "AssetSettings")]
         [Trait("Category", "AssetSettingsGet")]
@@ -47,12 +50,27 @@ namespace AFTests.AssetsTests
             Assert.True(response.Status == HttpStatusCode.OK);
 
             AssetSettingsDTO parsedRseponse = JsonUtils.DeserializeJson<AssetSettingsDTO>(response.ResponseJson);
+            AssetSettingsDTO parsedSettings = fixture.mapper.Map<AssetSettingsDTO>(fixture.TestAssetSettings);
+            parsedRseponse.NormalizeNumberStrings(parsedSettings);
 
-            for (int i = 0; i < fixture.AllAssetSettingsFromDB.Count; i++)
-            {
-                fixture.AllAssetSettingsFromDB[i].ShouldBeEquivalentTo(parsedRseponse, o => o
-                .ExcludingMissingMembers());
-            }
+            parsedSettings.ShouldBeEquivalentTo(parsedRseponse);
+
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetSettings")]
+        [Trait("Category", "AssetSettingsGet")]
+        public async void CheckIfAssetSettingsExists()
+        {
+            string url = fixture.ApiEndpointNames["assetSettings"] + "/" + fixture.TestAssetSettings.Id + "/exists";
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.NotNull(response);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            bool parsedRseponse = JsonUtils.DeserializeJson<bool>(response.ResponseJson);
+            Assert.True(parsedRseponse);
+
         }
     }
 }
