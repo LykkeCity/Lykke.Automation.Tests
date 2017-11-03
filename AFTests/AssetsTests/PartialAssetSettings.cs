@@ -8,6 +8,7 @@ using Xunit;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
 using XUnitTestData.Repositories.Assets;
+using System;
 
 namespace AFTests.AssetsTests
 {
@@ -50,10 +51,10 @@ namespace AFTests.AssetsTests
             Assert.True(response.Status == HttpStatusCode.OK);
 
             AssetSettingsDTO parsedRseponse = JsonUtils.DeserializeJson<AssetSettingsDTO>(response.ResponseJson);
-            AssetSettingsDTO parsedSettings = fixture.mapper.Map<AssetSettingsDTO>(fixture.TestAssetSettings);
-            parsedRseponse.NormalizeNumberStrings(parsedSettings);
+            AssetSettingsDTO parsedEntity = fixture.mapper.Map<AssetSettingsDTO>(fixture.TestAssetSettings);
+            parsedRseponse.NormalizeNumberStrings(parsedEntity);
 
-            parsedSettings.ShouldBeEquivalentTo(parsedRseponse);
+            parsedEntity.ShouldBeEquivalentTo(parsedRseponse);
 
         }
 
@@ -71,6 +72,75 @@ namespace AFTests.AssetsTests
             bool parsedRseponse = JsonUtils.DeserializeJson<bool>(response.ResponseJson);
             Assert.True(parsedRseponse);
 
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetSettings")]
+        [Trait("Category", "AssetSettingsPost")]
+        public async void CreateAssetSettings()
+        {
+            AssetSettingsDTO createdDTO = await fixture.CreateTestAssetSettings();
+            Assert.NotNull(createdDTO);
+
+            await fixture.AssetSettingsManager.UpdateCacheAsync();
+            AssetSettingsEntity entity = await fixture.AssetSettingsManager.TryGetAsync(createdDTO.Asset) as AssetSettingsEntity;
+            AssetSettingsDTO parsedEntity = fixture.mapper.Map<AssetSettingsDTO>(entity);
+            createdDTO.NormalizeNumberStrings(parsedEntity);
+
+            parsedEntity.ShouldBeEquivalentTo(createdDTO);
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetSettings")]
+        [Trait("Category", "AssetSettingsPut")]
+        public async void UpdateAssetSettings()
+        {
+            string url = fixture.ApiEndpointNames["assetSettings"];
+            AssetSettingsCreateDTO updateDTO = new AssetSettingsCreateDTO()
+            {
+                Asset = fixture.TestAssetSettingsUpdate.Asset,
+                CashinCoef = Helpers.Random.Next(1,10),
+                ChangeWallet = fixture.TestAssetSettingsUpdate.ChangeWallet,
+                Dust = Math.Round(Helpers.Random.NextDouble(), 10),
+                HotWallet = fixture.TestAssetSettingsUpdate.HotWallet,
+                MaxBalance = Helpers.Random.Next(100,1000),
+                MaxOutputsCount = Helpers.Random.Next(1, 100),
+                MaxOutputsCountInTx = Helpers.Random.Next(1, 100),
+                MinBalance = Helpers.Random.Next(1, 100),
+                MinOutputsCount = Helpers.Random.Next(1, 100),
+                OutputSize = Helpers.Random.Next(100, 10000),
+                PrivateIncrement = 0
+            };
+            string updateParam = JsonUtils.SerializeObject(updateDTO);
+
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
+            Assert.True(response.Status == HttpStatusCode.NoContent);
+
+            AssetSettingsDTO parsedUpdateDTO = fixture.mapper.Map<AssetSettingsDTO>(updateDTO);
+
+            await fixture.AssetSettingsManager.UpdateCacheAsync();
+            AssetSettingsEntity entity = await fixture.AssetSettingsManager.TryGetAsync(fixture.TestAssetSettingsUpdate.Asset) as AssetSettingsEntity;
+            AssetSettingsDTO parsedEntity = fixture.mapper.Map<AssetSettingsDTO>(entity);
+            parsedUpdateDTO.NormalizeNumberStrings(parsedEntity);
+
+            parsedEntity.ShouldBeEquivalentTo(parsedUpdateDTO);
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "AssetSettings")]
+        [Trait("Category", "AssetSettingsDelete")]
+        public async void DeleteAssetSettings()
+        {
+            string url = fixture.ApiEndpointNames["assetSettings"] + "/" + fixture.TestAssetSettingsDelete.Asset;
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+            Assert.True(response.Status == HttpStatusCode.NoContent);
+
+            await fixture.AssetSettingsManager.UpdateCacheAsync();
+            AssetSettingsEntity entity = await fixture.AssetSettingsManager.TryGetAsync(fixture.TestAssetSettingsDelete.Asset) as AssetSettingsEntity;
+            Assert.Null(entity);
         }
     }
 }

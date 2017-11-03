@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AssetsData.DTOs.Assets
 {
-    public class AssetSettingsDTO
+    public class AssetSettingsDTO : BaseDTO
     {
         public string Id
         {
@@ -27,6 +27,7 @@ namespace AssetsData.DTOs.Assets
 
         public void NormalizeNumberStrings(AssetSettingsDTO parsedDTO)
         {
+            this.Dust = this.Dust.Replace(',', '.'); //todo fix locale
             NormalizeNumberString("MinBalance", parsedDTO); 
             NormalizeNumberString("MaxBalance", parsedDTO);
             NormalizeNumberString("OutputSize", parsedDTO);
@@ -52,6 +53,22 @@ namespace AssetsData.DTOs.Assets
                 }
             }
         }
+    }
+
+    public class AssetSettingsCreateDTO
+    {
+        public string Asset { get; set; }
+        public int CashinCoef { get; set; }
+        public string ChangeWallet { get; set; }
+        public double Dust { get; set; }
+        public string HotWallet { get; set; }
+        public int? MaxBalance { get; set; }
+        public int MaxOutputsCount { get; set; }
+        public int MaxOutputsCountInTx { get; set; }
+        public int MinBalance { get; set; }
+        public int MinOutputsCount { get; set; }
+        public int OutputSize { get; set; }
+        public int PrivateIncrement { get; set; }
     }
 
     public class AllAssetSettingsDTO
