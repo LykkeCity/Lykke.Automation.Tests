@@ -22,6 +22,8 @@ namespace AssetsData.Fixtures
             newAssetDTO.Name += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             newAssetDTO.BlockChainAssetId += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
             newAssetDTO.BlockChainId += Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest";
+            newAssetDTO.Accuracy = Helpers.Random.Next(2, 6);
+            newAssetDTO.MultiplierPower = Helpers.Random.Next(6, 10);
 
             string createUrl = ApiEndpointNames["assets"];
             string createParam = JsonUtils.SerializeObject(newAssetDTO);
