@@ -7,6 +7,7 @@ using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Domains;
 using XUnitTestData.Domains.ApiV2;
+using XUnitTestData.Repositories;
 using XUnitTestData.Repositories.ApiV2;
 
 namespace ApiV2Data.DependencyInjection
@@ -33,6 +34,13 @@ namespace ApiV2Data.DependencyInjection
                     new AzureTableStorage<WalletEntity>(
                         _configBuilder.Config["MainConnectionString"], "Wallets", null)))
                 .As<IDictionaryRepository<IWallet>>();
+
+            builder.Register(c => new AccountRepository(
+                    new AzureTableStorage<AccountEntity>(
+                        _configBuilder.Config["MainConnectionString"], "Accounts", null)))
+                .As<IDictionaryRepository<IAccount>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IAccount>(builder);
         }
     }
 }

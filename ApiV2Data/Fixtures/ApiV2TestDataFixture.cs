@@ -35,6 +35,9 @@ namespace ApiV2Data.Fixtures
         public WalletRepository WalletRepository;
         public List<WalletEntity> AllWalletsFromDB;
         public WalletEntity TestWallet;
+        public string TestWalletAssetId;
+
+        public IDictionaryManager<IAccount> AccountManager;
 
         public Dictionary<string, string> ApiEndpointNames;
         public ApiConsumer Consumer;
@@ -73,6 +76,7 @@ namespace ApiV2Data.Fixtures
 
             this.PledgeRepository = (PledgesRepository)this.container.Resolve<IDictionaryRepository<IPledgeEntity>>();
             this.WalletRepository = (WalletRepository)this.container.Resolve<IDictionaryRepository<IWallet>>();
+            this.AccountManager = RepositoryUtils.PrepareRepositoryManager<IAccount>(this.container);
         }
 
         private async Task prepareTestData()
@@ -92,6 +96,7 @@ namespace ApiV2Data.Fixtures
 
             this.AllWalletsFromDB = (await walletsFromDB).Cast<WalletEntity>().ToList();
             this.TestWallet = EnumerableUtils.PickRandom(AllWalletsFromDB);
+            this.TestWalletAssetId = "LKK";
 
         }
 
