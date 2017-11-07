@@ -28,6 +28,11 @@ namespace ApiV2Data.DependencyInjection
                 .As<IDictionaryRepository<IPledgeEntity>>();
 
             RepositoryUtils.RegisterDictionaryManager<IPledgeEntity>(builder);
+
+            builder.Register(c => new WalletRepository(
+                    new AzureTableStorage<WalletEntity>(
+                        _configBuilder.Config["MainConnectionString"], "Wallets", null)))
+                .As<IDictionaryRepository<IWallet>>();
         }
     }
 }

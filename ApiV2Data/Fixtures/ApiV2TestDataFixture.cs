@@ -18,17 +18,23 @@ using System.Net;
 
 namespace ApiV2Data.Fixtures
 {
-    public class ApiV2TestDataFixture : IDisposable
+    public partial class ApiV2TestDataFixture : IDisposable
     {
         private ConfigBuilder _configBuilder;
         private IContainer container;
 
         private Dictionary<string, string> PledgesToDelete;
 
+        public string TestClientId;
+
         public PledgesRepository PledgeRepository;
         public PledgeDTO TestPledge;
         public PledgeDTO TestPledgeUpdate;
         public PledgeDTO TestPledgeDelete;
+
+        public WalletRepository WalletRepository;
+        public List<WalletEntity> AllWalletsFromDB;
+        public WalletEntity TestWallet;
 
         public Dictionary<string, string> ApiEndpointNames;
         public ApiConsumer Consumer;
@@ -66,19 +72,26 @@ namespace ApiV2Data.Fixtures
             this.container = builder.Build();
 
             this.PledgeRepository = (PledgesRepository)this.container.Resolve<IDictionaryRepository<IPledgeEntity>>();
+            this.WalletRepository = (WalletRepository)this.container.Resolve<IDictionaryRepository<IWallet>>();
         }
 
         private async Task prepareTestData()
         {
             ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["Pledges"] = "/api/pledges";
+            ApiEndpointNames["Wallets"] = "/api/wallets";
 
             PledgesToDelete = new Dictionary<string, string>();
 
-            this.TestPledge = await CreateTestPledge();
+            TestClientId = this._configBuilder.Config["AuthClientId"];
+            var walletsFromDB = this.WalletRepository.GetAllAsync(TestClientId);
 
+            this.TestPledge = await CreateTestPledge();
             this.TestPledgeUpdate = await CreateTestPledge("UpdatePledge");
             this.TestPledgeDelete = await CreateTestPledge("DeletePledge");
+
+            this.AllWalletsFromDB = (await walletsFromDB).Cast<WalletEntity>().ToList();
+            this.TestWallet = EnumerableUtils.PickRandom(AllWalletsFromDB);
 
         }
 
@@ -89,55 +102,5 @@ namespace ApiV2Data.Fixtures
 
             Task.WhenAll(deleteTasks).Wait();
         }
-
-        #region Create / Delete methods
-
-        public async Task<PledgeDTO> CreateTestPledge(string consumerIndex = null)
-        {
-            ApiConsumer consumer;
-            if (consumerIndex == null)
-                consumer = this.Consumer;
-            else
-                consumer = this.PledgeApiConsumers[consumerIndex];
-
-            string url = ApiEndpointNames["Pledges"];
-            CreatePledgeDTO newPledge = new CreatePledgeDTO()
-            {
-                CO2Footprint = Helpers.Random.Next(100, 100000),
-                ClimatePositiveValue = Helpers.Random.Next(100, 100000)
-            };
-
-            string createParam = JsonUtils.SerializeObject(newPledge);
-            var response = await consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
-            if (response.Status != HttpStatusCode.Created)
-            {
-                return null;
-            }
-
-            PledgeDTO returnDTO = JsonUtils.DeserializeJson<PledgeDTO>(response.ResponseJson);
-
-            PledgesToDelete.Add(returnDTO.Id, consumerIndex);
-
-            return returnDTO;
-        }
-
-        public async Task<bool> DeleteTestPledge(string id, string consumerIndex = null)
-        {
-            ApiConsumer consumer;
-            if (consumerIndex == null)
-                consumer = this.Consumer;
-            else
-                consumer = this.PledgeApiConsumers[consumerIndex];
-
-            string deletePledgeUrl = ApiEndpointNames["Pledges"] + "/" + id;
-            var deleteResponse = await consumer.ExecuteRequest(deletePledgeUrl, Helpers.EmptyDictionary, null, Method.DELETE);
-            if (deleteResponse.Status != HttpStatusCode.OK)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        #endregion
     }
 }
