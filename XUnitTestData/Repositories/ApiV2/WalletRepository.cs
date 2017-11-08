@@ -52,7 +52,7 @@ namespace XUnitTestData.Repositories.ApiV2
         {
             string partitionKey = WalletEntity.GeneratePartitionKey();
 
-            return _tableStorage.Where(e => e.ClientId == clientId).ToList();
+            return _tableStorage.Where(e => e.ClientId == clientId && e.State != "deleted").ToList();
         }
     }
 }

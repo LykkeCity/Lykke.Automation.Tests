@@ -15,6 +15,7 @@ using XUnitTestData.Domains;
 using ApiV2Data.DTOs;
 using RestSharp;
 using System.Net;
+using XUnitTestData.Repositories;
 
 namespace ApiV2Data.Fixtures
 {
@@ -24,6 +25,7 @@ namespace ApiV2Data.Fixtures
         private IContainer container;
 
         private Dictionary<string, string> PledgesToDelete;
+        private List<string> WalletsToDelete;
 
         public string TestClientId;
 
@@ -35,6 +37,8 @@ namespace ApiV2Data.Fixtures
         public WalletRepository WalletRepository;
         public List<WalletEntity> AllWalletsFromDB;
         public WalletEntity TestWallet;
+        public WalletDTO TestWalletDelete;
+        public AccountEntity TestWalletAccount;
         public string TestWalletAssetId;
 
         public IDictionaryManager<IAccount> AccountManager;
@@ -86,6 +90,7 @@ namespace ApiV2Data.Fixtures
             ApiEndpointNames["Wallets"] = "/api/wallets";
 
             PledgesToDelete = new Dictionary<string, string>();
+            WalletsToDelete = new List<string>();
 
             TestClientId = this._configBuilder.Config["AuthClientId"];
             var walletsFromDB = this.WalletRepository.GetAllAsync(TestClientId);
@@ -95,8 +100,12 @@ namespace ApiV2Data.Fixtures
             this.TestPledgeDelete = await CreateTestPledge("DeletePledge");
 
             this.AllWalletsFromDB = (await walletsFromDB).Cast<WalletEntity>().ToList();
-            this.TestWallet = EnumerableUtils.PickRandom(AllWalletsFromDB);
+            this.TestWallet = AllWalletsFromDB.Where(w => w.Id == "fd0f7373-301e-42c0-83a2-1d7b691676c3").FirstOrDefault(); //TODO hardcoded
+            this.TestWalletDelete = await CreateTestWallet();
+            this.TestWalletAccount = await AccountManager.TryGetAsync(TestWallet.Id) as AccountEntity;
             this.TestWalletAssetId = "LKK";
+
+
 
         }
 
@@ -104,6 +113,7 @@ namespace ApiV2Data.Fixtures
         {
             List<Task<bool>> deleteTasks = new List<Task<bool>>();
             foreach (KeyValuePair<string, string> pledgeData in PledgesToDelete) { deleteTasks.Add(DeleteTestPledge(pledgeData.Key, pledgeData.Value)); }
+            foreach (string walletId in WalletsToDelete) { deleteTasks.Add(DeleteTestWallet(walletId)); }
 
             Task.WhenAll(deleteTasks).Wait();
         }

@@ -105,18 +105,13 @@ namespace AFTests.ApiV2
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
-            List<WalletBalanceDTO.BalanceDTO> parsedResponse = JsonUtils.DeserializeJson<List<WalletBalanceDTO.BalanceDTO>>(response.ResponseJson);
+            List<WBalanceDTO> parsedResponse = JsonUtils.DeserializeJson<List<WBalanceDTO>>(response.ResponseJson);
 
-            AccountEntity accountEntity = await fixture.AccountManager.TryGetAsync(fixture.TestWallet.Id) as AccountEntity;
-
-            if (accountEntity != null)
+            foreach (BalanceDTO balanceDTO in fixture.TestWalletAccount.BalancesParsed)
             {
-                foreach (BalanceDTO balanceDTO in accountEntity.BalancesParsed)
-                {
-                    var parsedBalance = parsedResponse.Where(b => b.AssetId == balanceDTO.Asset).FirstOrDefault();
-                    Assert.NotNull(parsedBalance);
-                    Assert.True(balanceDTO.Balance == parsedBalance.Balance);
-                }
+                var parsedBalance = parsedResponse.Where(b => b.AssetId == balanceDTO.Asset).FirstOrDefault();
+                Assert.NotNull(parsedBalance);
+                Assert.True(balanceDTO.Balance == parsedBalance.Balance);
             }
         }
 
@@ -124,15 +119,15 @@ namespace AFTests.ApiV2
         [Trait("Category", "Smoke")]
         [Trait("Category", "Wallets")]
         [Trait("Category", "WalletsGet")]
-        public async void GetBalancesByAssetId()
+        public async void GetWalletBalancesByAssetId()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/balances/" + fixture.TestWalletAssetId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
-            List<WalletBalanceDTO> parsedResponse = JsonUtils.DeserializeJson<List<WalletBalanceDTO>>(response.ResponseJson);
+            List<WalletSingleBalanceDTO> parsedResponse = JsonUtils.DeserializeJson<List<WalletSingleBalanceDTO>>(response.ResponseJson);
 
-            foreach (WalletBalanceDTO wbDTO in parsedResponse)
+            foreach (WalletSingleBalanceDTO wbDTO in parsedResponse)
             {
                 WalletEntity walletEntity = fixture.AllWalletsFromDB.Where(w => w.Id == wbDTO.Id).FirstOrDefault();
                 if (walletEntity != null)
@@ -147,18 +142,123 @@ namespace AFTests.ApiV2
 
                 if (accountEntity != null)
                 {
-                    foreach (BalanceDTO balanceDTO in accountEntity.BalancesParsed)
-                    {
-                        var parsedBalance = wbDTO.Balances.Where(b => b.AssetId == balanceDTO.Asset).FirstOrDefault();
-                        Assert.NotNull(parsedBalance);
-                        Assert.True(balanceDTO.Balance == parsedBalance.Balance);
-                    }
+                    BalanceDTO balanceDTO = accountEntity.BalancesParsed.Where(b => b.Asset == fixture.TestWalletAssetId).FirstOrDefault();
+                    Assert.True(balanceDTO.Balance == wbDTO.Balances.Balance);
                 }
                 else
                 {
-                    Assert.True(wbDTO.Balances.Count == 0);
+                    Assert.Null(wbDTO.Balances);
                 }
             }
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "Wallets")]
+        [Trait("Category", "WalletsGet")]
+        public async void GetWalletBalanceByWalletAndAssetId()
+        {
+            string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWallet.Id + "/balances/" + fixture.TestWalletAssetId;
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+
+            Assert.True(response.Status == HttpStatusCode.OK);
+            WBalanceDTO parsedResponse = JsonUtils.DeserializeJson<WBalanceDTO>(response.ResponseJson);
+
+            BalanceDTO accountBalance = fixture.TestWalletAccount.BalancesParsed.Where(b => b.Asset == fixture.TestWalletAssetId).FirstOrDefault();
+
+            Assert.NotNull(accountBalance);
+            Assert.True(parsedResponse.Balance == accountBalance.Balance);
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "Wallets")]
+        [Trait("Category", "WalletsGet")]
+        public async void GetWalletTradeBalances()
+        {
+            string url = fixture.ApiEndpointNames["Wallets"] + "/trading/balances";
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+
+            Assert.True(response.Status == HttpStatusCode.OK);
+            List<WBalanceDTO> parsedResponse = JsonUtils.DeserializeJson<List<WBalanceDTO>>(response.ResponseJson);
+
+            AccountEntity entity = await fixture.AccountManager.TryGetAsync(fixture.TestClientId) as AccountEntity;
+            Assert.NotNull(entity);
+
+            foreach (BalanceDTO entityBalance in entity.BalancesParsed)
+            {
+                WBalanceDTO responseBalance = parsedResponse.Where(b => b.AssetId == entityBalance.Asset).FirstOrDefault();
+                Assert.NotNull(responseBalance);
+                Assert.True(entityBalance.Balance == responseBalance.Balance);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "Wallets")]
+        [Trait("Category", "WalletsGet")]
+        public async void GetWalletTradeBalanceByAssetId()
+        {
+            string url = fixture.ApiEndpointNames["Wallets"] + "/trading/balances/" + fixture.TestWalletAssetId;
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+
+            Assert.True(response.Status == HttpStatusCode.OK);
+            WBalanceDTO parsedResponse = JsonUtils.DeserializeJson<WBalanceDTO>(response.ResponseJson);
+
+            AccountEntity entity = await fixture.AccountManager.TryGetAsync(fixture.TestClientId) as AccountEntity;
+            Assert.NotNull(entity);
+            BalanceDTO entityBalance = entity.BalancesParsed.Where(b => b.Asset == fixture.TestWalletAssetId).FirstOrDefault();
+            Assert.NotNull(entityBalance);
+
+            Assert.True(entityBalance.Balance == parsedResponse.Balance);
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "Wallets")]
+        [Trait("Category", "WalletsPost")]
+        public async void CreateWallet()
+        {
+            WalletDTO createdWallet = await fixture.CreateTestWallet();
+            Assert.NotNull(createdWallet);
+
+            WalletEntity entity = await fixture.WalletRepository.TryGetAsync(createdWallet.Id) as WalletEntity;
+            Assert.NotNull(entity);
+
+            entity.ShouldBeEquivalentTo(createdWallet, o => o
+            .ExcludingMissingMembers());
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "Wallets")]
+        [Trait("Category", "WalletsPost")]
+        public async void CreateHFTWallet()
+        {
+            WalletDTO createdWallet = await fixture.CreateTestWallet(true);
+            Assert.NotNull(createdWallet);
+
+            WalletEntity entity = await fixture.WalletRepository.TryGetAsync(createdWallet.Id) as WalletEntity;
+            Assert.NotNull(entity);
+
+            entity.ShouldBeEquivalentTo(createdWallet, o => o
+            .ExcludingMissingMembers()
+            .Excluding(w => w.Type));
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "Wallets")]
+        [Trait("Category", "WalletsDelete")]
+        public async void DeleteWallet()
+        {
+            string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWalletDelete.Id;
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            WalletEntity entity = await fixture.WalletRepository.TryGetAsync(fixture.TestWalletDelete.Id) as WalletEntity;
+            Assert.True(entity.State == "deleted");
         }
     }
 }
