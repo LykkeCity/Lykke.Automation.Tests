@@ -1,14 +1,13 @@
 ﻿using Microsoft.WindowsAzure.Storage.Table;
-using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using XUnitTestData.Domains;
 using XUnitTestData.Domains.ApiV2;
 using System.Threading.Tasks;
 using AzureStorage;
+using XUnitTestData.Domains.BlueApi;
 
-namespace XUnitTestData.Repositories.ApiV2
+namespace XUnitTestData.Repositories.BlueApi
 {
     public class PledgeEntity : TableEntity, IPledgeEntity
     {
