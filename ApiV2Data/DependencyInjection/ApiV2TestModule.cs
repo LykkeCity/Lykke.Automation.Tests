@@ -41,6 +41,11 @@ namespace ApiV2Data.DependencyInjection
                 .As<IDictionaryRepository<IAccount>>();
 
             RepositoryUtils.RegisterDictionaryManager<IAccount>(builder);
+
+            builder.Register(c => new OperationsRepository(
+                    new AzureTableStorage<OperationsEntity>(
+                        _configBuilder.Config["MainConnectionString"], "Operations", null)))
+                .As<IDictionaryRepository<IOperations>>();
         }
     }
 }

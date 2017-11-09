@@ -110,5 +110,45 @@ namespace ApiV2Data.Fixtures
             }
             return true;
         }
+
+        public async Task<OperationCreateReturnDTO> CreateTestOperation()
+        {
+            string newId = Guid.NewGuid().ToString().ToLower();
+            string url = ApiEndpointNames["Operations"] + "/transfer/" + newId;
+
+            OperationCreateDTO createDTO = new OperationCreateDTO()
+            {
+                Amount = Helpers.Random.Next(1, 10),
+                AssetId = TestAssetId,
+                SourceWalletId = TestWalletWithBalance,
+                WalletId = TestWalletOperations.Id
+            };
+            string createParam = JsonUtils.SerializeObject(createDTO);
+
+
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            if (response.Status != HttpStatusCode.Created)
+            {
+                return null;
+            }
+            string parsedResponse = JsonUtils.DeserializeJson<string>(response.ResponseJson);
+            OperationCreateReturnDTO returnDTO = new OperationCreateReturnDTO(createDTO);
+            returnDTO.Id = parsedResponse;
+
+            OperationsToCancel.Add(returnDTO.Id);
+
+            return returnDTO;
+        }
+
+        public async Task<bool> CancelTestOperation(string id)
+        {
+            string url = ApiEndpointNames["Operations"] + "/cancel/" + id;
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
+            if (response.Status != HttpStatusCode.OK)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

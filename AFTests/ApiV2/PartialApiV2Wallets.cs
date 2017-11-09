@@ -121,7 +121,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsGet")]
         public async void GetWalletBalancesByAssetId()
         {
-            string url = fixture.ApiEndpointNames["Wallets"] + "/balances/" + fixture.TestWalletAssetId;
+            string url = fixture.ApiEndpointNames["Wallets"] + "/balances/" + fixture.TestAssetId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -142,7 +142,7 @@ namespace AFTests.ApiV2
 
                 if (accountEntity != null)
                 {
-                    BalanceDTO balanceDTO = accountEntity.BalancesParsed.Where(b => b.Asset == fixture.TestWalletAssetId).FirstOrDefault();
+                    BalanceDTO balanceDTO = accountEntity.BalancesParsed.Where(b => b.Asset == fixture.TestAssetId).FirstOrDefault();
                     Assert.True(balanceDTO.Balance == wbDTO.Balances.Balance);
                 }
                 else
@@ -158,13 +158,13 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsGet")]
         public async void GetWalletBalanceByWalletAndAssetId()
         {
-            string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWallet.Id + "/balances/" + fixture.TestWalletAssetId;
+            string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWallet.Id + "/balances/" + fixture.TestAssetId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             WBalanceDTO parsedResponse = JsonUtils.DeserializeJson<WBalanceDTO>(response.ResponseJson);
 
-            BalanceDTO accountBalance = fixture.TestWalletAccount.BalancesParsed.Where(b => b.Asset == fixture.TestWalletAssetId).FirstOrDefault();
+            BalanceDTO accountBalance = fixture.TestWalletAccount.BalancesParsed.Where(b => b.Asset == fixture.TestAssetId).FirstOrDefault();
 
             Assert.NotNull(accountBalance);
             Assert.True(parsedResponse.Balance == accountBalance.Balance);
@@ -199,7 +199,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsGet")]
         public async void GetWalletTradeBalanceByAssetId()
         {
-            string url = fixture.ApiEndpointNames["Wallets"] + "/trading/balances/" + fixture.TestWalletAssetId;
+            string url = fixture.ApiEndpointNames["Wallets"] + "/trading/balances/" + fixture.TestAssetId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -207,7 +207,7 @@ namespace AFTests.ApiV2
 
             AccountEntity entity = await fixture.AccountManager.TryGetAsync(fixture.TestClientId) as AccountEntity;
             Assert.NotNull(entity);
-            BalanceDTO entityBalance = entity.BalancesParsed.Where(b => b.Asset == fixture.TestWalletAssetId).FirstOrDefault();
+            BalanceDTO entityBalance = entity.BalancesParsed.Where(b => b.Asset == fixture.TestAssetId).FirstOrDefault();
             Assert.NotNull(entityBalance);
 
             Assert.True(entityBalance.Balance == parsedResponse.Balance);
