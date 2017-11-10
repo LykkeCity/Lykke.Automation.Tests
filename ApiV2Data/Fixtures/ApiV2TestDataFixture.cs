@@ -43,6 +43,8 @@ namespace ApiV2Data.Fixtures
         public string TestAssetId;
         public string TestWalletWithBalance;
         public WalletDTO TestWalletOperations;
+        public WalletDTO TestWalletRegenerateKey;
+
         public IDictionaryManager<IAccount> AccountManager;
 
         public OperationsRepository OperationsRepository;
@@ -103,6 +105,7 @@ namespace ApiV2Data.Fixtures
             ApiEndpointNames["Wallets"] = "/api/wallets";
             ApiEndpointNames["Operations"] = "/api/operations";
             ApiEndpointNames["OperationDetails"] = "/api/operationsDetails";
+            ApiEndpointNames["Hft"] = "/api/hft";
 
             //PledgesToDelete = new Dictionary<string, string>();
             WalletsToDelete = new List<string>();
@@ -123,6 +126,7 @@ namespace ApiV2Data.Fixtures
             this.TestWalletDelete = await CreateTestWallet();
             this.TestWalletAccount = await AccountManager.TryGetAsync(TestWallet.Id) as AccountEntity;
             this.TestWalletOperations = await CreateTestWallet();
+            this.TestWalletRegenerateKey = await CreateTestWallet(true);
 
             this.TestOperation = await CreateTestOperation();
             this.TestOperationCancel = await CreateTestOperation();

@@ -42,7 +42,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "Smoke")]
         [Trait("Category", "Wallets")]
         [Trait("Category", "WalletsGet")]
-        public async void GetSingleWallets()
+        public async void GetSingleWallet()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWallet.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -147,7 +147,10 @@ namespace AFTests.ApiV2
                 }
                 else
                 {
-                    Assert.Null(wbDTO.Balances);
+                    if (wbDTO.Balances != null)
+                    {
+                        Assert.True(wbDTO.Balances.Balance == 0);
+                    }
                 }
             }
         }
@@ -259,6 +262,29 @@ namespace AFTests.ApiV2
 
             WalletEntity entity = await fixture.WalletRepository.TryGetAsync(fixture.TestWalletDelete.Id) as WalletEntity;
             Assert.True(entity.State == "deleted");
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "WalletsHFT")]
+        [Trait("Category", "WalletsHFTPut")]
+        public async void RegenerateApiKey()
+        {
+            string url = fixture.ApiEndpointNames["Hft"] + "/" + fixture.TestWalletRegenerateKey.Id + "/regenerateKey";
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.PUT);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            WalletCreateHFTDTO parsedResponse = JsonUtils.DeserializeJson<WalletCreateHFTDTO>(response.ResponseJson);
+            Assert.True(fixture.TestWalletRegenerateKey.ApiKey != parsedResponse.ApiKey);
+
+            string checkUrl = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWalletRegenerateKey.Id;
+            var checkResponse = await fixture.Consumer.ExecuteRequest(checkUrl, Helpers.EmptyDictionary, null, Method.GET);
+
+            Assert.True(checkResponse.Status == HttpStatusCode.OK);
+            WalletDTO checkParsedResponse = JsonUtils.DeserializeJson<WalletDTO>(checkResponse.ResponseJson);
+
+            Assert.True(checkParsedResponse.ApiKey == parsedResponse.ApiKey);
+
         }
     }
 }
