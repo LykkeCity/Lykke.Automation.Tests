@@ -71,5 +71,54 @@ namespace AFTests.ApiV2
 
             Assert.True(entity.StatusString == "Canceled");
         }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "OperationDetails")]
+        [Trait("Category", "OperationDetailsPost")]
+        public async void CreateOperationDetails()
+        {
+            string url = fixture.ApiEndpointNames["OperationDetails"] + "/create";
+            OperationDetailsDTO createDTO = new OperationDetailsDTO()
+            {
+                TransactionId = fixture.TestOperationCreateDetails.Id,
+                Comment = Guid.NewGuid().ToString() + "_AutoTest"
+            };
+            string createParam = JsonUtils.SerializeObject(createDTO);
+
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            OperationDetailsEntity entity = await fixture.OperationDetailsRepository.TryGetByTransactionId(fixture.TestClientId, fixture.TestOperationCreateDetails.Id) as OperationDetailsEntity;
+            Assert.NotNull(entity);
+
+            Assert.True(entity.Comment == createDTO.Comment);
+        }
+
+        [Fact]
+        [Trait("Category", "Smoke")]
+        [Trait("Category", "OperationDetails")]
+        [Trait("Category", "OperationDetailsPost")]
+        public async void RegisterOperationDetails()
+        {
+            string url = fixture.ApiEndpointNames["OperationDetails"] + "/register";
+            OperationDetailsDTO createDTO = new OperationDetailsDTO()
+            {
+                TransactionId = fixture.TestOperationRegisterDetails.Id,
+                Comment = Guid.NewGuid().ToString() + "_AutoTest"
+            };
+            string createParam = JsonUtils.SerializeObject(createDTO);
+
+            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            OperationDetailsReturnDTO parsedResponse = JsonUtils.DeserializeJson<OperationDetailsReturnDTO>(response.ResponseJson);
+
+            OperationDetailsEntity entity = await fixture.OperationDetailsRepository.TryGetAsync(fixture.TestClientId, parsedResponse.Id) as OperationDetailsEntity;
+            Assert.NotNull(entity);
+
+            Assert.True(entity.TransactionId == createDTO.TransactionId);
+            Assert.True(entity.Comment == createDTO.Comment);
+        }
     }
 }

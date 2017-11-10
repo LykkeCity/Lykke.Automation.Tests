@@ -46,6 +46,11 @@ namespace ApiV2Data.DependencyInjection
                     new AzureTableStorage<OperationsEntity>(
                         _configBuilder.Config["MainConnectionString"], "Operations", null)))
                 .As<IDictionaryRepository<IOperations>>();
+
+            builder.Register(c => new OperationDetailsRepository(
+                    new AzureTableStorage<OperationDetailsEntity>(
+                        _configBuilder.Config["MainConnectionString"], "OperationDetailsInformation", null)))
+                .As<IDictionaryRepository<IOperationDetails>>();
         }
     }
 }

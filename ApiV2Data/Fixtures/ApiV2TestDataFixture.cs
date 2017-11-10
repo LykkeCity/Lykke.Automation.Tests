@@ -49,6 +49,11 @@ namespace ApiV2Data.Fixtures
         public List<OperationsEntity> AllOperationsFromDB;
         public OperationCreateReturnDTO TestOperation;
         public OperationCreateReturnDTO TestOperationCancel;
+
+        public OperationDetailsRepository OperationDetailsRepository;
+        public OperationCreateReturnDTO TestOperationCreateDetails;
+        public OperationCreateReturnDTO TestOperationRegisterDetails;
+
         public Dictionary<string, string> ApiEndpointNames;
         public ApiConsumer Consumer;
 
@@ -88,6 +93,7 @@ namespace ApiV2Data.Fixtures
             this.WalletRepository = (WalletRepository)this.container.Resolve<IDictionaryRepository<IWallet>>();
             this.AccountManager = RepositoryUtils.PrepareRepositoryManager<IAccount>(this.container);
             this.OperationsRepository = (OperationsRepository)this.container.Resolve<IDictionaryRepository<IOperations>>();
+            this.OperationDetailsRepository = (OperationDetailsRepository)this.container.Resolve<IDictionaryRepository<IOperationDetails>>();
         }
 
         private async Task prepareTestData()
@@ -96,6 +102,7 @@ namespace ApiV2Data.Fixtures
             //ApiEndpointNames["Pledges"] = "/api/pledges";
             ApiEndpointNames["Wallets"] = "/api/wallets";
             ApiEndpointNames["Operations"] = "/api/operations";
+            ApiEndpointNames["OperationDetails"] = "/api/operationsDetails";
 
             //PledgesToDelete = new Dictionary<string, string>();
             WalletsToDelete = new List<string>();
@@ -119,6 +126,9 @@ namespace ApiV2Data.Fixtures
 
             this.TestOperation = await CreateTestOperation();
             this.TestOperationCancel = await CreateTestOperation();
+
+            this.TestOperationCreateDetails = await CreateTestOperation();
+            this.TestOperationRegisterDetails = await CreateTestOperation();
 
             //this.AllOperationsFromDB = (await operationsFromDB).Cast<OperationsEntity>().ToList();
 
