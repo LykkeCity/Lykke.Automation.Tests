@@ -11,8 +11,6 @@ namespace XUnitTestCommon.Consumers
 {
     public class ApiConsumer
     {
-        private ConfigBuilder _configBuilder;
-
         private string urlPrefix;
         private string baseUrl;
         private string baseAuthUrl;
@@ -27,47 +25,12 @@ namespace XUnitTestCommon.Consumers
         private RestClient client;
         private RestRequest request;
 
-        public ApiConsumer(ConfigBuilder configBuilder)
+        public ApiConsumer(string urlPrefix, string baseUrl, bool isHttps = false)
         {
-            this._configBuilder = configBuilder;
-            this.urlPrefix = _configBuilder.Config["UrlPefix"];
-            this.baseUrl = _configBuilder.Config["BaseUrl"];
-
-            if (bool.TryParse(_configBuilder.Config["IsHttps"], out bool isHttps))
-            {
-                this.isSecure = isHttps;
-            }
-            else
-            {
-                this.isSecure = false;
-            }
-
-            //authentication
-            if (_configBuilder.Config["BaseUrlAuth"] != null && _configBuilder.Config["BaseUrlAuth"] != "")
-            {
-                this.baseAuthUrl = _configBuilder.Config["BaseUrlAuth"];
-                this.authPath = _configBuilder.Config["AuthPath"];
-
-                if (Int32.TryParse(_configBuilder.Config["AuthTokenTimeout"], out int timeout))
-                    this.authTokenTimeout = timeout;
-                else
-                    this.authTokenTimeout = 60000;
-
-                this.authentication = new User(
-                    _configBuilder.Config["AuthEmail"],
-                    _configBuilder.Config["AuthPassword"],
-                    _configBuilder.Config["AuthClientInfo"],
-                    _configBuilder.Config["AuthPartnerId"]);
-
-                if (!Task.Run(async () => { return await UpdateToken(); }).Result)
-                {
-                    throw new Exception("couldn't update token");
-                }
-            }
-            else
-            {
-                this.authentication = null;
-            }
+            this.urlPrefix = urlPrefix;
+            this.baseUrl = baseUrl;
+            this.isSecure = isHttps;
+            this.authentication = null;
         }
 
         public async Task<Response> ExecuteRequest(string path, Dictionary<string, string> queryParams, string body, Method method)
@@ -119,6 +82,21 @@ namespace XUnitTestCommon.Consumers
             }
 
             return token.AccessToken;
+        }
+
+        public bool Authenticate(string authUrl, string authPath, string authEmail, string authPassword, string authClientInfo, string authPartnerId, int authTokenTimeout = 30000)
+        {
+            this.baseAuthUrl = authUrl;
+            this.authPath = authPath;
+            this.authTokenTimeout = authTokenTimeout;
+
+            this.authentication = new User(
+                authEmail,
+                authPassword,
+                authClientInfo,
+                authPartnerId);
+
+            return Task.Run(async () => { return await UpdateToken(); }).Result;
         }
 
         private async Task<bool> UpdateToken()

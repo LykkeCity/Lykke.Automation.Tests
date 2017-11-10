@@ -15,32 +15,37 @@ using XUnitTestData.Domains;
 using ApiV2Data.DTOs;
 using RestSharp;
 using System.Net;
+using XUnitTestData.Repositories;
 
 namespace ApiV2Data.Fixtures
 {
-    public class ApiV2TestDataFixture : IDisposable
+    public partial class ApiV2TestDataFixture : IDisposable
     {
         private ConfigBuilder _configBuilder;
         private IContainer container;
 
-        private List<string> PledgesToDelete;
+        private List<string> WalletsToDelete;
 
         public string TestClientId;
 
-        public PledgesRepository PledgeRepository;
-        public List<PledgeEntity> AllPledgesFromDB;
-        public PledgeEntity TestPledge;
-        public PledgeDTO TestPledgeUpdate;
-        public PledgeDTO TestPledgeDelete;
+        public WalletRepository WalletRepository;
+        public List<WalletEntity> AllWalletsFromDB;
+        public WalletEntity TestWallet;
+        public WalletDTO TestWalletDelete;
+        public AccountEntity TestWalletAccount;
+        public string TestWalletAssetId;
+
+        public IDictionaryManager<IAccount> AccountManager;
 
         public Dictionary<string, string> ApiEndpointNames;
         public ApiConsumer Consumer;
 
-
         public ApiV2TestDataFixture()
         {
             this._configBuilder = new ConfigBuilder("ApiV2");
-            this.Consumer = new ApiConsumer(this._configBuilder);
+            this.Consumer = new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"]));
+            this.Consumer.Authenticate(_configBuilder.Config["BaseUrlAuth"], _configBuilder.Config["AuthPath"], _configBuilder.Config["AuthEmail"],
+                _configBuilder.Config["AuthPassword"], _configBuilder.Config["AuthClientInfo"], _configBuilder.Config["AuthPartnerId"], Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]));
 
             prepareDependencyContainer();
             prepareTestData().Wait();
@@ -52,74 +57,34 @@ namespace ApiV2Data.Fixtures
             builder.RegisterModule(new ApiV2TestModule(_configBuilder));
             this.container = builder.Build();
 
-            this.PledgeRepository = (PledgesRepository)this.container.Resolve<IDictionaryRepository<IPledgeEntity>>();
+            this.WalletRepository = (WalletRepository)this.container.Resolve<IDictionaryRepository<IWallet>>();
+            this.AccountManager = RepositoryUtils.PrepareRepositoryManager<IAccount>(this.container);
         }
 
         private async Task prepareTestData()
         {
             ApiEndpointNames = new Dictionary<string, string>();
-            ApiEndpointNames["Pledges"] = "/api/pledges";
+            ApiEndpointNames["Wallets"] = "/api/wallets";
 
-            PledgesToDelete = new List<string>();
+            WalletsToDelete = new List<string>();
+
             TestClientId = this._configBuilder.Config["AuthClientId"];
+            var walletsFromDB = this.WalletRepository.GetAllAsync(TestClientId);
 
-            var pledgesFromDB = Task.Run(async () => { return await this.PledgeRepository.GetAllByClientAsync(this._configBuilder.Config["AuthClientId"]); }).Result;
-            this.AllPledgesFromDB = pledgesFromDB.Cast<PledgeEntity>().ToList();
-            this.TestPledge = EnumerableUtils.PickRandom(AllPledgesFromDB);
-
-            this.TestPledgeUpdate = await CreateTestPledge();
-            this.TestPledgeDelete = await CreateTestPledge(false);
-
-
+            this.AllWalletsFromDB = (await walletsFromDB).Cast<WalletEntity>().ToList();
+            this.TestWallet = AllWalletsFromDB.Where(w => w.Id == "fd0f7373-301e-42c0-83a2-1d7b691676c3").FirstOrDefault(); //TODO hardcoded
+            this.TestWalletDelete = await CreateTestWallet();
+            this.TestWalletAccount = await AccountManager.TryGetAsync(TestWallet.Id) as AccountEntity;
+            this.TestWalletAssetId = "LKK";
         }
 
         public void Dispose()
         {
             List<Task<bool>> deleteTasks = new List<Task<bool>>();
-            foreach (string pledgeId in PledgesToDelete) { deleteTasks.Add(DeleteTestPledge(pledgeId)); }
+            
+            foreach (string walletId in WalletsToDelete) { deleteTasks.Add(DeleteTestWallet(walletId)); }
 
             Task.WhenAll(deleteTasks).Wait();
         }
-
-        #region Create / Delete methods
-
-        public async Task<PledgeDTO> CreateTestPledge(bool deleteWithDispose = true)
-        {
-            string url = ApiEndpointNames["Pledges"];
-            CreatePledgeDTO newPledge = new CreatePledgeDTO()
-            {
-                CO2Footprint = Helpers.Random.Next(100, 100000),
-                ClimatePositiveValue = Helpers.Random.Next(100, 100000)
-            };
-
-            string createParam = JsonUtils.SerializeObject(newPledge);
-            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
-            if (response.Status != HttpStatusCode.Created)
-            {
-                return null;
-            }
-
-            PledgeDTO returnDTO = JsonUtils.DeserializeJson<PledgeDTO>(response.ResponseJson);
-
-            if (deleteWithDispose)
-            {
-                PledgesToDelete.Add(returnDTO.Id);
-            }
-
-            return returnDTO;
-        }
-
-        public async Task<bool> DeleteTestPledge(string id)
-        {
-            string deletePledgeUrl = ApiEndpointNames["Pledges"] + "/" + id;
-            var deleteResponse = await Consumer.ExecuteRequest(deletePledgeUrl, Helpers.EmptyDictionary, null, Method.DELETE);
-            if (deleteResponse.Status != HttpStatusCode.OK)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        #endregion
     }
 }

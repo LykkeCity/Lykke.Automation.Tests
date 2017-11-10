@@ -1,4 +1,4 @@
-﻿namespace XUnitTestData.Domains.ApiV2
+﻿namespace XUnitTestData.Domains.BlueApi
 {
     public interface IPledgeEntity : IDictionaryItem
     {

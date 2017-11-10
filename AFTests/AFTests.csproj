@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ApiV2Data\ApiV2Data.csproj" />
     <ProjectReference Include="..\AssetsData\AssetsData.csproj" />
+    <ProjectReference Include="..\BlueApiData\BlueApiData.csproj" />
     <ProjectReference Include="..\MatchingEngineData\MatchingEngineData.csproj" />
     <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
   </ItemGroup>

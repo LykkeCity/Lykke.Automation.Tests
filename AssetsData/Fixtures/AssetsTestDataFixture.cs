@@ -27,7 +27,7 @@ namespace AssetsData.Fixtures
         public AssetsTestDataFixture()
         {
             this._configBuilder = new ConfigBuilder("Assets");
-            this.Consumer = new ApiConsumer(this._configBuilder);
+            this.Consumer = new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"]));
 
             prepareDependencyContainer();
             prepareTestData().Wait();

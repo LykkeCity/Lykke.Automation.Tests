@@ -176,8 +176,6 @@ namespace AFTests.AssetsTests
 
                 Assert.False(parsedMatch.ReadOnly);
 
-                entity.AssetIDsList.Should().HaveSameCount(parsedMatch.AssetIds);
-
                 foreach (string assetId in entity.AssetIDsList)
                 {
                     parsedMatch.AssetIds.Should().Contain(assetId);
@@ -205,8 +203,6 @@ namespace AFTests.AssetsTests
             .Excluding(e => e.ReadOnly));
 
             Assert.False(parsedResponse.ReadOnly);
-
-            fixture.TestWatchListCustom.AssetIDsList.Should().HaveSameCount(parsedResponse.AssetIds);
 
             foreach (string assetId in fixture.TestWatchListCustom.AssetIDsList)
             {
@@ -319,11 +315,9 @@ namespace AFTests.AssetsTests
                 .Excluding(e => e.AssetIds)
                 .Excluding(e => e.ReadOnly));
 
-                entity.AssetIDsList.Should().HaveSameCount(parsedMatch.AssetIds);
-
-                foreach (string assetId in entity.AssetIDsList)
+                foreach (string assetId in parsedMatch.AssetIds)
                 {
-                    parsedMatch.AssetIds.Should().Contain(assetId);
+                    entity.AssetIDsList.Should().Contain(assetId);
                 }
             }
         }

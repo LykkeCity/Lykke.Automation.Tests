@@ -1,32 +1,31 @@
 ﻿using Autofac;
 using AzureStorage.Tables;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Domains;
-using XUnitTestData.Domains.ApiV2;
+using XUnitTestData.Domains.BlueApi;
 using XUnitTestData.Repositories;
-using XUnitTestData.Repositories.ApiV2;
+using XUnitTestData.Repositories.BlueApi;
 
-namespace ApiV2Data.DependencyInjection
+namespace BlueApiData.DependencyInjection
 {
-    public class ApiV2TestModule : Module
+    public class BlueApiTestModule : Module
     {
         private ConfigBuilder _configBuilder;
 
-        public ApiV2TestModule(ConfigBuilder configBuilder)
+        public BlueApiTestModule(ConfigBuilder configBuilder)
         {
-            this._configBuilder = configBuilder;
+            _configBuilder = configBuilder;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(c => new WalletRepository(
-                    new AzureTableStorage<WalletEntity>(
-                        _configBuilder.Config["MainConnectionString"], "Wallets", null)))
-                .As<IDictionaryRepository<IWallet>>();
+            builder.Register(c => new PledgesRepository(
+                    new AzureTableStorage<PledgeEntity>(
+                        _configBuilder.Config["MainConnectionString"], "Pledges", null)))
+                .As<IDictionaryRepository<IPledgeEntity>>();
+
+            RepositoryUtils.RegisterDictionaryManager<IPledgeEntity>(builder);
 
             builder.Register(c => new AccountRepository(
                     new AzureTableStorage<AccountEntity>(
