@@ -14,7 +14,6 @@ namespace AFTests.BlueApi
     [Trait("Category", "BlueApiService")]
     public partial class BlueApiTests
     {
-        //[Fact(Skip = "test will fail")]
         [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "Pledges")]
@@ -31,7 +30,6 @@ namespace AFTests.BlueApi
             _fixture.TestPledge.ShouldBeEquivalentTo(parsedResponse);
         }
 
-        //[Fact(Skip = "test will fail")]
         [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "Pledges")]
@@ -45,7 +43,6 @@ namespace AFTests.BlueApi
             createdPledgeEntity.ShouldBeEquivalentTo(createdPledge, o => o.ExcludingMissingMembers());
         }
 
-        //[Fact(Skip = "test will fail")]
         [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "Pledges")]
@@ -71,7 +68,6 @@ namespace AFTests.BlueApi
             editedPledgeEntity.ShouldBeEquivalentTo(editPledge, o => o.ExcludingMissingMembers().Excluding(p => p.ClientId));
         }
 
-        //[Fact(Skip = "test will fail")]
         [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "Pledges")]

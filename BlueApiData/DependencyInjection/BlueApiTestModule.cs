@@ -11,7 +11,7 @@ namespace BlueApiData.DependencyInjection
 {
     public class BlueApiTestModule : Module
     {
-        private ConfigBuilder _configBuilder;
+        private readonly ConfigBuilder _configBuilder;
 
         public BlueApiTestModule(ConfigBuilder configBuilder)
         {
