@@ -38,6 +38,8 @@ namespace AssetsData.Fixtures
                 cfg.CreateMap<WatchListEntity, WatchListDTO>();
                 cfg.CreateMap<AssetSettingsDTO, AssetSettingsEntity>();
                 cfg.CreateMap<AssetSettingsEntity, AssetSettingsDTO>();
+                cfg.CreateMap<AssetSettingsDTO, AssetSettingsCreateDTO>();
+                cfg.CreateMap<AssetSettingsCreateDTO, AssetSettingsDTO>();
             });
 
             this.mapper = config.CreateMapper();
@@ -53,6 +55,7 @@ namespace AssetsData.Fixtures
             this.MarginAssetsToDelete = new List<string>();
             this.MarginIssuersToDelete = new List<string>();
             this.WatchListsToDelete = new Dictionary<string, string>();
+            this.AssetSettingsToDelete = new List<string>();
 
             this.ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["assets"] = "/api/v2/assets";
@@ -129,8 +132,8 @@ namespace AssetsData.Fixtures
 
             this.AllAssetSettingsFromDB = (await assetSettingsFromDB).Cast<AssetSettingsEntity>().ToList();
             this.TestAssetSettings = EnumerableUtils.PickRandom(AllAssetSettingsFromDB);
-            //TestAssetSettingsUpdate
-            //TestAssetSettingsDelete
+            this.TestAssetSettingsUpdate = await CreateTestAssetSettings();
+            this.TestAssetSettingsDelete = await CreateTestAssetSettings();
 
             this.AllAssetIssuersFromDB = (await assetIssuersFromDB).Cast<AssetIssuersEntity>().ToList();
             this.TestAssetIssuer = EnumerableUtils.PickRandom(AllAssetIssuersFromDB);

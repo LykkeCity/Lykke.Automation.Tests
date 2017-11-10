@@ -112,5 +112,6 @@ namespace AssetsData.Fixtures
         private List<string> MarginAssetsToDelete;
         private List<string> MarginIssuersToDelete;
         private Dictionary<string, string> WatchListsToDelete;
+        private List<string> AssetSettingsToDelete;
     }
 }

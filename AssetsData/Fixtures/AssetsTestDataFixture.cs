@@ -70,6 +70,7 @@ namespace AssetsData.Fixtures
             foreach (string assetId in MarginAssetsToDelete) { deleteTasks.Add(DeleteTestMarginAsset(assetId)); }
             foreach (string issuerId in MarginIssuersToDelete) { deleteTasks.Add(DeleteTestMarginIssuer(issuerId)); }
             foreach (KeyValuePair<string, string> watchListIDs in WatchListsToDelete) { deleteTasks.Add(DeleteTestWatchList(watchListIDs)); }
+            foreach (string assetId in AssetSettingsToDelete) { deleteTasks.Add(DeleteTestAssetSettings(assetId)); }
 
             Task.WhenAll(deleteTasks).Wait();
         }

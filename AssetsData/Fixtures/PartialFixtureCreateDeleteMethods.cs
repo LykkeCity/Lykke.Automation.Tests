@@ -445,5 +445,51 @@ namespace AssetsData.Fixtures
 
             return true;
         }
+
+        public async Task<AssetSettingsDTO> CreateTestAssetSettings()
+        {
+            string url = ApiEndpointNames["assetSettings"];
+            AssetSettingsCreateDTO createDTO = new AssetSettingsCreateDTO()
+            {
+                Asset = Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest",
+                CashinCoef = Helpers.Random.Next(1, 10),
+                ChangeWallet = Guid.NewGuid().ToString() + "_AutoTest",
+                Dust = Helpers.Random.NextDouble(),
+                HotWallet = Guid.NewGuid().ToString() + "_AutoTest",
+                MaxBalance = Helpers.Random.Next(100,1000),
+                MaxOutputsCount = Helpers.Random.Next(1, 100),
+                MaxOutputsCountInTx = Helpers.Random.Next(1, 100),
+                MinBalance = Helpers.Random.Next(1, 100),
+                MinOutputsCount = Helpers.Random.Next(1, 100),
+                OutputSize = Helpers.Random.Next(100, 10000),
+                PrivateIncrement = 0
+            };
+            string createParam = JsonUtils.SerializeObject(createDTO);
+
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            if (response.Status != HttpStatusCode.Created)
+            {
+                return null;
+            }
+
+            AssetSettingsDTO parsedResponse = JsonUtils.DeserializeJson<AssetSettingsDTO>(response.ResponseJson);
+
+            AssetSettingsToDelete.Add(parsedResponse.Asset);
+
+            return parsedResponse;
+        }
+
+        public async Task<bool> DeleteTestAssetSettings(string id)
+        {
+            string url = ApiEndpointNames["assetSettings"] + "/" + id;
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+
+            if (response.Status != HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
