@@ -18,6 +18,9 @@ namespace BlueApiData.Fixtures
         private IContainer _container;
 
         public string TestClientId;
+        public string TestPledgeCreateClientId;
+        public string TestPledgeUpdateClientId;
+        public string TestPledgeDeleteClientId;
 
         private Dictionary<string, string> _pledgesToDelete;
 
@@ -48,43 +51,43 @@ namespace BlueApiData.Fixtures
 
             PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
             PledgeApiConsumers.Add(
-                "CreatePledge", 
+                "CreatePledge",
                 new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"]))
             );
             PledgeApiConsumers.Add(
-                "UpdatePledge", 
+                "UpdatePledge",
                 new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"]))
             );
             PledgeApiConsumers.Add(
-                "DeletePledge", 
+                "DeletePledge",
                 new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"]))
             );
 
             PledgeApiConsumers["CreatePledge"].Authenticate(
-                _configBuilder.Config["BaseUrlAuth"], 
-                _configBuilder.Config["AuthPath"], 
+                _configBuilder.Config["BaseUrlAuth"],
+                _configBuilder.Config["AuthPath"],
                 _configBuilder.Config["PledgeCreateAuthEmail"],
-                _configBuilder.Config["AuthPassword"], 
-                _configBuilder.Config["AuthClientInfo"], 
-                _configBuilder.Config["AuthPartnerId"], 
+                _configBuilder.Config["AuthPassword"],
+                _configBuilder.Config["AuthClientInfo"],
+                _configBuilder.Config["AuthPartnerId"],
                 Int32.Parse(_configBuilder.Config["AuthTokenTimeout"])
             );
             PledgeApiConsumers["UpdatePledge"].Authenticate(
-                _configBuilder.Config["BaseUrlAuth"], 
-                _configBuilder.Config["AuthPath"], 
+                _configBuilder.Config["BaseUrlAuth"],
+                _configBuilder.Config["AuthPath"],
                 _configBuilder.Config["PledgeUpdateAuthEmail"],
-                _configBuilder.Config["AuthPassword"], 
-                _configBuilder.Config["AuthClientInfo"], 
-                _configBuilder.Config["AuthPartnerId"], 
+                _configBuilder.Config["AuthPassword"],
+                _configBuilder.Config["AuthClientInfo"],
+                _configBuilder.Config["AuthPartnerId"],
                 Int32.Parse(_configBuilder.Config["AuthTokenTimeout"])
             );
             PledgeApiConsumers["DeletePledge"].Authenticate(
-                _configBuilder.Config["BaseUrlAuth"], 
-                _configBuilder.Config["AuthPath"], 
+                _configBuilder.Config["BaseUrlAuth"],
+                _configBuilder.Config["AuthPath"],
                 _configBuilder.Config["PledgeDeleteAuthEmail"],
-                _configBuilder.Config["AuthPassword"], 
-                _configBuilder.Config["AuthClientInfo"], 
-                _configBuilder.Config["AuthPartnerId"], 
+                _configBuilder.Config["AuthPassword"],
+                _configBuilder.Config["AuthClientInfo"],
+                _configBuilder.Config["AuthPartnerId"],
                 Int32.Parse(_configBuilder.Config["AuthTokenTimeout"])
             );
 
@@ -100,10 +103,13 @@ namespace BlueApiData.Fixtures
             _pledgesToDelete = new Dictionary<string, string>();
 
             TestClientId = _configBuilder.Config["AuthClientId"];
+            TestPledgeCreateClientId = _configBuilder.Config["AuthPledgeCreateClientId"];
+            TestPledgeDeleteClientId = _configBuilder.Config["AuthPledgeDeleteClientId"];
+            TestPledgeUpdateClientId = _configBuilder.Config["AuthPledgeUpdateClientId"];
 
-            TestPledge = await CreateTestPledge();
-            TestPledgeUpdate = await CreateTestPledge("UpdatePledge");
-            TestPledgeDelete = await CreateTestPledge("DeletePledge");
+            TestPledge = await CreateTestPledge(clientId: TestClientId);
+            TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
+            TestPledgeDelete = await CreateTestPledge(TestPledgeDeleteClientId, "DeletePledge");
         }
 
         private void PrepareDependencyContainer()
@@ -119,7 +125,7 @@ namespace BlueApiData.Fixtures
         {
             var deleteTasks = new List<Task<bool>>();
 
-            foreach (KeyValuePair<string, string> pledgeData in _pledgesToDelete) { deleteTasks.Add(DeleteTestPledge(pledgeData.Key, pledgeData.Value)); }
+            foreach (KeyValuePair<string, string> pledgeData in _pledgesToDelete) { deleteTasks.Add(DeleteTestPledge(pledgeData.Value)); }
 
             Task.WhenAll(deleteTasks).Wait();
             GC.SuppressFinalize(this);

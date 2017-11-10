@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using BlueApiData.DTOs;
-using BlueApiData.Fixtures;
 using FluentAssertions;
 using RestSharp;
 using Xunit;
@@ -13,10 +12,10 @@ namespace AFTests.BlueApi
 {
     [Trait("Category", "FullRegression")]
     [Trait("Category", "BlueApiService")]
-    public partial class BlueApiTests : IClassFixture<BlueApiTestDataFixture>
+    public partial class BlueApiTests
     {
-        [Fact(Skip = "test will fail")]
-        //[Fact]
+        //[Fact(Skip = "test will fail")]
+        [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "Pledges")]
         [Trait("Category", "PledgesGet")]
@@ -24,42 +23,30 @@ namespace AFTests.BlueApi
         {
             var url = _fixture.ApiEndpointNames["Pledges"];
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+
             Assert.True(response.Status == HttpStatusCode.OK);
+
             var parsedResponse = JsonUtils.DeserializeJson<PledgeDTO>(response.ResponseJson);
 
             _fixture.TestPledge.ShouldBeEquivalentTo(parsedResponse);
         }
 
-        [Fact(Skip = "test will fail")]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Pledges")]
-        [Trait("Category", "PledgesGet")]
-        public async Task GetPledgeById()
-        {
-            var getSingleUrl = _fixture.ApiEndpointNames["Pledges"] + "/" + _fixture.TestPledge.Id;
-
-            var singleResponse = await _fixture.Consumer.ExecuteRequest(getSingleUrl, Helpers.EmptyDictionary, null, Method.GET);
-            Assert.True(singleResponse.Status == HttpStatusCode.OK);
-            var parsedResponseSingle = JsonUtils.DeserializeJson<PledgeDTO>(singleResponse.ResponseJson);
-            _fixture.TestPledge.ShouldBeEquivalentTo(parsedResponseSingle);
-
-        }
-
-        [Fact(Skip = "test will fail")]
+        //[Fact(Skip = "test will fail")]
+        [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "Pledges")]
         [Trait("Category", "PledgesPost")]
         public async Task CreatePledge()
         {
-            var createdPledge = await _fixture.CreateTestPledge("CreatePledge");
+            var createdPledge = await _fixture.CreateTestPledge(_fixture.TestPledgeCreateClientId, "CreatePledge");
             Assert.NotNull(createdPledge);
 
-            var createdPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(createdPledge.Id);
-            createdPledgeEntity.ShouldBeEquivalentTo(createdPledge, o => o
-            .ExcludingMissingMembers());
+            var createdPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.GetPledgeAsync(_fixture.TestPledgeCreateClientId);
+            createdPledgeEntity.ShouldBeEquivalentTo(createdPledge, o => o.ExcludingMissingMembers());
         }
 
-        [Fact(Skip = "test will fail")]
+        //[Fact(Skip = "test will fail")]
+        [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "Pledges")]
         [Trait("Category", "PledgesPut")]
@@ -76,27 +63,27 @@ namespace AFTests.BlueApi
             var editPledgeUrl = _fixture.ApiEndpointNames["Pledges"];
             var editParam = JsonUtils.SerializeObject(editPledge);
             var editResponse = await _fixture.PledgeApiConsumers["UpdatePledge"].ExecuteRequest(editPledgeUrl, Helpers.EmptyDictionary, editParam, Method.PUT);
-            //Assert.True(editResponse.Status == HttpStatusCode.OK);
-            var parsedEditResponse = JsonUtils.DeserializeJson<PledgeDTO>(editResponse.ResponseJson);
 
-            var editedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(_fixture.TestPledgeUpdate.Id);
-            editedPledgeEntity.ShouldBeEquivalentTo(parsedEditResponse, o => o
-            .ExcludingMissingMembers()
-            .Excluding(p => p.ClientId));
+            Assert.True(editResponse.Status == HttpStatusCode.NoContent);
+
+            var editedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.GetPledgeAsync(_fixture.TestPledgeUpdateClientId);
+
+            editedPledgeEntity.ShouldBeEquivalentTo(editPledge, o => o.ExcludingMissingMembers().Excluding(p => p.ClientId));
         }
 
-        [Fact(Skip = "test will fail")]
+        //[Fact(Skip = "test will fail")]
+        [Fact]
         [Trait("Category", "Smoke")]
         [Trait("Category", "Pledges")]
         [Trait("Category", "PledgesDelete")]
         public async Task DeletePledge()
         {
-            var deletePledgeUrl = _fixture.ApiEndpointNames["Pledges"] + "/" + _fixture.TestPledgeDelete.Id;
+            var deletePledgeUrl = _fixture.ApiEndpointNames["Pledges"];
 
             var deleteResponse = await _fixture.PledgeApiConsumers["DeletePledge"].ExecuteRequest(deletePledgeUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            var deletedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(_fixture.TestPledgeDelete.Id);
+            var deletedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.GetPledgeAsync(_fixture.TestPledgeDeleteClientId);
             Assert.Null(deletedPledgeEntity);
         }
     }

@@ -45,11 +45,11 @@ namespace XUnitTestData.Repositories.BlueApi
             return (await _tableStorage.GetDataAsync(partitionKey));
         }
 
-        public async Task<IEnumerable<IPledgeEntity>> GetAllByClientAsync(string clientId)
+        public async Task<IPledgeEntity> GetPledgeAsync(string clientId)
         {
             var partitionKey = PledgeEntity.GeneratePartitionKey();
 
-            return _tableStorage.Where(p => p.PartitionKey == partitionKey && p.ClientId == clientId);
+            return _tableStorage.FirstOrDefault(p => p.PartitionKey == partitionKey && p.ClientId == clientId);
         }
     }
 }
