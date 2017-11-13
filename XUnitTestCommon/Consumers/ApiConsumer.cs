@@ -9,6 +9,14 @@ using System.Net;
 
 namespace XUnitTestCommon.Consumers
 {
+    public enum ApiConsumerType
+    {
+        Default,
+        Create,
+        Update,
+        Delete
+    }
+
     public class ApiConsumer
     {
         private string urlPrefix;
@@ -25,11 +33,14 @@ namespace XUnitTestCommon.Consumers
         private RestClient client;
         private RestRequest request;
 
-        public ApiConsumer(string urlPrefix, string baseUrl, bool isHttps = false)
+        private ConfigBuilder _configBuilder;
+
+        public ApiConsumer(ConfigBuilder configBuilder)
         {
-            this.urlPrefix = urlPrefix;
-            this.baseUrl = baseUrl;
-            this.isSecure = isHttps;
+            this._configBuilder = configBuilder;
+            this.urlPrefix = _configBuilder.Config["UrlPefix"];
+            this.baseUrl = _configBuilder.Config["BaseUrl"];
+            this.isSecure = Boolean.Parse(_configBuilder.Config["IsHttps"]);
             this.authentication = null;
         }
 
@@ -84,17 +95,27 @@ namespace XUnitTestCommon.Consumers
             return token.AccessToken;
         }
 
-        public bool Authenticate(string authUrl, string authPath, string authEmail, string authPassword, string authClientInfo, string authPartnerId, int authTokenTimeout = 30000)
+        public bool Authenticate(ApiConsumerType apiConsumerType = ApiConsumerType.Default)
         {
-            this.baseAuthUrl = authUrl;
-            this.authPath = authPath;
-            this.authTokenTimeout = authTokenTimeout;
+            this.baseAuthUrl = _configBuilder.Config["BaseUrlAuth"];
+            this.authPath = _configBuilder.Config["AuthPath"];
+            this.authTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]);
+
+            var authEmail = _configBuilder.Config["AuthEmail"];
+
+            if (apiConsumerType == ApiConsumerType.Create)
+                authEmail = _configBuilder.Config["PledgeCreateAuthEmail"];
+            else if (apiConsumerType == ApiConsumerType.Update)
+                authEmail = _configBuilder.Config["PledgeUpdateAuthEmail"];
+            else if (apiConsumerType == ApiConsumerType.Delete)
+                authEmail = _configBuilder.Config["PledgeDeleteAuthEmail"];
+
 
             this.authentication = new User(
                 authEmail,
-                authPassword,
-                authClientInfo,
-                authPartnerId);
+                _configBuilder.Config["AuthPassword"],
+                _configBuilder.Config["AuthClientInfo"],
+                _configBuilder.Config["AuthPartnerId"]);
 
             return Task.Run(async () => { return await UpdateToken(); }).Result;
         }

@@ -43,9 +43,8 @@ namespace ApiV2Data.Fixtures
         public ApiV2TestDataFixture()
         {
             this._configBuilder = new ConfigBuilder("ApiV2");
-            this.Consumer = new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"]));
-            this.Consumer.Authenticate(_configBuilder.Config["BaseUrlAuth"], _configBuilder.Config["AuthPath"], _configBuilder.Config["AuthEmail"],
-                _configBuilder.Config["AuthPassword"], _configBuilder.Config["AuthClientInfo"], _configBuilder.Config["AuthPartnerId"], Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]));
+            this.Consumer = new ApiConsumer(_configBuilder);
+            this.Consumer.Authenticate();
 
             prepareDependencyContainer();
             prepareTestData().Wait();

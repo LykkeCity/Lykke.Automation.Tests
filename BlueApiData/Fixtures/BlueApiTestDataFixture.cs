@@ -38,58 +38,17 @@ namespace BlueApiData.Fixtures
         {
             _configBuilder = new ConfigBuilder("BlueApi");
 
-            Consumer = new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"]));
-            Consumer.Authenticate(
-                _configBuilder.Config["BaseUrlAuth"], 
-                _configBuilder.Config["AuthPath"], 
-                _configBuilder.Config["AuthEmail"],
-                _configBuilder.Config["AuthPassword"], 
-                _configBuilder.Config["AuthClientInfo"], 
-                _configBuilder.Config["AuthPartnerId"], 
-                Int32.Parse(_configBuilder.Config["AuthTokenTimeout"])
-            );
+            Consumer = new ApiConsumer(_configBuilder);
+            Consumer.Authenticate();
 
             PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
-            PledgeApiConsumers.Add(
-                "CreatePledge",
-                new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"]))
-            );
-            PledgeApiConsumers.Add(
-                "UpdatePledge",
-                new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"]))
-            );
-            PledgeApiConsumers.Add(
-                "DeletePledge",
-                new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"]))
-            );
+            PledgeApiConsumers.Add("CreatePledge", new ApiConsumer(_configBuilder));
+            PledgeApiConsumers.Add("UpdatePledge", new ApiConsumer(_configBuilder));
+            PledgeApiConsumers.Add("DeletePledge", new ApiConsumer(_configBuilder));
 
-            PledgeApiConsumers["CreatePledge"].Authenticate(
-                _configBuilder.Config["BaseUrlAuth"],
-                _configBuilder.Config["AuthPath"],
-                _configBuilder.Config["PledgeCreateAuthEmail"],
-                _configBuilder.Config["AuthPassword"],
-                _configBuilder.Config["AuthClientInfo"],
-                _configBuilder.Config["AuthPartnerId"],
-                Int32.Parse(_configBuilder.Config["AuthTokenTimeout"])
-            );
-            PledgeApiConsumers["UpdatePledge"].Authenticate(
-                _configBuilder.Config["BaseUrlAuth"],
-                _configBuilder.Config["AuthPath"],
-                _configBuilder.Config["PledgeUpdateAuthEmail"],
-                _configBuilder.Config["AuthPassword"],
-                _configBuilder.Config["AuthClientInfo"],
-                _configBuilder.Config["AuthPartnerId"],
-                Int32.Parse(_configBuilder.Config["AuthTokenTimeout"])
-            );
-            PledgeApiConsumers["DeletePledge"].Authenticate(
-                _configBuilder.Config["BaseUrlAuth"],
-                _configBuilder.Config["AuthPath"],
-                _configBuilder.Config["PledgeDeleteAuthEmail"],
-                _configBuilder.Config["AuthPassword"],
-                _configBuilder.Config["AuthClientInfo"],
-                _configBuilder.Config["AuthPartnerId"],
-                Int32.Parse(_configBuilder.Config["AuthTokenTimeout"])
-            );
+            PledgeApiConsumers["CreatePledge"].Authenticate(ApiConsumerType.Create);
+            PledgeApiConsumers["UpdatePledge"].Authenticate(ApiConsumerType.Update);
+            PledgeApiConsumers["DeletePledge"].Authenticate(ApiConsumerType.Delete);
 
             PrepareDependencyContainer();
             PrepareTestData().Wait();
