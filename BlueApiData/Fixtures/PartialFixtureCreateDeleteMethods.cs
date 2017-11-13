@@ -30,13 +30,7 @@ namespace BlueApiData.Fixtures
 
             var pledge = await PledgeRepository.GetPledgeAsync(clientId);
 
-            var returnDto = new PledgeDTO
-            {
-                Id = pledge.Id,
-                CO2Footprint = pledge.CO2Footprint,
-                ClientId = pledge.ClientId,
-                ClimatePositiveValue = pledge.ClimatePositiveValue
-            };
+            var returnDto = Mapper.Map<PledgeDTO>(pledge);
 
             _pledgesToDelete.Add(returnDto.Id, consumerIndex);
 

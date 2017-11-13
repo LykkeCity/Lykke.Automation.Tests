@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
+using AutoMapper;
 using BlueApiData.DependencyInjection;
 using BlueApiData.DTOs;
 using XUnitTestCommon;
@@ -16,6 +17,7 @@ namespace BlueApiData.Fixtures
     {
         private readonly ConfigBuilder _configBuilder;
         private IContainer _container;
+        public IMapper Mapper;
 
         public string TestClientId;
         public string TestPledgeCreateClientId;
