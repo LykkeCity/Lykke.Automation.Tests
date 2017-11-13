@@ -53,6 +53,8 @@ namespace ApiV2Data.Fixtures
         public OperationCreateReturnDTO TestOperationCancel;
 
         public OperationDetailsRepository OperationDetailsRepository;
+        public PersonalDataRepository PersonalDataRepository;
+
         public OperationCreateReturnDTO TestOperationCreateDetails;
         public OperationCreateReturnDTO TestOperationRegisterDetails;
 
@@ -96,6 +98,7 @@ namespace ApiV2Data.Fixtures
             this.AccountManager = RepositoryUtils.PrepareRepositoryManager<IAccount>(this.container);
             this.OperationsRepository = (OperationsRepository)this.container.Resolve<IDictionaryRepository<IOperations>>();
             this.OperationDetailsRepository = (OperationDetailsRepository)this.container.Resolve<IDictionaryRepository<IOperationDetails>>();
+            this.PersonalDataRepository = (PersonalDataRepository)this.container.Resolve<IDictionaryRepository<IPersonalData>>();
         }
 
         private async Task prepareTestData()
@@ -106,6 +109,7 @@ namespace ApiV2Data.Fixtures
             ApiEndpointNames["Operations"] = "/api/operations";
             ApiEndpointNames["OperationDetails"] = "/api/operationsDetails";
             ApiEndpointNames["Hft"] = "/api/hft";
+            ApiEndpointNames["Client"] = "/api/client";
 
             //PledgesToDelete = new Dictionary<string, string>();
             WalletsToDelete = new List<string>();
