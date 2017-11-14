@@ -54,9 +54,10 @@ namespace ApiV2Data.Fixtures
 
         public OperationDetailsRepository OperationDetailsRepository;
         public PersonalDataRepository PersonalDataRepository;
-
         public OperationCreateReturnDTO TestOperationCreateDetails;
         public OperationCreateReturnDTO TestOperationRegisterDetails;
+
+        public TradersRepository TradersRepository;
 
         public Dictionary<string, string> ApiEndpointNames;
         public ApiConsumer Consumer;
@@ -70,18 +71,6 @@ namespace ApiV2Data.Fixtures
             this.Consumer = new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"]));
             this.Consumer.Authenticate(_configBuilder.Config["BaseUrlAuth"], _configBuilder.Config["AuthPath"], _configBuilder.Config["AuthEmail"],
                 _configBuilder.Config["AuthPassword"], _configBuilder.Config["AuthClientInfo"], _configBuilder.Config["AuthPartnerId"], Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]));
-
-            //PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
-            //PledgeApiConsumers.Add("CreatePledge", new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"])));
-            //PledgeApiConsumers.Add("UpdatePledge", new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"])));
-            //PledgeApiConsumers.Add("DeletePledge", new ApiConsumer(_configBuilder.Config["UrlPefix"], _configBuilder.Config["BaseUrl"], Boolean.Parse(_configBuilder.Config["IsHttps"])));
-
-            //PledgeApiConsumers["CreatePledge"].Authenticate(_configBuilder.Config["BaseUrlAuth"], _configBuilder.Config["AuthPath"], _configBuilder.Config["PledgeCreateAuthEmail"],
-            //    _configBuilder.Config["AuthPassword"], _configBuilder.Config["AuthClientInfo"], _configBuilder.Config["AuthPartnerId"], Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]));
-            //PledgeApiConsumers["UpdatePledge"].Authenticate(_configBuilder.Config["BaseUrlAuth"], _configBuilder.Config["AuthPath"], _configBuilder.Config["PledgeUpdateAuthEmail"],
-            //    _configBuilder.Config["AuthPassword"], _configBuilder.Config["AuthClientInfo"], _configBuilder.Config["AuthPartnerId"], Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]));
-            //PledgeApiConsumers["DeletePledge"].Authenticate(_configBuilder.Config["BaseUrlAuth"], _configBuilder.Config["AuthPath"], _configBuilder.Config["PledgeDeleteAuthEmail"],
-            //    _configBuilder.Config["AuthPassword"], _configBuilder.Config["AuthClientInfo"], _configBuilder.Config["AuthPartnerId"], Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]));
 
             prepareDependencyContainer();
             prepareTestData().Wait();
@@ -99,29 +88,24 @@ namespace ApiV2Data.Fixtures
             this.OperationsRepository = (OperationsRepository)this.container.Resolve<IDictionaryRepository<IOperations>>();
             this.OperationDetailsRepository = (OperationDetailsRepository)this.container.Resolve<IDictionaryRepository<IOperationDetails>>();
             this.PersonalDataRepository = (PersonalDataRepository)this.container.Resolve<IDictionaryRepository<IPersonalData>>();
+            this.TradersRepository = (TradersRepository)this.container.Resolve<IDictionaryRepository<ITrader>>();
         }
 
         private async Task prepareTestData()
         {
             ApiEndpointNames = new Dictionary<string, string>();
-            //ApiEndpointNames["Pledges"] = "/api/pledges";
             ApiEndpointNames["Wallets"] = "/api/wallets";
             ApiEndpointNames["Operations"] = "/api/operations";
             ApiEndpointNames["OperationDetails"] = "/api/operationsDetails";
             ApiEndpointNames["Hft"] = "/api/hft";
             ApiEndpointNames["Client"] = "/api/client";
 
-            //PledgesToDelete = new Dictionary<string, string>();
             WalletsToDelete = new List<string>();
             OperationsToCancel = new List<string>();
 
             TestClientId = this._configBuilder.Config["AuthClientId"];
             var walletsFromDB = this.WalletRepository.GetAllAsync(TestClientId);
             var operationsFromDB = this.OperationsRepository.GetAllAsync(TestClientId);
-
-            //this.TestPledge = await CreateTestPledge();
-            //this.TestPledgeUpdate = await CreateTestPledge("UpdatePledge");
-            //this.TestPledgeDelete = await CreateTestPledge("DeletePledge");
 
             this.TestAssetId = "LKK";
             this.TestWalletWithBalance = "fd0f7373-301e-42c0-83a2-1d7b691676c3";
@@ -138,14 +122,11 @@ namespace ApiV2Data.Fixtures
             this.TestOperationCreateDetails = await CreateTestOperation();
             this.TestOperationRegisterDetails = await CreateTestOperation();
 
-            //this.AllOperationsFromDB = (await operationsFromDB).Cast<OperationsEntity>().ToList();
-
         }
 
         public void Dispose()
         {
             List<Task<bool>> deleteTasks = new List<Task<bool>>();
-            //foreach (KeyValuePair<string, string> pledgeData in PledgesToDelete) { deleteTasks.Add(DeleteTestPledge(pledgeData.Key, pledgeData.Value)); }
             foreach (string walletId in WalletsToDelete) { deleteTasks.Add(DeleteTestWallet(walletId)); }
             foreach (string operationId in OperationsToCancel) { deleteTasks.Add(CancelTestOperation(operationId)); }
 

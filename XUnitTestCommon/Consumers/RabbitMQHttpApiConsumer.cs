@@ -7,21 +7,22 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon.DTOs.RabbitMQ;
+using XUnitTestCommon.Consumers.Models;
 
 namespace XUnitTestCommon.Consumers
 {
     public static class RabbitMQHttpApiConsumer
     {
         private static HttpClient _client = new HttpClient();
-        private static ConfigBuilder _config;
+        private static RabbitMQHttpApiSettings _settings;
 
-        public static void Setup(ConfigBuilder configBuidler)
+        public static void Setup(RabbitMQHttpApiSettings settings)
         {
-            _config = configBuidler;
+            _settings = settings;
 
-            _client.BaseAddress = new Uri("http://" + _config.Config["RabbitMQHost"] + ":" + _config.Config["RabbitMQPort"]);
+            _client.BaseAddress = new Uri("http://" + _settings.Hostname + ":" + _settings.Port);
 
-            byte[] authBytes = new UTF8Encoding().GetBytes(_config.Config["RabbitMQUsername"] + ":" + _config.Config["RabbitMQPassword"]);
+            byte[] authBytes = new UTF8Encoding().GetBytes(_settings.Username + ":" + _settings.Password);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authBytes));
 
             _client.DefaultRequestHeaders.Accept.Clear();
@@ -41,7 +42,7 @@ namespace XUnitTestCommon.Consumers
             requestData.arguments = new RabbitMQCreateQueueDTO.Arguments();
             requestData.auto_delete = false;
             requestData.durable = true;
-            requestData.node = _config.Config["RabbitMQNode"];
+            requestData.node = _settings.Node;
 
             string requestDataStr = JsonUtils.SerializeObject(requestData);
 

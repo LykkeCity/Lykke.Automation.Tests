@@ -6,6 +6,7 @@ using XUnitTestCommon.Consumers;
 using XUnitTestCommon.DTOs.RabbitMQ;
 using Autofac;
 using XUnitTestCommon.Utils;
+using XUnitTestCommon.Consumers.Models;
 using MatchingEngineData.DependencyInjection;
 using XUnitTestData.Services;
 using XUnitTestData.Domains;
@@ -19,6 +20,7 @@ using XUnitTestData.Domains.MatchingEngine;
 using XUnitTestData.Domains.Assets;
 using XUnitTestData.Repositories.Assets;
 using System.Linq.Expressions;
+using MatchingEngineData;
 
 namespace AFTMatchingEngine.Fixtures
 {
@@ -61,7 +63,7 @@ namespace AFTMatchingEngine.Fixtures
 
         public MatchingEngineTestDataFixture()
         {
-            this._configBuilder = new ConfigBuilder("MatchingEngine");
+            this._configBuilder = new ConfigBuilder(Constants.ConfigItemName);
             prepareConsumer();
             prepareRabbitQueues();
             prepareRabbitMQConnections();
@@ -88,22 +90,22 @@ namespace AFTMatchingEngine.Fixtures
             RabbitMqMessages = new Dictionary<Type, List<IRabbitMQOperation>>();
 
             CashInOutSubscription = new RabbitMQConsumer<CashOperation>(
-                _configBuilder, "cashinout", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "cashinout", Constants.TestQueueName), handleOperationMessages);
 
             CashTransferSubscription = new RabbitMQConsumer<CashTransferOperation>(
-                _configBuilder, "transfers", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "transfers", Constants.TestQueueName), handleOperationMessages);
 
             CashSwapSubscription = new RabbitMQConsumer<CashSwapOperation>(
-                _configBuilder, "cashswap", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "cashswap", Constants.TestQueueName), handleOperationMessages);
 
             BalanceUpdateSubscription = new RabbitMQConsumer<BalanceUpdate>(
-                _configBuilder, "balanceupdate", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "balanceupdate", Constants.TestQueueName), handleOperationMessages);
 
             LimitOrderSubscription = new RabbitMQConsumer<LimitOrdersResponse>(
-                _configBuilder, "limitorders.clients", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "limitorders.clients", Constants.TestQueueName), handleOperationMessages);
 
             TradesOrderSubscription = new RabbitMQConsumer<MarketOrderWithTrades>(
-                _configBuilder, "trades", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "trades", Constants.TestQueueName), handleOperationMessages);
 
         }
 
@@ -122,19 +124,19 @@ namespace AFTMatchingEngine.Fixtures
         private void prepareRabbitQueues()
         {
             _createdQueues = new List<string>();
-            RabbitMQHttpApiConsumer.Setup(_configBuilder);
+            RabbitMQHttpApiConsumer.Setup(new RabbitMQHttpApiSettings(_configBuilder));
 
             
             if(!Int32.TryParse(_configBuilder.Config["RabbitMQMessageWait"], out waitForRabbitMQMessage))
                 waitForRabbitMQMessage = 20000;
 
             List<Task<bool>> createQueueTasks = new List<Task<bool>>();
-            createQueueTasks.Add(createQueue("lykke.cashinout", "lykke.cashinout.automation_functional_tests"));
-            createQueueTasks.Add(createQueue("lykke.transfers", "lykke.transfers.automation_functional_tests"));
-            createQueueTasks.Add(createQueue("lykke.cashswap", "lykke.cashswap.automation_functional_tests"));
-            createQueueTasks.Add(createQueue("lykke.balanceupdate", "lykke.balanceupdate.automation_functional_tests"));
-            createQueueTasks.Add(createQueue("lykke.limitorders.clients", "lykke.limitorders.clients.automation_functional_tests"));
-            createQueueTasks.Add(createQueue("lykke.trades", "lykke.trades.automation_functional_tests"));
+            createQueueTasks.Add(createQueue("lykke.cashinout", "lykke.cashinout." + Constants.TestQueueName));
+            createQueueTasks.Add(createQueue("lykke.transfers", "lykke.transfers." + Constants.TestQueueName));
+            createQueueTasks.Add(createQueue("lykke.cashswap", "lykke.cashswap." + Constants.TestQueueName));
+            createQueueTasks.Add(createQueue("lykke.balanceupdate", "lykke.balanceupdate." + Constants.TestQueueName));
+            createQueueTasks.Add(createQueue("lykke.limitorders.clients", "lykke.limitorders.clients." + Constants.TestQueueName));
+            createQueueTasks.Add(createQueue("lykke.trades", "lykke.trades." + Constants.TestQueueName));
 
             Task.WhenAll(createQueueTasks).Wait();
         }
@@ -169,10 +171,10 @@ namespace AFTMatchingEngine.Fixtures
 
         private void prepareTestData()
         {
-            TestAccountId1 = "AFTest_Client1";
-            TestAccountId2 = "AFTest_Client2";
-            TestAsset1 = "LKK";
-            TestAsset2 = "USD";
+            TestAccountId1 = Constants.TestAccountId1;
+            TestAccountId2 = Constants.TestAccountId2;
+            TestAsset1 = Constants.TestAsset1;
+            TestAsset2 = Constants.TestAsset2;
 
             if (!Int32.TryParse(_configBuilder.Config["AssetPrecission"], out AssetPrecission))
                 AssetPrecission = 2;

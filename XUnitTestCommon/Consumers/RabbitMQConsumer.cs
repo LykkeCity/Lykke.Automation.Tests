@@ -5,19 +5,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using XUnitTestCommon.Consumers.Models;
 
 namespace XUnitTestCommon.Consumers
 {
     public class RabbitMQConsumer<T>
     {
         private RabbitMqSubscriber<T> _connector;
+        private RabbitMQSettings _settings;
 
-        public RabbitMQConsumer(ConfigBuilder configBuilder, string sourceEndpoint, string endpoint, Func<T, Task> callback)
+        public RabbitMQConsumer(RabbitMQSettings settings, Func<T, Task> callback)
         {
-            string connectionString = getConnectionStringFromConfig(configBuilder);
+            string connectionString = getConnectionStringFromSettings(settings);
 
             RabbitMqSubscriptionSettings subscriberSettings =
-                RabbitMqSubscriptionSettings.CreateForSubscriber(connectionString, sourceEndpoint, endpoint);
+                RabbitMqSubscriptionSettings.CreateForSubscriber(connectionString, settings.SourceEndpoint, settings.Endpoint);
 
             subscriberSettings.MakeDurable();
             subscriberSettings.DeadLetterExchangeName = "";
@@ -59,16 +61,16 @@ namespace XUnitTestCommon.Consumers
             _connector.Subscribe(callback);
         }
 
-        private string getConnectionStringFromConfig(ConfigBuilder configBuilder)
+        private string getConnectionStringFromSettings(RabbitMQSettings settings)
         {
             StringBuilder connectionstrinSb = new StringBuilder("amqp://");
-            connectionstrinSb.Append(configBuilder.Config["RabbitMQUsername"]);
+            connectionstrinSb.Append(settings.Username);
             connectionstrinSb.Append(":");
-            connectionstrinSb.Append(configBuilder.Config["RabbitMQPassword"]);
+            connectionstrinSb.Append(settings.Password);
             connectionstrinSb.Append("@");
-            connectionstrinSb.Append(configBuilder.Config["RabbitMQHost"]);
+            connectionstrinSb.Append(settings.Hostname);
             connectionstrinSb.Append(":");
-            connectionstrinSb.Append(configBuilder.Config["RabbitMQamqpPort"]);
+            connectionstrinSb.Append(settings.Port);
             connectionstrinSb.Append("/");
             connectionstrinSb.Append("%2f");
 
