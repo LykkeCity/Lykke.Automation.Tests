@@ -48,7 +48,7 @@ namespace ApiV2Data.Fixtures
                 returnModel = JsonUtils.DeserializeJson<WalletDTO>(response.ResponseJson);
             }
 
-            WalletsToDelete.Add(returnModel.Id);
+            _walletsToDelete.Add(returnModel.Id);
 
             return returnModel;
         }

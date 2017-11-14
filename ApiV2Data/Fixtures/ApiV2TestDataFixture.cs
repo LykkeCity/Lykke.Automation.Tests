@@ -1,6 +1,5 @@
 ﻿using ApiV2Data.DependencyInjection;
 using Autofac;
-using AutoMapper;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -13,23 +12,21 @@ using XUnitTestData.Services;
 using System.Threading.Tasks;
 using XUnitTestData.Domains;
 using ApiV2Data.DTOs;
-using RestSharp;
-using System.Net;
 using XUnitTestData.Repositories;
 
 namespace ApiV2Data.Fixtures
 {
-    public partial class ApiV2TestDataFixture : IDisposable
+    public partial class ApiV2TestDataFixture
     {
         private ConfigBuilder _configBuilder;
-        private IContainer container;
+        private IContainer _container;
 
-        private List<string> WalletsToDelete;
+        private List<string> _walletsToDelete;
 
         public string TestClientId;
 
         public WalletRepository WalletRepository;
-        public List<WalletEntity> AllWalletsFromDB;
+        public List<WalletEntity> AllWalletsFromDb;
         public WalletEntity TestWallet;
         public WalletDTO TestWalletDelete;
         public AccountEntity TestWalletAccount;
@@ -42,48 +39,50 @@ namespace ApiV2Data.Fixtures
 
         public ApiV2TestDataFixture()
         {
-            this._configBuilder = new ConfigBuilder("ApiV2");
-            this.Consumer = new ApiConsumer(_configBuilder);
-            this.Consumer.Authenticate();
+            _configBuilder = new ConfigBuilder("ApiV2");
+            Consumer = new ApiConsumer(_configBuilder);
+            Consumer.Authenticate();
 
-            prepareDependencyContainer();
-            prepareTestData().Wait();
+            PrepareDependencyContainer();
+            PrepareTestData().Wait();
         }
 
-        private void prepareDependencyContainer()
+        private void PrepareDependencyContainer()
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new ApiV2TestModule(_configBuilder));
-            this.container = builder.Build();
+            _container = builder.Build();
 
-            this.WalletRepository = (WalletRepository)this.container.Resolve<IDictionaryRepository<IWallet>>();
-            this.AccountManager = RepositoryUtils.PrepareRepositoryManager<IAccount>(this.container);
+            WalletRepository = (WalletRepository)_container.Resolve<IDictionaryRepository<IWallet>>();
+            AccountManager = RepositoryUtils.PrepareRepositoryManager<IAccount>(_container);
         }
 
-        private async Task prepareTestData()
+        private async Task PrepareTestData()
         {
             ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["Wallets"] = "/api/wallets";
+            ApiEndpointNames["TransactionHistory"] = "/api/transactionHistory";
 
-            WalletsToDelete = new List<string>();
+            _walletsToDelete = new List<string>();
 
-            TestClientId = this._configBuilder.Config["AuthClientId"];
-            var walletsFromDB = this.WalletRepository.GetAllAsync(TestClientId);
+            TestClientId = _configBuilder.Config["AuthClientId"];
+            var walletsFromDb = WalletRepository.GetAllAsync(TestClientId);
 
-            this.AllWalletsFromDB = (await walletsFromDB).Cast<WalletEntity>().ToList();
-            this.TestWallet = AllWalletsFromDB.Where(w => w.Id == "fd0f7373-301e-42c0-83a2-1d7b691676c3").FirstOrDefault(); //TODO hardcoded
-            this.TestWalletDelete = await CreateTestWallet();
-            this.TestWalletAccount = await AccountManager.TryGetAsync(TestWallet.Id) as AccountEntity;
-            this.TestWalletAssetId = "LKK";
+            AllWalletsFromDb = (await walletsFromDb).Cast<WalletEntity>().ToList();
+            TestWallet = AllWalletsFromDb.FirstOrDefault(w => w.Id == "fd0f7373-301e-42c0-83a2-1d7b691676c3"); //TODO hardcoded
+            TestWalletDelete = await CreateTestWallet();
+            TestWalletAccount = await AccountManager.TryGetAsync(TestWallet.Id) as AccountEntity;
+            TestWalletAssetId = "LKK";
         }
 
         public void Dispose()
         {
-            List<Task<bool>> deleteTasks = new List<Task<bool>>();
-            
-            foreach (string walletId in WalletsToDelete) { deleteTasks.Add(DeleteTestWallet(walletId)); }
+            var deleteTasks = new List<Task<bool>>();
+
+            foreach (string walletId in _walletsToDelete) { deleteTasks.Add(DeleteTestWallet(walletId)); }
 
             Task.WhenAll(deleteTasks).Wait();
+            GC.SuppressFinalize(this);
         }
     }
 }
