@@ -34,6 +34,26 @@ namespace ApiV2Data.DependencyInjection
                 .As<IDictionaryRepository<IAccount>>();
 
             RepositoryUtils.RegisterDictionaryManager<IAccount>(builder);
+
+            builder.Register(c => new OperationsRepository(
+                    new AzureTableStorage<OperationsEntity>(
+                        _configBuilder.Config["MainConnectionString"], "Operations", null)))
+                .As<IDictionaryRepository<IOperations>>();
+
+            builder.Register(c => new OperationDetailsRepository(
+                    new AzureTableStorage<OperationDetailsEntity>(
+                        _configBuilder.Config["MainConnectionString"], "OperationDetailsInformation", null)))
+                .As<IDictionaryRepository<IOperationDetails>>();
+
+            builder.Register(c => new PersonalDataRepository(
+                    new AzureTableStorage<PersonalDataEntity>(
+                        _configBuilder.Config["MainConnectionString"], "PersonalData", null)))
+                .As<IDictionaryRepository<IPersonalData>>();
+
+            builder.Register(c => new TradersRepository(
+                    new AzureTableStorage<TradersEntity>(
+                        _configBuilder.Config["MainConnectionString"], "Traders", null)))
+                .As<IDictionaryRepository<ITrader>>();
         }
     }
 }

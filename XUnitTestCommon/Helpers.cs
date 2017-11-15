@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace XUnitTestCommon
@@ -8,5 +9,11 @@ namespace XUnitTestCommon
     {
         public static Dictionary<string, string> EmptyDictionary = new Dictionary<string, string>();
         public static Random Random = new Random();
+        public static string RandomString(int length)
+        {
+            const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[Random.Next(s.Length)]).ToArray());
+        }
     }
 }

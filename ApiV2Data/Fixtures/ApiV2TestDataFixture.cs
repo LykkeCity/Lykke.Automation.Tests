@@ -23,6 +23,8 @@ namespace ApiV2Data.Fixtures
         private ConfigBuilder _configBuilder;
         private IContainer _container;
 
+        private List<string> WalletsToDelete;
+        private List<string> OperationsToCancel;
         private List<string> _walletsToDelete;
 
         public string TestClientId;
@@ -32,9 +34,24 @@ namespace ApiV2Data.Fixtures
         public WalletEntity TestWallet;
         public WalletDTO TestWalletDelete;
         public AccountEntity TestWalletAccount;
-        public string TestWalletAssetId;
+        public string TestAssetId;
+        public string TestWalletWithBalance;
+        public WalletDTO TestWalletOperations;
+        public WalletDTO TestWalletRegenerateKey;
 
         public IDictionaryManager<IAccount> AccountManager;
+
+        public OperationsRepository OperationsRepository;
+        public List<OperationsEntity> AllOperationsFromDB;
+        public OperationCreateReturnDTO TestOperation;
+        public OperationCreateReturnDTO TestOperationCancel;
+
+        public OperationDetailsRepository OperationDetailsRepository;
+        public PersonalDataRepository PersonalDataRepository;
+        public OperationCreateReturnDTO TestOperationCreateDetails;
+        public OperationCreateReturnDTO TestOperationRegisterDetails;
+
+        public TradersRepository TradersRepository;
 
         public Dictionary<string, string> ApiEndpointNames;
         public ApiConsumer Consumer;
@@ -55,37 +72,66 @@ namespace ApiV2Data.Fixtures
             builder.RegisterModule(new ApiV2TestModule(_configBuilder));
             _container = builder.Build();
 
-            WalletRepository = (WalletRepository)_container.Resolve<IDictionaryRepository<IWallet>>();
-            AccountManager = RepositoryUtils.PrepareRepositoryManager<IAccount>(_container);
+            this.WalletRepository = (WalletRepository)this._container.Resolve<IDictionaryRepository<IWallet>>();
+            this.AccountManager = RepositoryUtils.PrepareRepositoryManager<IAccount>(this._container);
+            this.OperationsRepository = (OperationsRepository)this._container.Resolve<IDictionaryRepository<IOperations>>();
+            this.OperationDetailsRepository = (OperationDetailsRepository)this._container.Resolve<IDictionaryRepository<IOperationDetails>>();
+            this.PersonalDataRepository = (PersonalDataRepository)this._container.Resolve<IDictionaryRepository<IPersonalData>>();
+            this.TradersRepository = (TradersRepository)this._container.Resolve<IDictionaryRepository<ITrader>>();
         }
 
         private async Task PrepareTestData()
         {
             ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["Wallets"] = "/api/wallets";
+            ApiEndpointNames["Operations"] = "/api/operations";
+            ApiEndpointNames["OperationDetails"] = "/api/operationsDetails";
+            ApiEndpointNames["Hft"] = "/api/hft";
+            ApiEndpointNames["Client"] = "/api/client";
+
+            WalletsToDelete = new List<string>();
+            OperationsToCancel = new List<string>();
             ApiEndpointNames["Assets"] = "/api/assets";
             ApiEndpointNames["AssetsBaseAsset"] = ApiEndpointNames["Assets"] + "/baseAsset";            
             ApiEndpointNames["TransactionHistory"] = "/api/transactionHistory";
 
             _walletsToDelete = new List<string>();
+            TestClientId = this._configBuilder.Config["AuthClientId"];
+            var walletsFromDB = this.WalletRepository.GetAllAsync(TestClientId);
+            var operationsFromDB = this.OperationsRepository.GetAllAsync(TestClientId);
 
             TestClientId = _configBuilder.Config["AuthClientId"];
             var walletsFromDb = WalletRepository.GetAllAsync(TestClientId);
 
             this.AllWalletsFromDb = (await walletsFromDb).Cast<WalletEntity>().ToList();
             this.TestWallet = AllWalletsFromDb.Where(w => w.Id == "fd0f7373-301e-42c0-83a2-1d7b691676c3").FirstOrDefault(); //TODO hardcoded
+            this.TestAssetId = "LKK";
+            this.TestWalletWithBalance = "fd0f7373-301e-42c0-83a2-1d7b691676c3";
+            this.AllWalletsFromDb = (await walletsFromDB).Cast<WalletEntity>().ToList();
+            this.TestWallet = AllWalletsFromDb.Where(w => w.Id == TestWalletWithBalance).FirstOrDefault(); //TODO hardcoded
             this.TestWalletDelete = await CreateTestWallet();
             this.TestWalletAccount = await AccountManager.TryGetAsync(TestWallet.Id) as AccountEntity;
-            this.TestWalletAssetId = "LKK";
+            this.TestWalletOperations = await CreateTestWallet();
+            this.TestWalletRegenerateKey = await CreateTestWallet(true);
+
+            this.TestOperation = await CreateTestOperation();
+            this.TestOperationCancel = await CreateTestOperation();
+
+            this.TestOperationCreateDetails = await CreateTestOperation();
+            this.TestOperationRegisterDetails = await CreateTestOperation();
 
             // set the id to the default one in case it has been changed by any test
-            BaseAssetDTO body = new BaseAssetDTO(this.TestWalletAssetId);
+            BaseAssetDTO body = new BaseAssetDTO(this.TestAssetId);
             await Consumer.ExecuteRequest(ApiEndpointNames["AssetsBaseAsset"], Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
         }
 
         public void Dispose()
         {
             var deleteTasks = new List<Task<bool>>();
+
+            foreach (string walletId in WalletsToDelete) { deleteTasks.Add(DeleteTestWallet(walletId)); }
+
+            foreach (string operationId in OperationsToCancel) { deleteTasks.Add(CancelTestOperation(operationId)); }
 
             foreach (string walletId in _walletsToDelete) { deleteTasks.Add(DeleteTestWallet(walletId)); }
 
