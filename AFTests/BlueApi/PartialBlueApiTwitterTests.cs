@@ -19,7 +19,7 @@ namespace AFTests.BlueApi
         public async void GetTweets()
         {
             string url = _fixture.ApiEndpointNames["Twitter"];
-            int pageSize = Helpers.Random.Next(0, 101); // from 0 to 100 records on a page
+            int pageSize = Helpers.Random.Next(1, 101); // from 1 to 100 records on a page
             var body = new TwitterSearchDTO()
             {
                 SearchQuery = _fixture.TwitterSearchQuery,
