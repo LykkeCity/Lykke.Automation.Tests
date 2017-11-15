@@ -7,23 +7,24 @@ namespace XUnitTestCommon.Consumers
 {
     public class ApiConsumer
     {
-        private string urlPrefix;
-        private string baseUrl;
-        private bool isSecure;
+        private readonly string _urlPrefix;
+        private readonly string _baseUrl;
+        private readonly bool _isSecure;
 
-        private RestClient client;
-        private RestRequest request;
+        private RestClient _client;
+        private RestRequest _request;
 
-        private ConfigBuilder _configBuilder;
+        private readonly ConfigBuilder _configBuilder;
 
-        private OAuthConsumer _oAuthConsumer;
+        private readonly OAuthConsumer _oAuthConsumer;
 
         public ApiConsumer(ConfigBuilder configBuilder, OAuthConsumer oAuthConsumer)
         {
-            this._configBuilder = configBuilder;
-            this.urlPrefix = _configBuilder.Config["UrlPefix"];
-            this.baseUrl = _configBuilder.Config["BaseUrl"];
-            this.isSecure = Boolean.Parse(_configBuilder.Config["IsHttps"]);
+            _configBuilder = configBuilder;
+
+            _urlPrefix = _configBuilder.Config["UrlPefix"];
+            _baseUrl = _configBuilder.Config["BaseUrl"];
+            _isSecure = Boolean.Parse(_configBuilder.Config["IsHttps"]);
 
             _oAuthConsumer = oAuthConsumer;
             _oAuthConsumer.Authenticate().Wait();
@@ -31,21 +32,21 @@ namespace XUnitTestCommon.Consumers
 
         public async Task<Response> ExecuteRequest(string path, Dictionary<string, string> queryParams, string body, Method method)
         {
-            var uri = BuildUri(urlPrefix, baseUrl, path);
-            client = new RestClient(uri);
-            request = new RestRequest(method);
+            var uri = BuildUri(_urlPrefix, _baseUrl, path);
+            _client = new RestClient(uri);
+            _request = new RestRequest(method);
 
             AddQueryParams(queryParams);
 
             if (body != null)
             {
-                request.AddParameter("application/json", body, ParameterType.RequestBody);
+                _request.AddParameter("application/json", body, ParameterType.RequestBody);
             }
 
             await _oAuthConsumer.UpdateToken();
-            request.AddParameter("Authorization", "Bearer " + _oAuthConsumer.authToken, ParameterType.HttpHeader);
+            _request.AddParameter("Authorization", "Bearer " + _oAuthConsumer.AuthToken, ParameterType.HttpHeader);
 
-            var response = await client.ExecuteAsync(request);
+            var response = await _client.ExecuteAsync(_request);
 
             return new Response(response.StatusCode, response.Content);
         }
@@ -54,14 +55,14 @@ namespace XUnitTestCommon.Consumers
         {
             foreach (var param in queryParams)
             {
-                request.AddQueryParameter(param.Key, param.Value);
+                _request.AddQueryParameter(param.Key, param.Value);
             }
         }
 
         private Uri BuildUri(string urlPreffix, string baseUrl, string path, int? port = null)
         {
             string protocol = "http";
-            if (this.isSecure)
+            if (_isSecure)
                 protocol = "https";
             UriBuilder uriBuilder = new UriBuilder($"{protocol}://{urlPreffix}.{baseUrl}");
             uriBuilder.Path = path;

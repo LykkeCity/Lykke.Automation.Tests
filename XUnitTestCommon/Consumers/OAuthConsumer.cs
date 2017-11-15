@@ -12,13 +12,13 @@ namespace XUnitTestCommon.Consumers
 {
     public class OAuthConsumer : IAuthentication
     {
-        public string baseAuthUrl { get; set; }
-        public string authPath { get; set; }
-        public int authTokenTimeout { get; set; }
-        public User authentication { get; set; }
-        public string authToken { get; private set; }
+        public string BaseAuthUrl { get; set; }
+        public string AuthPath { get; set; }
+        public int AuthTokenTimeout { get; set; }
+        public User AuthUser { get; set; }
+        public string AuthToken { get; private set; }
 
-        private DateTime? tokenUpdateTime;
+        private DateTime? _tokenUpdateTime;
 
         public async Task<bool> Authenticate()
         {
@@ -30,10 +30,10 @@ namespace XUnitTestCommon.Consumers
             try
             {
                 //Only update token if it is expired
-                if (!tokenUpdateTime.HasValue || DateTime.UtcNow.Subtract(tokenUpdateTime.Value).TotalMilliseconds >= authTokenTimeout)
+                if (!_tokenUpdateTime.HasValue || DateTime.UtcNow.Subtract(_tokenUpdateTime.Value).TotalMilliseconds >= AuthTokenTimeout)
                 {
-                    this.authToken = await GetToken();
-                    this.tokenUpdateTime = DateTime.UtcNow;
+                    AuthToken = await GetToken();
+                    _tokenUpdateTime = DateTime.UtcNow;
                 }
 
                 return true;
@@ -46,10 +46,10 @@ namespace XUnitTestCommon.Consumers
 
         private async Task<string> GetToken()
         {
-            var localClient = new RestClient(baseAuthUrl);
-            var localRequest = new RestRequest(authPath, Method.POST);
+            var localClient = new RestClient(BaseAuthUrl);
+            var localRequest = new RestRequest(AuthPath, Method.POST);
 
-            var body = JsonUtils.SerializeObject(authentication);
+            var body = JsonUtils.SerializeObject(AuthUser);
 
             localRequest.AddParameter("application/json", body, ParameterType.RequestBody);
 

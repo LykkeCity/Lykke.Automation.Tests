@@ -63,10 +63,10 @@ namespace ApiV2Data.Fixtures
 
             var oAuthConsumer = new OAuthConsumer
             {
-                authTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]),
-                authPath = _configBuilder.Config["AuthPath"],
-                baseAuthUrl = _configBuilder.Config["BaseUrlAuth"],
-                authentication = new User
+                AuthTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]),
+                AuthPath = _configBuilder.Config["AuthPath"],
+                BaseAuthUrl = _configBuilder.Config["BaseUrlAuth"],
+                AuthUser = new User
                 {
                     ClientInfo = _configBuilder.Config["AuthClientInfo"],
                     Email = _configBuilder.Config["AuthEmail"],
