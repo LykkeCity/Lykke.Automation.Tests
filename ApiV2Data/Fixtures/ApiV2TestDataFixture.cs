@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using XUnitTestData.Domains;
 using ApiV2Data.DTOs;
 using XUnitTestData.Repositories;
+using AssetsData.DTOs.Assets;
+using RestSharp;
 
 namespace ApiV2Data.Fixtures
 {
@@ -61,6 +63,8 @@ namespace ApiV2Data.Fixtures
         {
             ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["Wallets"] = "/api/wallets";
+            ApiEndpointNames["Assets"] = "/api/assets";
+            ApiEndpointNames["AssetsBaseAsset"] = ApiEndpointNames["Assets"] + "/baseAsset";            
             ApiEndpointNames["TransactionHistory"] = "/api/transactionHistory";
 
             _walletsToDelete = new List<string>();
@@ -68,11 +72,15 @@ namespace ApiV2Data.Fixtures
             TestClientId = _configBuilder.Config["AuthClientId"];
             var walletsFromDb = WalletRepository.GetAllAsync(TestClientId);
 
-            AllWalletsFromDb = (await walletsFromDb).Cast<WalletEntity>().ToList();
-            TestWallet = AllWalletsFromDb.FirstOrDefault(w => w.Id == "fd0f7373-301e-42c0-83a2-1d7b691676c3"); //TODO hardcoded
-            TestWalletDelete = await CreateTestWallet();
-            TestWalletAccount = await AccountManager.TryGetAsync(TestWallet.Id) as AccountEntity;
-            TestWalletAssetId = "LKK";
+            this.AllWalletsFromDb = (await walletsFromDb).Cast<WalletEntity>().ToList();
+            this.TestWallet = AllWalletsFromDb.Where(w => w.Id == "fd0f7373-301e-42c0-83a2-1d7b691676c3").FirstOrDefault(); //TODO hardcoded
+            this.TestWalletDelete = await CreateTestWallet();
+            this.TestWalletAccount = await AccountManager.TryGetAsync(TestWallet.Id) as AccountEntity;
+            this.TestWalletAssetId = "LKK";
+
+            // set the id to the default one in case it has been changed by any test
+            BaseAssetDTO body = new BaseAssetDTO(this.TestWalletAssetId);
+            await Consumer.ExecuteRequest(ApiEndpointNames["AssetsBaseAsset"], Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
         }
 
         public void Dispose()
