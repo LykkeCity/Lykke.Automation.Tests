@@ -20,6 +20,9 @@ namespace BlueApiData.Fixtures
         public IMapper Mapper;
 
         public string TestClientId;
+        public string AccountEmail;
+        public string TwitterSearchQuery;
+        public DateTime TwitterSearchUntilDate;
         public string TestPledgeCreateClientId;
         public string TestPledgeUpdateClientId;
         public string TestPledgeDeleteClientId;

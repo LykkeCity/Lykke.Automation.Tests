@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using BlueApiData.DTOs;
@@ -24,9 +25,12 @@ namespace BlueApiData.Fixtures
         {
             PrepareMapper();
 
-            ApiEndpointNames = new Dictionary<string, string>();
-            ApiEndpointNames["IsAlive"] = "/api/isAlive";
-            ApiEndpointNames["Pledges"] = "/api/pledges";
+            ApiEndpointNames = new Dictionary<string, string>
+            {
+                ["IsAlive"] = "/api/isAlive",
+                ["Pledges"] = "/api/pledges",
+                ["Twitter"] = "/api/twitter"
+            };
 
             _pledgesToDelete = new Dictionary<string, string>();
 
@@ -34,6 +38,10 @@ namespace BlueApiData.Fixtures
             TestPledgeCreateClientId = _configBuilder.Config["AuthPledgeCreateClientId"];
             TestPledgeDeleteClientId = _configBuilder.Config["AuthPledgeDeleteClientId"];
             TestPledgeUpdateClientId = _configBuilder.Config["AuthPledgeUpdateClientId"];
+
+            AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
+            TwitterSearchQuery = "#dog"; // hard-coded for now, will think of a way to change it dynamically 
+            TwitterSearchUntilDate = DateTime.Parse("07-11-2017"); // hard-coded for now, will think of a way to change it dynamically
 
             TestPledge = await CreateTestPledge(clientId: TestClientId);
             TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
