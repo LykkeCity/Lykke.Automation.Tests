@@ -11,6 +11,7 @@ using XUnitTestData.Domains;
 using XUnitTestCommon.Utils;
 using AssetsData.DTOs.Assets;
 using AutoMapper;
+using XUnitTestData.Domains.Authentication;
 
 namespace AssetsData.Fixtures
 {
@@ -27,7 +28,22 @@ namespace AssetsData.Fixtures
         public AssetsTestDataFixture()
         {
             this._configBuilder = new ConfigBuilder("Assets");
-            this.Consumer = new ApiConsumer(_configBuilder);
+
+            var oAuthConsumer = new OAuthConsumer
+            {
+                authTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]),
+                authPath = _configBuilder.Config["AuthPath"],
+                baseAuthUrl = _configBuilder.Config["BaseUrlAuth"],
+                authentication = new User
+                {
+                    ClientInfo = _configBuilder.Config["AuthClientInfo"],
+                    Email = _configBuilder.Config["AuthEmail"],
+                    PartnerId = _configBuilder.Config["AuthPartnerId"],
+                    Password = _configBuilder.Config["AuthPassword"]
+                }
+            };
+
+            this.Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
 
             prepareDependencyContainer();
             prepareTestData().Wait();

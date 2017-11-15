@@ -15,6 +15,7 @@ using ApiV2Data.DTOs;
 using XUnitTestData.Repositories;
 using AssetsData.DTOs.Assets;
 using RestSharp;
+using XUnitTestData.Domains.Authentication;
 
 namespace ApiV2Data.Fixtures
 {
@@ -59,8 +60,22 @@ namespace ApiV2Data.Fixtures
         public ApiV2TestDataFixture()
         {
             _configBuilder = new ConfigBuilder("ApiV2");
-            Consumer = new ApiConsumer(_configBuilder);
-            Consumer.Authenticate();
+
+            var oAuthConsumer = new OAuthConsumer
+            {
+                authTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]),
+                authPath = _configBuilder.Config["AuthPath"],
+                baseAuthUrl = _configBuilder.Config["BaseUrlAuth"],
+                authentication = new User
+                {
+                    ClientInfo = _configBuilder.Config["AuthClientInfo"],
+                    Email = _configBuilder.Config["AuthEmail"],
+                    PartnerId = _configBuilder.Config["AuthPartnerId"],
+                    Password = _configBuilder.Config["AuthPassword"]
+                }
+            };
+
+            Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
 
             PrepareDependencyContainer();
             PrepareTestData().Wait();
