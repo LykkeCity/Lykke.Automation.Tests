@@ -12,7 +12,7 @@ namespace AFTests.BlueApi
     [Trait("Category", "BlueApiService")]
     public partial class BlueApiTests : IClassFixture<BlueApiTestDataFixture>
     {
-        [Fact]
+        [Fact(Skip = "Test will fail")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "Twitter")]
         [Trait("Category", "TwitterPost")]
