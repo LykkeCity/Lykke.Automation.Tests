@@ -19,7 +19,7 @@ namespace XUnitTestCommon.Consumers.Models
         public RabbitMQSettings(ConfigBuilder config, string sourceEndpoint, string endpoint)
         {
             Hostname = config.Config["RabbitMQHost"];
-            Port = config.Config["RabbitMQHost"];
+            Port = config.Config["RabbitMQamqpPort"];
             Username = config.Config["RabbitMQUsername"];
             Password = config.Config["RabbitMQPassword"];
             SourceEndpoint = sourceEndpoint;

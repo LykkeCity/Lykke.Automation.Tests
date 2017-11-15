@@ -15,7 +15,7 @@ namespace AFTests.ApiV2
     [Trait("Category", "ApiV2Service")]
     public partial class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>
     {
-        [Fact]
+        [Fact(Skip="ApiV2 currently has some issues")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "Client")]
         [Trait("Category", "ClientPost")]
