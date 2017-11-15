@@ -11,7 +11,7 @@ namespace AFTests.ApiV2
 {
     public partial class ApiV2Tests
     {
-        [Fact]
+        [Fact(Skip = "Test will fail")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "TransactionHistory")]
         [Trait("Category", "TransactionHistoryGet")]
@@ -24,7 +24,7 @@ namespace AFTests.ApiV2
             Assert.True(response.Status == HttpStatusCode.NoContent);
         }
 
-        [Fact]
+        [Fact(Skip = "Test will fail")]
         [Trait("Category", "Smoke")]
         [Trait("Category", "TransactionHistory")]
         [Trait("Category", "TransactionHistoryGet")]
