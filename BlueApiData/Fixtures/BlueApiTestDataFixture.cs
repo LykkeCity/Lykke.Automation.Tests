@@ -18,6 +18,9 @@ namespace BlueApiData.Fixtures
         private IContainer _container;
 
         public string TestClientId;
+        public string AccountEmail;
+        public string TwitterSearchQuery;
+        public DateTime TwitterSearchUntilDate;
 
         private Dictionary<string, string> _pledgesToDelete;
 
@@ -96,10 +99,14 @@ namespace BlueApiData.Fixtures
         {
             ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["Pledges"] = "/api/pledges";
+            ApiEndpointNames["Twitter"] = "/api/twitter";
 
             _pledgesToDelete = new Dictionary<string, string>();
 
             TestClientId = _configBuilder.Config["AuthClientId"];
+            AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
+            TwitterSearchQuery = "#dog"; // hardcoded for now, will think of a way to change it dynamically 
+            TwitterSearchUntilDate = DateTime.Parse("07-11-2017"); // hardcoded for now, will think of a way to change it dynamically 
 
             TestPledge = await CreateTestPledge();
             TestPledgeUpdate = await CreateTestPledge("UpdatePledge");
