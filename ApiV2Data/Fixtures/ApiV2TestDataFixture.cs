@@ -16,6 +16,7 @@ using ApiV2Data.DTOs;
 using RestSharp;
 using System.Net;
 using XUnitTestData.Repositories;
+using AssetsData.DTOs.Assets;
 
 namespace ApiV2Data.Fixtures
 {
@@ -65,6 +66,8 @@ namespace ApiV2Data.Fixtures
         {
             ApiEndpointNames = new Dictionary<string, string>();
             ApiEndpointNames["Wallets"] = "/api/wallets";
+            ApiEndpointNames["Assets"] = "/api/assets";
+            ApiEndpointNames["AssetsBaseAsset"] = ApiEndpointNames["Assets"] + "/baseAsset";            
 
             WalletsToDelete = new List<string>();
 
@@ -76,6 +79,10 @@ namespace ApiV2Data.Fixtures
             this.TestWalletDelete = await CreateTestWallet();
             this.TestWalletAccount = await AccountManager.TryGetAsync(TestWallet.Id) as AccountEntity;
             this.TestWalletAssetId = "LKK";
+
+            // set the id to the default one in case it has been changed by any test
+            BaseAssetDTO body = new BaseAssetDTO(this.TestWalletAssetId);
+            await Consumer.ExecuteRequest(ApiEndpointNames["AssetsBaseAsset"], Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
         }
 
         public void Dispose()
