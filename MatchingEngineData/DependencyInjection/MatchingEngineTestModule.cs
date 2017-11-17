@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Autofac;
-using System.Text;
+﻿using Autofac;
 using XUnitTestCommon;
 using XUnitTestData.Domains;
-using XUnitTestData.Services;
 using XUnitTestData.Repositories;
 using XUnitTestCommon.Utils;
 using AzureStorage.Tables;
@@ -12,7 +8,7 @@ using XUnitTestData.Entities.MatchingEngine;
 using XUnitTestData.Domains.MatchingEngine;
 using XUnitTestData.Domains.Assets;
 using XUnitTestData.Entities;
-using XUnitTestData.Entitites.ApiV2.Assets;
+using XUnitTestData.Entities.Assets;
 
 namespace MatchingEngineData.DependencyInjection
 {
@@ -44,8 +40,6 @@ namespace MatchingEngineData.DependencyInjection
                 )
             )
             .As<IDictionaryRepository<IAssetPair>>();
-
-            RepositoryUtils.RegisterDictionaryManager<IAssetPair>(builder);
 
             builder.Register(c => new GenericRepository<MarketOrderEntity, IMarketOrderEntity>(
                     new AzureTableStorage<MarketOrderEntity>(

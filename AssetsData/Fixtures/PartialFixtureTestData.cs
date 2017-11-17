@@ -6,7 +6,7 @@ using XUnitTestCommon.Utils;
 using AutoMapper;
 using AssetsData.DTOs;
 using AssetsData.DTOs.Assets;
-using XUnitTestData.Entitites.ApiV2.Assets;
+using XUnitTestData.Entities.Assets;
 
 namespace AssetsData.Fixtures
 {

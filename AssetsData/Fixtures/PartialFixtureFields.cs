@@ -1,12 +1,11 @@
 ﻿using XUnitTestData.Domains.Assets;
 using System;
 using System.Collections.Generic;
-using XUnitTestData.Services;
 using AssetsData.DTOs;
 using AssetsData.DTOs.Assets;
-using XUnitTestData.Entitites.ApiV2.Assets;
 using XUnitTestData.Repositories;
 using XUnitTestData.Repositories.ApiV2;
+using XUnitTestData.Entities.Assets;
 
 namespace AssetsData.Fixtures
 {

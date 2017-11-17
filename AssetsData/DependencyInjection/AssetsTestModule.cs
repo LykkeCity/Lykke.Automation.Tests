@@ -4,9 +4,9 @@ using XUnitTestCommon;
 using XUnitTestData.Domains;
 using XUnitTestData.Domains.Assets;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Entitites.ApiV2.Assets;
 using XUnitTestData.Repositories;
 using XUnitTestData.Repositories.ApiV2;
+using XUnitTestData.Entities.Assets;
 
 namespace AssetsData.DependencyInjection
 {
@@ -29,8 +29,6 @@ namespace AssetsData.DependencyInjection
             )
             .As<IDictionaryRepository<IAsset>>();
 
-            RepositoryUtils.RegisterDictionaryManager<IAsset>(builder);
-
             builder.Register(c => 
                 new GenericRepository<AssetExtendedInfosEntity, IAssetExtendedInfo>(
                     new AzureTableStorage<AssetExtendedInfosEntity>(_configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null),
@@ -38,8 +36,6 @@ namespace AssetsData.DependencyInjection
                 )
             )
             .As<IDictionaryRepository<IAssetExtendedInfo>>();
-
-            RepositoryUtils.RegisterDictionaryManager<IAssetExtendedInfo>(builder);
 
             builder.Register(c => 
                 new GenericRepository<AssetCategoryEntity, IAssetCategory>(
@@ -49,16 +45,12 @@ namespace AssetsData.DependencyInjection
             )
             .As<IDictionaryRepository<IAssetCategory>>();
 
-            RepositoryUtils.RegisterDictionaryManager<IAssetCategory>(builder);
-
             builder.Register(c => 
                 new AssetAttributesRepository(
                     new AzureTableStorage<AssetAttributesEntity>(_configBuilder.Config["DictionariesConnectionString"], "AssetAttributes", null)
                 )
             )
             .As<IDictionaryRepository<IAssetAttributes>>();
-
-            RepositoryUtils.RegisterDictionaryManager<IAssetAttributes>(builder);
 
             builder.Register(c => 
                 new GenericRepository<AssetGroupEntity, IAssetGroup>(
@@ -68,8 +60,6 @@ namespace AssetsData.DependencyInjection
             )
             .As<IDictionaryRepository<IAssetGroup>>();
 
-            RepositoryUtils.RegisterDictionaryManager<IAssetGroup>(builder);
-
             builder.Register(c => 
                 new GenericRepository<AssetPairEntity, IAssetPair>(
                     new AzureTableStorage<AssetPairEntity>(_configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null),
@@ -77,8 +67,6 @@ namespace AssetsData.DependencyInjection
                 )
             )
             .As<IDictionaryRepository<IAssetPair>>();
-
-            RepositoryUtils.RegisterDictionaryManager<IAssetPair>(builder);
 
             builder.Register(c => 
                 new GenericRepository<AssetSettingsEntity, IAssetSettings>(
@@ -88,8 +76,6 @@ namespace AssetsData.DependencyInjection
             )
             .As<IDictionaryRepository<IAssetSettings>>();
 
-            RepositoryUtils.RegisterDictionaryManager<IAssetSettings>(builder);
-
             builder.Register(c => 
                 new GenericRepository<AssetIssuersEntity, IAssetIssuers>(
                     new AzureTableStorage<AssetIssuersEntity>(_configBuilder.Config["DictionariesConnectionString"], "AssetIssuers", null),
@@ -97,8 +83,6 @@ namespace AssetsData.DependencyInjection
                 )
             )
             .As<IDictionaryRepository<IAssetIssuers>>();
-
-            RepositoryUtils.RegisterDictionaryManager<IAssetIssuers>(builder);
 
             builder.Register(c => 
                 new GenericRepository<MarginAssetPairsEntity, IMarginAssetPairs>(
@@ -108,8 +92,6 @@ namespace AssetsData.DependencyInjection
             )
             .As<IDictionaryRepository<IMarginAssetPairs>>();
 
-            RepositoryUtils.RegisterDictionaryManager<IMarginAssetPairs>(builder);
-
             builder.Register(c => 
                 new GenericRepository<MarginAssetEntity, IMarginAsset>(
                     new AzureTableStorage<MarginAssetEntity>(_configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null),
@@ -118,8 +100,6 @@ namespace AssetsData.DependencyInjection
             )
             .As<IDictionaryRepository<IMarginAsset>>();
 
-            RepositoryUtils.RegisterDictionaryManager<IMarginAsset>(builder);
-
             builder.Register(c => 
                 new GenericRepository<MarginIssuerEntity, IMarginIssuer>(
                     new AzureTableStorage<MarginIssuerEntity>(_configBuilder.Config["DictionariesConnectionString"], "AssetIssuers", null),
@@ -127,8 +107,6 @@ namespace AssetsData.DependencyInjection
                 )
             )
             .As<IDictionaryRepository<IMarginIssuer>>();
-
-            RepositoryUtils.RegisterDictionaryManager<IMarginIssuer>(builder);
 
             builder.Register(c => 
                 new WatchListRepository(

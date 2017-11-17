@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using AzureStorage.Tables;
 using XUnitTestCommon;
-using XUnitTestCommon.Utils;
 using XUnitTestData.Domains;
 using XUnitTestData.Domains.BlueApi;
 using XUnitTestData.Entities;
@@ -26,14 +25,10 @@ namespace BlueApiData.DependencyInjection
                         _configBuilder.Config["MainConnectionString"], "Pledges", null), "Pledge"))
                 .As<IDictionaryRepository<IPledgeEntity>>();
 
-            RepositoryUtils.RegisterDictionaryManager<IPledgeEntity>(builder);
-
             builder.Register(c => new GenericRepository<AccountEntity, IAccount>(
                     new AzureTableStorage<AccountEntity>(
                         _configBuilder.Config["MainConnectionString"], "Accounts", null), "ClientBalance"))
                 .As<IDictionaryRepository<IAccount>>();
-
-            RepositoryUtils.RegisterDictionaryManager<IAccount>(builder);
         }
     }
 }

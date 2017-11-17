@@ -8,7 +8,6 @@ using Autofac;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon.Consumers.Models;
 using MatchingEngineData.DependencyInjection;
-using XUnitTestData.Services;
 using XUnitTestData.Domains;
 using XUnitTestData.Repositories;
 using System.Diagnostics;
@@ -20,7 +19,7 @@ using XUnitTestData.Domains.Assets;
 using MatchingEngineData;
 using XUnitTestData.Entities.MatchingEngine;
 using XUnitTestData.Entities;
-using XUnitTestData.Entitites.ApiV2.Assets;
+using XUnitTestData.Entities.Assets;
 
 namespace AFTMatchingEngine.Fixtures
 {

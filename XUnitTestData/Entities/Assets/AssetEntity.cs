@@ -7,7 +7,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using XUnitTestData.Domains.Assets;
 
-namespace XUnitTestData.Entitites.ApiV2.Assets
+namespace XUnitTestData.Entities.Assets
 {
     public class AssetEntity : TableEntity, IAsset
     {

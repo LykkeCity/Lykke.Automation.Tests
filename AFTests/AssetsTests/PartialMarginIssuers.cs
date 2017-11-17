@@ -10,7 +10,7 @@ using System.Text;
 using Xunit;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Entitites.ApiV2.Assets;
+using XUnitTestData.Entities.Assets;
 
 namespace AFTests.AssetsTests
 {

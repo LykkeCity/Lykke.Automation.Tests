@@ -12,33 +12,6 @@ namespace XUnitTestData.Domains.Assets
         string IconUrl { get; }
     }
 
-    //public class Issuer : IIssuer
-    //{
-    //    public string Id { get; set; }
-    //    public string Name { get; set; }
-    //    public string IconUrl { get; set; }
-
-
-    //    public static Issuer Create(string id, string name, string iconUrl)
-    //    {
-    //        return new Issuer
-    //        {
-    //            Id = id,
-    //            Name = name,
-    //            IconUrl = iconUrl
-    //        };
-    //    }
-
-    //    public static Issuer CreateDefault()
-    //    {
-    //        return new Issuer
-    //        {
-
-    //        };
-    //    }
-
-    //}
-
     public interface IIssuerRepository
     {
         Task RegisterIssuerAsync(IIssuer issuer);

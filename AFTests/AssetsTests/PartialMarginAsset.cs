@@ -10,7 +10,7 @@ using RestSharp;
 using FluentAssertions;
 using AssetsData.DTOs.Assets;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Entitites.ApiV2.Assets;
+using XUnitTestData.Entities.Assets;
 
 namespace AFTests.AssetsTests
 {

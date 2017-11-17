@@ -10,7 +10,7 @@ using AssetsData.DTOs.Assets;
 using XUnitTestCommon.Utils;
 using FluentAssertions;
 using System.Linq;
-using XUnitTestData.Entitites.ApiV2.Assets;
+using XUnitTestData.Entities.Assets;
 
 namespace AFTests.AssetsTests
 {

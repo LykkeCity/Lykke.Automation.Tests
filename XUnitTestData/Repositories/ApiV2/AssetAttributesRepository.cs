@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AzureStorage;
 using XUnitTestData.Domains.Assets;
-using XUnitTestData.Entitites.ApiV2.Assets;
+using XUnitTestData.Entities.Assets;
 
 namespace XUnitTestData.Repositories.ApiV2
 {

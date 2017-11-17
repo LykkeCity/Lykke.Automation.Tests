@@ -10,9 +10,9 @@ using XUnitTestData.Domains;
 using XUnitTestCommon.Utils;
 using AssetsData.DTOs.Assets;
 using AutoMapper;
-using XUnitTestData.Entitites.ApiV2.Assets;
 using XUnitTestData.Domains.Authentication;
 using XUnitTestData.Repositories.ApiV2;
+using XUnitTestData.Entities.Assets;
 
 namespace AssetsData.Fixtures
 {

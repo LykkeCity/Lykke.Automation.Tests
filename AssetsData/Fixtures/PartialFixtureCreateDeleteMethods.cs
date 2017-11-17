@@ -8,7 +8,7 @@ using RestSharp;
 using System.Net;
 using AssetsData.DTOs.Assets;
 using System.Collections.Generic;
-using XUnitTestData.Entitites.ApiV2.Assets;
+using XUnitTestData.Entities.Assets;
 
 namespace AssetsData.Fixtures
 {

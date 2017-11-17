@@ -8,7 +8,7 @@ using System.Net;
 using Xunit;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
-using XUnitTestData.Entitites.ApiV2.Assets;
+using XUnitTestData.Entities.Assets;
 
 namespace AFTests.AssetsTests
 {
