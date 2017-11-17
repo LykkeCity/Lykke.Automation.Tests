@@ -5,7 +5,7 @@ namespace AFTests.BlueApi
 {
     [Category("FullRegression")]
     [Category("BlueApiService")]
-    public partial class BlueApiTests : BlueApiTestDataFixture
+    public partial class BlueApiTests
     {
         private readonly BlueApiTestDataFixture _fixture;
 

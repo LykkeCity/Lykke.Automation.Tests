@@ -20,7 +20,7 @@ namespace AFTMatchingEngine
 {
     [Category("FullRegression")]
     [Category("MatchingEngine")]
-    public class MatchingEngineServiceTests : MatchingEngineTestDataFixture
+    public class MatchingEngineServiceTests
     {
         private MatchingEngineTestDataFixture fixture;
 
@@ -68,12 +68,12 @@ namespace AFTMatchingEngine
 
             Assert.NotNull(message);
 
-            Assert.Equals(message.clientId, testAccount.Id);
-            Assert.Equals(message.asset, accountBalance.Asset);
+            Assert.True(message.clientId == testAccount.Id);
+            Assert.True(message.asset == accountBalance.Asset);
 
             if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedVolume))
             {
-                Assert.Equals(parsedVolume, goodCashOutAmmount);
+                Assert.True(parsedVolume == goodCashOutAmmount);
             }
 
             AccountEntity testAccountCheck = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
@@ -93,12 +93,12 @@ namespace AFTMatchingEngine
 
             Assert.NotNull(message);
 
-            Assert.Equals(message.clientId, testAccount.Id);
-            Assert.Equals(message.asset, accountBalance.Asset);
+            Assert.True(message.clientId == testAccount.Id);
+            Assert.True(message.asset == accountBalance.Asset);
 
             if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out parsedVolume))
             {
-                Assert.Equals(parsedVolume, cashInAmmount);
+                Assert.True(parsedVolume == cashInAmmount);
             }
 
 
@@ -110,7 +110,7 @@ namespace AFTMatchingEngine
             BalanceDTO accountBalanceAfter = testAccountAfter.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalanceAfter);
 
-            Assert.Equals(accountBalance.Balance, accountBalanceAfter.Balance);
+            Assert.True(accountBalance.Balance == accountBalanceAfter.Balance);
 
         }
 

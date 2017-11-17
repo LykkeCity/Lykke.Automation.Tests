@@ -12,7 +12,7 @@ namespace AFTests.AssetsTests
 
     [Category("FullRegression")]
     [Category("AssetsService")]
-    public partial class AssetsTest : AssetsTestDataFixture
+    public partial class AssetsTest
     {
         private AssetsTestDataFixture fixture;
 
