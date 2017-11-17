@@ -5,22 +5,22 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest : AssetsTestDataFixture
     {
         #region predefined
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListGet")]
         public async void GetAllWatchListsPredefined()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/predefined";
@@ -48,10 +48,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListGet")]
         public async void GetSingleWatchListsPredefined()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/predefined/" + fixture.TestWatchListPredefined.Id;
@@ -74,10 +74,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListPost")]
         public async void CreatePredefinedWatchList()
         {
             WatchListDTO createdDTO = await fixture.CreateTestWatchList();
@@ -98,10 +98,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListPut")]
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListPut")]
         public async void UpdatePredefinedWatchList()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/predefined";
@@ -134,10 +134,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListDelete")]
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListDelete")]
         public async void DeletePredefinedWatchList()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/predefined/" + fixture.TestWatchListPredefinedDelete.Id;
@@ -150,10 +150,10 @@ namespace AFTests.AssetsTests
         #endregion
 
         #region Custom
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListGet")]
         public async void GetAllWatchListsCustom()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/custom";
@@ -183,10 +183,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListGet")]
         public async void GetSingleWatchListsCustom()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/custom/" + fixture.TestWatchListCustom.Id;
@@ -210,10 +210,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListPost")]
         public async void CreateCustomWatchList()
         {
             WatchListDTO createdDTO = await fixture.CreateTestWatchList(fixture.TestAccountId);
@@ -234,10 +234,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListPut")]
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListPut")]
         public async void UpdateCustomWatchList()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/custom";
@@ -272,10 +272,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListDelete")]
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListDelete")]
         public async void DeleteCustomWatchList()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/custom/" + fixture.TestWatchListCustomDelete.Id;
@@ -290,10 +290,10 @@ namespace AFTests.AssetsTests
         }
         #endregion
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListGet")]
         public async void GetAllWatchLists()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/all";

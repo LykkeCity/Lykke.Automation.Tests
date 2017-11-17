@@ -5,21 +5,21 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest : AssetsTestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsGet")]
         public async void GetAllAssetGroups()
         {
             string url = fixture.ApiEndpointNames["assetGroups"];
@@ -38,10 +38,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsGet")]
         public async void GetSingleAssetGroups()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id;
@@ -57,10 +57,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsGet")]
         public async void GetAssetGroupAssetIDs()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id + "/asset-ids";
@@ -82,10 +82,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsGet")]
         public async void GetAssetGroupClientIDs()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id + "/client-ids";
@@ -105,10 +105,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPost")]
         public async void CreateAssetGroup()
         {
             AssetGroupDTO createdGroup = await fixture.CreateTestAssetGroup();
@@ -120,10 +120,10 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPut")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPut")]
         public async void UpdateAssetGroup()
         {
             string url = fixture.ApiEndpointNames["assetGroups"];
@@ -147,10 +147,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsDelete")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsDelete")]
         public async void DeleteAssetGroup()
         {
             string deleteUrl = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroupDelete.Name;
@@ -162,10 +162,10 @@ namespace AFTests.AssetsTests
             Assert.Null(entity);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPost")]
         public async void AddAssetToAssetGroup()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForGroupRelationAdd.Name + "/assets/" + fixture.TestAssetForGroupRelationAdd.Id;
@@ -179,10 +179,10 @@ namespace AFTests.AssetsTests
             Assert.True(assetIds[0] == fixture.TestAssetForGroupRelationAdd.Id);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPost")]
         public async void RemoveAssetFromAssetGroup()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForGroupRelationDelete.Name + "/assets/" + fixture.TestAssetForGroupRelationDelete.Id;
@@ -198,10 +198,10 @@ namespace AFTests.AssetsTests
             Assert.True(assetIds.Count == 0);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPost")]
         public async void AddClientToAssetGroup()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForClientRelationAdd.Name + "/clients/" + fixture.TestAccountId;
@@ -215,10 +215,10 @@ namespace AFTests.AssetsTests
             Assert.True(assetIds[0] == fixture.TestAccountId);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPost")]
         public async void RemoveClientFromAssetGroup()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForClientRelationDelete.Name + "/clients/" + fixture.TestAccountId;

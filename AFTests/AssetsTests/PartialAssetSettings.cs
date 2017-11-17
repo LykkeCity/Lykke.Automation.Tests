@@ -4,7 +4,7 @@ using FluentAssertions;
 using RestSharp;
 using System.Linq;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
 using XUnitTestData.Repositories.Assets;
@@ -12,14 +12,14 @@ using System;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest : AssetsTestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetSettings")]
-        [Trait("Category", "AssetSettingsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetSettings")]
+        [Category("AssetSettingsGet")]
         public async void GetAllAssetSettings()
         {
             string url = fixture.ApiEndpointNames["assetSettings"];
@@ -39,10 +39,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetSettings")]
-        [Trait("Category", "AssetSettingsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetSettings")]
+        [Category("AssetSettingsGet")]
         public async void GetSingleAssetSettings()
         {
             string url = fixture.ApiEndpointNames["assetSettings"] + "/" + fixture.TestAssetSettings.Id;
@@ -58,10 +58,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetSettings")]
-        [Trait("Category", "AssetSettingsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetSettings")]
+        [Category("AssetSettingsGet")]
         public async void CheckIfAssetSettingsExists()
         {
             string url = fixture.ApiEndpointNames["assetSettings"] + "/" + fixture.TestAssetSettings.Id + "/exists";
@@ -74,10 +74,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetSettings")]
-        [Trait("Category", "AssetSettingsPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetSettings")]
+        [Category("AssetSettingsPost")]
         public async void CreateAssetSettings()
         {
             AssetSettingsDTO createdDTO = await fixture.CreateTestAssetSettings();
@@ -91,10 +91,10 @@ namespace AFTests.AssetsTests
             parsedEntity.ShouldBeEquivalentTo(createdDTO);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetSettings")]
-        [Trait("Category", "AssetSettingsPut")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetSettings")]
+        [Category("AssetSettingsPut")]
         public async void UpdateAssetSettings()
         {
             string url = fixture.ApiEndpointNames["assetSettings"];
@@ -128,10 +128,10 @@ namespace AFTests.AssetsTests
             parsedEntity.ShouldBeEquivalentTo(parsedUpdateDTO);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetSettings")]
-        [Trait("Category", "AssetSettingsDelete")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetSettings")]
+        [Category("AssetSettingsDelete")]
         public async void DeleteAssetSettings()
         {
             string url = fixture.ApiEndpointNames["assetSettings"] + "/" + fixture.TestAssetSettingsDelete.Asset;

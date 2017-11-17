@@ -5,21 +5,21 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest : AssetsTestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsGet")]
         public async void GetAllAssetPairs()
         {
             string url = fixture.ApiEndpointNames["assetPairs"];
@@ -36,10 +36,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsGet")]
         public async void GetSingleAssetPair()
         {
             string url = fixture.ApiEndpointNames["assetPairs"] + "/" + fixture.TestAssetPair.Id;
@@ -53,10 +53,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsGet")]
         public async void CheckIfAssetPairExists()
         {
             string url = fixture.ApiEndpointNames["assetPairs"] + "/" + fixture.TestAssetPair.Id + "/exists";
@@ -69,10 +69,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsPost")]
         public async void CreateAssetPair()
         {
             AssetPairDTO newAssetPair = await fixture.CreateTestAssetPair();
@@ -84,10 +84,10 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsPut")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsPut")]
         public async void UpdateAssetPair()
         {
             string url = fixture.ApiEndpointNames["assetPairs"];
@@ -116,10 +116,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsDelete")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsDelete")]
         public async void DeleteAssetPair()
         {
             string url = fixture.ApiEndpointNames["assetPairs"] + "/" + fixture.TestAssetPairDelete.Id;

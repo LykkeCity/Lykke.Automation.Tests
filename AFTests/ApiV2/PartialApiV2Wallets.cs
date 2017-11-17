@@ -4,7 +4,6 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Text;
-using Xunit;
 using XUnitTestCommon;
 using ApiV2Data.DTOs;
 using XUnitTestCommon.Utils;
@@ -12,17 +11,18 @@ using XUnitTestData.Repositories.ApiV2;
 using FluentAssertions;
 using System.Linq;
 using XUnitTestData.Repositories;
+using NUnit.Framework;
 
 namespace AFTests.ApiV2
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "ApiV2Service")]
-    public partial class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>
+    [Category("FullRegression")]
+    [Category("ApiV2Service")]
+    public partial class ApiV2Tests : ApiV2TestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Wallets")]
-        [Trait("Category", "WalletsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Wallets")]
+        [Category("WalletsGet")]
         public async void GetAllWallets()
         {
             string url = fixture.ApiEndpointNames["Wallets"];
@@ -38,10 +38,10 @@ namespace AFTests.ApiV2
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Wallets")]
-        [Trait("Category", "WalletsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Wallets")]
+        [Category("WalletsGet")]
         public async void GetSingleWallets()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWallet.Id;
@@ -54,10 +54,10 @@ namespace AFTests.ApiV2
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Wallets")]
-        [Trait("Category", "WalletsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Wallets")]
+        [Category("WalletsGet")]
         public async void GetAllWalletBalances()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/balances";
@@ -95,10 +95,10 @@ namespace AFTests.ApiV2
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Wallets")]
-        [Trait("Category", "WalletsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Wallets")]
+        [Category("WalletsGet")]
         public async void GetBalancesByWalletId()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWallet.Id + "/balances";
@@ -115,10 +115,10 @@ namespace AFTests.ApiV2
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Wallets")]
-        [Trait("Category", "WalletsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Wallets")]
+        [Category("WalletsGet")]
         public async void GetWalletBalancesByAssetId()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/balances/" + fixture.TestWalletAssetId;
@@ -152,10 +152,10 @@ namespace AFTests.ApiV2
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Wallets")]
-        [Trait("Category", "WalletsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Wallets")]
+        [Category("WalletsGet")]
         public async void GetWalletBalanceByWalletAndAssetId()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWallet.Id + "/balances/" + fixture.TestWalletAssetId;
@@ -170,10 +170,10 @@ namespace AFTests.ApiV2
             Assert.True(parsedResponse.Balance == accountBalance.Balance);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Wallets")]
-        [Trait("Category", "WalletsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Wallets")]
+        [Category("WalletsGet")]
         public async void GetWalletTradeBalances()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/trading/balances";
@@ -193,10 +193,10 @@ namespace AFTests.ApiV2
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Wallets")]
-        [Trait("Category", "WalletsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Wallets")]
+        [Category("WalletsGet")]
         public async void GetWalletTradeBalanceByAssetId()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/trading/balances/" + fixture.TestWalletAssetId;
@@ -213,10 +213,10 @@ namespace AFTests.ApiV2
             Assert.True(entityBalance.Balance == parsedResponse.Balance);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Wallets")]
-        [Trait("Category", "WalletsPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Wallets")]
+        [Category("WalletsPost")]
         public async void CreateWallet()
         {
             WalletDTO createdWallet = await fixture.CreateTestWallet();
@@ -229,10 +229,10 @@ namespace AFTests.ApiV2
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Wallets")]
-        [Trait("Category", "WalletsPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Wallets")]
+        [Category("WalletsPost")]
         public async void CreateHFTWallet()
         {
             WalletDTO createdWallet = await fixture.CreateTestWallet(true);
@@ -246,10 +246,10 @@ namespace AFTests.ApiV2
             .Excluding(w => w.Type));
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Wallets")]
-        [Trait("Category", "WalletsDelete")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Wallets")]
+        [Category("WalletsDelete")]
         public async void DeleteWallet()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWalletDelete.Id;

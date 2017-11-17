@@ -5,21 +5,21 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
 using XUnitTestData.Repositories.Assets;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest : AssetsTestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersGet")]
         public async void GetAllIssuers()
         {
             string url = fixture.ApiEndpointNames["assetIssuers"];
@@ -35,10 +35,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersGet")]
         public async void GetSingleIssuers()
         {
             string url = fixture.ApiEndpointNames["assetIssuers"] + "/" + fixture.TestAssetIssuer.Id;
@@ -51,10 +51,10 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersGet")]
         public async void CheckIfIssuerExists()
         {
             string url = fixture.ApiEndpointNames["assetIssuers"] + "/" + fixture.TestAssetIssuer.Id + "/exists";
@@ -66,10 +66,10 @@ namespace AFTests.AssetsTests
             Assert.True(parsedResponse);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersPost")]
         public async void CreateAssetIssuer()
         {
             AssetIssuerDTO createdIssuer = await fixture.CreateTestAssetIssuer();
@@ -81,10 +81,10 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersPut")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersPut")]
         public async void UpdateAssetIssuer()
         {
             string url = fixture.ApiEndpointNames["assetIssuers"];
@@ -106,10 +106,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersDelete")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersDelete")]
         public async void DeleteAssetIssuer()
         {
             string url = fixture.ApiEndpointNames["assetIssuers"] + "/" + fixture.TestAssetIssuerDelete.Id;

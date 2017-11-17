@@ -4,17 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 
 namespace AFTests.AssetsTests
 {
 
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest : AssetsTestDataFixture
     {
         private AssetsTestDataFixture fixture;
+
+        public AssetsTest() { } // Default constructor is needed for nUnit
 
         public AssetsTest(AssetsTestDataFixture fixture)
         {
@@ -22,10 +24,10 @@ namespace AFTests.AssetsTests
         }
 
         #region IsAlive
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "IsAlive")]
-        [Trait("Category", "IsAliveGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("IsAlive")]
+        [Category("IsAliveGet")]
         public async void IsAlive()
         {
             string url = fixture.ApiEndpointNames["assetIsAlive"];

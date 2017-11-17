@@ -4,7 +4,7 @@ using System.Net;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 using RestSharp;
 using XUnitTestData.Repositories.Assets;
@@ -14,14 +14,14 @@ using XUnitTestCommon.Utils;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest : AssetsTestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsGet")]
         public async void GetAllMarginAssets()
         {
             string url = fixture.ApiEndpointNames["marginAssets"];
@@ -37,10 +37,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsGet")]
         public async void GetSingleMarginAssets()
         {
             string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAsset.Id;
@@ -53,10 +53,10 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsGet")]
         public async void CheckIfMarginAssetsExists()
         {
             string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAsset.Id + "/exists";
@@ -67,10 +67,10 @@ namespace AFTests.AssetsTests
             Assert.True(parsedResponse);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsPost")]
         public async void CreateMarginAsset()
         {
             MarginAssetDTO createdDTO = await fixture.CreateTestMarginAsset();
@@ -82,10 +82,10 @@ namespace AFTests.AssetsTests
             entity.ShouldBeEquivalentTo(createdDTO, o => o.ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsPut")]
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsPut")]
         public async void UpdateMarginAsset()
         {
             string url = fixture.ApiEndpointNames["marginAssets"];
@@ -111,10 +111,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsDelete")]
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsDelete")]
         public async void DeleteMarginAsset()
         {
             string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAssetDelete.Id;

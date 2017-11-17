@@ -1,13 +1,15 @@
 ﻿using ApiV2Data.Fixtures;
-using Xunit;
+using NUnit.Framework;
 
 namespace AFTests.ApiV2
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "ApiV2Service")]
-    public partial class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>
+    [Category("FullRegression")]
+    [Category("ApiV2Service")]
+    public partial class ApiV2Tests : ApiV2TestDataFixture
     {
         private ApiV2TestDataFixture fixture;
+
+        public ApiV2Tests() { } // Default constructor is needed for nUnit
 
         public ApiV2Tests(ApiV2TestDataFixture fixture)
         {

@@ -5,21 +5,21 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest : AssetsTestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetExtendedInfos")]
-        [Trait("Category", "AssetExtendedInfoGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetExtendedInfos")]
+        [Category("AssetExtendedInfoGet")]
         public async void GetAllAssetExtendedInfos()
         {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"];
@@ -37,10 +37,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetExtendedInfos")]
-        [Trait("Category", "AssetExtendedInfoGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetExtendedInfos")]
+        [Category("AssetExtendedInfoGet")]
         public async void GetSingleAssetExtendedInfo()
         {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfo.Id;
@@ -54,10 +54,10 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetExtendedInfos")]
-        [Trait("Category", "AssetExtendedInfoGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetExtendedInfos")]
+        [Category("AssetExtendedInfoGet")]
         public async void CheckIfAssetExtendedInfoExists()
         {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfo.Id + "/exists";
@@ -75,10 +75,10 @@ namespace AFTests.AssetsTests
             Assert.False(badParsedResponse);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetExtendedInfos")]
-        [Trait("Category", "AssetExtendedInfoPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetExtendedInfos")]
+        [Category("AssetExtendedInfoPost")]
         public async void CreateAssetExtendedInfo()
         {
             AssetExtendedInfoDTO createdInfo = await fixture.CreateTestAssetExtendedInfo();
@@ -90,10 +90,10 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetExtendedInfos")]
-        [Trait("Category", "AssetExtendedInfoPut")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetExtendedInfos")]
+        [Category("AssetExtendedInfoPut")]
         public async void UpdateAssetExtendedInfo()
         {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"];
@@ -120,10 +120,10 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetExtendedInfos")]
-        [Trait("Category", "AssetExtendedInfoDelete")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetExtendedInfos")]
+        [Category("AssetExtendedInfoDelete")]
         public async void DeleteAssetExtendedInfo()
         {
             string deleteUrl = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfoDelete.Id;

@@ -6,20 +6,20 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 
 namespace AFTests.ApiV2
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "ApiV2Service")]
-    public partial class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>
+    [Category("FullRegression")]
+    [Category("ApiV2Service")]
+    public partial class ApiV2Tests : ApiV2TestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Settings")]
-        [Trait("Category", "SettingsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Settings")]
+        [Category("SettingsGet")]
         public async void GetBaseAsset()
         {
             string url = fixture.ApiEndpointNames["AssetsBaseAsset"];
@@ -31,10 +31,10 @@ namespace AFTests.ApiV2
             
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Settings")]
-        [Trait("Category", "SettingsPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Settings")]
+        [Category("SettingsPost")]
         public async void SetBaseAsset()
         {
            

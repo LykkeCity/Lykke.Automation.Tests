@@ -3,19 +3,19 @@ using FluentAssertions;
 using RestSharp;
 using System.Collections.Generic;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest : AssetsTestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetClients")]
-        [Trait("Category", "AssetClientsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetClients")]
+        [Category("AssetClientsGet")]
         public async void GetClientAssetIDs()
         {
             string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/asset-ids";
@@ -30,10 +30,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetClients")]
-        [Trait("Category", "AssetClientsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetClients")]
+        [Category("AssetClientsGet")]
         public async void GetClientSwiftDepositOption()
         {
             string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/swift-deposit-enabled";
@@ -48,10 +48,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetClients")]
-        [Trait("Category", "AssetClientsGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetClients")]
+        [Category("AssetClientsGet")]
         public async void GetClientCashInBankOption()
         {
             string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/cash-in-via-bank-card-enabled";

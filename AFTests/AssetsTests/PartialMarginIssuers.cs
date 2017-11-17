@@ -7,21 +7,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest : AssetsTestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginIssuers")]
-        [Trait("Category", "MarginIssuersGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginIssuers")]
+        [Category("MarginIssuersGet")]
         public async void GetAllMarginIssuers()
         {
             string url = fixture.ApiEndpointNames["marginIssuers"];
@@ -37,10 +37,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginIssuers")]
-        [Trait("Category", "MarginIssuersGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginIssuers")]
+        [Category("MarginIssuersGet")]
         public async void GetSingleMarginIssuer()
         {
             string url = fixture.ApiEndpointNames["marginIssuers"] + "/" + fixture.TestMarginIssuer.Id;
@@ -53,10 +53,10 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginIssuers")]
-        [Trait("Category", "MarginIssuersGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginIssuers")]
+        [Category("MarginIssuersGet")]
         public async void CheckIfMarginIssuerExists()
         {
             string url = fixture.ApiEndpointNames["marginIssuers"] + "/" + fixture.TestMarginIssuer.Id + "/exists";
@@ -68,10 +68,10 @@ namespace AFTests.AssetsTests
             Assert.True(parsedResponse);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersPost")]
         public async void CreateMarginIssuer()
         {
             MarginIssuerDTO createdIssuer = await fixture.CreateTestMarginIssuer();
@@ -83,10 +83,10 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersPut")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersPut")]
         public async void UpdateMarginIssuer()
         {
             string url = fixture.ApiEndpointNames["marginIssuers"];
@@ -108,10 +108,10 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersDelete")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersDelete")]
         public async void DeleteMarginIssuer()
         {
             string url = fixture.ApiEndpointNames["marginIssuers"] + "/" + fixture.TestMarginIssuerDelete.Id;

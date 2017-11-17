@@ -2,20 +2,20 @@
 using BlueApiData.Fixtures;
 using System;
 using System.Collections.Generic;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 
 namespace AFTests.BlueApi
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "BlueApiService")]
-    public partial class BlueApiTests : IClassFixture<BlueApiTestDataFixture>
+    [Category("FullRegression")]
+    [Category("BlueApiService")]
+    public partial class BlueApiTests : BlueApiTestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Twitter")]
-        [Trait("Category", "TwitterPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Twitter")]
+        [Category("TwitterPost")]
         public async void GetTweets()
         {
             string url = _fixture.ApiEndpointNames["Twitter"];

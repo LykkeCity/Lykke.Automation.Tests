@@ -4,20 +4,20 @@ using FluentAssertions;
 using RestSharp;
 using System.Collections.Generic;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest : AssetsTestDataFixture
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetAttributes")]
-        [Trait("Category", "AssetsAttributesGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetAttributes")]
+        [Category("AssetsAttributesGet")]
         public async void GetAllAssetAttributes()
         {
             string url = fixture.ApiEndpointNames["assetAttributes"];
@@ -37,10 +37,10 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetAttributes")]
-        [Trait("Category", "AssetsAttributesGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetAttributes")]
+        [Category("AssetsAttributesGet")]
         public async void GetSingleAssetAttributes()
         {
             string url = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttribute.AssetId;
@@ -56,10 +56,10 @@ namespace AFTests.AssetsTests
             .Excluding(p => p.Attributes));
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetAttributes")]
-        [Trait("Category", "AssetsAttributesGet")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetAttributes")]
+        [Category("AssetsAttributesGet")]
         public async void GetSingleAssetAttribute()
         {
             string url = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttribute.AssetId + "/" + fixture.TestAssetAttribute.Key;
@@ -73,10 +73,10 @@ namespace AFTests.AssetsTests
             Assert.True(fixture.TestAssetAttribute.Value == parsedResponse.Value);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetAttributes")]
-        [Trait("Category", "AssetsAttributesPost")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetAttributes")]
+        [Category("AssetsAttributesPost")]
         public async void CreateAssetAttribute()
         {
             AssetAttributeIdentityDTO newAssetAttr = await fixture.CreateTestAssetAttribute();
@@ -86,10 +86,10 @@ namespace AFTests.AssetsTests
             Assert.True(checkDb.Value == newAssetAttr.Value);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetAttributes")]
-        [Trait("Category", "AssetsAttributesPut")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetAttributes")]
+        [Category("AssetsAttributesPut")]
         public async void UpdateAssetAttribute()
         {
             string updateUrl = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttributeUpdate.AssetId;
@@ -103,10 +103,10 @@ namespace AFTests.AssetsTests
             Assert.True(checkDbUpdated.Value == updateValue);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetAttributes")]
-        [Trait("Category", "AssetsAttributesDelete")]
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetAttributes")]
+        [Category("AssetsAttributesDelete")]
         public async void DeleteAssetAttribute()
         {
             string deleteUrl = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttributeDelete.AssetId + "/" + fixture.TestAssetAttributeDelete.Key;
