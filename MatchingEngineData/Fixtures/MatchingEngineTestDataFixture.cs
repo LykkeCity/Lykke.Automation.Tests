@@ -130,13 +130,15 @@ namespace AFTMatchingEngine.Fixtures
             if(!Int32.TryParse(_configBuilder.Config["RabbitMQMessageWait"], out waitForRabbitMQMessage))
                 waitForRabbitMQMessage = 20000;
 
-            List<Task<bool>> createQueueTasks = new List<Task<bool>>();
-            createQueueTasks.Add(createQueue("lykke.cashinout", "lykke.cashinout." + Constants.TestQueueName));
-            createQueueTasks.Add(createQueue("lykke.transfers", "lykke.transfers." + Constants.TestQueueName));
-            createQueueTasks.Add(createQueue("lykke.cashswap", "lykke.cashswap." + Constants.TestQueueName));
-            createQueueTasks.Add(createQueue("lykke.balanceupdate", "lykke.balanceupdate." + Constants.TestQueueName));
-            createQueueTasks.Add(createQueue("lykke.limitorders.clients", "lykke.limitorders.clients." + Constants.TestQueueName));
-            createQueueTasks.Add(createQueue("lykke.trades", "lykke.trades." + Constants.TestQueueName));
+            List<Task<bool>> createQueueTasks = new List<Task<bool>>
+            {
+                createQueue("lykke.cashinout", "lykke.cashinout." + Constants.TestQueueName),
+                createQueue("lykke.transfers", "lykke.transfers." + Constants.TestQueueName),
+                createQueue("lykke.cashswap", "lykke.cashswap." + Constants.TestQueueName),
+                createQueue("lykke.balanceupdate", "lykke.balanceupdate." + Constants.TestQueueName),
+                createQueue("lykke.limitorders.clients", "lykke.limitorders.clients." + Constants.TestQueueName),
+                createQueue("lykke.trades", "lykke.trades." + Constants.TestQueueName)
+            };
 
             Task.WhenAll(createQueueTasks).Wait();
         }

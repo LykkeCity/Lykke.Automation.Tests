@@ -22,7 +22,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AsestPairsGet")]
         public async void GetAllAssetPairs()
         {
-            string url = fixture.ApiEndpointNames["assetPairs"];
+            string url = ApiPaths.ASSET_PAIRS_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -42,7 +42,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AsestPairsGet")]
         public async void GetSingleAssetPair()
         {
-            string url = fixture.ApiEndpointNames["assetPairs"] + "/" + fixture.TestAssetPair.Id;
+            string url = ApiPaths.ASSET_PAIRS_PATH + "/" + fixture.TestAssetPair.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -59,7 +59,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AsestPairsGet")]
         public async void CheckIfAssetPairExists()
         {
-            string url = fixture.ApiEndpointNames["assetPairs"] + "/" + fixture.TestAssetPair.Id + "/exists";
+            string url = ApiPaths.ASSET_PAIRS_PATH + "/" + fixture.TestAssetPair.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -90,7 +90,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AsestPairsPut")]
         public async void UpdateAssetPair()
         {
-            string url = fixture.ApiEndpointNames["assetPairs"];
+            string url = ApiPaths.ASSET_PAIRS_PATH;
             AssetPairDTO updateAssetPair = new AssetPairDTO()
             {
                 Accuracy = Helpers.Random.Next(2, 8),
@@ -98,7 +98,7 @@ namespace AFTests.AssetsTests
                 Id = fixture.TestAssetPairUpdate.Id,
                 InvertedAccuracy = fixture.TestAssetPairUpdate.InvertedAccuracy,
                 IsDisabled = fixture.TestAssetPairUpdate.IsDisabled,
-                Name = fixture.TestAssetPairUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest",
+                Name = fixture.TestAssetPairUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
                 QuotingAssetId = fixture.TestAssetPairUpdate.QuotingAssetId,
                 Source = fixture.TestAssetPairUpdate.Source,
                 Source2 = fixture.TestAssetPairUpdate.Source2
@@ -122,7 +122,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AsestPairsDelete")]
         public async void DeleteAssetPair()
         {
-            string url = fixture.ApiEndpointNames["assetPairs"] + "/" + fixture.TestAssetPairDelete.Id;
+            string url = ApiPaths.ASSET_PAIRS_PATH + "/" + fixture.TestAssetPairDelete.Id;
             var result = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.NotNull(result);
             Assert.True(result.Status == HttpStatusCode.NoContent);

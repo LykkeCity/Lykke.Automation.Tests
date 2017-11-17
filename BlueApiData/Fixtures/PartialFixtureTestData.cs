@@ -25,13 +25,6 @@ namespace BlueApiData.Fixtures
         {
             PrepareMapper();
 
-            ApiEndpointNames = new Dictionary<string, string>
-            {
-                ["IsAlive"] = "/api/isAlive",
-                ["Pledges"] = "/api/pledges",
-                ["Twitter"] = "/api/twitter"
-            };
-
             _pledgesToDelete = new Dictionary<string, string>();
 
             TestClientId = _configBuilder.Config["AuthClientId"];

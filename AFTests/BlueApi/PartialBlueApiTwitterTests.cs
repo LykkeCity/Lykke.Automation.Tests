@@ -18,7 +18,7 @@ namespace AFTests.BlueApi
         [Trait("Category", "TwitterPost")]
         public async void GetTweets()
         {
-            string url = _fixture.ApiEndpointNames["Twitter"];
+            string url = ApiPaths.TWITTER_BASE_PATH;
             int pageSize = Helpers.Random.Next(1, 101); // from 1 to 100 records on a page
             var body = new TwitterSearchDTO()
             {

@@ -22,7 +22,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "IssuersGet")]
         public async void GetAllIssuers()
         {
-            string url = fixture.ApiEndpointNames["assetIssuers"];
+            string url = ApiPaths.ISSUERS_BASE_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -41,7 +41,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "IssuersGet")]
         public async void GetSingleIssuers()
         {
-            string url = fixture.ApiEndpointNames["assetIssuers"] + "/" + fixture.TestAssetIssuer.Id;
+            string url = ApiPaths.ISSUERS_BASE_PATH + "/" + fixture.TestAssetIssuer.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -57,7 +57,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "IssuersGet")]
         public async void CheckIfIssuerExists()
         {
-            string url = fixture.ApiEndpointNames["assetIssuers"] + "/" + fixture.TestAssetIssuer.Id + "/exists";
+            string url = ApiPaths.ISSUERS_BASE_PATH + "/" + fixture.TestAssetIssuer.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -87,12 +87,12 @@ namespace AFTests.AssetsTests
         [Trait("Category", "IssuersPut")]
         public async void UpdateAssetIssuer()
         {
-            string url = fixture.ApiEndpointNames["assetIssuers"];
+            string url = ApiPaths.ISSUERS_BASE_PATH;
             AssetIssuerDTO editIssuer = new AssetIssuerDTO()
             {
                 Id = fixture.TestAssetIssuerUpdate.Id,
-                IconUrl = fixture.TestAssetIssuerUpdate.IconUrl + Helpers.Random.Next(1000,9999).ToString() + "_AutoTest",
-                Name = fixture.TestAssetIssuerUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest",
+                IconUrl = fixture.TestAssetIssuerUpdate.IconUrl + Helpers.Random.Next(1000,9999).ToString() + GlobalConstants.AutoTest,
+                Name = fixture.TestAssetIssuerUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
             };
             string editParam = JsonUtils.SerializeObject(editIssuer);
 
@@ -112,7 +112,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "IssuersDelete")]
         public async void DeleteAssetIssuer()
         {
-            string url = fixture.ApiEndpointNames["assetIssuers"] + "/" + fixture.TestAssetIssuerDelete.Id;
+            string url = ApiPaths.ISSUERS_BASE_PATH + "/" + fixture.TestAssetIssuerDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 

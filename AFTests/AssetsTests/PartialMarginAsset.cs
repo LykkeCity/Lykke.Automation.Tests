@@ -24,7 +24,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "MarginAssetsGet")]
         public async void GetAllMarginAssets()
         {
-            string url = fixture.ApiEndpointNames["marginAssets"];
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -43,7 +43,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "MarginAssetsGet")]
         public async void GetSingleMarginAssets()
         {
-            string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAsset.Id;
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + fixture.TestMarginAsset.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -59,7 +59,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "MarginAssetsGet")]
         public async void CheckIfMarginAssetsExists()
         {
-            string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAsset.Id + "/exists";
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + fixture.TestMarginAsset.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -88,7 +88,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "MarginAssetsPut")]
         public async void UpdateMarginAsset()
         {
-            string url = fixture.ApiEndpointNames["marginAssets"];
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH;
             MarginAssetDTO updateDTO = new MarginAssetDTO()
             {
                 Id = fixture.TestMarginAssetUpdate.Id,
@@ -117,7 +117,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "MarginAssetsDelete")]
         public async void DeleteMarginAsset()
         {
-            string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAssetDelete.Id;
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + fixture.TestMarginAssetDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 

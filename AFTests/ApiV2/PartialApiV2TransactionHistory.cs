@@ -17,7 +17,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "TransactionHistoryGet")]
         public async void GetTransactionHistoryWhenThereIsNone()
         {
-            var url = _fixture.ApiEndpointNames["TransactionHistory"];
+            var url = ApiPaths.TRANSACTION_HISTORY_BASE_PATH;
 
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
@@ -51,7 +51,7 @@ namespace AFTests.ApiV2
 
             Assert.True(meGoodCashOutResponse.Status == MeStatusCodes.Ok);
 
-            var url = _fixture.ApiEndpointNames["TransactionHistory"];
+            var url = ApiPaths.TRANSACTION_HISTORY_BASE_PATH;
 
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 

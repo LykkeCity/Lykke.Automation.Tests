@@ -24,7 +24,7 @@ namespace AFTests.BlueApi
         [Trait("Category", "IsAliveGet")]
         public async void IsAlive()
         {
-            string url = _fixture.ApiEndpointNames["IsAlive"];
+            string url = ApiPaths.ISALIVE_BASE_PATH;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 

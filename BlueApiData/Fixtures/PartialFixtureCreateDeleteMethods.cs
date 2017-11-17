@@ -14,7 +14,7 @@ namespace BlueApiData.Fixtures
         {
             var consumer = String.IsNullOrEmpty(consumerIndex) ? Consumer : PledgeApiConsumers[consumerIndex];
 
-            var url = ApiEndpointNames["Pledges"];
+            var url = ApiPaths.PLEDGES_BASE_PATH;
             var newPledge = new CreatePledgeDTO
             {
                 CO2Footprint = Helpers.Random.Next(100, 100000),
@@ -41,7 +41,7 @@ namespace BlueApiData.Fixtures
         {
             var consumer = String.IsNullOrEmpty(consumerIndex) ? Consumer : PledgeApiConsumers[consumerIndex];
 
-            var deletePledgeUrl = ApiEndpointNames["Pledges"];
+            var deletePledgeUrl = ApiPaths.PLEDGES_BASE_PATH;
             var deleteResponse = await consumer.ExecuteRequest(deletePledgeUrl, Helpers.EmptyDictionary, null, Method.DELETE);
 
             if (deleteResponse.Status != HttpStatusCode.NoContent)

@@ -22,7 +22,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetExtendedInfoGet")]
         public async void GetAllAssetExtendedInfos()
         {
-            string url = fixture.ApiEndpointNames["assetExtendedInfos"];
+            string url = ApiPaths.ASSET_EXTENDED_INFO_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -43,7 +43,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetExtendedInfoGet")]
         public async void GetSingleAssetExtendedInfo()
         {
-            string url = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfo.Id;
+            string url = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/" + fixture.TestAssetExtendedInfo.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -60,14 +60,14 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetExtendedInfoGet")]
         public async void CheckIfAssetExtendedInfoExists()
         {
-            string url = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfo.Id + "/exists";
+            string url = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/" + fixture.TestAssetExtendedInfo.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             bool parsedResponse = JsonUtils.DeserializeJson<bool>(response.ResponseJson);
             Assert.NotNull(parsedResponse);
             Assert.True(parsedResponse);
 
-            string badUrl = fixture.ApiEndpointNames["assetExtendedInfos"] + "/AutoTestAssetThatDoesntExist/exists";
+            string badUrl = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/AutoTestAssetThatDoesntExist/exists";
             var badResponse = await fixture.Consumer.ExecuteRequest(badUrl, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(badResponse);
             bool badParsedResponse = JsonUtils.DeserializeJson<bool>(badResponse.ResponseJson);
@@ -96,7 +96,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetExtendedInfoPut")]
         public async void UpdateAssetExtendedInfo()
         {
-            string url = fixture.ApiEndpointNames["assetExtendedInfos"];
+            string url = ApiPaths.ASSET_EXTENDED_INFO_PATH;
 
             AssetExtendedInfoDTO updateExtendedInfo = new AssetExtendedInfoDTO()
             {
@@ -126,7 +126,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetExtendedInfoDelete")]
         public async void DeleteAssetExtendedInfo()
         {
-            string deleteUrl = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfoDelete.Id;
+            string deleteUrl = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/" + fixture.TestAssetExtendedInfoDelete.Id;
             var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 

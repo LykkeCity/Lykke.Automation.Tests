@@ -22,7 +22,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetSettingsGet")]
         public async void GetAllAssetSettings()
         {
-            string url = fixture.ApiEndpointNames["assetSettings"];
+            string url = ApiPaths.ASSET_SETTINGS_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -45,7 +45,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetSettingsGet")]
         public async void GetSingleAssetSettings()
         {
-            string url = fixture.ApiEndpointNames["assetSettings"] + "/" + fixture.TestAssetSettings.Id;
+            string url = ApiPaths.ASSET_SETTINGS_PATH + "/" + fixture.TestAssetSettings.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -64,7 +64,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetSettingsGet")]
         public async void CheckIfAssetSettingsExists()
         {
-            string url = fixture.ApiEndpointNames["assetSettings"] + "/" + fixture.TestAssetSettings.Id + "/exists";
+            string url = ApiPaths.ASSET_SETTINGS_PATH + "/" + fixture.TestAssetSettings.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -97,7 +97,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetSettingsPut")]
         public async void UpdateAssetSettings()
         {
-            string url = fixture.ApiEndpointNames["assetSettings"];
+            string url = ApiPaths.ASSET_SETTINGS_PATH;
             AssetSettingsCreateDTO updateDTO = new AssetSettingsCreateDTO()
             {
                 Asset = fixture.TestAssetSettingsUpdate.Asset,
@@ -134,7 +134,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetSettingsDelete")]
         public async void DeleteAssetSettings()
         {
-            string url = fixture.ApiEndpointNames["assetSettings"] + "/" + fixture.TestAssetSettingsDelete.Asset;
+            string url = ApiPaths.ASSET_SETTINGS_PATH + "/" + fixture.TestAssetSettingsDelete.Asset;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 

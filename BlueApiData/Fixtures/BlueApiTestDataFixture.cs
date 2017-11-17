@@ -34,8 +34,6 @@ namespace BlueApiData.Fixtures
         public PledgeDTO TestPledge;
         public PledgeDTO TestPledgeUpdate;
         public PledgeDTO TestPledgeDelete;
-
-        public Dictionary<string, string> ApiEndpointNames;
         public ApiConsumer Consumer;
 
         public Dictionary<string, ApiConsumer> PledgeApiConsumers;

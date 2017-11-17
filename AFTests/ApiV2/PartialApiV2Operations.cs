@@ -23,7 +23,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "OperationsGet")]
         public async void GetOperationById()
         {
-            string url = _fixture.ApiEndpointNames["Operations"] + "/" + _fixture.TestOperation.Id;
+            string url = ApiPaths.OPERATIONS_BASE_PATH + "/" + _fixture.TestOperation.Id;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -61,7 +61,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "OperationsPost")]
         public async void CancelOperation()
         {
-            string url = _fixture.ApiEndpointNames["Operations"] + "/cancel/" + _fixture.TestOperationCancel.Id;
+            string url = ApiPaths.OPERATIONS_CANCEL_PATH + "/" + _fixture.TestOperationCancel.Id;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -78,11 +78,11 @@ namespace AFTests.ApiV2
         [Trait("Category", "OperationDetailsPost")]
         public async void CreateOperationDetails()
         {
-            string url = _fixture.ApiEndpointNames["OperationDetails"] + "/create";
+            string url = ApiPaths.OPERATIONS_DETAILS_CREATE_PATH;
             OperationDetailsDTO createDTO = new OperationDetailsDTO()
             {
                 TransactionId = _fixture.TestOperationCreateDetails.Id,
-                Comment = Guid.NewGuid().ToString() + "_AutoTest"
+                Comment = Guid.NewGuid().ToString() + GlobalConstants.AutoTest
             };
             string createParam = JsonUtils.SerializeObject(createDTO);
 
@@ -101,11 +101,11 @@ namespace AFTests.ApiV2
         [Trait("Category", "OperationDetailsPost")]
         public async void RegisterOperationDetails()
         {
-            string url = _fixture.ApiEndpointNames["OperationDetails"] + "/register";
+            string url = ApiPaths.OPERATIONS_DETAILS_REGISTER_PATH;
             OperationDetailsDTO createDTO = new OperationDetailsDTO()
             {
                 TransactionId = _fixture.TestOperationRegisterDetails.Id,
-                Comment = Guid.NewGuid().ToString() + "_AutoTest"
+                Comment = Guid.NewGuid().ToString() + GlobalConstants.AutoTest
             };
             string createParam = JsonUtils.SerializeObject(createDTO);
 
