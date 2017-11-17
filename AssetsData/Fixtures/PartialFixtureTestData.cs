@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using XUnitTestData.Repositories.Assets;
 using System.Linq;
 using XUnitTestCommon.Utils;
 using AutoMapper;
 using AssetsData.DTOs;
 using AssetsData.DTOs.Assets;
-using XUnitTestCommon;
+using XUnitTestData.Entitites.ApiV2.Assets;
 
 namespace AssetsData.Fixtures
 {

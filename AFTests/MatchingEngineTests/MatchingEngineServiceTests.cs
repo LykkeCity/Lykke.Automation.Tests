@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Globalization;
 using AFTMatchingEngine.Fixtures;
 using Xunit;
 using Lykke.MatchingEngine.Connector.Abstractions.Models;
-using XUnitTestData.Repositories;
 using System.Linq;
-using System.Threading;
-using System.Diagnostics;
 using MatchingEngineData.DTOs.RabbitMQ;
-using XUnitTestData.Repositories.MatchingEngine;
-using XUnitTestData.Repositories.Assets;
+using XUnitTestData.Entities.MatchingEngine;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
+using XUnitTestData.Entities;
 
 namespace AFTMatchingEngine
 {
@@ -153,7 +148,7 @@ namespace AFTMatchingEngine
             if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedMsgAmount))
                 Assert.True(parsedMsgAmount == transferAmount);
 
-            CashSwapEntity checkCashSwapOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(transferId);
+            CashSwapEntity checkCashSwapOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(c => c.ExternalId == transferId);
             Assert.True(checkCashSwapOperation.Amount == transferAmount);
             Assert.True(checkCashSwapOperation.AssetId == fixture.TestAsset1);
             Assert.True(checkCashSwapOperation.FromClientId == testAccount1.Id);
@@ -184,7 +179,7 @@ namespace AFTMatchingEngine
             if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out parsedMsgAmount))
                 Assert.True(parsedMsgAmount == transferAmount);
 
-            CashSwapEntity checkCashSwapBackOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(transferBackId);
+            CashSwapEntity checkCashSwapBackOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(c => c.ExternalId == transferBackId);
             Assert.True(checkCashSwapBackOperation.Amount == transferAmount);
             Assert.True(checkCashSwapBackOperation.AssetId == fixture.TestAsset1);
             Assert.True(checkCashSwapBackOperation.FromClientId == testAccount2.Id);
@@ -254,7 +249,7 @@ namespace AFTMatchingEngine
             if (Double.TryParse(message.volume2, NumberStyles.Float, CultureInfo.InvariantCulture, out parsedVolume))
                 Assert.True(parsedVolume == swapAmount2);
 
-            CashSwapEntity checkCashSwapOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(swapId);
+            CashSwapEntity checkCashSwapOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(c => c.ExternalId == swapId);
 
             Assert.True(checkCashSwapOperation.AssetId1 == fixture.TestAsset1);
             Assert.True(checkCashSwapOperation.AssetId2 == fixture.TestAsset2);
@@ -298,7 +293,7 @@ namespace AFTMatchingEngine
             if (Double.TryParse(message.volume2, NumberStyles.Float, CultureInfo.InvariantCulture, out parsedVolume))
                 Assert.True(parsedVolume == swapAmount2);
 
-            checkCashSwapOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(swapBackId);
+            checkCashSwapOperation = (CashSwapEntity)await fixture.CashSwapRepository.TryGetAsync(c => c.ExternalId == swapBackId);
 
             Assert.True(checkCashSwapOperation.AssetId1 == fixture.TestAsset1);
             Assert.True(checkCashSwapOperation.AssetId2 == fixture.TestAsset2);

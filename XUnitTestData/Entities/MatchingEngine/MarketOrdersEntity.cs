@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using XUnitTestData.Domains;
 using XUnitTestData.Domains.MatchingEngine;
 
-namespace XUnitTestData.Repositories.MatchingEngine
+namespace XUnitTestData.Entities.MatchingEngine
 {
     public class MarketOrderEntity : TableEntity, IMarketOrderEntity
     {
@@ -28,29 +28,5 @@ namespace XUnitTestData.Repositories.MatchingEngine
         public DateTime MatchedAt { get; set; }
         public double Price { get; set; }
         public string DustSize { get; set; }
-    }
-
-    public class MarketOrdersRepository : IDictionaryRepository<IMarketOrderEntity>
-    {
-        private readonly INoSQLTableStorage<MarketOrderEntity> _tableStorage;
-
-        public MarketOrdersRepository(INoSQLTableStorage<MarketOrderEntity> tableStorage)
-        {
-            _tableStorage = tableStorage;
-        }
-
-        public async Task<IEnumerable<IMarketOrderEntity>> GetAllAsync()
-        {
-            string partitionKey = MarketOrderEntity.GeneratePartitionKey();
-
-            return (await _tableStorage.GetDataAsync(partitionKey));
-        }
-
-        public async Task<IMarketOrderEntity> TryGetAsync(string id)
-        {
-            string partitionKey = MarketOrderEntity.GeneratePartitionKey();
-
-            return (await _tableStorage.GetDataAsync(partitionKey, id));
-        }
     }
 }

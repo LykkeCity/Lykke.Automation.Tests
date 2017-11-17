@@ -10,7 +10,7 @@ using System.Text;
 using Xunit;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.Assets;
+using XUnitTestData.Entitites.ApiV2.Assets;
 
 namespace AFTests.AssetsTests
 {
@@ -77,7 +77,6 @@ namespace AFTests.AssetsTests
             MarginIssuerDTO createdIssuer = await fixture.CreateTestMarginIssuer();
             Assert.NotNull(createdIssuer);
 
-            await fixture.MarginIssuerManager.UpdateCacheAsync();
             MarginIssuerEntity entity = await fixture.MarginIssuerManager.TryGetAsync(createdIssuer.Id) as MarginIssuerEntity;
             entity.ShouldBeEquivalentTo(createdIssuer, o => o
             .ExcludingMissingMembers());
@@ -101,7 +100,6 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.OK); //HttpStatusCode.NoContent
 
-            await fixture.MarginIssuerManager.UpdateCacheAsync();
             MarginIssuerEntity entity = await fixture.MarginIssuerManager.TryGetAsync(fixture.TestMarginIssuerUpdate.Id) as MarginIssuerEntity;
             entity.ShouldBeEquivalentTo(editIssuer, o => o
             .ExcludingMissingMembers());
@@ -118,7 +116,6 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.MarginIssuerManager.UpdateCacheAsync();
             MarginIssuerEntity entity = await fixture.MarginIssuerManager.TryGetAsync(fixture.TestMarginIssuerDelete.Id) as MarginIssuerEntity;
             Assert.Null(entity);
         }

@@ -7,8 +7,7 @@ using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Domains.ApiV2;
-using XUnitTestData.Repositories.ApiV2;
-using XUnitTestData.Services;
+using XUnitTestData.Entities.ApiV2;
 using System.Threading.Tasks;
 using XUnitTestData.Domains;
 using ApiV2Data.DTOs;
@@ -16,10 +15,11 @@ using XUnitTestData.Repositories;
 using AssetsData.DTOs.Assets;
 using RestSharp;
 using XUnitTestData.Domains.Authentication;
+using XUnitTestData.Entities;
 
 namespace ApiV2Data.Fixtures
 {
-    public partial class ApiV2TestDataFixture
+    public partial class ApiV2TestDataFixture : IDisposable
     {
         private ConfigBuilder _configBuilder;
         private IContainer _container;
@@ -30,34 +30,42 @@ namespace ApiV2Data.Fixtures
 
         public string TestClientId;
 
-        public WalletRepository WalletRepository;
+        public GenericRepository<WalletEntity, IWallet> WalletRepository;
         public List<WalletEntity> AllWalletsFromDb;
         public WalletEntity TestWallet;
         public WalletDTO TestWalletDelete;
         public AccountEntity TestWalletAccount;
         public string TestAssetId;
+        public int AssetPrecission;
         public string TestWalletWithBalance;
         public WalletDTO TestWalletOperations;
         public WalletDTO TestWalletRegenerateKey;
 
-        public IDictionaryManager<IAccount> AccountManager;
+        public GenericRepository<AccountEntity, IAccount> AccountRepository;
 
-        public OperationsRepository OperationsRepository;
+        public GenericRepository<OperationsEntity, IOperations> OperationsRepository;
         public List<OperationsEntity> AllOperationsFromDB;
         public OperationCreateReturnDTO TestOperation;
         public OperationCreateReturnDTO TestOperationCancel;
 
-        public OperationDetailsRepository OperationDetailsRepository;
-        public PersonalDataRepository PersonalDataRepository;
+        public GenericRepository<OperationDetailsEntity, IOperationDetails> OperationDetailsRepository;
+        public GenericRepository<PersonalDataEntity, IPersonalData> PersonalDataRepository;
         public OperationCreateReturnDTO TestOperationCreateDetails;
         public OperationCreateReturnDTO TestOperationRegisterDetails;
 
-        public TradersRepository TradersRepository;
+        public GenericRepository<TradersEntity, ITrader> TradersRepository;
         public ApiConsumer Consumer;
+        public MatchingEngineConsumer MEConsumer;
 
         public ApiV2TestDataFixture()
         {
             _configBuilder = new ConfigBuilder("ApiV2");
+
+            ConfigBuilder MeConfig = new ConfigBuilder("MatchingEngine");
+            if (Int32.TryParse(MeConfig.Config["Port"], out int port))
+            {
+                MEConsumer = new MatchingEngineConsumer(MeConfig.Config["BaseUrl"], port);
+            }
 
             var oAuthConsumer = new OAuthConsumer
             {
@@ -85,36 +93,34 @@ namespace ApiV2Data.Fixtures
             builder.RegisterModule(new ApiV2TestModule(_configBuilder));
             _container = builder.Build();
 
-            this.WalletRepository = (WalletRepository)this._container.Resolve<IDictionaryRepository<IWallet>>();
-            this.AccountManager = RepositoryUtils.PrepareRepositoryManager<IAccount>(this._container);
-            this.OperationsRepository = (OperationsRepository)this._container.Resolve<IDictionaryRepository<IOperations>>();
-            this.OperationDetailsRepository = (OperationDetailsRepository)this._container.Resolve<IDictionaryRepository<IOperationDetails>>();
-            this.PersonalDataRepository = (PersonalDataRepository)this._container.Resolve<IDictionaryRepository<IPersonalData>>();
-            this.TradersRepository = (TradersRepository)this._container.Resolve<IDictionaryRepository<ITrader>>();
+            this.WalletRepository = RepositoryUtils.ResolveGenericRepository<WalletEntity, IWallet>(this._container);
+            this.AccountRepository = RepositoryUtils.ResolveGenericRepository<AccountEntity, IAccount>(this._container);
+            this.OperationsRepository = RepositoryUtils.ResolveGenericRepository<OperationsEntity, IOperations>(this._container);
+            this.OperationDetailsRepository = RepositoryUtils.ResolveGenericRepository<OperationDetailsEntity, IOperationDetails>(this._container);
+            this.PersonalDataRepository = RepositoryUtils.ResolveGenericRepository<PersonalDataEntity, IPersonalData>(this._container);
+            this.TradersRepository = RepositoryUtils.ResolveGenericRepository<TradersEntity, ITrader>(this._container);
         }
 
         private async Task PrepareTestData()
         {        
 
             WalletsToDelete = new List<string>();
-            OperationsToCancel = new List<string>();            
+            OperationsToCancel = new List<string>();
 
             _walletsToDelete = new List<string>();
             TestClientId = this._configBuilder.Config["AuthClientId"];
-            var walletsFromDB = this.WalletRepository.GetAllAsync(TestClientId);
-            var operationsFromDB = this.OperationsRepository.GetAllAsync(TestClientId);
+            var walletsFromDB = this.WalletRepository.GetAllAsync(w => w.ClientId == TestClientId && w.State != "deleted");
+            var operationsFromDB = this.OperationsRepository.GetAllAsync(o => o.PartitionKey == OperationsEntity.GeneratePartitionKey() && o.ClientId.ToString() == TestClientId);
 
-            TestClientId = _configBuilder.Config["AuthClientId"];
-            var walletsFromDb = WalletRepository.GetAllAsync(TestClientId);
-
-            this.AllWalletsFromDb = (await walletsFromDb).Cast<WalletEntity>().ToList();
-            this.TestWallet = AllWalletsFromDb.Where(w => w.Id == Constants.TestWalletId).FirstOrDefault(); //TODO hardcoded
-            this.TestAssetId = Constants.TestAssetId;
-            this.TestWalletWithBalance = Constants.TestWalletId;
+            this.AllWalletsFromDb = (await walletsFromDB).Cast<WalletEntity>().ToList();
+            this.TestWallet = AllWalletsFromDb.Where(w => w.RowKey == "fd0f7373-301e-42c0-83a2-1d7b691676c3").FirstOrDefault(); //TODO hardcoded
+            this.TestAssetId = "LKK";
+            this.AssetPrecission = 2;
+            this.TestWalletWithBalance = "fd0f7373-301e-42c0-83a2-1d7b691676c3";
             this.AllWalletsFromDb = (await walletsFromDB).Cast<WalletEntity>().ToList();
             this.TestWallet = AllWalletsFromDb.Where(w => w.Id == TestWalletWithBalance).FirstOrDefault(); //TODO hardcoded
             this.TestWalletDelete = await CreateTestWallet();
-            this.TestWalletAccount = await AccountManager.TryGetAsync(TestWallet.Id) as AccountEntity;
+            this.TestWalletAccount = await AccountRepository.TryGetAsync(TestWallet.Id) as AccountEntity;
             this.TestWalletOperations = await CreateTestWallet();
             this.TestWalletRegenerateKey = await CreateTestWallet(true);
 

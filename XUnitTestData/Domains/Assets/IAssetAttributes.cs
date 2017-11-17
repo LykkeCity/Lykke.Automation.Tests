@@ -24,12 +24,12 @@ namespace XUnitTestData.Domains.Assets
         public string Value { get; set; }
     }
 
-    public class AssetAttributes : IAssetAttributes
-    {
-        public string AssetId { get; set; }
-        public IEnumerable<IAssetAttributesKeyValue> Attributes { get; set; }
-        public string Id { get; set; }
-    }
+    //public class AssetAttributes : IAssetAttributes
+    //{
+    //    public string AssetId { get; set; }
+    //    public IEnumerable<IAssetAttributesKeyValue> Attributes { get; set; }
+    //    public string Id { get; set; }
+    //}
 
     public interface IAssetAttributesRepository
     {

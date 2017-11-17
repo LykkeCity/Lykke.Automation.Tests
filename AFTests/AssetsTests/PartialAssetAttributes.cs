@@ -3,6 +3,7 @@ using AssetsData.Fixtures;
 using FluentAssertions;
 using RestSharp;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Xunit;
 using XUnitTestCommon.Utils;

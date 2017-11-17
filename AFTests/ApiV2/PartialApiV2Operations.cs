@@ -2,14 +2,12 @@
 using RestSharp;
 using System;
 using System.Net;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 using XUnitTestCommon;
 using ApiV2Data.DTOs;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.ApiV2;
 using FluentAssertions;
+using XUnitTestData.Entities.ApiV2;
 
 namespace AFTests.ApiV2
 {
@@ -89,7 +87,8 @@ namespace AFTests.ApiV2
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
             Assert.True(response.Status == HttpStatusCode.OK);
 
-            OperationDetailsEntity entity = await _fixture.OperationDetailsRepository.TryGetByTransactionId(_fixture.TestClientId, _fixture.TestOperationCreateDetails.Id) as OperationDetailsEntity;
+            OperationDetailsEntity entity = await _fixture.OperationDetailsRepository.TryGetAsync(
+                d => d.PartitionKey == _fixture.TestClientId && d.TransactionId == _fixture.TestOperationCreateDetails.Id) as OperationDetailsEntity;
             Assert.NotNull(entity);
 
             Assert.True(entity.Comment == createDTO.Comment);

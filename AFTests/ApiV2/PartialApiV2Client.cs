@@ -7,7 +7,7 @@ using Xunit;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Domains.ApiV2;
-using XUnitTestData.Repositories.ApiV2;
+using XUnitTestData.Entities.ApiV2;
 
 namespace AFTests.ApiV2
 {
@@ -41,7 +41,8 @@ namespace AFTests.ApiV2
 
             ClientDTO parsedResponse = JsonUtils.DeserializeJson<ClientDTO>(response.ResponseJson);
 
-            PersonalDataEntity entity = await _fixture.PersonalDataRepository.TryGetByClientEmail(registerDTO.Email) as PersonalDataEntity;
+            PersonalDataEntity entity = await _fixture.PersonalDataRepository.TryGetAsync(
+                p => p.PartitionKey == PersonalDataEntity.GeneratePartitionKey() && p.Email == registerDTO.Email) as PersonalDataEntity;
         }
     }
 }

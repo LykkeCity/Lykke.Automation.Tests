@@ -4,8 +4,9 @@ using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Domains;
 using XUnitTestData.Domains.BlueApi;
+using XUnitTestData.Entities;
+using XUnitTestData.Entities.BlueApi;
 using XUnitTestData.Repositories;
-using XUnitTestData.Repositories.BlueApi;
 
 namespace BlueApiData.DependencyInjection
 {
@@ -20,16 +21,16 @@ namespace BlueApiData.DependencyInjection
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(c => new PledgesRepository(
+            builder.Register(c => new GenericRepository<PledgeEntity, IPledgeEntity>(
                     new AzureTableStorage<PledgeEntity>(
-                        _configBuilder.Config["MainConnectionString"], "Pledges", null)))
+                        _configBuilder.Config["MainConnectionString"], "Pledges", null), "Pledge"))
                 .As<IDictionaryRepository<IPledgeEntity>>();
 
             RepositoryUtils.RegisterDictionaryManager<IPledgeEntity>(builder);
 
-            builder.Register(c => new AccountRepository(
+            builder.Register(c => new GenericRepository<AccountEntity, IAccount>(
                     new AzureTableStorage<AccountEntity>(
-                        _configBuilder.Config["MainConnectionString"], "Accounts", null)))
+                        _configBuilder.Config["MainConnectionString"], "Accounts", null), "ClientBalance"))
                 .As<IDictionaryRepository<IAccount>>();
 
             RepositoryUtils.RegisterDictionaryManager<IAccount>(builder);

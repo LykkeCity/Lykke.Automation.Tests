@@ -6,7 +6,7 @@ using RestSharp;
 using Xunit;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.BlueApi;
+using XUnitTestData.Entities.BlueApi;
 
 namespace AFTests.BlueApi
 {
@@ -39,7 +39,9 @@ namespace AFTests.BlueApi
             var createdPledge = await _fixture.CreateTestPledge(_fixture.TestPledgeCreateClientId, "CreatePledge");
             Assert.NotNull(createdPledge);
 
-            var createdPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.GetPledgeAsync(_fixture.TestPledgeCreateClientId);
+            var createdPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeCreateClientId);
+
             createdPledgeEntity.ShouldBeEquivalentTo(createdPledge, o => o.ExcludingMissingMembers());
         }
 
@@ -63,7 +65,8 @@ namespace AFTests.BlueApi
 
             Assert.True(editResponse.Status == HttpStatusCode.NoContent);
 
-            var editedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.GetPledgeAsync(_fixture.TestPledgeUpdateClientId);
+            var editedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeUpdateClientId);
 
             editedPledgeEntity.ShouldBeEquivalentTo(editPledge, o => o.ExcludingMissingMembers().Excluding(p => p.ClientId));
         }
@@ -79,7 +82,8 @@ namespace AFTests.BlueApi
             var deleteResponse = await _fixture.PledgeApiConsumers["DeletePledge"].ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            var deletedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.GetPledgeAsync(_fixture.TestPledgeDeleteClientId);
+            var deletedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeDeleteClientId);
             Assert.Null(deletedPledgeEntity);
         }
     }

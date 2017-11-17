@@ -15,12 +15,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using MatchingEngineData.DTOs.RabbitMQ;
-using XUnitTestData.Repositories.MatchingEngine;
 using XUnitTestData.Domains.MatchingEngine;
 using XUnitTestData.Domains.Assets;
-using XUnitTestData.Repositories.Assets;
-using System.Linq.Expressions;
 using MatchingEngineData;
+using XUnitTestData.Entities.MatchingEngine;
+using XUnitTestData.Entities;
+using XUnitTestData.Entitites.ApiV2.Assets;
 
 namespace AFTMatchingEngine.Fixtures
 {
@@ -29,12 +29,12 @@ namespace AFTMatchingEngine.Fixtures
         public MatchingEngineConsumer Consumer;
 
         //public IDictionaryManager<IAccount> AccountManager;
-        public AccountRepository AccountRepository;
-        public CashSwapRepository CashSwapRepository;
-        public MarketOrdersRepository MarketOrdersRepository;
-        public LimitOrderRepository LimitOrdersRepository;
+        public GenericRepository<AccountEntity, IAccount> AccountRepository;
+        public GenericRepository<CashSwapEntity, ICashSwap> CashSwapRepository;
+        public GenericRepository<MarketOrderEntity, IMarketOrderEntity> MarketOrdersRepository;
+        public GenericRepository<LimitOrderEntity, ILimitOrderEntity> LimitOrdersRepository;
 
-        private IDictionaryManager<IAssetPair> AssetPairsManager;
+        private GenericRepository<AssetPairEntity, IAssetPair> AssetPairsRepository;
 
         public string TestAccountId1;
         public string TestAccountId2;
@@ -78,11 +78,11 @@ namespace AFTMatchingEngine.Fixtures
             builder.RegisterModule(new MatchingEngineTestModule(_configBuilder));
             this.container = builder.Build();
 
-            this.AccountRepository = (AccountRepository)this.container.Resolve<IDictionaryRepository<IAccount>>();
-            this.CashSwapRepository = (CashSwapRepository)this.container.Resolve<IDictionaryRepository<ICashSwap>>();
-            this.AssetPairsManager = RepositoryUtils.PrepareRepositoryManager<IAssetPair>(this.container);
-            this.MarketOrdersRepository = (MarketOrdersRepository)this.container.Resolve<IDictionaryRepository<IMarketOrderEntity>>();
-            this.LimitOrdersRepository = (LimitOrderRepository)this.container.Resolve<IDictionaryRepository<ILimitOrderEntity>>();
+            this.AccountRepository = RepositoryUtils.ResolveGenericRepository<AccountEntity, IAccount>(this.container);
+            this.CashSwapRepository = RepositoryUtils.ResolveGenericRepository<CashSwapEntity, ICashSwap>(this.container);
+            this.AssetPairsRepository = RepositoryUtils.ResolveGenericRepository<AssetPairEntity, IAssetPair>(this.container);
+            this.MarketOrdersRepository = RepositoryUtils.ResolveGenericRepository<MarketOrderEntity, IMarketOrderEntity>(this.container);
+            this.LimitOrdersRepository = RepositoryUtils.ResolveGenericRepository<LimitOrderEntity, ILimitOrderEntity>(this.container);
         }
 
         private void prepareRabbitMQConnections()
@@ -183,7 +183,7 @@ namespace AFTMatchingEngine.Fixtures
 
             this.TestAssetPair = (AssetPairEntity)Task.Run(async () =>
             {
-                return await this.AssetPairsManager.TryGetAsync(TestAsset1 + TestAsset2);
+                return await this.AssetPairsRepository.TryGetAsync(TestAsset1 + TestAsset2);
             }).Result;
         }
 

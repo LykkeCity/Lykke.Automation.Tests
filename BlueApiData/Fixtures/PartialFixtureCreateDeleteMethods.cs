@@ -5,6 +5,7 @@ using BlueApiData.DTOs;
 using RestSharp;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
+using XUnitTestData.Entities.BlueApi;
 
 namespace BlueApiData.Fixtures
 {
@@ -28,7 +29,8 @@ namespace BlueApiData.Fixtures
                 return null;
             }
 
-            var pledge = await PledgeRepository.GetPledgeAsync(clientId);
+            var pledge = await PledgeRepository.TryGetAsync(
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == clientId);
 
             var returnDto = Mapper.Map<PledgeDTO>(pledge);
 

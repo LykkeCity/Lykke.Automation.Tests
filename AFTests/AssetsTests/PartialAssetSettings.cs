@@ -7,8 +7,8 @@ using System.Net;
 using Xunit;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
-using XUnitTestData.Repositories.Assets;
 using System;
+using XUnitTestData.Entitites.ApiV2.Assets;
 
 namespace AFTests.AssetsTests
 {
@@ -83,7 +83,6 @@ namespace AFTests.AssetsTests
             AssetSettingsDTO createdDTO = await fixture.CreateTestAssetSettings();
             Assert.NotNull(createdDTO);
 
-            await fixture.AssetSettingsManager.UpdateCacheAsync();
             AssetSettingsEntity entity = await fixture.AssetSettingsManager.TryGetAsync(createdDTO.Asset) as AssetSettingsEntity;
             AssetSettingsDTO parsedEntity = fixture.mapper.Map<AssetSettingsDTO>(entity);
             createdDTO.NormalizeNumberStrings(parsedEntity);
@@ -120,7 +119,6 @@ namespace AFTests.AssetsTests
 
             AssetSettingsDTO parsedUpdateDTO = fixture.mapper.Map<AssetSettingsDTO>(updateDTO);
 
-            await fixture.AssetSettingsManager.UpdateCacheAsync();
             AssetSettingsEntity entity = await fixture.AssetSettingsManager.TryGetAsync(fixture.TestAssetSettingsUpdate.Asset) as AssetSettingsEntity;
             AssetSettingsDTO parsedEntity = fixture.mapper.Map<AssetSettingsDTO>(entity);
             parsedUpdateDTO.NormalizeNumberStrings(parsedEntity);
@@ -138,7 +136,6 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetSettingsManager.UpdateCacheAsync();
             AssetSettingsEntity entity = await fixture.AssetSettingsManager.TryGetAsync(fixture.TestAssetSettingsDelete.Asset) as AssetSettingsEntity;
             Assert.Null(entity);
         }

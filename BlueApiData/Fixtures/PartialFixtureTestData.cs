@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BlueApiData.DTOs;
 using XUnitTestData.Domains.BlueApi;
-using XUnitTestData.Repositories.BlueApi;
+using XUnitTestData.Entities.BlueApi;
 
 namespace BlueApiData.Fixtures
 {

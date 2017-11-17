@@ -1,9 +1,11 @@
 ﻿using Autofac;
 using Autofac.Core;
+using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using XUnitTestData.Domains;
+using XUnitTestData.Repositories;
 using XUnitTestData.Services;
 
 namespace XUnitTestCommon.Utils
@@ -21,6 +23,13 @@ namespace XUnitTestCommon.Utils
                 .WithParameter(new TypedParameter(typeof(TimeSpan),
                     TimeSpan.FromSeconds(cacheServiceTimeout)))
                 .SingleInstance();
+        }
+
+        public static GenericRepository<TEntity, TInterface> ResolveGenericRepository<TEntity, TInterface>(IContainer container)
+            where TEntity : TableEntity, TInterface, new()
+            where TInterface : IDictionaryItem
+        {
+            return container.Resolve<IDictionaryRepository<TInterface>>() as GenericRepository<TEntity, TInterface>;
         }
 
         public static IDictionaryManager<T> PrepareRepositoryManager<T>(IContainer container) where T : IDictionaryItem

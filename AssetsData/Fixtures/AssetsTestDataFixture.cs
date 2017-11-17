@@ -6,12 +6,13 @@ using XUnitTestData.Domains.Assets;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using XUnitTestData.Repositories.Assets;
 using XUnitTestData.Domains;
 using XUnitTestCommon.Utils;
 using AssetsData.DTOs.Assets;
 using AutoMapper;
+using XUnitTestData.Entitites.ApiV2.Assets;
 using XUnitTestData.Domains.Authentication;
+using XUnitTestData.Repositories.ApiV2;
 
 namespace AssetsData.Fixtures
 {
@@ -26,7 +27,7 @@ namespace AssetsData.Fixtures
 
         public AssetsTestDataFixture()
         {
-            this._configBuilder = new ConfigBuilder("Assets");
+            _configBuilder = new ConfigBuilder("Assets");
 
             var oAuthConsumer = new OAuthConsumer
             {
@@ -52,22 +53,25 @@ namespace AssetsData.Fixtures
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new AssetsTestModule(_configBuilder));
-            this.container = builder.Build();
+            container = builder.Build();
 
-            this.AssetManager = RepositoryUtils.PrepareRepositoryManager<IAsset>(this.container);
-            this.AssetExtendedInfosManager = RepositoryUtils.PrepareRepositoryManager<IAssetExtendedInfo>(this.container);
-            this.AssetCategoryManager = RepositoryUtils.PrepareRepositoryManager<IAssetCategory>(this.container);
-            this.AssetAttributesManager = RepositoryUtils.PrepareRepositoryManager<IAssetAttributes>(this.container);
-            this.AssetGroupsManager = RepositoryUtils.PrepareRepositoryManager<IAssetGroup>(this.container);
-            this.AssetAttributesRepository = (AssetAttributesRepository)this.container.Resolve<IDictionaryRepository<IAssetAttributes>>();
-            this.AssetGroupsRepository = (AssetGroupsRepository)this.container.Resolve<IDictionaryRepository<IAssetGroup>>();
-            this.AssetPairManager = RepositoryUtils.PrepareRepositoryManager<IAssetPair>(this.container);
-            this.AssetSettingsManager = RepositoryUtils.PrepareRepositoryManager<IAssetSettings>(this.container);
-            this.AssetIssuersManager = RepositoryUtils.PrepareRepositoryManager<IAssetIssuers>(this.container);
-            this.MarginAssetPairManager = RepositoryUtils.PrepareRepositoryManager<IMarginAssetPairs>(this.container);
-            this.MarginAssetManager = RepositoryUtils.PrepareRepositoryManager<IMarginAsset>(this.container);
-            this.MarginIssuerManager = RepositoryUtils.PrepareRepositoryManager<IMarginIssuer>(this.container);
-            this.WatchListRepository = (WatchListRepository)this.container.Resolve<IDictionaryRepository<IWatchList>>();
+            AssetManager = RepositoryUtils.ResolveGenericRepository<AssetEntity, IAsset>(container);
+            AssetExtendedInfosManager = RepositoryUtils.ResolveGenericRepository<AssetExtendedInfosEntity, IAssetExtendedInfo>(container);
+            AssetCategoryManager = RepositoryUtils.ResolveGenericRepository<AssetCategoryEntity, IAssetCategory>(container);
+            AssetAttributesManager = container.Resolve<IDictionaryRepository<IAssetAttributes>>() as AssetAttributesRepository;
+            AssetGroupsManager = RepositoryUtils.ResolveGenericRepository<AssetGroupEntity, IAssetGroup>(container);
+
+            AssetAttributesRepository = container.Resolve<IDictionaryRepository<IAssetAttributes>>() as AssetAttributesRepository;
+            AssetGroupsRepository = RepositoryUtils.ResolveGenericRepository<AssetGroupEntity, IAssetGroup>(container);
+
+            AssetPairManager = RepositoryUtils.ResolveGenericRepository<AssetPairEntity, IAssetPair>(container);
+            AssetSettingsManager = RepositoryUtils.ResolveGenericRepository<AssetSettingsEntity, IAssetSettings>(container);
+            AssetIssuersManager = RepositoryUtils.ResolveGenericRepository<AssetIssuersEntity, IAssetIssuers>(container);
+            MarginAssetPairManager = RepositoryUtils.ResolveGenericRepository<MarginAssetPairsEntity, IMarginAssetPairs>(container);
+            MarginAssetManager = RepositoryUtils.ResolveGenericRepository<MarginAssetEntity, IMarginAsset>(container);
+            MarginIssuerManager = RepositoryUtils.ResolveGenericRepository<MarginIssuerEntity, IMarginIssuer>(container);
+
+            WatchListRepository = container.Resolve<IDictionaryRepository<IWatchList>>() as WatchListRepository;
         }
 
         public void Dispose()

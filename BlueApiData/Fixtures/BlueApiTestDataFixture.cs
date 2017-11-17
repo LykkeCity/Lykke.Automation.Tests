@@ -7,10 +7,11 @@ using BlueApiData.DependencyInjection;
 using BlueApiData.DTOs;
 using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
-using XUnitTestData.Domains;
 using XUnitTestData.Domains.Authentication;
 using XUnitTestData.Domains.BlueApi;
-using XUnitTestData.Repositories.BlueApi;
+using XUnitTestCommon.Utils;
+using XUnitTestData.Repositories;
+using XUnitTestData.Entities.BlueApi;
 
 namespace BlueApiData.Fixtures
 {
@@ -30,7 +31,7 @@ namespace BlueApiData.Fixtures
 
         private Dictionary<string, string> _pledgesToDelete;
 
-        public PledgesRepository PledgeRepository;
+        public GenericRepository<PledgeEntity, IPledgeEntity> PledgeRepository;
         public PledgeDTO TestPledge;
         public PledgeDTO TestPledgeUpdate;
         public PledgeDTO TestPledgeDelete;
@@ -66,7 +67,6 @@ namespace BlueApiData.Fixtures
             Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
 
             PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
-
             oAuthConsumer = new OAuthConsumer
             {
                 AuthTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]),
@@ -119,7 +119,7 @@ namespace BlueApiData.Fixtures
             builder.RegisterModule(new BlueApiTestModule(_configBuilder));
             _container = builder.Build();
 
-            PledgeRepository = (PledgesRepository)_container.Resolve<IDictionaryRepository<IPledgeEntity>>();
+            PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(this._container);
         }
 
         public void Dispose()

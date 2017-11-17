@@ -6,15 +6,13 @@ namespace AFTests.ApiV2
 {
     [Trait("Category", "FullRegression")]
     [Trait("Category", "ApiV2Service")]
-    public partial class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>, IClassFixture<MatchingEngineTestDataFixture>
+    public partial class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>
     {
         private ApiV2TestDataFixture _fixture;
-        private MatchingEngineTestDataFixture _matchingEngineFixture;
 
-        public ApiV2Tests(ApiV2TestDataFixture fixture, MatchingEngineTestDataFixture matchingEngineFixture)
+        public ApiV2Tests(ApiV2TestDataFixture fixture)
         {
             _fixture = fixture;
-            _matchingEngineFixture = matchingEngineFixture;
         }
     }
 }

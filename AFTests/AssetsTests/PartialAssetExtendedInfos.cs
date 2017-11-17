@@ -7,8 +7,8 @@ using System.Linq;
 using System.Net;
 using Xunit;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using XUnitTestData.Entitites.ApiV2.Assets;
 
 namespace AFTests.AssetsTests
 {
@@ -84,7 +84,6 @@ namespace AFTests.AssetsTests
             AssetExtendedInfoDTO createdInfo = await fixture.CreateTestAssetExtendedInfo();
             Assert.NotNull(createdInfo);
 
-            await fixture.AssetExtendedInfosManager.UpdateCacheAsync();
             AssetExtendedInfosEntity checkDbCreated = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(createdInfo.Id);
             checkDbCreated.ShouldBeEquivalentTo(createdInfo, o => o
             .ExcludingMissingMembers());
@@ -114,7 +113,6 @@ namespace AFTests.AssetsTests
             var updateResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetExtendedInfosManager.UpdateCacheAsync();
             AssetExtendedInfosEntity checkDbUpdated = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(fixture.TestAssetExtendedInfoUpdate.Id);
             checkDbUpdated.ShouldBeEquivalentTo(updateParam, o => o
             .ExcludingMissingMembers());
@@ -130,7 +128,6 @@ namespace AFTests.AssetsTests
             var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetExtendedInfosManager.UpdateCacheAsync();
             AssetExtendedInfosEntity checkDbDeleted = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(fixture.TestAssetExtendedInfoDelete.Id);
             Assert.Null(checkDbDeleted);
         }

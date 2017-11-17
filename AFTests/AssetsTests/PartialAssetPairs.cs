@@ -7,8 +7,8 @@ using System.Linq;
 using System.Net;
 using Xunit;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using XUnitTestData.Entitites.ApiV2.Assets;
 
 namespace AFTests.AssetsTests
 {
@@ -78,7 +78,6 @@ namespace AFTests.AssetsTests
             AssetPairDTO newAssetPair = await fixture.CreateTestAssetPair();
             Assert.NotNull(newAssetPair);
 
-            await fixture.AssetPairManager.UpdateCacheAsync();
             AssetPairEntity entity = await fixture.AssetPairManager.TryGetAsync(newAssetPair.Id) as AssetPairEntity;
             entity.ShouldBeEquivalentTo(newAssetPair, o => o
             .ExcludingMissingMembers());
@@ -109,7 +108,6 @@ namespace AFTests.AssetsTests
             Assert.NotNull(response);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetPairManager.UpdateCacheAsync();
             AssetPairEntity entity = await fixture.AssetPairManager.TryGetAsync(updateAssetPair.Id) as AssetPairEntity;
             entity.ShouldBeEquivalentTo(updateAssetPair, o => o
             .ExcludingMissingMembers());
@@ -127,7 +125,6 @@ namespace AFTests.AssetsTests
             Assert.NotNull(result);
             Assert.True(result.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetPairManager.UpdateCacheAsync();
             AssetPairEntity entity = await fixture.AssetPairManager.TryGetAsync(fixture.TestAssetPairDelete.Id) as AssetPairEntity;
             Assert.Null(entity);
         }

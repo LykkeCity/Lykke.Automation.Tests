@@ -8,9 +8,9 @@ using Xunit;
 using XUnitTestCommon;
 using AssetsData.DTOs.Assets;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.Assets;
 using FluentAssertions;
 using System.Linq;
+using XUnitTestData.Entitites.ApiV2.Assets;
 
 namespace AFTests.AssetsTests
 {
@@ -77,7 +77,6 @@ namespace AFTests.AssetsTests
             MarginAssetPairDTO createdDTO = await fixture.CreateTestMarginAssetPair();
             Assert.NotNull(createdDTO);
 
-            await fixture.MarginAssetPairManager.UpdateCacheAsync();
             MarginAssetPairsEntity entity = await fixture.MarginAssetPairManager.TryGetAsync(createdDTO.Id) as MarginAssetPairsEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(createdDTO, o => o.ExcludingMissingMembers());
@@ -104,7 +103,6 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.MarginAssetPairManager.UpdateCacheAsync();
             MarginAssetPairsEntity entity = await fixture.MarginAssetPairManager.TryGetAsync(updateDTO.Id) as MarginAssetPairsEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(updateDTO, o => o.ExcludingMissingMembers());
@@ -120,7 +118,6 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.MarginAssetPairManager.UpdateCacheAsync();
             MarginAssetPairsEntity entity = await fixture.MarginAssetPairManager.TryGetAsync(fixture.TestMarginAssetPairDelete.Id) as MarginAssetPairsEntity;
             Assert.Null(entity);
 

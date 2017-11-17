@@ -7,8 +7,8 @@ using System.Linq;
 using System.Net;
 using Xunit;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using XUnitTestData.Entitites.ApiV2.Assets;
 
 namespace AFTests.AssetsTests
 {
@@ -67,7 +67,6 @@ namespace AFTests.AssetsTests
             AssetCategoryDTO createdCategory = await fixture.CreateTestAssetCategory();
             Assert.NotNull(createdCategory);
 
-            await fixture.AssetCategoryManager.UpdateCacheAsync();
             AssetCategoryEntity checkDbCreated = (AssetCategoryEntity)await fixture.AssetCategoryManager.TryGetAsync(createdCategory.Id);
             checkDbCreated.ShouldBeEquivalentTo(createdCategory, o => o
             .ExcludingMissingMembers());
@@ -94,7 +93,6 @@ namespace AFTests.AssetsTests
             var updateResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetCategoryManager.UpdateCacheAsync();
             AssetCategoryEntity checkDbUpdated = (AssetCategoryEntity)await fixture.AssetCategoryManager.TryGetAsync(fixture.TestAssetCategoryUpdate.Id);
             checkDbUpdated.ShouldBeEquivalentTo(updateCategory, o => o
             .ExcludingMissingMembers());
@@ -110,7 +108,6 @@ namespace AFTests.AssetsTests
             var deleteResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetCategoryManager.UpdateCacheAsync();
             AssetCategoryEntity checkDbDeleted = (AssetCategoryEntity)await fixture.AssetCategoryManager.TryGetAsync(fixture.TestAssetCategoryDelete.Id);
             Assert.Null(checkDbDeleted);
         }

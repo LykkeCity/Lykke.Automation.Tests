@@ -8,8 +8,8 @@ using System.Net;
 using System.Reflection;
 using Xunit;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using XUnitTestData.Entitites.ApiV2.Assets;
 
 namespace AFTests.AssetsTests
 {
@@ -132,7 +132,6 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, parameter, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetManager.UpdateCacheAsync();
             AssetEntity entity = await fixture.AssetManager.TryGetAsync(fixture.TestAsset.Id) as AssetEntity;
             Assert.True(entity.IsDisabled != fixture.TestAsset.IsDisabled);
 
@@ -144,7 +143,6 @@ namespace AFTests.AssetsTests
             var responseAfter = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, parameter, Method.POST);
             Assert.True(responseAfter.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetManager.UpdateCacheAsync();
             AssetEntity entityAfter = await fixture.AssetManager.TryGetAsync(fixture.TestAsset.Id) as AssetEntity;
             Assert.True(entityAfter.IsDisabled == fixture.TestAsset.IsDisabled);
 
@@ -159,7 +157,6 @@ namespace AFTests.AssetsTests
             AssetDTO createdAsset = await fixture.CreateTestAsset();
             Assert.NotNull(createdAsset);
 
-            await fixture.AssetManager.UpdateCacheAsync();
             AssetEntity entity = await fixture.AssetManager.TryGetAsync(createdAsset.Id) as AssetEntity;
             entity.ShouldBeEquivalentTo(createdAsset, o => o
             .ExcludingMissingMembers());
@@ -182,7 +179,6 @@ namespace AFTests.AssetsTests
             var updateResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetManager.UpdateCacheAsync();
             AssetEntity entityUpdateed = await fixture.AssetManager.TryGetAsync(updateParamAsset.Id) as AssetEntity;
             entityUpdateed.ShouldBeEquivalentTo(updateParamAsset, o => o
             .ExcludingMissingMembers());
@@ -202,7 +198,6 @@ namespace AFTests.AssetsTests
             var deleteResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, deleteParam, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetManager.UpdateCacheAsync();
             AssetEntity entityDeleted = await fixture.AssetManager.TryGetAsync(fixture.TestAssetDelete.Id) as AssetEntity;
             Assert.Null(entityDeleted);
         }

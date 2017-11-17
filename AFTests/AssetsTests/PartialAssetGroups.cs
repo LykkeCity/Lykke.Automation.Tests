@@ -7,8 +7,8 @@ using System.Linq;
 using System.Net;
 using Xunit;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using XUnitTestData.Entitites.ApiV2.Assets;
 
 namespace AFTests.AssetsTests
 {
@@ -71,7 +71,7 @@ namespace AFTests.AssetsTests
             List<string> parsedResponse = JsonUtils.DeserializeJson<List<string>>(response.ResponseJson);
             Assert.NotNull(parsedResponse);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupAssetIDsAsync(fixture.TestAssetGroup.Id);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"AssetLink_{fixture.TestAssetGroup.Id}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             for (int i = 0; i < assetIds.Count; i++)
@@ -96,7 +96,7 @@ namespace AFTests.AssetsTests
             List<string> parsedResponse = JsonUtils.DeserializeJson<List<string>>(response.ResponseJson);
             Assert.NotNull(parsedResponse);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupClientIDsAsync(fixture.TestAssetGroup.Id);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"ClientGroupLink_{fixture.TestAssetGroup.Id}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             for (int i = 0; i < assetIds.Count; i++)
@@ -114,7 +114,6 @@ namespace AFTests.AssetsTests
             AssetGroupDTO createdGroup = await fixture.CreateTestAssetGroup();
             Assert.NotNull(createdGroup);
 
-            await fixture.AssetGroupsManager.UpdateCacheAsync();
             AssetGroupEntity entity = await fixture.AssetGroupsManager.TryGetAsync(createdGroup.Name) as AssetGroupEntity;
             entity.ShouldBeEquivalentTo(createdGroup, o => o
             .ExcludingMissingMembers());
@@ -140,7 +139,6 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetGroupsManager.UpdateCacheAsync();
             AssetGroupEntity entity = await fixture.AssetGroupsManager.TryGetAsync(editGroup.Name) as AssetGroupEntity;
             entity.ShouldBeEquivalentTo(editGroup, o => o
             .ExcludingMissingMembers());
@@ -157,7 +155,6 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetGroupsManager.UpdateCacheAsync();
             AssetGroupEntity entity = await fixture.AssetGroupsManager.TryGetAsync(fixture.TestAssetGroupDelete.Name) as AssetGroupEntity;
             Assert.Null(entity);
         }
@@ -172,7 +169,7 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupAssetIDsAsync(fixture.TestGroupForGroupRelationAdd.Name);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"AssetLink_{fixture.TestGroupForGroupRelationAdd.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 1);
@@ -192,7 +189,7 @@ namespace AFTests.AssetsTests
             var deleteResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupAssetIDsAsync(fixture.TestGroupForGroupRelationDelete.Name);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"AssetLink_{fixture.TestGroupForGroupRelationDelete.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 0);
@@ -208,7 +205,7 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupClientIDsAsync(fixture.TestGroupForClientRelationAdd.Name);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"ClientGroupLink_{fixture.TestGroupForClientRelationAdd.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 1);
@@ -228,7 +225,7 @@ namespace AFTests.AssetsTests
             var deleteResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupClientIDsAsync(fixture.TestGroupForClientRelationDelete.Name);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"ClientGroupLink_{fixture.TestGroupForClientRelationDelete.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 0);

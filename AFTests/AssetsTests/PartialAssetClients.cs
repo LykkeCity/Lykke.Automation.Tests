@@ -29,7 +29,7 @@ namespace AFTests.AssetsTests
             Assert.True(response.Status == HttpStatusCode.OK);
 
             List<string> parsedResponse = JsonUtils.DeserializeJson<List<string>>(response.ResponseJson);
-            Assert.True(parsedResponse[0] == fixture.TestAssetForClientEndpoint.Id);
+            parsedResponse.Should().Contain(fixture.TestAssetForClientEndpoint.Id);
 
         }
 

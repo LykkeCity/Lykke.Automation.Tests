@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using AzureStorage;
-using XUnitTestData.Domains.Assets;
-using Microsoft.WindowsAzure.Storage.Table;
-using Common;
-using Microsoft.WindowsAzure.Storage;
 using System.Linq;
 using System.Reflection;
-using XUnitTestData.Domains;
+using Common;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
+using XUnitTestData.Domains.Assets;
 
-namespace XUnitTestData.Repositories.Assets
+namespace XUnitTestData.Entitites.ApiV2.Assets
 {
     public class AssetEntity : TableEntity, IAsset
     {
@@ -98,23 +94,6 @@ namespace XUnitTestData.Repositories.Assets
             }
 
             return properties;
-        }
-    }
-
-    public class AssetsRepository : IDictionaryRepository<IAsset>
-    {
-        private readonly INoSQLTableStorage<AssetEntity> _tableStorage;
-
-        public AssetsRepository(INoSQLTableStorage<AssetEntity> tableStorage)
-        {
-            _tableStorage = tableStorage;
-        }
-
-        public async Task<IEnumerable<IAsset>> GetAllAsync()
-        {
-            var partitionKey = AssetEntity.GeneratePartitionKey();
-
-            return (await _tableStorage.GetDataAsync(partitionKey));
         }
     }
 }
