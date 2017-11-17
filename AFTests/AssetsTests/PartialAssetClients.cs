@@ -3,21 +3,22 @@ using FluentAssertions;
 using RestSharp;
 using System.Collections.Generic;
 using System.Net;
-using Xunit;
-using XUnitTestCommon;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
+using System.Threading.Tasks;
+using XUnitTestCommon;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetClients")]
-        [Trait("Category", "AssetClientsGet")]
-        public async void GetClientAssetIDs()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetClients")]
+        [Category("AssetClientsGet")]
+        public async Task GetClientAssetIDs()
         {
             string url = ApiPaths.CLIENTS_BASE_PATH + "/" + fixture.TestAccountIdForClientEndpoint + "/asset-ids";
             Dictionary<string, string> queryParams = new Dictionary<string, string>
@@ -33,11 +34,11 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetClients")]
-        [Trait("Category", "AssetClientsGet")]
-        public async void GetClientSwiftDepositOption()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetClients")]
+        [Category("AssetClientsGet")]
+        public async Task GetClientSwiftDepositOption()
         {
             string url = ApiPaths.CLIENTS_BASE_PATH + "/" + fixture.TestAccountIdForClientEndpoint + "/swift-deposit-enabled";
             Dictionary<string, string> queryParams = new Dictionary<string, string>
@@ -53,11 +54,11 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetClients")]
-        [Trait("Category", "AssetClientsGet")]
-        public async void GetClientCashInBankOption()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetClients")]
+        [Category("AssetClientsGet")]
+        public async Task GetClientCashInBankOption()
         {
             string url = ApiPaths.CLIENTS_BASE_PATH + "/" + fixture.TestAccountIdForClientEndpoint + "/cash-in-via-bank-card-enabled";
             Dictionary<string, string> queryParams = new Dictionary<string, string>

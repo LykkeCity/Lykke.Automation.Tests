@@ -5,22 +5,23 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
+using System.Threading.Tasks;
 using XUnitTestData.Entities.Assets;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsGet")]
-        public async void GetAllAssetPairs()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsGet")]
+        public async Task GetAllAssetPairs()
         {
             string url = ApiPaths.ASSET_PAIRS_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -36,11 +37,11 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsGet")]
-        public async void GetSingleAssetPair()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsGet")]
+        public async Task GetSingleAssetPair()
         {
             string url = ApiPaths.ASSET_PAIRS_PATH + "/" + fixture.TestAssetPair.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -53,11 +54,11 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsGet")]
-        public async void CheckIfAssetPairExists()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsGet")]
+        public async Task CheckIfAssetPairExists()
         {
             string url = ApiPaths.ASSET_PAIRS_PATH + "/" + fixture.TestAssetPair.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -69,11 +70,11 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsPost")]
-        public async void CreateAssetPair()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsPost")]
+        public async Task CreateAssetPair()
         {
             AssetPairDTO newAssetPair = await fixture.CreateTestAssetPair();
             Assert.NotNull(newAssetPair);
@@ -83,11 +84,11 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsPut")]
-        public async void UpdateAssetPair()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsPut")]
+        public async Task UpdateAssetPair()
         {
             string url = ApiPaths.ASSET_PAIRS_PATH;
             AssetPairDTO updateAssetPair = new AssetPairDTO()
@@ -114,11 +115,11 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetPairs")]
-        [Trait("Category", "AsestPairsDelete")]
-        public async void DeleteAssetPair()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetPairs")]
+        [Category("AsestPairsDelete")]
+        public async Task DeleteAssetPair()
         {
             string url = ApiPaths.ASSET_PAIRS_PATH + "/" + fixture.TestAssetPairDelete.Id;
             var result = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);

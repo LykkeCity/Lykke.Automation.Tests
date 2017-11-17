@@ -6,22 +6,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
+using System.Threading.Tasks;
 using XUnitTestData.Entities.Assets;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Assets")]
-        [Trait("Category", "AssetsGet")]
-        public async void GetAllAssets()
+        [Test]
+        [Category("Smoke")]
+        [Category("Assets")]
+        [Category("AssetsGet")]
+        public async Task GetAllAssets()
         {
             // Get all assets
             string url = ApiPaths.ASSETS_BASE_PATH;
@@ -40,11 +41,11 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Assets")]
-        [Trait("Category", "AssetsGet")]
-        public async void GetSingleAsset()
+        [Test]
+        [Category("Smoke")]
+        [Category("Assets")]
+        [Category("AssetsGet")]
+        public async Task GetSingleAsset()
         {
             string url = ApiPaths.ASSETS_BASE_PATH + "/" + fixture.TestAsset.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -59,11 +60,11 @@ namespace AFTests.AssetsTests
                 .Excluding(a => a.PartnerIds));
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Assets")]
-        [Trait("Category", "AssetsGet")]
-        public async void CheckIfAssetExists()
+        [Test]
+        [Category("Smoke")]
+        [Category("Assets")]
+        [Category("AssetsGet")]
+        public async Task CheckIfAssetExists()
         {
             string url = ApiPaths.ASSETS_V2_BASE_PATH + "/" + fixture.TestAsset.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -76,11 +77,11 @@ namespace AFTests.AssetsTests
             Assert.True(parsedResponse);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Assets")]
-        [Trait("Category", "AssetsGet")]
-        public async void GetDefault()
+        [Test]
+        [Category("Smoke")]
+        [Category("Assets")]
+        [Category("AssetsGet")]
+        public async Task GetDefault()
         {
             string url = ApiPaths.ASSETS_DEFAULT_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -113,11 +114,19 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Assets")]
-        [Trait("Category", "AssetsPost")]
-        public async void EnableDisableAsset()
+        //[Test]
+        //[Category("Smoke")]
+        //[Category("AssetsPut")]
+        //public async Task GetAssetSpecification()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        [Test]
+        [Category("Smoke")]
+        [Category("Assets")]
+        [Category("AssetsPost")]
+        public async Task EnableDisableAsset()
         {
             string disableUrl = ApiPaths.ASSETS_V2_BASE_PATH + "/" + fixture.TestAsset.Id + "/disable";
             string enableUrl = ApiPaths.ASSETS_V2_BASE_PATH + "/" + fixture.TestAsset.Id + "/enable";
@@ -148,11 +157,11 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Assets")]
-        [Trait("Category", "AssetsPost")]
-        public async void CreateAsset()
+        [Test]
+        [Category("Smoke")]
+        [Category("Assets")]
+        [Category("AssetsPost")]
+        public async Task CreateAsset()
         {
             AssetDTO createdAsset = await fixture.CreateTestAsset();
             Assert.NotNull(createdAsset);
@@ -163,11 +172,11 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Assets")]
-        [Trait("Category", "AssetsPut")]
-        public async void UpdateAsset()
+        [Test]
+        [Category("Smoke")]
+        [Category("Assets")]
+        [Category("AssetsPut")]
+        public async Task UpdateAsset()
         {
             string url = ApiPaths.ASSETS_V2_BASE_PATH;
             AssetDTO updateParamAsset = fixture.TestAssetUpdate;
@@ -186,11 +195,11 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Assets")]
-        [Trait("Category", "AssetsDelete")]
-        public async void DeleteAsset()
+        [Test]
+        [Category("Smoke")]
+        [Category("Assets")]
+        [Category("AssetsDelete")]
+        public async Task DeleteAsset()
         {
             string url = ApiPaths.ASSETS_V2_BASE_PATH + "/" + fixture.TestAssetDelete.Id;
             string deleteParam = JsonUtils.SerializeObject(new { id = fixture.TestAssetDelete.Id });

@@ -5,22 +5,23 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
+using System.Threading.Tasks;
 using XUnitTestData.Entities.Assets;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersGet")]
-        public async void GetAllIssuers()
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersGet")]
+        public async Task GetAllIssuers()
         {
             string url = ApiPaths.ISSUERS_BASE_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -35,11 +36,11 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersGet")]
-        public async void GetSingleIssuers()
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersGet")]
+        public async Task GetSingleIssuers()
         {
             string url = ApiPaths.ISSUERS_BASE_PATH + "/" + fixture.TestAssetIssuer.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -51,11 +52,11 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersGet")]
-        public async void CheckIfIssuerExists()
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersGet")]
+        public async Task CheckIfIssuerExists()
         {
             string url = ApiPaths.ISSUERS_BASE_PATH + "/" + fixture.TestAssetIssuer.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -66,11 +67,11 @@ namespace AFTests.AssetsTests
             Assert.True(parsedResponse);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersPost")]
-        public async void CreateAssetIssuer()
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersPost")]
+        public async Task CreateAssetIssuer()
         {
             AssetIssuerDTO createdIssuer = await fixture.CreateTestAssetIssuer();
             Assert.NotNull(createdIssuer);
@@ -80,11 +81,11 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersPut")]
-        public async void UpdateAssetIssuer()
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersPut")]
+        public async Task UpdateAssetIssuer()
         {
             string url = ApiPaths.ISSUERS_BASE_PATH;
             AssetIssuerDTO editIssuer = new AssetIssuerDTO()
@@ -104,11 +105,11 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Issuers")]
-        [Trait("Category", "IssuersDelete")]
-        public async void DeleteAssetIssuer()
+        [Test]
+        [Category("Smoke")]
+        [Category("Issuers")]
+        [Category("IssuersDelete")]
+        public async Task DeleteAssetIssuer()
         {
             string url = ApiPaths.ISSUERS_BASE_PATH + "/" + fixture.TestAssetIssuerDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);

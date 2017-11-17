@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Lykke.MatchingEngine.Connector.Abstractions.Models;
+using NUnit.Framework;
 using RestSharp;
-using Xunit;
 using XUnitTestCommon;
 using XUnitTestData.Entities;
 
@@ -11,11 +12,12 @@ namespace AFTests.ApiV2
 {
     public partial class ApiV2Tests
     {
-        [Fact(Skip = "Test will fail due to ApiV2 issues")]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "TransactionHistory")]
-        [Trait("Category", "TransactionHistoryGet")]
-        public async void GetTransactionHistoryWhenThereIsNone()
+        [Ignore("Test will fail due to ApiV2 issues")]
+        [Test]
+        [Category("Smoke")]
+        [Category("TransactionHistory")]
+        [Category("TransactionHistoryGet")]
+        public async Task GetTransactionHistoryWhenThereIsNone()
         {
             var url = ApiPaths.TRANSACTION_HISTORY_BASE_PATH;
 
@@ -23,11 +25,12 @@ namespace AFTests.ApiV2
 
             Assert.True(response.Status == HttpStatusCode.NoContent);
         }
-        [Fact(Skip="Test will fail due to ApiV2 issues")]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "TransactionHistory")]
-        [Trait("Category", "TransactionHistoryGet")]
-        public async void GetTransactionHistory()
+        [Ignore("Test will fail due to ApiV2 issues")]
+        [Test]
+        [Category("Smoke")]
+        [Category("TransactionHistory")]
+        [Category("TransactionHistoryGet")]
+        public async Task GetTransactionHistory()
         {
             //Get an account that has no transaction history
             var testAccount = (AccountEntity)await _fixture.AccountRepository.TryGetAsync(

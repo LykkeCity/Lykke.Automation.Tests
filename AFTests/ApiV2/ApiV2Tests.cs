@@ -1,18 +1,17 @@
-﻿using AFTMatchingEngine.Fixtures;
-using ApiV2Data.Fixtures;
-using Xunit;
+﻿using ApiV2Data.Fixtures;
+using NUnit.Framework;
 
 namespace AFTests.ApiV2
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "ApiV2Service")]
-    public partial class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>
+    [Category("FullRegression")]
+    [Category("ApiV2Service")]
+    public partial class ApiV2Tests
     {
         private ApiV2TestDataFixture _fixture;
 
-        public ApiV2Tests(ApiV2TestDataFixture fixture)
+        public ApiV2Tests()
         {
-            _fixture = fixture;
+            this._fixture = new ApiV2TestDataFixture();
         }
     }
 }

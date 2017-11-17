@@ -2,24 +2,25 @@
 using RestSharp;
 using System;
 using System.Net;
-using Xunit;
+using System.Threading.Tasks;
 using XUnitTestCommon;
 using ApiV2Data.DTOs;
 using XUnitTestCommon.Utils;
 using FluentAssertions;
+using NUnit.Framework;
 using XUnitTestData.Entities.ApiV2;
 
 namespace AFTests.ApiV2
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "ApiV2Service")]
-    public partial class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>
+    [Category("FullRegression")]
+    [Category("ApiV2Service")]
+    public partial class ApiV2Tests
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Operations")]
-        [Trait("Category", "OperationsGet")]
-        public async void GetOperationById()
+        [Test]
+        [Category("Smoke")]
+        [Category("Operations")]
+        [Category("OperationsGet")]
+        public async Task GetOperationById()
         {
             string url = ApiPaths.OPERATIONS_BASE_PATH + "/" + _fixture.TestOperation.Id;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -37,11 +38,11 @@ namespace AFTests.ApiV2
             Assert.True(entity.Created == parsedResponse.Created);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Operations")]
-        [Trait("Category", "OperationsPost")]
-        public async void CreateOperation()
+        [Test]
+        [Category("Smoke")]
+        [Category("Operations")]
+        [Category("OperationsPost")]
+        public async Task CreateOperation()
         {
             OperationCreateReturnDTO createdDTO = await _fixture.CreateTestOperation();
             Assert.NotNull(createdDTO);
@@ -53,11 +54,11 @@ namespace AFTests.ApiV2
             Assert.True(entity.TypeString == "Transfer");
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Operations")]
-        [Trait("Category", "OperationsPost")]
-        public async void CancelOperation()
+        [Test]
+        [Category("Smoke")]
+        [Category("Operations")]
+        [Category("OperationsPost")]
+        public async Task CancelOperation()
         {
             string url = ApiPaths.OPERATIONS_CANCEL_PATH + "/" + _fixture.TestOperationCancel.Id;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
@@ -70,11 +71,11 @@ namespace AFTests.ApiV2
             Assert.True(entity.StatusString == "Canceled");
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "OperationDetails")]
-        [Trait("Category", "OperationDetailsPost")]
-        public async void CreateOperationDetails()
+        [Test]
+        [Category("Smoke")]
+        [Category("OperationDetails")]
+        [Category("OperationDetailsPost")]
+        public async Task CreateOperationDetails()
         {
             string url = ApiPaths.OPERATIONS_DETAILS_CREATE_PATH;
             OperationDetailsDTO createDTO = new OperationDetailsDTO()
@@ -94,11 +95,11 @@ namespace AFTests.ApiV2
             Assert.True(entity.Comment == createDTO.Comment);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "OperationDetails")]
-        [Trait("Category", "OperationDetailsPost")]
-        public async void RegisterOperationDetails()
+        [Test]
+        [Category("Smoke")]
+        [Category("OperationDetails")]
+        [Category("OperationDetailsPost")]
+        public async Task RegisterOperationDetails()
         {
             string url = ApiPaths.OPERATIONS_DETAILS_REGISTER_PATH;
             OperationDetailsDTO createDTO = new OperationDetailsDTO()

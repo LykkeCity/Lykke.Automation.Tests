@@ -1,26 +1,23 @@
 ﻿using ApiV2Data.Fixtures;
-using AssetsData.DTOs;
 using AssetsData.DTOs.Assets;
 using RestSharp;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
+using System.Threading.Tasks;
 
 namespace AFTests.ApiV2
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "ApiV2Service")]
-    public partial class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>
+    [Category("FullRegression")]
+    [Category("ApiV2Service")]
+    public partial class ApiV2Tests
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Settings")]
-        [Trait("Category", "SettingsGet")]
-        public async void GetBaseAsset()
+        [Test]
+        [Category("Smoke")]
+        [Category("Settings")]
+        [Category("SettingsGet")]
+        public async Task GetBaseAsset()
         {
             string url = ApiPaths.ASSETS_BASEASSET_PATH;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -31,11 +28,11 @@ namespace AFTests.ApiV2
             
         }
 
-        [Fact(Skip = "Test will fail due to ApiV2 issues")]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Settings")]
-        [Trait("Category", "SettingsPost")]
-        public async void SetBaseAsset()
+        [Test]
+        [Category("Smoke")]
+        [Category("Settings")]
+        [Category("SettingsPost")]
+        public async Task SetBaseAsset()
         {
            
             string url = ApiPaths.ASSETS_BASEASSET_PATH;

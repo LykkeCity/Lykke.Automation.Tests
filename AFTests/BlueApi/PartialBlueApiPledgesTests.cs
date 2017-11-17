@@ -1,23 +1,25 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using BlueApiData.DTOs;
+using BlueApiData.Fixtures;
 using FluentAssertions;
 using RestSharp;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Entities.BlueApi;
 
 namespace AFTests.BlueApi
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "BlueApiService")]
+    [Category("FullRegression")]
+    [Category("BlueApiService")]
     public partial class BlueApiTests
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Pledges")]
-        [Trait("Category", "PledgesGet")]
+        //[Ignore("test will fail")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Pledges")]
+        [Category("PledgesGet")]
         public async Task GetPledge()
         {
             var url = ApiPaths.PLEDGES_BASE_PATH;
@@ -30,10 +32,27 @@ namespace AFTests.BlueApi
             _fixture.TestPledge.ShouldBeEquivalentTo(parsedResponse);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Pledges")]
-        [Trait("Category", "PledgesPost")]
+        //[Ignore("test will fail")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Pledges")]
+        [Category("PledgesGet")]
+        public async Task GetPledgeById()
+        {
+            var getSingleUrl = ApiPaths.PLEDGES_BASE_PATH;
+
+            var singleResponse = await _fixture.Consumer.ExecuteRequest(getSingleUrl, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.True(singleResponse.Status == HttpStatusCode.OK);
+            var parsedResponseSingle = JsonUtils.DeserializeJson<PledgeDTO>(singleResponse.ResponseJson);
+            _fixture.TestPledge.ShouldBeEquivalentTo(parsedResponseSingle);
+
+        }
+
+        //[Ignore("test will fail")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Pledges")]
+        [Category("PledgesPost")]
         public async Task CreatePledge()
         {
             var createdPledge = await _fixture.CreateTestPledge(_fixture.TestPledgeCreateClientId, "CreatePledge");
@@ -45,10 +64,11 @@ namespace AFTests.BlueApi
             createdPledgeEntity.ShouldBeEquivalentTo(createdPledge, o => o.ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Pledges")]
-        [Trait("Category", "PledgesPut")]
+        //[Ignore("test will fail")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Pledges")]
+        [Category("PledgesPut")]
         public async Task UpdatePledge()
         {
             var editPledge = new PledgeDTO()
@@ -71,10 +91,11 @@ namespace AFTests.BlueApi
             editedPledgeEntity.ShouldBeEquivalentTo(editPledge, o => o.ExcludingMissingMembers().Excluding(p => p.ClientId));
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Pledges")]
-        [Trait("Category", "PledgesDelete")]
+        //[Ignore("test will fail")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Pledges")]
+        [Category("PledgesDelete")]
         public async Task DeletePledge()
         {
             var url = ApiPaths.PLEDGES_BASE_PATH;

@@ -1,9 +1,8 @@
 ﻿using ApiV2Data.Fixtures;
 using RestSharp;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+using System.Threading.Tasks;
+using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Domains.ApiV2;
@@ -11,15 +10,16 @@ using XUnitTestData.Entities.ApiV2;
 
 namespace AFTests.ApiV2
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "ApiV2Service")]
-    public partial class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>
+    [Category("FullRegression")]
+    [Category("ApiV2Service")]
+    public partial class ApiV2Tests
     {
-        [Fact(Skip="ApiV2 currently has some issues")]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Client")]
-        [Trait("Category", "ClientPost")]
-        public async void RegisterClient()
+        [Ignore("ApiV2 currently has some issues")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Client")]
+        [Category("ClientPost")]
+        public async Task RegisterClient()
         {
             string url = ApiPaths.CLIENT_REGISTER_PATH;
 
