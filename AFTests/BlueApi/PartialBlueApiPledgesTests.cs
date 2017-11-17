@@ -20,7 +20,7 @@ namespace AFTests.BlueApi
         [Trait("Category", "PledgesGet")]
         public async Task GetPledge()
         {
-            var url = _fixture.ApiEndpointNames["Pledges"];
+            var url = ApiPaths.PLEDGES_BASE_PATH;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -57,9 +57,9 @@ namespace AFTests.BlueApi
                 ClimatePositiveValue = Helpers.Random.Next(100, 100000)
             };
 
-            var editPledgeUrl = _fixture.ApiEndpointNames["Pledges"];
+            var url = ApiPaths.PLEDGES_BASE_PATH;
             var editParam = JsonUtils.SerializeObject(editPledge);
-            var editResponse = await _fixture.PledgeApiConsumers["UpdatePledge"].ExecuteRequest(editPledgeUrl, Helpers.EmptyDictionary, editParam, Method.PUT);
+            var editResponse = await _fixture.PledgeApiConsumers["UpdatePledge"].ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
 
             Assert.True(editResponse.Status == HttpStatusCode.NoContent);
 
@@ -74,9 +74,9 @@ namespace AFTests.BlueApi
         [Trait("Category", "PledgesDelete")]
         public async Task DeletePledge()
         {
-            var deletePledgeUrl = _fixture.ApiEndpointNames["Pledges"];
+            var url = ApiPaths.PLEDGES_BASE_PATH;
 
-            var deleteResponse = await _fixture.PledgeApiConsumers["DeletePledge"].ExecuteRequest(deletePledgeUrl, Helpers.EmptyDictionary, null, Method.DELETE);
+            var deleteResponse = await _fixture.PledgeApiConsumers["DeletePledge"].ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
             var deletedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.GetPledgeAsync(_fixture.TestPledgeDeleteClientId);

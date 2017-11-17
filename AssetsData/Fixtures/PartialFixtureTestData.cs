@@ -7,6 +7,7 @@ using XUnitTestCommon.Utils;
 using AutoMapper;
 using AssetsData.DTOs;
 using AssetsData.DTOs.Assets;
+using XUnitTestCommon;
 
 namespace AssetsData.Fixtures
 {
@@ -56,22 +57,6 @@ namespace AssetsData.Fixtures
             this.MarginIssuersToDelete = new List<string>();
             this.WatchListsToDelete = new Dictionary<string, string>();
             this.AssetSettingsToDelete = new List<string>();
-
-            this.ApiEndpointNames = new Dictionary<string, string>();
-            ApiEndpointNames["assets"] = "/api/v2/assets";
-            ApiEndpointNames["assetAttributes"] = "/api/v2/asset-attributes";
-            ApiEndpointNames["assetCategories"] = "/api/v2/asset-categories";
-            ApiEndpointNames["assetExtendedInfos"] = "/api/v2/asset-extended-infos";
-            ApiEndpointNames["assetGroups"] = "/api/v2/asset-groups";
-            ApiEndpointNames["assetPairs"] = "/api/v2/asset-pairs";
-            ApiEndpointNames["assetSettings"] = "/api/v2/asset-settings";
-            ApiEndpointNames["assetClients"] = "/api/v2/clients";
-            ApiEndpointNames["assetIsAlive"] = "/api/IsAlive";
-            ApiEndpointNames["assetIssuers"] = "/api/v2/issuers";
-            ApiEndpointNames["marginAssetPairs"] = "/api/v2/margin-asset-pairs";
-            ApiEndpointNames["marginAssets"] = "/api/v2/margin-assets";
-            ApiEndpointNames["marginIssuers"] = "/api/v2/margin-issuers";
-            ApiEndpointNames["watchList"] = "/api/v2/watch-lists";
 
             var assetsFromDB = AssetManager.GetAllAsync();
             var AssetExtInfoFromDB = AssetExtendedInfosManager.GetAllAsync();

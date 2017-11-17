@@ -22,7 +22,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetCategoriesGet")]
         public async void GetAllAssetCategories()
         {
-            string url = fixture.ApiEndpointNames["assetCategories"];
+            string url = ApiPaths.ASSET_CATEGORIES_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -43,7 +43,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetCategoriesGet")]
         public async void GetSingleAssetCategory()
         {
-            string url = fixture.ApiEndpointNames["assetCategories"] + "/" + fixture.TestAssetCategory.Id;
+            string url = ApiPaths.ASSET_CATEGORIES_PATH + "/" + fixture.TestAssetCategory.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -79,7 +79,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetCategoriesPost")]
         public async void UpdateAssetCategory()
         {
-            string url = fixture.ApiEndpointNames["assetCategories"];
+            string url = ApiPaths.ASSET_CATEGORIES_PATH;
 
             AssetCategoryDTO updateCategory = new AssetCategoryDTO()
             {
@@ -106,8 +106,8 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetCategoriesDelete")]
         public async void DeleteAssetCategory()
         {
-            string deleteUrl = fixture.ApiEndpointNames["assetCategories"] + "/" + fixture.TestAssetCategoryDelete.Id;
-            var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
+            string url = ApiPaths.ASSET_CATEGORIES_PATH + "/" + fixture.TestAssetCategoryDelete.Id;
+            var deleteResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
             await fixture.AssetCategoryManager.UpdateCacheAsync();

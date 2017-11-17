@@ -25,7 +25,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsGet")]
         public async void GetAllWallets()
         {
-            string url = _fixture.ApiEndpointNames["Wallets"];
+            string url = ApiPaths.WALLETS_BASE_PATH;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -44,7 +44,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsGet")]
         public async void GetSingleWallet()
         {
-            string url = _fixture.ApiEndpointNames["Wallets"] + "/" + _fixture.TestWallet.Id;
+            string url = ApiPaths.WALLETS_BASE_PATH + "/" + _fixture.TestWallet.Id;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -60,7 +60,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsGet")]
         public async void GetAllWalletBalances()
         {
-            string url = _fixture.ApiEndpointNames["Wallets"] + "/balances";
+            string url = ApiPaths.WALLETS_BALANCES_PATH;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -101,7 +101,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsGet")]
         public async void GetBalancesByWalletId()
         {
-            string url = _fixture.ApiEndpointNames["Wallets"] + "/" + _fixture.TestWallet.Id + "/balances";
+            string url = ApiPaths.WALLETS_BASE_PATH + "/" + _fixture.TestWallet.Id + "/balances";
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -121,7 +121,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsGet")]
         public async void GetWalletBalancesByAssetId()
         {
-            string url = _fixture.ApiEndpointNames["Wallets"] + "/balances/" + _fixture.TestAssetId;
+            string url = ApiPaths.WALLETS_BALANCES_PATH + "/" + _fixture.TestAssetId;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -161,7 +161,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsGet")]
         public async void GetWalletBalanceByWalletAndAssetId()
         {
-            string url = _fixture.ApiEndpointNames["Wallets"] + "/" + _fixture.TestWallet.Id + "/balances/" + _fixture.TestAssetId;
+            string url = ApiPaths.TWITTER_BASE_PATH + "/" + _fixture.TestWallet.Id + "/balances/" + _fixture.TestAssetId;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -179,7 +179,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsGet")]
         public async void GetWalletTradeBalances()
         {
-            string url = _fixture.ApiEndpointNames["Wallets"] + "/trading/balances";
+            string url = ApiPaths.WALLETS_TRADING_BALANCES_PATH;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -202,7 +202,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsGet")]
         public async void GetWalletTradeBalanceByAssetId()
         {
-            string url = _fixture.ApiEndpointNames["Wallets"] + "/trading/balances/" + _fixture.TestAssetId;
+            string url = ApiPaths.WALLETS_TRADING_BALANCES_PATH + "/" + _fixture.TestAssetId;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -255,7 +255,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsDelete")]
         public async void DeleteWallet()
         {
-            string url = _fixture.ApiEndpointNames["Wallets"] + "/" + _fixture.TestWalletDelete.Id;
+            string url = ApiPaths.WALLETS_BASE_PATH + "/" + _fixture.TestWalletDelete.Id;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -270,14 +270,14 @@ namespace AFTests.ApiV2
         [Trait("Category", "WalletsHFTPut")]
         public async void RegenerateApiKey()
         {
-            string url = _fixture.ApiEndpointNames["Hft"] + "/" + _fixture.TestWalletRegenerateKey.Id + "/regenerateKey";
+            string url = ApiPaths.HFT_BASE_PATH + "/" + _fixture.TestWalletRegenerateKey.Id + "/regenerateKey";
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             WalletCreateHFTDTO parsedResponse = JsonUtils.DeserializeJson<WalletCreateHFTDTO>(response.ResponseJson);
             Assert.True(_fixture.TestWalletRegenerateKey.ApiKey != parsedResponse.ApiKey);
 
-            string checkUrl = _fixture.ApiEndpointNames["Wallets"] + "/" + _fixture.TestWalletRegenerateKey.Id;
+            string checkUrl = ApiPaths.WALLETS_BASE_PATH + "/" + _fixture.TestWalletRegenerateKey.Id;
             var checkResponse = await _fixture.Consumer.ExecuteRequest(checkUrl, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(checkResponse.Status == HttpStatusCode.OK);

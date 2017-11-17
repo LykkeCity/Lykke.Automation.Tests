@@ -20,7 +20,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetsAttributesGet")]
         public async void GetAllAssetAttributes()
         {
-            string url = fixture.ApiEndpointNames["assetAttributes"];
+            string url = ApiPaths.ASSET_ATTRIBUTES_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -43,7 +43,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetsAttributesGet")]
         public async void GetSingleAssetAttributes()
         {
-            string url = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttribute.AssetId;
+            string url = ApiPaths.ASSET_ATTRIBUTES_PATH + "/" + fixture.TestAssetAttribute.AssetId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -62,7 +62,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetsAttributesGet")]
         public async void GetSingleAssetAttribute()
         {
-            string url = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttribute.AssetId + "/" + fixture.TestAssetAttribute.Key;
+            string url = ApiPaths.ASSET_ATTRIBUTES_PATH + "/" + fixture.TestAssetAttribute.AssetId + "/" + fixture.TestAssetAttribute.Key;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -92,11 +92,11 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetsAttributesPut")]
         public async void UpdateAssetAttribute()
         {
-            string updateUrl = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttributeUpdate.AssetId;
+            string url = ApiPaths.ASSET_ATTRIBUTES_PATH + "/" + fixture.TestAssetAttributeUpdate.AssetId;
             string updateValue = fixture.TestAssetAttributeUpdate.Value + "_AutoTestEdit";
             string updateParameter = JsonUtils.SerializeObject(
                 new AssetAttributeDTO() { Key = fixture.TestAssetAttributeUpdate.Key, Value = updateValue });
-            var updateResponse = await fixture.Consumer.ExecuteRequest(updateUrl, Helpers.EmptyDictionary, updateParameter, Method.PUT);
+            var updateResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParameter, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
             var checkDbUpdated = await fixture.AssetAttributesRepository.TryGetAsync(fixture.TestAssetAttributeUpdate.AssetId, fixture.TestAssetAttributeUpdate.Key);
@@ -109,7 +109,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetsAttributesDelete")]
         public async void DeleteAssetAttribute()
         {
-            string deleteUrl = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttributeDelete.AssetId + "/" + fixture.TestAssetAttributeDelete.Key;
+            string deleteUrl = ApiPaths.ASSET_ATTRIBUTES_PATH + "/" + fixture.TestAssetAttributeDelete.AssetId + "/" + fixture.TestAssetAttributeDelete.Key;
             var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 

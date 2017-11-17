@@ -22,7 +22,7 @@ namespace AFTests.ApiV2
         [Trait("Category", "SettingsGet")]
         public async void GetBaseAsset()
         {
-            string url = _fixture.ApiEndpointNames["AssetsBaseAsset"];
+            string url = ApiPaths.ASSETS_BASEASSET_PATH;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -38,7 +38,7 @@ namespace AFTests.ApiV2
         public async void SetBaseAsset()
         {
            
-            string url = _fixture.ApiEndpointNames["AssetsBaseAsset"];
+            string url = ApiPaths.ASSETS_BASEASSET_PATH;
             string testID = "LKK_TEST";
             BaseAssetDTO body = new BaseAssetDTO(testID);
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);

@@ -22,7 +22,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetGroupsGet")]
         public async void GetAllAssetGroups()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"];
+            string url = ApiPaths.ASSET_GROUPS_PATH;
 
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -44,7 +44,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetGroupsGet")]
         public async void GetSingleAssetGroups()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id;
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestAssetGroup.Id;
 
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -63,7 +63,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetGroupsGet")]
         public async void GetAssetGroupAssetIDs()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id + "/asset-ids";
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestAssetGroup.Id + "/asset-ids";
 
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -88,7 +88,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetGroupsGet")]
         public async void GetAssetGroupClientIDs()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id + "/client-ids";
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestAssetGroup.Id + "/client-ids";
 
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -126,7 +126,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetGroupsPut")]
         public async void UpdateAssetGroup()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"];
+            string url = ApiPaths.ASSET_GROUPS_PATH;
 
             AssetGroupDTO editGroup = new AssetGroupDTO()
             {
@@ -153,7 +153,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetGroupsDelete")]
         public async void DeleteAssetGroup()
         {
-            string deleteUrl = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroupDelete.Name;
+            string deleteUrl = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestAssetGroupDelete.Name;
             var response = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
@@ -168,7 +168,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetGroupsPost")]
         public async void AddAssetToAssetGroup()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForGroupRelationAdd.Name + "/assets/" + fixture.TestAssetForGroupRelationAdd.Id;
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestGroupForGroupRelationAdd.Name + "/assets/" + fixture.TestAssetForGroupRelationAdd.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
@@ -185,7 +185,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetGroupsPost")]
         public async void RemoveAssetFromAssetGroup()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForGroupRelationDelete.Name + "/assets/" + fixture.TestAssetForGroupRelationDelete.Id;
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestGroupForGroupRelationDelete.Name + "/assets/" + fixture.TestAssetForGroupRelationDelete.Id;
             var createResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(createResponse.Status == HttpStatusCode.NoContent);
 
@@ -204,7 +204,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetGroupsPost")]
         public async void AddClientToAssetGroup()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForClientRelationAdd.Name + "/clients/" + fixture.TestAccountId;
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestGroupForClientRelationAdd.Name + "/clients/" + fixture.TestAccountId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
@@ -221,7 +221,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetGroupsPost")]
         public async void RemoveClientFromAssetGroup()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForClientRelationDelete.Name + "/clients/" + fixture.TestAccountId;
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestGroupForClientRelationDelete.Name + "/clients/" + fixture.TestAccountId;
             var createResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(createResponse.Status == HttpStatusCode.NoContent);
 

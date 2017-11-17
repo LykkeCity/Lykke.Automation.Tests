@@ -21,11 +21,11 @@ namespace AFTests.ApiV2
         [Trait("Category", "ClientPost")]
         public async void RegisterClient()
         {
-            string url = _fixture.ApiEndpointNames["Client"] + "/register";
+            string url = ApiPaths.CLIENT_REGISTER_PATH;
 
             ClientRegisterDTO registerDTO = new ClientRegisterDTO()
             {
-                Email = Helpers.RandomString(8) + "_AutoTest@auto.test",
+                Email = Helpers.RandomString(8) + GlobalConstants.AutoTestEmail,
                 FullName = Helpers.RandomString(5) + " " + Helpers.RandomString(8),
                 ContactPhone = Helpers.Random.Next(1000000, 9999999).ToString(),
                 Password = Helpers.RandomString(10),

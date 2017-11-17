@@ -4,6 +4,7 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Net;
 using Xunit;
+using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 
 namespace AFTests.AssetsTests
@@ -18,9 +19,11 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetClientsGet")]
         public async void GetClientAssetIDs()
         {
-            string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/asset-ids";
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString();
+            string url = ApiPaths.CLIENTS_BASE_PATH + "/" + fixture.TestAccountIdForClientEndpoint + "/asset-ids";
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                ["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString()
+            };
 
             var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -36,9 +39,11 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetClientsGet")]
         public async void GetClientSwiftDepositOption()
         {
-            string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/swift-deposit-enabled";
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString();
+            string url = ApiPaths.CLIENTS_BASE_PATH + "/" + fixture.TestAccountIdForClientEndpoint + "/swift-deposit-enabled";
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                ["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString()
+            };
 
             var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -54,9 +59,11 @@ namespace AFTests.AssetsTests
         [Trait("Category", "AssetClientsGet")]
         public async void GetClientCashInBankOption()
         {
-            string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/cash-in-via-bank-card-enabled";
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString();
+            string url = ApiPaths.CLIENTS_BASE_PATH + "/" + fixture.TestAccountIdForClientEndpoint + "/cash-in-via-bank-card-enabled";
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                ["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString()
+            };
 
             var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);

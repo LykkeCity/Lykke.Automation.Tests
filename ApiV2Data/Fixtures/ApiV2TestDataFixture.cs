@@ -52,8 +52,6 @@ namespace ApiV2Data.Fixtures
         public OperationCreateReturnDTO TestOperationRegisterDetails;
 
         public TradersRepository TradersRepository;
-
-        public Dictionary<string, string> ApiEndpointNames;
         public ApiConsumer Consumer;
 
         public ApiV2TestDataFixture()
@@ -81,19 +79,10 @@ namespace ApiV2Data.Fixtures
         }
 
         private async Task PrepareTestData()
-        {
-            ApiEndpointNames = new Dictionary<string, string>();
-            ApiEndpointNames["Wallets"] = "/api/wallets";
-            ApiEndpointNames["Operations"] = "/api/operations";
-            ApiEndpointNames["OperationDetails"] = "/api/operationsDetails";
-            ApiEndpointNames["Hft"] = "/api/hft";
-            ApiEndpointNames["Client"] = "/api/client";
+        {        
 
             WalletsToDelete = new List<string>();
-            OperationsToCancel = new List<string>();
-            ApiEndpointNames["Assets"] = "/api/assets";
-            ApiEndpointNames["AssetsBaseAsset"] = ApiEndpointNames["Assets"] + "/baseAsset";            
-            ApiEndpointNames["TransactionHistory"] = "/api/transactionHistory";
+            OperationsToCancel = new List<string>();            
 
             _walletsToDelete = new List<string>();
             TestClientId = this._configBuilder.Config["AuthClientId"];
@@ -104,9 +93,9 @@ namespace ApiV2Data.Fixtures
             var walletsFromDb = WalletRepository.GetAllAsync(TestClientId);
 
             this.AllWalletsFromDb = (await walletsFromDb).Cast<WalletEntity>().ToList();
-            this.TestWallet = AllWalletsFromDb.Where(w => w.Id == "fd0f7373-301e-42c0-83a2-1d7b691676c3").FirstOrDefault(); //TODO hardcoded
-            this.TestAssetId = "LKK";
-            this.TestWalletWithBalance = "fd0f7373-301e-42c0-83a2-1d7b691676c3";
+            this.TestWallet = AllWalletsFromDb.Where(w => w.Id == Constants.TestWalletId).FirstOrDefault(); //TODO hardcoded
+            this.TestAssetId = Constants.TestAssetId;
+            this.TestWalletWithBalance = Constants.TestWalletId;
             this.AllWalletsFromDb = (await walletsFromDB).Cast<WalletEntity>().ToList();
             this.TestWallet = AllWalletsFromDb.Where(w => w.Id == TestWalletWithBalance).FirstOrDefault(); //TODO hardcoded
             this.TestWalletDelete = await CreateTestWallet();
@@ -122,7 +111,7 @@ namespace ApiV2Data.Fixtures
 
             // set the id to the default one in case it has been changed by any test
             BaseAssetDTO body = new BaseAssetDTO(this.TestAssetId);
-            await Consumer.ExecuteRequest(ApiEndpointNames["AssetsBaseAsset"], Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
+            await Consumer.ExecuteRequest(ApiPaths.ASSETS_BASEASSET_PATH, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
         }
 
         public void Dispose()

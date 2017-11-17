@@ -24,7 +24,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "MarginIssuersGet")]
         public async void GetAllMarginIssuers()
         {
-            string url = fixture.ApiEndpointNames["marginIssuers"];
+            string url = ApiPaths.MARGIN_ISSUERS_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -43,7 +43,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "MarginIssuersGet")]
         public async void GetSingleMarginIssuer()
         {
-            string url = fixture.ApiEndpointNames["marginIssuers"] + "/" + fixture.TestMarginIssuer.Id;
+            string url = ApiPaths.MARGIN_ISSUERS_PATH + "/" + fixture.TestMarginIssuer.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -59,7 +59,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "MarginIssuersGet")]
         public async void CheckIfMarginIssuerExists()
         {
-            string url = fixture.ApiEndpointNames["marginIssuers"] + "/" + fixture.TestMarginIssuer.Id + "/exists";
+            string url = ApiPaths.MARGIN_ISSUERS_PATH + "/" + fixture.TestMarginIssuer.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -89,12 +89,12 @@ namespace AFTests.AssetsTests
         [Trait("Category", "IssuersPut")]
         public async void UpdateMarginIssuer()
         {
-            string url = fixture.ApiEndpointNames["marginIssuers"];
+            string url = ApiPaths.MARGIN_ISSUERS_PATH;
             MarginIssuerDTO editIssuer = new MarginIssuerDTO()
             {
                 Id = fixture.TestMarginIssuerUpdate.Id,
-                IconUrl = fixture.TestMarginIssuerUpdate.IconUrl + Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest",
-                Name = fixture.TestMarginIssuerUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest",
+                IconUrl = fixture.TestMarginIssuerUpdate.IconUrl + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Name = fixture.TestMarginIssuerUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
             };
             string editParam = JsonUtils.SerializeObject(editIssuer);
 
@@ -114,7 +114,7 @@ namespace AFTests.AssetsTests
         [Trait("Category", "IssuersDelete")]
         public async void DeleteMarginIssuer()
         {
-            string url = fixture.ApiEndpointNames["marginIssuers"] + "/" + fixture.TestMarginIssuerDelete.Id;
+            string url = ApiPaths.MARGIN_ISSUERS_PATH + "/" + fixture.TestMarginIssuerDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 

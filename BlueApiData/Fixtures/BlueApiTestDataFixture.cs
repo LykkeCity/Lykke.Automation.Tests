@@ -33,8 +33,6 @@ namespace BlueApiData.Fixtures
         public PledgeDTO TestPledge;
         public PledgeDTO TestPledgeUpdate;
         public PledgeDTO TestPledgeDelete;
-
-        public Dictionary<string, string> ApiEndpointNames;
         public ApiConsumer Consumer;
 
         public Dictionary<string, ApiConsumer> PledgeApiConsumers;
@@ -46,10 +44,12 @@ namespace BlueApiData.Fixtures
             Consumer = new ApiConsumer(_configBuilder);
             Consumer.Authenticate();
 
-            PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
-            PledgeApiConsumers.Add("CreatePledge", new ApiConsumer(_configBuilder));
-            PledgeApiConsumers.Add("UpdatePledge", new ApiConsumer(_configBuilder));
-            PledgeApiConsumers.Add("DeletePledge", new ApiConsumer(_configBuilder));
+            PledgeApiConsumers = new Dictionary<string, ApiConsumer>
+            {
+                { "CreatePledge", new ApiConsumer(_configBuilder) },
+                { "UpdatePledge", new ApiConsumer(_configBuilder) },
+                { "DeletePledge", new ApiConsumer(_configBuilder) }
+            };
 
             PledgeApiConsumers["CreatePledge"].Authenticate(ApiConsumerType.Create);
             PledgeApiConsumers["UpdatePledge"].Authenticate(ApiConsumerType.Update);

@@ -17,7 +17,6 @@ namespace AssetsData.Fixtures
     public partial class AssetsTestDataFixture : IDisposable
     {
         public ApiConsumer Consumer;
-        public Dictionary<string, string> ApiEndpointNames;
 
         public IMapper mapper;
         private IContainer container;
