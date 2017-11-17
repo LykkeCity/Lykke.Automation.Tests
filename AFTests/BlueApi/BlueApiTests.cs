@@ -1,17 +1,17 @@
 ﻿using BlueApiData.Fixtures;
-using Xunit;
+using NUnit.Framework;
 
 namespace AFTests.BlueApi
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "BlueApiService")]
-    public partial class BlueApiTests : IClassFixture<BlueApiTestDataFixture>
+    [Category("FullRegression")]
+    [Category("BlueApiService")]
+    public partial class BlueApiTests
     {
         private readonly BlueApiTestDataFixture _fixture;
 
-        public BlueApiTests(BlueApiTestDataFixture fixture)
+        public BlueApiTests()
         {
-            _fixture = fixture;
+            this._fixture = new BlueApiTestDataFixture();
         }
     }
 }

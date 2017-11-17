@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
 using AFTMatchingEngine.Fixtures;
-using Xunit;
+using NUnit.Framework;
 using Lykke.MatchingEngine.Connector.Abstractions.Models;
 using XUnitTestData.Repositories;
 using System.Linq;
@@ -14,24 +14,25 @@ using XUnitTestData.Repositories.MatchingEngine;
 using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
+using System.Threading.Tasks;
 
 namespace AFTMatchingEngine
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "MatchingEngine")]
-    public class MatchingEngineServiceTests : IClassFixture<MatchingEngineTestDataFixture>
+    [Category("FullRegression")]
+    [Category("MatchingEngine")]
+    public class MatchingEngineServiceTests
     {
         private MatchingEngineTestDataFixture fixture;
 
-        public MatchingEngineServiceTests(MatchingEngineTestDataFixture fixture)
+        public MatchingEngineServiceTests()
         {
-            this.fixture = fixture;
+            this.fixture = new MatchingEngineTestDataFixture();
         }
 
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        public async void CashInOut()
+        [Test]
+        [Category("Smoke")]
+        public async Task CashInOut()
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
@@ -67,12 +68,12 @@ namespace AFTMatchingEngine
 
             Assert.NotNull(message);
 
-            Assert.Equal(message.clientId, testAccount.Id);
-            Assert.Equal(message.asset, accountBalance.Asset);
+            Assert.True(message.clientId == testAccount.Id);
+            Assert.True(message.asset == accountBalance.Asset);
 
             if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedVolume))
             {
-                Assert.Equal(parsedVolume, goodCashOutAmmount);
+                Assert.True(parsedVolume == goodCashOutAmmount);
             }
 
             AccountEntity testAccountCheck = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
@@ -92,12 +93,12 @@ namespace AFTMatchingEngine
 
             Assert.NotNull(message);
 
-            Assert.Equal(message.clientId, testAccount.Id);
-            Assert.Equal(message.asset, accountBalance.Asset);
+            Assert.True(message.clientId == testAccount.Id);
+            Assert.True(message.asset == accountBalance.Asset);
 
             if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out parsedVolume))
             {
-                Assert.Equal(parsedVolume, cashInAmmount);
+                Assert.True(parsedVolume == cashInAmmount);
             }
 
 
@@ -109,13 +110,13 @@ namespace AFTMatchingEngine
             BalanceDTO accountBalanceAfter = testAccountAfter.BalancesParsed.Where(b => b.Asset == fixture.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalanceAfter);
 
-            Assert.Equal(accountBalance.Balance, accountBalanceAfter.Balance);
+            Assert.True(accountBalance.Balance == accountBalanceAfter.Balance);
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        public async void CashTransfer()
+        [Test]
+        [Category("Smoke")]
+        public async Task CashTransfer()
         {
             AccountEntity testAccount1 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount1);
@@ -201,9 +202,9 @@ namespace AFTMatchingEngine
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        public async void CashSwap()
+        [Test]
+        [Category("Smoke")]
+        public async Task CashSwap()
         {
             AccountEntity testAccount1 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount1);
@@ -323,9 +324,9 @@ namespace AFTMatchingEngine
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        public async void UpdateBalance()
+        [Test]
+        [Category("Smoke")]
+        public async Task UpdateBalance()
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
@@ -374,10 +375,10 @@ namespace AFTMatchingEngine
             Assert.True(checkAccountBalance.Balance == accountBalance.Balance);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "LimitOrders")]
-        public async void LimitOrderSell() // and CancelLimitOrder
+        [Test]
+        [Category("Smoke")]
+        [Category("LimitOrders")]
+        public async Task LimitOrderSell() // and CancelLimitOrder
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
@@ -461,10 +462,10 @@ namespace AFTMatchingEngine
             Assert.True(cancelSubMessage.order.price == price);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "LimitOrders")]
-        public async void LimitOrderBuy() // and CancelLimitOrder
+        [Test]
+        [Category("Smoke")]
+        [Category("LimitOrders")]
+        public async Task LimitOrderBuy() // and CancelLimitOrder
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
@@ -538,10 +539,10 @@ namespace AFTMatchingEngine
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "LimitOrders")]
-        public async void HandleMarketOrderBuy()
+        [Test]
+        [Category("Smoke")]
+        [Category("LimitOrders")]
+        public async Task HandleMarketOrderBuy()
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
@@ -643,10 +644,10 @@ namespace AFTMatchingEngine
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "LimitOrders")]
-        public async void HandleMarketOrderSell()
+        [Test]
+        [Category("Smoke")]
+        [Category("LimitOrders")]
+        public async Task HandleMarketOrderSell()
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
