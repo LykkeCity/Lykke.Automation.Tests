@@ -9,6 +9,7 @@ using System.Text;
 using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
+using System.Threading.Tasks;
 
 namespace AFTests.ApiV2
 {
@@ -20,7 +21,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Settings")]
         [Category("SettingsGet")]
-        public async void GetBaseAsset()
+        public async Task GetBaseAsset()
         {
             string url = fixture.ApiEndpointNames["AssetsBaseAsset"];
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -35,7 +36,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Settings")]
         [Category("SettingsPost")]
-        public async void SetBaseAsset()
+        public async Task SetBaseAsset()
         {
            
             string url = fixture.ApiEndpointNames["AssetsBaseAsset"];

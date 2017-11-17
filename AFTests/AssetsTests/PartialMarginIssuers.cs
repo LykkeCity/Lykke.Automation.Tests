@@ -11,6 +11,7 @@ using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -22,7 +23,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginIssuers")]
         [Category("MarginIssuersGet")]
-        public async void GetAllMarginIssuers()
+        public async Task GetAllMarginIssuers()
         {
             string url = fixture.ApiEndpointNames["marginIssuers"];
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -41,7 +42,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginIssuers")]
         [Category("MarginIssuersGet")]
-        public async void GetSingleMarginIssuer()
+        public async Task GetSingleMarginIssuer()
         {
             string url = fixture.ApiEndpointNames["marginIssuers"] + "/" + fixture.TestMarginIssuer.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -57,7 +58,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginIssuers")]
         [Category("MarginIssuersGet")]
-        public async void CheckIfMarginIssuerExists()
+        public async Task CheckIfMarginIssuerExists()
         {
             string url = fixture.ApiEndpointNames["marginIssuers"] + "/" + fixture.TestMarginIssuer.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -72,7 +73,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Issuers")]
         [Category("IssuersPost")]
-        public async void CreateMarginIssuer()
+        public async Task CreateMarginIssuer()
         {
             MarginIssuerDTO createdIssuer = await fixture.CreateTestMarginIssuer();
             Assert.NotNull(createdIssuer);
@@ -87,7 +88,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Issuers")]
         [Category("IssuersPut")]
-        public async void UpdateMarginIssuer()
+        public async Task UpdateMarginIssuer()
         {
             string url = fixture.ApiEndpointNames["marginIssuers"];
             MarginIssuerDTO editIssuer = new MarginIssuerDTO()
@@ -112,7 +113,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Issuers")]
         [Category("IssuersDelete")]
-        public async void DeleteMarginIssuer()
+        public async Task DeleteMarginIssuer()
         {
             string url = fixture.ApiEndpointNames["marginIssuers"] + "/" + fixture.TestMarginIssuerDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);

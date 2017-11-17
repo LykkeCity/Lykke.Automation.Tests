@@ -9,6 +9,7 @@ using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -20,7 +21,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsGet")]
-        public async void GetAllAssetGroups()
+        public async Task GetAllAssetGroups()
         {
             string url = fixture.ApiEndpointNames["assetGroups"];
 
@@ -42,7 +43,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsGet")]
-        public async void GetSingleAssetGroups()
+        public async Task GetSingleAssetGroups()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id;
 
@@ -61,7 +62,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsGet")]
-        public async void GetAssetGroupAssetIDs()
+        public async Task GetAssetGroupAssetIDs()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id + "/asset-ids";
 
@@ -86,7 +87,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsGet")]
-        public async void GetAssetGroupClientIDs()
+        public async Task GetAssetGroupClientIDs()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id + "/client-ids";
 
@@ -109,7 +110,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsPost")]
-        public async void CreateAssetGroup()
+        public async Task CreateAssetGroup()
         {
             AssetGroupDTO createdGroup = await fixture.CreateTestAssetGroup();
             Assert.NotNull(createdGroup);
@@ -124,7 +125,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsPut")]
-        public async void UpdateAssetGroup()
+        public async Task UpdateAssetGroup()
         {
             string url = fixture.ApiEndpointNames["assetGroups"];
 
@@ -151,7 +152,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsDelete")]
-        public async void DeleteAssetGroup()
+        public async Task DeleteAssetGroup()
         {
             string deleteUrl = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroupDelete.Name;
             var response = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
@@ -166,7 +167,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsPost")]
-        public async void AddAssetToAssetGroup()
+        public async Task AddAssetToAssetGroup()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForGroupRelationAdd.Name + "/assets/" + fixture.TestAssetForGroupRelationAdd.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
@@ -183,7 +184,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsPost")]
-        public async void RemoveAssetFromAssetGroup()
+        public async Task RemoveAssetFromAssetGroup()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForGroupRelationDelete.Name + "/assets/" + fixture.TestAssetForGroupRelationDelete.Id;
             var createResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
@@ -202,7 +203,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsPost")]
-        public async void AddClientToAssetGroup()
+        public async Task AddClientToAssetGroup()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForClientRelationAdd.Name + "/clients/" + fixture.TestAccountId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
@@ -219,7 +220,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsPost")]
-        public async void RemoveClientFromAssetGroup()
+        public async Task RemoveClientFromAssetGroup()
         {
             string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForClientRelationDelete.Name + "/clients/" + fixture.TestAccountId;
             var createResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);

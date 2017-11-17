@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
+using System.Threading.Tasks;
 
 namespace AFTests.BlueApi
 {
@@ -16,7 +17,7 @@ namespace AFTests.BlueApi
         [Category("Smoke")]
         [Category("Twitter")]
         [Category("TwitterPost")]
-        public async void GetTweets()
+        public async Task GetTweets()
         {
             string url = _fixture.ApiEndpointNames["Twitter"];
             int pageSize = Helpers.Random.Next(0, 101); // from 0 to 100 records on a page

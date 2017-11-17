@@ -9,11 +9,9 @@ namespace AFTests.BlueApi
     {
         private readonly BlueApiTestDataFixture _fixture;
 
-        public BlueApiTests() { } // Default constructor is needed for nUnit
-
-        public BlueApiTests(BlueApiTestDataFixture fixture)
+        public BlueApiTests()
         {
-            _fixture = fixture;
+            this._fixture = new BlueApiTestDataFixture();
         }
     }
 }

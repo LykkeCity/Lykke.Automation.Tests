@@ -11,6 +11,7 @@ using XUnitTestData.Repositories.Assets;
 using FluentAssertions;
 using AssetsData.DTOs.Assets;
 using XUnitTestCommon.Utils;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -22,7 +23,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssets")]
         [Category("MarginAssetsGet")]
-        public async void GetAllMarginAssets()
+        public async Task GetAllMarginAssets()
         {
             string url = fixture.ApiEndpointNames["marginAssets"];
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -41,7 +42,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssets")]
         [Category("MarginAssetsGet")]
-        public async void GetSingleMarginAssets()
+        public async Task GetSingleMarginAssets()
         {
             string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAsset.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -57,7 +58,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssets")]
         [Category("MarginAssetsGet")]
-        public async void CheckIfMarginAssetsExists()
+        public async Task CheckIfMarginAssetsExists()
         {
             string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAsset.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -71,7 +72,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssets")]
         [Category("MarginAssetsPost")]
-        public async void CreateMarginAsset()
+        public async Task CreateMarginAsset()
         {
             MarginAssetDTO createdDTO = await fixture.CreateTestMarginAsset();
             Assert.NotNull(createdDTO);
@@ -86,7 +87,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssets")]
         [Category("MarginAssetsPut")]
-        public async void UpdateMarginAsset()
+        public async Task UpdateMarginAsset()
         {
             string url = fixture.ApiEndpointNames["marginAssets"];
             MarginAssetDTO updateDTO = new MarginAssetDTO()
@@ -115,7 +116,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssets")]
         [Category("MarginAssetsDelete")]
-        public async void DeleteMarginAsset()
+        public async Task DeleteMarginAsset()
         {
             string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAssetDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);

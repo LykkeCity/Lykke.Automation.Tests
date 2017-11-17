@@ -14,6 +14,7 @@ using XUnitTestData.Repositories.MatchingEngine;
 using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
+using System.Threading.Tasks;
 
 namespace AFTMatchingEngine
 {
@@ -23,17 +24,15 @@ namespace AFTMatchingEngine
     {
         private MatchingEngineTestDataFixture fixture;
 
-        public MatchingEngineServiceTests() { } // Default constructor is needed for nUnit
-
-        public MatchingEngineServiceTests(MatchingEngineTestDataFixture fixture)
+        public MatchingEngineServiceTests()
         {
-            this.fixture = fixture;
+            this.fixture = new MatchingEngineTestDataFixture();
         }
 
 
         [Test]
         [Category("Smoke")]
-        public async void CashInOut()
+        public async Task CashInOut()
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
@@ -117,7 +116,7 @@ namespace AFTMatchingEngine
 
         [Test]
         [Category("Smoke")]
-        public async void CashTransfer()
+        public async Task CashTransfer()
         {
             AccountEntity testAccount1 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount1);
@@ -205,7 +204,7 @@ namespace AFTMatchingEngine
 
         [Test]
         [Category("Smoke")]
-        public async void CashSwap()
+        public async Task CashSwap()
         {
             AccountEntity testAccount1 = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount1);
@@ -327,7 +326,7 @@ namespace AFTMatchingEngine
 
         [Test]
         [Category("Smoke")]
-        public async void UpdateBalance()
+        public async Task UpdateBalance()
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
@@ -379,7 +378,7 @@ namespace AFTMatchingEngine
         [Test]
         [Category("Smoke")]
         [Category("LimitOrders")]
-        public async void LimitOrderSell() // and CancelLimitOrder
+        public async Task LimitOrderSell() // and CancelLimitOrder
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
@@ -466,7 +465,7 @@ namespace AFTMatchingEngine
         [Test]
         [Category("Smoke")]
         [Category("LimitOrders")]
-        public async void LimitOrderBuy() // and CancelLimitOrder
+        public async Task LimitOrderBuy() // and CancelLimitOrder
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
@@ -543,7 +542,7 @@ namespace AFTMatchingEngine
         [Test]
         [Category("Smoke")]
         [Category("LimitOrders")]
-        public async void HandleMarketOrderBuy()
+        public async Task HandleMarketOrderBuy()
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);
@@ -648,7 +647,7 @@ namespace AFTMatchingEngine
         [Test]
         [Category("Smoke")]
         [Category("LimitOrders")]
-        public async void HandleMarketOrderSell()
+        public async Task HandleMarketOrderSell()
         {
             AccountEntity testAccount = (AccountEntity)await fixture.AccountRepository.TryGetAsync(fixture.TestAccountId1);
             Assert.NotNull(testAccount);

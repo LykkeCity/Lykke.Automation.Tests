@@ -9,6 +9,7 @@ using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -20,7 +21,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetExtendedInfos")]
         [Category("AssetExtendedInfoGet")]
-        public async void GetAllAssetExtendedInfos()
+        public async Task GetAllAssetExtendedInfos()
         {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"];
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -41,7 +42,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetExtendedInfos")]
         [Category("AssetExtendedInfoGet")]
-        public async void GetSingleAssetExtendedInfo()
+        public async Task GetSingleAssetExtendedInfo()
         {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfo.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -58,7 +59,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetExtendedInfos")]
         [Category("AssetExtendedInfoGet")]
-        public async void CheckIfAssetExtendedInfoExists()
+        public async Task CheckIfAssetExtendedInfoExists()
         {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfo.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -79,7 +80,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetExtendedInfos")]
         [Category("AssetExtendedInfoPost")]
-        public async void CreateAssetExtendedInfo()
+        public async Task CreateAssetExtendedInfo()
         {
             AssetExtendedInfoDTO createdInfo = await fixture.CreateTestAssetExtendedInfo();
             Assert.NotNull(createdInfo);
@@ -94,7 +95,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetExtendedInfos")]
         [Category("AssetExtendedInfoPut")]
-        public async void UpdateAssetExtendedInfo()
+        public async Task UpdateAssetExtendedInfo()
         {
             string url = fixture.ApiEndpointNames["assetExtendedInfos"];
 
@@ -124,7 +125,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetExtendedInfos")]
         [Category("AssetExtendedInfoDelete")]
-        public async void DeleteAssetExtendedInfo()
+        public async Task DeleteAssetExtendedInfo()
         {
             string deleteUrl = fixture.ApiEndpointNames["assetExtendedInfos"] + "/" + fixture.TestAssetExtendedInfoDelete.Id;
             var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);

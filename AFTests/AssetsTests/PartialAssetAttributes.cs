@@ -7,6 +7,7 @@ using System.Net;
 using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -18,7 +19,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetAttributes")]
         [Category("AssetsAttributesGet")]
-        public async void GetAllAssetAttributes()
+        public async Task GetAllAssetAttributes()
         {
             string url = fixture.ApiEndpointNames["assetAttributes"];
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -41,7 +42,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetAttributes")]
         [Category("AssetsAttributesGet")]
-        public async void GetSingleAssetAttributes()
+        public async Task GetSingleAssetAttributes()
         {
             string url = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttribute.AssetId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -60,7 +61,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetAttributes")]
         [Category("AssetsAttributesGet")]
-        public async void GetSingleAssetAttribute()
+        public async Task GetSingleAssetAttribute()
         {
             string url = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttribute.AssetId + "/" + fixture.TestAssetAttribute.Key;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -77,7 +78,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetAttributes")]
         [Category("AssetsAttributesPost")]
-        public async void CreateAssetAttribute()
+        public async Task CreateAssetAttribute()
         {
             AssetAttributeIdentityDTO newAssetAttr = await fixture.CreateTestAssetAttribute();
             Assert.NotNull(newAssetAttr);
@@ -90,7 +91,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetAttributes")]
         [Category("AssetsAttributesPut")]
-        public async void UpdateAssetAttribute()
+        public async Task UpdateAssetAttribute()
         {
             string updateUrl = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttributeUpdate.AssetId;
             string updateValue = fixture.TestAssetAttributeUpdate.Value + "_AutoTestEdit";
@@ -107,7 +108,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetAttributes")]
         [Category("AssetsAttributesDelete")]
-        public async void DeleteAssetAttribute()
+        public async Task DeleteAssetAttribute()
         {
             string deleteUrl = fixture.ApiEndpointNames["assetAttributes"] + "/" + fixture.TestAssetAttributeDelete.AssetId + "/" + fixture.TestAssetAttributeDelete.Key;
             var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);

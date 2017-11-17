@@ -12,6 +12,7 @@ using FluentAssertions;
 using System.Linq;
 using XUnitTestData.Repositories;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace AFTests.ApiV2
 {
@@ -23,7 +24,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Wallets")]
         [Category("WalletsGet")]
-        public async void GetAllWallets()
+        public async Task GetAllWallets()
         {
             string url = fixture.ApiEndpointNames["Wallets"];
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -42,7 +43,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Wallets")]
         [Category("WalletsGet")]
-        public async void GetSingleWallets()
+        public async Task GetSingleWallets()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWallet.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -58,7 +59,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Wallets")]
         [Category("WalletsGet")]
-        public async void GetAllWalletBalances()
+        public async Task GetAllWalletBalances()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/balances";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -99,7 +100,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Wallets")]
         [Category("WalletsGet")]
-        public async void GetBalancesByWalletId()
+        public async Task GetBalancesByWalletId()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWallet.Id + "/balances";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -119,7 +120,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Wallets")]
         [Category("WalletsGet")]
-        public async void GetWalletBalancesByAssetId()
+        public async Task GetWalletBalancesByAssetId()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/balances/" + fixture.TestWalletAssetId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -156,7 +157,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Wallets")]
         [Category("WalletsGet")]
-        public async void GetWalletBalanceByWalletAndAssetId()
+        public async Task GetWalletBalanceByWalletAndAssetId()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWallet.Id + "/balances/" + fixture.TestWalletAssetId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -174,7 +175,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Wallets")]
         [Category("WalletsGet")]
-        public async void GetWalletTradeBalances()
+        public async Task GetWalletTradeBalances()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/trading/balances";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -197,7 +198,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Wallets")]
         [Category("WalletsGet")]
-        public async void GetWalletTradeBalanceByAssetId()
+        public async Task GetWalletTradeBalanceByAssetId()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/trading/balances/" + fixture.TestWalletAssetId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -217,7 +218,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Wallets")]
         [Category("WalletsPost")]
-        public async void CreateWallet()
+        public async Task CreateWallet()
         {
             WalletDTO createdWallet = await fixture.CreateTestWallet();
             Assert.NotNull(createdWallet);
@@ -233,7 +234,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Wallets")]
         [Category("WalletsPost")]
-        public async void CreateHFTWallet()
+        public async Task CreateHFTWallet()
         {
             WalletDTO createdWallet = await fixture.CreateTestWallet(true);
             Assert.NotNull(createdWallet);
@@ -250,7 +251,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Wallets")]
         [Category("WalletsDelete")]
-        public async void DeleteWallet()
+        public async Task DeleteWallet()
         {
             string url = fixture.ApiEndpointNames["Wallets"] + "/" + fixture.TestWalletDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);

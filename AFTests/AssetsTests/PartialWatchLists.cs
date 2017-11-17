@@ -9,6 +9,7 @@ using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -21,7 +22,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("WatchList")]
         [Category("WatchListGet")]
-        public async void GetAllWatchListsPredefined()
+        public async Task GetAllWatchListsPredefined()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/predefined";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -52,7 +53,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("WatchList")]
         [Category("WatchListGet")]
-        public async void GetSingleWatchListsPredefined()
+        public async Task GetSingleWatchListsPredefined()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/predefined/" + fixture.TestWatchListPredefined.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -78,7 +79,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("WatchList")]
         [Category("WatchListPost")]
-        public async void CreatePredefinedWatchList()
+        public async Task CreatePredefinedWatchList()
         {
             WatchListDTO createdDTO = await fixture.CreateTestWatchList();
             Assert.NotNull(createdDTO);
@@ -102,7 +103,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("WatchList")]
         [Category("WatchListPut")]
-        public async void UpdatePredefinedWatchList()
+        public async Task UpdatePredefinedWatchList()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/predefined";
             WatchListDTO updateWatchList = new WatchListDTO()
@@ -138,7 +139,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("WatchList")]
         [Category("WatchListDelete")]
-        public async void DeletePredefinedWatchList()
+        public async Task DeletePredefinedWatchList()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/predefined/" + fixture.TestWatchListPredefinedDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
@@ -154,7 +155,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("WatchList")]
         [Category("WatchListGet")]
-        public async void GetAllWatchListsCustom()
+        public async Task GetAllWatchListsCustom()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/custom";
             Dictionary<string, string> queryParams = new Dictionary<string, string>();
@@ -187,7 +188,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("WatchList")]
         [Category("WatchListGet")]
-        public async void GetSingleWatchListsCustom()
+        public async Task GetSingleWatchListsCustom()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/custom/" + fixture.TestWatchListCustom.Id;
             Dictionary<string, string> queryParams = new Dictionary<string, string>();
@@ -214,7 +215,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("WatchList")]
         [Category("WatchListPost")]
-        public async void CreateCustomWatchList()
+        public async Task CreateCustomWatchList()
         {
             WatchListDTO createdDTO = await fixture.CreateTestWatchList(fixture.TestAccountId);
             Assert.NotNull(createdDTO);
@@ -238,7 +239,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("WatchList")]
         [Category("WatchListPut")]
-        public async void UpdateCustomWatchList()
+        public async Task UpdateCustomWatchList()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/custom";
             Dictionary<string, string> queryParams = new Dictionary<string, string>();
@@ -276,7 +277,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("WatchList")]
         [Category("WatchListDelete")]
-        public async void DeleteCustomWatchList()
+        public async Task DeleteCustomWatchList()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/custom/" + fixture.TestWatchListCustomDelete.Id;
             Dictionary<string, string> queryParams = new Dictionary<string, string>();
@@ -294,7 +295,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("WatchList")]
         [Category("WatchListGet")]
-        public async void GetAllWatchLists()
+        public async Task GetAllWatchLists()
         {
             string url = fixture.ApiEndpointNames["watchList"] + "/all";
             Dictionary<string, string> queryParams = new Dictionary<string, string>();

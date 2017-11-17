@@ -10,6 +10,7 @@ using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -21,7 +22,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Assets")]
         [Category("AssetsGet")]
-        public async void GetAllAssets()
+        public async Task GetAllAssets()
         {
             // Get all assets
             string url = fixture.ApiEndpointNames["assets"];
@@ -44,7 +45,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Assets")]
         [Category("AssetsGet")]
-        public async void GetSingleAsset()
+        public async Task GetSingleAsset()
         {
             string url = fixture.ApiEndpointNames["assets"] + "/" + fixture.TestAsset.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -63,7 +64,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Assets")]
         [Category("AssetsGet")]
-        public async void CheckIfAssetExists()
+        public async Task CheckIfAssetExists()
         {
             string url = fixture.ApiEndpointNames["assets"] + "/" + fixture.TestAsset.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -80,7 +81,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Assets")]
         [Category("AssetsGet")]
-        public async void GetDefault()
+        public async Task GetDefault()
         {
             string url = fixture.ApiEndpointNames["assets"] + "/default";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -116,7 +117,7 @@ namespace AFTests.AssetsTests
         //[Test]
         //[Category("Smoke")]
         //[Category("AssetsPut")]
-        //public async void GetAssetSpecification()
+        //public async Task GetAssetSpecification()
         //{
         //    throw new NotImplementedException();
         //}
@@ -125,7 +126,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Assets")]
         [Category("AssetsPost")]
-        public async void EnableDisableAsset()
+        public async Task EnableDisableAsset()
         {
             string disableUrl = fixture.ApiEndpointNames["assets"] + "/" + fixture.TestAsset.Id + "/disable";
             string enableUrl = fixture.ApiEndpointNames["assets"] + "/" + fixture.TestAsset.Id + "/enable";
@@ -162,7 +163,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Assets")]
         [Category("AssetsPost")]
-        public async void CreateAsset()
+        public async Task CreateAsset()
         {
             AssetDTO createdAsset = await fixture.CreateTestAsset();
             Assert.NotNull(createdAsset);
@@ -178,7 +179,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Assets")]
         [Category("AssetsPut")]
-        public async void UpdateAsset()
+        public async Task UpdateAsset()
         {
             string updateUrl = fixture.ApiEndpointNames["assets"];
             AssetDTO updateParamAsset = fixture.TestAssetUpdate;
@@ -202,7 +203,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Assets")]
         [Category("AssetsDelete")]
-        public async void DeleteAsset()
+        public async Task DeleteAsset()
         {
             string deleteUrl = fixture.ApiEndpointNames["assets"] + "/" + fixture.TestAssetDelete.Id;
             string deleteParam = JsonUtils.SerializeObject(new { id = fixture.TestAssetDelete.Id });

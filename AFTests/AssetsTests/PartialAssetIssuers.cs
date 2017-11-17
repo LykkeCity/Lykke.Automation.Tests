@@ -9,6 +9,7 @@ using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestCommon;
 using XUnitTestData.Repositories.Assets;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -20,7 +21,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Issuers")]
         [Category("IssuersGet")]
-        public async void GetAllIssuers()
+        public async Task GetAllIssuers()
         {
             string url = fixture.ApiEndpointNames["assetIssuers"];
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -39,7 +40,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Issuers")]
         [Category("IssuersGet")]
-        public async void GetSingleIssuers()
+        public async Task GetSingleIssuers()
         {
             string url = fixture.ApiEndpointNames["assetIssuers"] + "/" + fixture.TestAssetIssuer.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -55,7 +56,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Issuers")]
         [Category("IssuersGet")]
-        public async void CheckIfIssuerExists()
+        public async Task CheckIfIssuerExists()
         {
             string url = fixture.ApiEndpointNames["assetIssuers"] + "/" + fixture.TestAssetIssuer.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -70,7 +71,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Issuers")]
         [Category("IssuersPost")]
-        public async void CreateAssetIssuer()
+        public async Task CreateAssetIssuer()
         {
             AssetIssuerDTO createdIssuer = await fixture.CreateTestAssetIssuer();
             Assert.NotNull(createdIssuer);
@@ -85,7 +86,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Issuers")]
         [Category("IssuersPut")]
-        public async void UpdateAssetIssuer()
+        public async Task UpdateAssetIssuer()
         {
             string url = fixture.ApiEndpointNames["assetIssuers"];
             AssetIssuerDTO editIssuer = new AssetIssuerDTO()
@@ -110,7 +111,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("Issuers")]
         [Category("IssuersDelete")]
-        public async void DeleteAssetIssuer()
+        public async Task DeleteAssetIssuer()
         {
             string url = fixture.ApiEndpointNames["assetIssuers"] + "/" + fixture.TestAssetIssuerDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);

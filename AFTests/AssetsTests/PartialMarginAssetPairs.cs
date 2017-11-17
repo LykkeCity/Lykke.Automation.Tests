@@ -11,6 +11,7 @@ using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
 using FluentAssertions;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -22,7 +23,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssetPairs")]
         [Category("MarginAssetPairsGet")]
-        public async void GetAllMarginAssetPairs()
+        public async Task GetAllMarginAssetPairs()
         {
             string url = fixture.ApiEndpointNames["marginAssetPairs"];
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -41,7 +42,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssetPairs")]
         [Category("MarginAssetPairsGet")]
-        public async void GetSingleMarginAssetPairs()
+        public async Task GetSingleMarginAssetPairs()
         {
             string url = fixture.ApiEndpointNames["marginAssetPairs"] + "/" + fixture.TestMarginAssetPair.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -57,7 +58,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssetPairs")]
         [Category("MarginAssetPairsGet")]
-        public async void CheckIfMarginAssetPairExists()
+        public async Task CheckIfMarginAssetPairExists()
         {
             string url = fixture.ApiEndpointNames["marginAssetPairs"] + "/" + fixture.TestMarginAssetPair.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -72,7 +73,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssetPairs")]
         [Category("MarginAssetPairsPost")]
-        public async void CreateMarginAssetPair()
+        public async Task CreateMarginAssetPair()
         {
             MarginAssetPairDTO createdDTO = await fixture.CreateTestMarginAssetPair();
             Assert.NotNull(createdDTO);
@@ -87,7 +88,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssetPairs")]
         [Category("MarginAssetPairsDelete")]
-        public async void UpdateMarginAssetPair()
+        public async Task UpdateMarginAssetPair()
         {
             string url = fixture.ApiEndpointNames["marginAssetPairs"];
             MarginAssetPairDTO updateDTO = new MarginAssetPairDTO()
@@ -114,7 +115,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("MarginAssetPairs")]
         [Category("MarginAssetPairsDelete")]
-        public async void DeleteMarginAssetPair()
+        public async Task DeleteMarginAssetPair()
         {
             string url = fixture.ApiEndpointNames["marginAssetPairs"] + "/" + fixture.TestMarginAssetPairDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);

@@ -16,11 +16,9 @@ namespace AFTests.AssetsTests
     {
         private AssetsTestDataFixture fixture;
 
-        public AssetsTest() { } // Default constructor is needed for nUnit
-
-        public AssetsTest(AssetsTestDataFixture fixture)
+        public AssetsTest()
         {
-            this.fixture = fixture;
+            this.fixture = new AssetsTestDataFixture();
         }
 
         #region IsAlive
@@ -28,7 +26,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("IsAlive")]
         [Category("IsAliveGet")]
-        public async void IsAlive()
+        public async Task IsAlive()
         {
             string url = fixture.ApiEndpointNames["assetIsAlive"];
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);

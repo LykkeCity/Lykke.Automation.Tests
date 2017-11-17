@@ -9,6 +9,7 @@ using NUnit.Framework;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -20,7 +21,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetCategories")]
         [Category("AssetCategoriesGet")]
-        public async void GetAllAssetCategories()
+        public async Task GetAllAssetCategories()
         {
             string url = fixture.ApiEndpointNames["assetCategories"];
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -41,7 +42,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetCategories")]
         [Category("AssetCategoriesGet")]
-        public async void GetSingleAssetCategory()
+        public async Task GetSingleAssetCategory()
         {
             string url = fixture.ApiEndpointNames["assetCategories"] + "/" + fixture.TestAssetCategory.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -62,7 +63,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetCategories")]
         [Category("AssetCategoriesPost")]
-        public async void CreateAssetCategory()
+        public async Task CreateAssetCategory()
         {
             AssetCategoryDTO createdCategory = await fixture.CreateTestAssetCategory();
             Assert.NotNull(createdCategory);
@@ -77,7 +78,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetCategories")]
         [Category("AssetCategoriesPost")]
-        public async void UpdateAssetCategory()
+        public async Task UpdateAssetCategory()
         {
             string url = fixture.ApiEndpointNames["assetCategories"];
 
@@ -104,7 +105,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetCategories")]
         [Category("AssetCategoriesDelete")]
-        public async void DeleteAssetCategory()
+        public async Task DeleteAssetCategory()
         {
             string deleteUrl = fixture.ApiEndpointNames["assetCategories"] + "/" + fixture.TestAssetCategoryDelete.Id;
             var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);

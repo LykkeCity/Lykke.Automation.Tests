@@ -9,11 +9,9 @@ namespace AFTests.ApiV2
     {
         private ApiV2TestDataFixture fixture;
 
-        public ApiV2Tests() { } // Default constructor is needed for nUnit
-
-        public ApiV2Tests(ApiV2TestDataFixture fixture)
+        public ApiV2Tests()
         {
-            this.fixture = fixture;
+            this.fixture = new ApiV2TestDataFixture();
         }
     }
 }

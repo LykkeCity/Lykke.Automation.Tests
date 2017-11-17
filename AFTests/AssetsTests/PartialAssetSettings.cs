@@ -9,6 +9,7 @@ using XUnitTestCommon.Utils;
 using XUnitTestCommon;
 using XUnitTestData.Repositories.Assets;
 using System;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -20,7 +21,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetSettings")]
         [Category("AssetSettingsGet")]
-        public async void GetAllAssetSettings()
+        public async Task GetAllAssetSettings()
         {
             string url = fixture.ApiEndpointNames["assetSettings"];
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -43,7 +44,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetSettings")]
         [Category("AssetSettingsGet")]
-        public async void GetSingleAssetSettings()
+        public async Task GetSingleAssetSettings()
         {
             string url = fixture.ApiEndpointNames["assetSettings"] + "/" + fixture.TestAssetSettings.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -62,7 +63,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetSettings")]
         [Category("AssetSettingsGet")]
-        public async void CheckIfAssetSettingsExists()
+        public async Task CheckIfAssetSettingsExists()
         {
             string url = fixture.ApiEndpointNames["assetSettings"] + "/" + fixture.TestAssetSettings.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -78,7 +79,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetSettings")]
         [Category("AssetSettingsPost")]
-        public async void CreateAssetSettings()
+        public async Task CreateAssetSettings()
         {
             AssetSettingsDTO createdDTO = await fixture.CreateTestAssetSettings();
             Assert.NotNull(createdDTO);
@@ -95,7 +96,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetSettings")]
         [Category("AssetSettingsPut")]
-        public async void UpdateAssetSettings()
+        public async Task UpdateAssetSettings()
         {
             string url = fixture.ApiEndpointNames["assetSettings"];
             AssetSettingsCreateDTO updateDTO = new AssetSettingsCreateDTO()
@@ -132,7 +133,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetSettings")]
         [Category("AssetSettingsDelete")]
-        public async void DeleteAssetSettings()
+        public async Task DeleteAssetSettings()
         {
             string url = fixture.ApiEndpointNames["assetSettings"] + "/" + fixture.TestAssetSettingsDelete.Asset;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);

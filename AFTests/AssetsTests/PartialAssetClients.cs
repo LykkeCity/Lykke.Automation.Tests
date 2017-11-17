@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 using NUnit.Framework;
 using XUnitTestCommon.Utils;
+using System.Threading.Tasks;
 
 namespace AFTests.AssetsTests
 {
@@ -16,7 +17,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetClients")]
         [Category("AssetClientsGet")]
-        public async void GetClientAssetIDs()
+        public async Task GetClientAssetIDs()
         {
             string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/asset-ids";
             Dictionary<string, string> queryParams = new Dictionary<string, string>();
@@ -34,7 +35,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetClients")]
         [Category("AssetClientsGet")]
-        public async void GetClientSwiftDepositOption()
+        public async Task GetClientSwiftDepositOption()
         {
             string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/swift-deposit-enabled";
             Dictionary<string, string> queryParams = new Dictionary<string, string>();
@@ -52,7 +53,7 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetClients")]
         [Category("AssetClientsGet")]
-        public async void GetClientCashInBankOption()
+        public async Task GetClientCashInBankOption()
         {
             string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/cash-in-via-bank-card-enabled";
             Dictionary<string, string> queryParams = new Dictionary<string, string>();
