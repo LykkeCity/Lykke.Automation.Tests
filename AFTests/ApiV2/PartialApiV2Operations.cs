@@ -105,7 +105,7 @@ namespace AFTests.ApiV2
             OperationDetailsDTO createDTO = new OperationDetailsDTO()
             {
                 TransactionId = _fixture.TestOperationRegisterDetails.Id,
-                Comment = Guid.NewGuid().ToString() + GlobalConstants.AutoTest;
+                Comment = Guid.NewGuid().ToString() + GlobalConstants.AutoTest
             };
             string createParam = JsonUtils.SerializeObject(createDTO);
 
