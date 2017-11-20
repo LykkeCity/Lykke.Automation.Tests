@@ -6,19 +6,20 @@ using XUnitTestCommon.Consumers;
 using XUnitTestCommon.DTOs.RabbitMQ;
 using Autofac;
 using XUnitTestCommon.Utils;
+using XUnitTestCommon.Consumers.Models;
 using MatchingEngineData.DependencyInjection;
-using XUnitTestData.Services;
 using XUnitTestData.Domains;
 using XUnitTestData.Repositories;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using MatchingEngineData.DTOs.RabbitMQ;
-using XUnitTestData.Repositories.MatchingEngine;
 using XUnitTestData.Domains.MatchingEngine;
 using XUnitTestData.Domains.Assets;
-using XUnitTestData.Repositories.Assets;
-using System.Linq.Expressions;
+using MatchingEngineData;
+using XUnitTestData.Entities.MatchingEngine;
+using XUnitTestData.Entities;
+using XUnitTestData.Entities.Assets;
 
 namespace AFTMatchingEngine.Fixtures
 {
@@ -27,12 +28,12 @@ namespace AFTMatchingEngine.Fixtures
         public MatchingEngineConsumer Consumer;
 
         //public IDictionaryManager<IAccount> AccountManager;
-        public AccountRepository AccountRepository;
-        public CashSwapRepository CashSwapRepository;
-        public MarketOrdersRepository MarketOrdersRepository;
-        public LimitOrderRepository LimitOrdersRepository;
+        public GenericRepository<AccountEntity, IAccount> AccountRepository;
+        public GenericRepository<CashSwapEntity, ICashSwap> CashSwapRepository;
+        public GenericRepository<MarketOrderEntity, IMarketOrderEntity> MarketOrdersRepository;
+        public GenericRepository<LimitOrderEntity, ILimitOrderEntity> LimitOrdersRepository;
 
-        private IDictionaryManager<IAssetPair> AssetPairsManager;
+        private GenericRepository<AssetPairEntity, IAssetPair> AssetPairsRepository;
 
         public string TestAccountId1;
         public string TestAccountId2;
@@ -61,7 +62,7 @@ namespace AFTMatchingEngine.Fixtures
 
         public MatchingEngineTestDataFixture()
         {
-            this._configBuilder = new ConfigBuilder("MatchingEngine");
+            this._configBuilder = new ConfigBuilder(Constants.ConfigItemName);
             prepareConsumer();
             prepareRabbitQueues();
             prepareRabbitMQConnections();
@@ -76,11 +77,11 @@ namespace AFTMatchingEngine.Fixtures
             builder.RegisterModule(new MatchingEngineTestModule(_configBuilder));
             this.container = builder.Build();
 
-            this.AccountRepository = (AccountRepository)this.container.Resolve<IDictionaryRepository<IAccount>>();
-            this.CashSwapRepository = (CashSwapRepository)this.container.Resolve<IDictionaryRepository<ICashSwap>>();
-            this.AssetPairsManager = RepositoryUtils.PrepareRepositoryManager<IAssetPair>(this.container);
-            this.MarketOrdersRepository = (MarketOrdersRepository)this.container.Resolve<IDictionaryRepository<IMarketOrderEntity>>();
-            this.LimitOrdersRepository = (LimitOrderRepository)this.container.Resolve<IDictionaryRepository<ILimitOrderEntity>>();
+            this.AccountRepository = RepositoryUtils.ResolveGenericRepository<AccountEntity, IAccount>(this.container);
+            this.CashSwapRepository = RepositoryUtils.ResolveGenericRepository<CashSwapEntity, ICashSwap>(this.container);
+            this.AssetPairsRepository = RepositoryUtils.ResolveGenericRepository<AssetPairEntity, IAssetPair>(this.container);
+            this.MarketOrdersRepository = RepositoryUtils.ResolveGenericRepository<MarketOrderEntity, IMarketOrderEntity>(this.container);
+            this.LimitOrdersRepository = RepositoryUtils.ResolveGenericRepository<LimitOrderEntity, ILimitOrderEntity>(this.container);
         }
 
         private void prepareRabbitMQConnections()
@@ -88,22 +89,22 @@ namespace AFTMatchingEngine.Fixtures
             RabbitMqMessages = new Dictionary<Type, List<IRabbitMQOperation>>();
 
             CashInOutSubscription = new RabbitMQConsumer<CashOperation>(
-                _configBuilder, "cashinout", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "cashinout", Constants.TestQueueName), handleOperationMessages);
 
             CashTransferSubscription = new RabbitMQConsumer<CashTransferOperation>(
-                _configBuilder, "transfers", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "transfers", Constants.TestQueueName), handleOperationMessages);
 
             CashSwapSubscription = new RabbitMQConsumer<CashSwapOperation>(
-                _configBuilder, "cashswap", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "cashswap", Constants.TestQueueName), handleOperationMessages);
 
             BalanceUpdateSubscription = new RabbitMQConsumer<BalanceUpdate>(
-                _configBuilder, "balanceupdate", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "balanceupdate", Constants.TestQueueName), handleOperationMessages);
 
             LimitOrderSubscription = new RabbitMQConsumer<LimitOrdersResponse>(
-                _configBuilder, "limitorders.clients", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "limitorders.clients", Constants.TestQueueName), handleOperationMessages);
 
             TradesOrderSubscription = new RabbitMQConsumer<MarketOrderWithTrades>(
-                _configBuilder, "trades", "automation_functional_tests", handleOperationMessages);
+                new RabbitMQSettings(_configBuilder, "trades", Constants.TestQueueName), handleOperationMessages);
 
         }
 
@@ -122,19 +123,21 @@ namespace AFTMatchingEngine.Fixtures
         private void prepareRabbitQueues()
         {
             _createdQueues = new List<string>();
-            RabbitMQHttpApiConsumer.Setup(_configBuilder);
+            RabbitMQHttpApiConsumer.Setup(new RabbitMQHttpApiSettings(_configBuilder));
 
             
             if(!Int32.TryParse(_configBuilder.Config["RabbitMQMessageWait"], out waitForRabbitMQMessage))
                 waitForRabbitMQMessage = 20000;
 
-            List<Task<bool>> createQueueTasks = new List<Task<bool>>();
-            createQueueTasks.Add(createQueue("lykke.cashinout", "lykke.cashinout.automation_functional_tests"));
-            createQueueTasks.Add(createQueue("lykke.transfers", "lykke.transfers.automation_functional_tests"));
-            createQueueTasks.Add(createQueue("lykke.cashswap", "lykke.cashswap.automation_functional_tests"));
-            createQueueTasks.Add(createQueue("lykke.balanceupdate", "lykke.balanceupdate.automation_functional_tests"));
-            createQueueTasks.Add(createQueue("lykke.limitorders.clients", "lykke.limitorders.clients.automation_functional_tests"));
-            createQueueTasks.Add(createQueue("lykke.trades", "lykke.trades.automation_functional_tests"));
+            List<Task<bool>> createQueueTasks = new List<Task<bool>>
+            {
+                createQueue("lykke.cashinout", "lykke.cashinout." + Constants.TestQueueName),
+                createQueue("lykke.transfers", "lykke.transfers." + Constants.TestQueueName),
+                createQueue("lykke.cashswap", "lykke.cashswap." + Constants.TestQueueName),
+                createQueue("lykke.balanceupdate", "lykke.balanceupdate." + Constants.TestQueueName),
+                createQueue("lykke.limitorders.clients", "lykke.limitorders.clients." + Constants.TestQueueName),
+                createQueue("lykke.trades", "lykke.trades." + Constants.TestQueueName)
+            };
 
             Task.WhenAll(createQueueTasks).Wait();
         }
@@ -169,17 +172,17 @@ namespace AFTMatchingEngine.Fixtures
 
         private void prepareTestData()
         {
-            TestAccountId1 = "AFTest_Client1";
-            TestAccountId2 = "AFTest_Client2";
-            TestAsset1 = "LKK";
-            TestAsset2 = "USD";
+            TestAccountId1 = Constants.TestAccountId1;
+            TestAccountId2 = Constants.TestAccountId2;
+            TestAsset1 = Constants.TestAsset1;
+            TestAsset2 = Constants.TestAsset2;
 
             if (!Int32.TryParse(_configBuilder.Config["AssetPrecission"], out AssetPrecission))
                 AssetPrecission = 2;
 
             this.TestAssetPair = (AssetPairEntity)Task.Run(async () =>
             {
-                return await this.AssetPairsManager.TryGetAsync(TestAsset1 + TestAsset2);
+                return await this.AssetPairsRepository.TryGetAsync(TestAsset1 + TestAsset2);
             }).Result;
         }
 

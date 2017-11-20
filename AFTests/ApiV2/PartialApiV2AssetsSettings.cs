@@ -1,29 +1,26 @@
 ﻿using ApiV2Data.Fixtures;
-using AssetsData.DTOs;
 using AssetsData.DTOs.Assets;
 using RestSharp;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
+using System.Threading.Tasks;
 
 namespace AFTests.ApiV2
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "ApiV2Service")]
-    public partial class ApiV2Tests : IClassFixture<ApiV2TestDataFixture>
+    [Category("FullRegression")]
+    [Category("ApiV2Service")]
+    public partial class ApiV2Tests
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Settings")]
-        [Trait("Category", "SettingsGet")]
-        public async void GetBaseAsset()
+        [Test]
+        [Category("Smoke")]
+        [Category("Settings")]
+        [Category("SettingsGet")]
+        public async Task GetBaseAsset()
         {
-            string url = fixture.ApiEndpointNames["AssetsBaseAsset"];
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.ASSETS_BASEASSET_PATH;
+            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             var baseAssetId = JsonUtils.DeserializeJson<BaseAssetDTO>(response.ResponseJson).BaseAssetId;
@@ -31,17 +28,17 @@ namespace AFTests.ApiV2
             
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "Settings")]
-        [Trait("Category", "SettingsPost")]
-        public async void SetBaseAsset()
+        [Test]
+        [Category("Smoke")]
+        [Category("Settings")]
+        [Category("SettingsPost")]
+        public async Task SetBaseAsset()
         {
            
-            string url = fixture.ApiEndpointNames["AssetsBaseAsset"];
+            string url = ApiPaths.ASSETS_BASEASSET_PATH;
             string testID = "LKK_TEST";
             BaseAssetDTO body = new BaseAssetDTO(testID);
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
+            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             string newBaseAssetId = JsonUtils.DeserializeJson<string>(response.ResponseJson);

@@ -15,14 +15,14 @@ namespace ApiV2Data.Fixtures
     {
         public async Task<WalletDTO> CreateTestWallet(bool isHFT = false)
         {
-            string url = ApiEndpointNames["Wallets"];
+            string url = ApiPaths.WALLETS_BASE_PATH;
             if (isHFT)
                 url += "/hft";
 
             WalletCreateDTO newWallet = new WalletCreateDTO()
             {
-                Name = Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest",
-                Description = Guid.NewGuid().ToString() + Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest"
+                Name = Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Description = Guid.NewGuid().ToString() + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest
             };
             string createParam = JsonUtils.SerializeObject(newWallet);
 
@@ -48,16 +48,58 @@ namespace ApiV2Data.Fixtures
                 returnModel = JsonUtils.DeserializeJson<WalletDTO>(response.ResponseJson);
             }
 
-            WalletsToDelete.Add(returnModel.Id);
+            _walletsToDelete.Add(returnModel.Id);
 
             return returnModel;
         }
 
         public async Task<bool> DeleteTestWallet(string id)
         {
-            string url = ApiEndpointNames["Wallets"] + "/" + id;
+            string url = ApiPaths.WALLETS_BASE_PATH + "/" + id;
             var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
 
+            if (response.Status != HttpStatusCode.OK)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<OperationCreateReturnDTO> CreateTestOperation()
+        {
+            string newId = Guid.NewGuid().ToString().ToLower();
+            string url = ApiPaths.OPERATIONS_TRANSFER_PATH + "/" +newId;
+
+            OperationCreateDTO createDTO = new OperationCreateDTO()
+            {
+                Amount = Helpers.Random.Next(1, 10),
+                AssetId = TestAssetId,
+                SourceWalletId = TestWalletWithBalance,
+                WalletId = TestWalletOperations.Id
+            };
+            string createParam = JsonUtils.SerializeObject(createDTO);
+
+
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            if (response.Status != HttpStatusCode.Created)
+            {
+                return null;
+            }
+            string parsedResponse = JsonUtils.DeserializeJson<string>(response.ResponseJson);
+            OperationCreateReturnDTO returnDTO = new OperationCreateReturnDTO(createDTO)
+            {
+                Id = parsedResponse
+            };
+
+            OperationsToCancel.Add(returnDTO.Id);
+
+            return returnDTO;
+        }
+
+        public async Task<bool> CancelTestOperation(string id)
+        {
+            string url = ApiPaths.OPERATIONS_CANCEL_PATH +  "/" + id;
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             if (response.Status != HttpStatusCode.OK)
             {
                 return false;

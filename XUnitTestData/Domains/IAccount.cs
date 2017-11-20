@@ -1,4 +1,4 @@
-﻿using XUnitTestData.Repositories;
+﻿using XUnitTestData.Entities;
 
 namespace XUnitTestData.Domains
 {

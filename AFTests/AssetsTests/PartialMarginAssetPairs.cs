@@ -1,30 +1,29 @@
 ﻿using AssetsData.Fixtures;
 using RestSharp;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 using AssetsData.DTOs.Assets;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.Assets;
 using FluentAssertions;
 using System.Linq;
+using System.Threading.Tasks;
+using XUnitTestData.Entities.Assets;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssetPairs")]
-        [Trait("Category", "MarginAssetPairsGet")]
-        public async void GetAllMarginAssetPairs()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssetPairs")]
+        [Category("MarginAssetPairsGet")]
+        public async Task GetAllMarginAssetPairs()
         {
-            string url = fixture.ApiEndpointNames["marginAssetPairs"];
+            string url = ApiPaths.MARGIN_ASSET_PAIRS_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -37,13 +36,13 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssetPairs")]
-        [Trait("Category", "MarginAssetPairsGet")]
-        public async void GetSingleMarginAssetPairs()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssetPairs")]
+        [Category("MarginAssetPairsGet")]
+        public async Task GetSingleMarginAssetPairs()
         {
-            string url = fixture.ApiEndpointNames["marginAssetPairs"] + "/" + fixture.TestMarginAssetPair.Id;
+            string url = ApiPaths.MARGIN_ASSET_PAIRS_PATH + "/" + fixture.TestMarginAssetPair.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -53,13 +52,13 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssetPairs")]
-        [Trait("Category", "MarginAssetPairsGet")]
-        public async void CheckIfMarginAssetPairExists()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssetPairs")]
+        [Category("MarginAssetPairsGet")]
+        public async Task CheckIfMarginAssetPairExists()
         {
-            string url = fixture.ApiEndpointNames["marginAssetPairs"] + "/" + fixture.TestMarginAssetPair.Id + "/exists";
+            string url = ApiPaths.MARGIN_ASSET_PAIRS_PATH + "/" + fixture.TestMarginAssetPair.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -68,28 +67,27 @@ namespace AFTests.AssetsTests
             Assert.True(parsedResponse);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssetPairs")]
-        [Trait("Category", "MarginAssetPairsPost")]
-        public async void CreateMarginAssetPair()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssetPairs")]
+        [Category("MarginAssetPairsPost")]
+        public async Task CreateMarginAssetPair()
         {
             MarginAssetPairDTO createdDTO = await fixture.CreateTestMarginAssetPair();
             Assert.NotNull(createdDTO);
 
-            await fixture.MarginAssetPairManager.UpdateCacheAsync();
             MarginAssetPairsEntity entity = await fixture.MarginAssetPairManager.TryGetAsync(createdDTO.Id) as MarginAssetPairsEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(createdDTO, o => o.ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssetPairs")]
-        [Trait("Category", "MarginAssetPairsDelete")]
-        public async void UpdateMarginAssetPair()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssetPairs")]
+        [Category("MarginAssetPairsDelete")]
+        public async Task UpdateMarginAssetPair()
         {
-            string url = fixture.ApiEndpointNames["marginAssetPairs"];
+            string url = ApiPaths.MARGIN_ASSET_PAIRS_PATH;
             MarginAssetPairDTO updateDTO = new MarginAssetPairDTO()
             {
                 Id = fixture.TestMarginAssetPairUpdate.Id,
@@ -104,23 +102,21 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.MarginAssetPairManager.UpdateCacheAsync();
             MarginAssetPairsEntity entity = await fixture.MarginAssetPairManager.TryGetAsync(updateDTO.Id) as MarginAssetPairsEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(updateDTO, o => o.ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssetPairs")]
-        [Trait("Category", "MarginAssetPairsDelete")]
-        public async void DeleteMarginAssetPair()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssetPairs")]
+        [Category("MarginAssetPairsDelete")]
+        public async Task DeleteMarginAssetPair()
         {
-            string url = fixture.ApiEndpointNames["marginAssetPairs"] + "/" + fixture.TestMarginAssetPairDelete.Id;
+            string url = ApiPaths.MARGIN_ASSET_PAIRS_PATH + "/" + fixture.TestMarginAssetPairDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.MarginAssetPairManager.UpdateCacheAsync();
             MarginAssetPairsEntity entity = await fixture.MarginAssetPairManager.TryGetAsync(fixture.TestMarginAssetPairDelete.Id) as MarginAssetPairsEntity;
             Assert.Null(entity);
 

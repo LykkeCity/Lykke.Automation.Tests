@@ -3,42 +3,48 @@ using FluentAssertions;
 using RestSharp;
 using System.Collections.Generic;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
+using System.Threading.Tasks;
+using XUnitTestCommon;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetClients")]
-        [Trait("Category", "AssetClientsGet")]
-        public async void GetClientAssetIDs()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetClients")]
+        [Category("AssetClientsGet")]
+        public async Task GetClientAssetIDs()
         {
-            string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/asset-ids";
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString();
+            string url = ApiPaths.CLIENTS_BASE_PATH + "/" + fixture.TestAccountIdForClientEndpoint + "/asset-ids";
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                ["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString()
+            };
 
             var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             List<string> parsedResponse = JsonUtils.DeserializeJson<List<string>>(response.ResponseJson);
-            Assert.True(parsedResponse[0] == fixture.TestAssetForClientEndpoint.Id);
+            parsedResponse.Should().Contain(fixture.TestAssetForClientEndpoint.Id);
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetClients")]
-        [Trait("Category", "AssetClientsGet")]
-        public async void GetClientSwiftDepositOption()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetClients")]
+        [Category("AssetClientsGet")]
+        public async Task GetClientSwiftDepositOption()
         {
-            string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/swift-deposit-enabled";
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString();
+            string url = ApiPaths.CLIENTS_BASE_PATH + "/" + fixture.TestAccountIdForClientEndpoint + "/swift-deposit-enabled";
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                ["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString()
+            };
 
             var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -48,15 +54,17 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetClients")]
-        [Trait("Category", "AssetClientsGet")]
-        public async void GetClientCashInBankOption()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetClients")]
+        [Category("AssetClientsGet")]
+        public async Task GetClientCashInBankOption()
         {
-            string url = fixture.ApiEndpointNames["assetClients"] + "/" + fixture.TestAccountIdForClientEndpoint + "/cash-in-via-bank-card-enabled";
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString();
+            string url = ApiPaths.CLIENTS_BASE_PATH + "/" + fixture.TestAccountIdForClientEndpoint + "/cash-in-via-bank-card-enabled";
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                ["isIosDevice"] = fixture.TestGroupForClientEndpoint.IsIosDevice.ToString()
+            };
 
             var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);

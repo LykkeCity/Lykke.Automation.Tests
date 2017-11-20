@@ -5,25 +5,26 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.Assets;
+using System.Threading.Tasks;
+using XUnitTestData.Entities.Assets;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest
     {
         #region predefined
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListGet")]
-        public async void GetAllWatchListsPredefined()
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListGet")]
+        public async Task GetAllWatchListsPredefined()
         {
-            string url = fixture.ApiEndpointNames["watchList"] + "/predefined";
+            string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -48,13 +49,13 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListGet")]
-        public async void GetSingleWatchListsPredefined()
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListGet")]
+        public async Task GetSingleWatchListsPredefined()
         {
-            string url = fixture.ApiEndpointNames["watchList"] + "/predefined/" + fixture.TestWatchListPredefined.Id;
+            string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH + "/" + fixture.TestWatchListPredefined.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -74,11 +75,11 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListPost")]
-        public async void CreatePredefinedWatchList()
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListPost")]
+        public async Task CreatePredefinedWatchList()
         {
             WatchListDTO createdDTO = await fixture.CreateTestWatchList();
             Assert.NotNull(createdDTO);
@@ -98,17 +99,17 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListPut")]
-        public async void UpdatePredefinedWatchList()
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListPut")]
+        public async Task UpdatePredefinedWatchList()
         {
-            string url = fixture.ApiEndpointNames["watchList"] + "/predefined";
+            string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH;
             WatchListDTO updateWatchList = new WatchListDTO()
             {
                 Id = fixture.TestWatchListPredefinedUpdate.Id,
-                Name = fixture.TestWatchListPredefinedUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest",
+                Name = fixture.TestWatchListPredefinedUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
                 Order = Helpers.Random.Next(1, 100),
                 ReadOnly = fixture.TestWatchListPredefinedUpdate.ReadOnly,
                 AssetIds = fixture.TestWatchListPredefinedUpdate.AssetIds
@@ -134,13 +135,13 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListDelete")]
-        public async void DeletePredefinedWatchList()
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListDelete")]
+        public async Task DeletePredefinedWatchList()
         {
-            string url = fixture.ApiEndpointNames["watchList"] + "/predefined/" + fixture.TestWatchListPredefinedDelete.Id;
+            string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH + "/" + fixture.TestWatchListPredefinedDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
@@ -150,15 +151,17 @@ namespace AFTests.AssetsTests
         #endregion
 
         #region Custom
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListGet")]
-        public async void GetAllWatchListsCustom()
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListGet")]
+        public async Task GetAllWatchListsCustom()
         {
-            string url = fixture.ApiEndpointNames["watchList"] + "/custom";
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams.Add("userId", fixture.TestWatchListCustom.PartitionKey);
+            string url = ApiPaths.WATCH_LIST_CUSTOM_PATH;
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                { "userId", fixture.TestWatchListCustom.PartitionKey }
+            };
 
             var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -183,15 +186,17 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListGet")]
-        public async void GetSingleWatchListsCustom()
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListGet")]
+        public async Task GetSingleWatchListsCustom()
         {
-            string url = fixture.ApiEndpointNames["watchList"] + "/custom/" + fixture.TestWatchListCustom.Id;
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams.Add("userId", fixture.TestWatchListCustom.PartitionKey);
+            string url = ApiPaths.WATCH_LIST_CUSTOM_PATH  + "/" + fixture.TestWatchListCustom.Id;
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                { "userId", fixture.TestWatchListCustom.PartitionKey }
+            };
 
             var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -210,11 +215,11 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListPost")]
-        public async void CreateCustomWatchList()
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListPost")]
+        public async Task CreateCustomWatchList()
         {
             WatchListDTO createdDTO = await fixture.CreateTestWatchList(fixture.TestAccountId);
             Assert.NotNull(createdDTO);
@@ -234,19 +239,21 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListPut")]
-        public async void UpdateCustomWatchList()
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListPut")]
+        public async Task UpdateCustomWatchList()
         {
-            string url = fixture.ApiEndpointNames["watchList"] + "/custom";
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams.Add("userId", fixture.TestAccountId);
+            string url = ApiPaths.WATCH_LIST_CUSTOM_PATH;
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                { "userId", fixture.TestAccountId }
+            };
             WatchListDTO updateWatchList = new WatchListDTO()
             {
                 Id = fixture.TestWatchListCustomUpdate.Id,
-                Name = fixture.TestWatchListCustomUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + "_AutoTest",
+                Name = fixture.TestWatchListCustomUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
                 Order = Helpers.Random.Next(1, 100),
                 ReadOnly = fixture.TestWatchListCustomUpdate.ReadOnly,
                 AssetIds = fixture.TestWatchListCustomUpdate.AssetIds
@@ -272,15 +279,17 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListDelete")]
-        public async void DeleteCustomWatchList()
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListDelete")]
+        public async Task DeleteCustomWatchList()
         {
-            string url = fixture.ApiEndpointNames["watchList"] + "/custom/" + fixture.TestWatchListCustomDelete.Id;
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams.Add("userId", fixture.TestAccountId);
+            string url = ApiPaths.WATCH_LIST_CUSTOM_PATH + "/" + fixture.TestWatchListCustomDelete.Id;
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                { "userId", fixture.TestAccountId }
+            };
 
             var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
@@ -290,15 +299,17 @@ namespace AFTests.AssetsTests
         }
         #endregion
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "WatchList")]
-        [Trait("Category", "WatchListGet")]
-        public async void GetAllWatchLists()
+        [Test]
+        [Category("Smoke")]
+        [Category("WatchList")]
+        [Category("WatchListGet")]
+        public async Task GetAllWatchLists()
         {
-            string url = fixture.ApiEndpointNames["watchList"] + "/all";
-            Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams.Add("userId", fixture.TestWatchListCustom.PartitionKey);
+            string url = ApiPaths.WATCH_LIST_ALL_PATH;
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                { "userId", fixture.TestWatchListCustom.PartitionKey }
+            };
 
             var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);

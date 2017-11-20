@@ -1,30 +1,29 @@
 ﻿using AssetsData.Fixtures;
-using System;
 using System.Net;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon;
 using RestSharp;
-using XUnitTestData.Repositories.Assets;
 using FluentAssertions;
 using AssetsData.DTOs.Assets;
 using XUnitTestCommon.Utils;
+using System.Threading.Tasks;
+using XUnitTestData.Entities.Assets;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsGet")]
-        public async void GetAllMarginAssets()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsGet")]
+        public async Task GetAllMarginAssets()
         {
-            string url = fixture.ApiEndpointNames["marginAssets"];
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -37,13 +36,13 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsGet")]
-        public async void GetSingleMarginAssets()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsGet")]
+        public async Task GetSingleMarginAssets()
         {
-            string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAsset.Id;
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + fixture.TestMarginAsset.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -53,13 +52,13 @@ namespace AFTests.AssetsTests
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsGet")]
-        public async void CheckIfMarginAssetsExists()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsGet")]
+        public async Task CheckIfMarginAssetsExists()
         {
-            string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAsset.Id + "/exists";
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + fixture.TestMarginAsset.Id + "/exists";
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -67,28 +66,27 @@ namespace AFTests.AssetsTests
             Assert.True(parsedResponse);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsPost")]
-        public async void CreateMarginAsset()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsPost")]
+        public async Task CreateMarginAsset()
         {
             MarginAssetDTO createdDTO = await fixture.CreateTestMarginAsset();
             Assert.NotNull(createdDTO);
 
-            await fixture.MarginAssetManager.UpdateCacheAsync();
             MarginAssetEntity entity = await fixture.MarginAssetManager.TryGetAsync(createdDTO.Id) as MarginAssetEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(createdDTO, o => o.ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsPut")]
-        public async void UpdateMarginAsset()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsPut")]
+        public async Task UpdateMarginAsset()
         {
-            string url = fixture.ApiEndpointNames["marginAssets"];
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH;
             MarginAssetDTO updateDTO = new MarginAssetDTO()
             {
                 Id = fixture.TestMarginAssetUpdate.Id,
@@ -104,24 +102,22 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.MarginAssetManager.UpdateCacheAsync();
             MarginAssetEntity entity = await fixture.MarginAssetManager.TryGetAsync(updateDTO.Id) as MarginAssetEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(updateDTO, o => o.ExcludingMissingMembers());
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "MarginAssets")]
-        [Trait("Category", "MarginAssetsDelete")]
-        public async void DeleteMarginAsset()
+        [Test]
+        [Category("Smoke")]
+        [Category("MarginAssets")]
+        [Category("MarginAssetsDelete")]
+        public async Task DeleteMarginAsset()
         {
-            string url = fixture.ApiEndpointNames["marginAssets"] + "/" + fixture.TestMarginAssetDelete.Id;
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + fixture.TestMarginAssetDelete.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.MarginAssetManager.UpdateCacheAsync();
             MarginAssetEntity entity = await fixture.MarginAssetManager.TryGetAsync(fixture.TestMarginAssetDelete.Id) as MarginAssetEntity;
             Assert.Null(entity);
         }

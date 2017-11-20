@@ -1,14 +1,11 @@
 ﻿using Autofac;
 using AzureStorage.Tables;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using XUnitTestCommon;
-using XUnitTestCommon.Utils;
 using XUnitTestData.Domains;
 using XUnitTestData.Domains.ApiV2;
 using XUnitTestData.Repositories;
-using XUnitTestData.Repositories.ApiV2;
+using XUnitTestData.Entities.ApiV2;
+using XUnitTestData.Entities;
 
 namespace ApiV2Data.DependencyInjection
 {
@@ -23,17 +20,35 @@ namespace ApiV2Data.DependencyInjection
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(c => new WalletRepository(
+            builder.Register(c => new GenericRepository<WalletEntity, IWallet>(
                     new AzureTableStorage<WalletEntity>(
-                        _configBuilder.Config["MainConnectionString"], "Wallets", null)))
+                        _configBuilder.Config["MainConnectionString"], "Wallets", null), "Wallet"))
                 .As<IDictionaryRepository<IWallet>>();
 
-            builder.Register(c => new AccountRepository(
+            builder.Register(c => new GenericRepository<AccountEntity, IAccount>(
                     new AzureTableStorage<AccountEntity>(
-                        _configBuilder.Config["MainConnectionString"], "Accounts", null)))
+                        _configBuilder.Config["MainConnectionString"], "Accounts", null), "ClientBalance"))
                 .As<IDictionaryRepository<IAccount>>();
 
-            RepositoryUtils.RegisterDictionaryManager<IAccount>(builder);
+            builder.Register(c => new GenericRepository<OperationsEntity, IOperations>(
+                    new AzureTableStorage<OperationsEntity>(
+                        _configBuilder.Config["MainConnectionString"], "Operations", null), "Operations"))
+                .As<IDictionaryRepository<IOperations>>();
+
+            builder.Register(c => new GenericRepository<OperationDetailsEntity, IOperationDetails>(
+                    new AzureTableStorage<OperationDetailsEntity>(
+                        _configBuilder.Config["MainConnectionString"], "OperationDetailsInformation", null)))
+                .As<IDictionaryRepository<IOperationDetails>>();
+
+            builder.Register(c => new GenericRepository<PersonalDataEntity, IPersonalData>(
+                    new AzureTableStorage<PersonalDataEntity>(
+                        _configBuilder.Config["MainConnectionString"], "PersonalData", null), "PD"))
+                .As<IDictionaryRepository<IPersonalData>>();
+
+            builder.Register(c => new GenericRepository<TradersEntity, ITrader>(
+                    new AzureTableStorage<TradersEntity>(
+                        _configBuilder.Config["MainConnectionString"], "Traders", null)))
+                .As<IDictionaryRepository<ITrader>>();
         }
     }
 }

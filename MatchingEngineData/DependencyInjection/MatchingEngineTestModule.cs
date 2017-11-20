@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using Autofac;
-using System.Text;
+﻿using Autofac;
 using XUnitTestCommon;
 using XUnitTestData.Domains;
-using XUnitTestData.Services;
 using XUnitTestData.Repositories;
 using XUnitTestCommon.Utils;
 using AzureStorage.Tables;
-using XUnitTestData.Repositories.MatchingEngine;
+using XUnitTestData.Entities.MatchingEngine;
 using XUnitTestData.Domains.MatchingEngine;
-using XUnitTestData.Repositories.Assets;
 using XUnitTestData.Domains.Assets;
+using XUnitTestData.Entities;
+using XUnitTestData.Entities.Assets;
 
 namespace MatchingEngineData.DependencyInjection
 {
@@ -26,31 +23,30 @@ namespace MatchingEngineData.DependencyInjection
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(c => new AccountRepository(
+            builder.Register(c => new GenericRepository<AccountEntity, IAccount>(
                     new AzureTableStorage<AccountEntity>(
-                        _configBuilder.Config["BalancesInfoConnectionString"], "Accounts", null)))
+                        _configBuilder.Config["BalancesInfoConnectionString"], "Accounts", null), "ClientBalance"))
                 .As<IDictionaryRepository<IAccount>>();
 
-            builder.Register(c => new CashSwapRepository(
+            builder.Register(c => new GenericRepository<CashSwapEntity, ICashSwap>(
                     new AzureTableStorage<CashSwapEntity>(
                         _configBuilder.Config["BalancesInfoConnectionString"], "SwapOperationsCash", null)))
                 .As<IDictionaryRepository<ICashSwap>>();
 
-            builder.Register(c => new AssetPairsRepository(
-                    new AzureTableStorage<AssetPairEntity>(
-                        _configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null)))
-                .As<IDictionaryRepository<IAssetPair>>();
+            builder.Register(c =>
+                new GenericRepository<AssetPairEntity, IAssetPair>(
+                    new AzureTableStorage<AssetPairEntity>(_configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null),
+                    "AssetPair"
+                )
+            )
+            .As<IDictionaryRepository<IAssetPair>>();
 
-            RepositoryUtils.RegisterDictionaryManager<IAssetPair>(builder);
-
-            builder.Register(c => new MarketOrdersRepository(
+            builder.Register(c => new GenericRepository<MarketOrderEntity, IMarketOrderEntity>(
                     new AzureTableStorage<MarketOrderEntity>(
-                        _configBuilder.Config["LimitOrdersConnectionString"], "MarketOrders", null)))
+                        _configBuilder.Config["LimitOrdersConnectionString"], "MarketOrders", null), "OrderId"))
                 .As<IDictionaryRepository<IMarketOrderEntity>>();
 
-            //RepositoryUtils.RegisterDictionaryManager<IMarketOrderEntity>(builder);
-
-            builder.Register(c => new LimitOrderRepository(
+            builder.Register(c => new GenericRepository<LimitOrderEntity, ILimitOrderEntity>(
                 new AzureTableStorage<LimitOrderEntity>(
                     _configBuilder.Config["LimitOrdersConnectionString"], "LimitOrders", null)))
                 .As<IDictionaryRepository<ILimitOrderEntity>>();

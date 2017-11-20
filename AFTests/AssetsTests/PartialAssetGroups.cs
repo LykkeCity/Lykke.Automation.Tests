@@ -5,24 +5,25 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Xunit;
+using NUnit.Framework;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories.Assets;
 using XUnitTestCommon;
+using System.Threading.Tasks;
+using XUnitTestData.Entities.Assets;
 
 namespace AFTests.AssetsTests
 {
-    [Trait("Category", "FullRegression")]
-    [Trait("Category", "AssetsService")]
-    public partial class AssetsTest : IClassFixture<AssetsTestDataFixture>
+    [Category("FullRegression")]
+    [Category("AssetsService")]
+    public partial class AssetsTest
     {
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsGet")]
-        public async void GetAllAssetGroups()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsGet")]
+        public async Task GetAllAssetGroups()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"];
+            string url = ApiPaths.ASSET_GROUPS_PATH;
 
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -38,13 +39,13 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsGet")]
-        public async void GetSingleAssetGroups()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsGet")]
+        public async Task GetSingleAssetGroups()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id;
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestAssetGroup.Id;
 
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -57,13 +58,13 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsGet")]
-        public async void GetAssetGroupAssetIDs()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsGet")]
+        public async Task GetAssetGroupAssetIDs()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id + "/asset-ids";
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestAssetGroup.Id + "/asset-ids";
 
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -71,7 +72,7 @@ namespace AFTests.AssetsTests
             List<string> parsedResponse = JsonUtils.DeserializeJson<List<string>>(response.ResponseJson);
             Assert.NotNull(parsedResponse);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupAssetIDsAsync(fixture.TestAssetGroup.Id);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"AssetLink_{fixture.TestAssetGroup.Id}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             for (int i = 0; i < assetIds.Count; i++)
@@ -82,13 +83,13 @@ namespace AFTests.AssetsTests
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsGet")]
-        public async void GetAssetGroupClientIDs()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsGet")]
+        public async Task GetAssetGroupClientIDs()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroup.Id + "/client-ids";
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestAssetGroup.Id + "/client-ids";
 
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -96,7 +97,7 @@ namespace AFTests.AssetsTests
             List<string> parsedResponse = JsonUtils.DeserializeJson<List<string>>(response.ResponseJson);
             Assert.NotNull(parsedResponse);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupClientIDsAsync(fixture.TestAssetGroup.Id);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"ClientGroupLink_{fixture.TestAssetGroup.Id}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             for (int i = 0; i < assetIds.Count; i++)
@@ -105,28 +106,27 @@ namespace AFTests.AssetsTests
             }
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPost")]
-        public async void CreateAssetGroup()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPost")]
+        public async Task CreateAssetGroup()
         {
             AssetGroupDTO createdGroup = await fixture.CreateTestAssetGroup();
             Assert.NotNull(createdGroup);
 
-            await fixture.AssetGroupsManager.UpdateCacheAsync();
             AssetGroupEntity entity = await fixture.AssetGroupsManager.TryGetAsync(createdGroup.Name) as AssetGroupEntity;
             entity.ShouldBeEquivalentTo(createdGroup, o => o
             .ExcludingMissingMembers());
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPut")]
-        public async void UpdateAssetGroup()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPut")]
+        public async Task UpdateAssetGroup()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"];
+            string url = ApiPaths.ASSET_GROUPS_PATH;
 
             AssetGroupDTO editGroup = new AssetGroupDTO()
             {
@@ -140,95 +140,93 @@ namespace AFTests.AssetsTests
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetGroupsManager.UpdateCacheAsync();
             AssetGroupEntity entity = await fixture.AssetGroupsManager.TryGetAsync(editGroup.Name) as AssetGroupEntity;
             entity.ShouldBeEquivalentTo(editGroup, o => o
             .ExcludingMissingMembers());
 
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsDelete")]
-        public async void DeleteAssetGroup()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsDelete")]
+        public async Task DeleteAssetGroup()
         {
-            string deleteUrl = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestAssetGroupDelete.Name;
+            string deleteUrl = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestAssetGroupDelete.Name;
             var response = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            await fixture.AssetGroupsManager.UpdateCacheAsync();
             AssetGroupEntity entity = await fixture.AssetGroupsManager.TryGetAsync(fixture.TestAssetGroupDelete.Name) as AssetGroupEntity;
             Assert.Null(entity);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPost")]
-        public async void AddAssetToAssetGroup()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPost")]
+        public async Task AddAssetToAssetGroup()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForGroupRelationAdd.Name + "/assets/" + fixture.TestAssetForGroupRelationAdd.Id;
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestGroupForGroupRelationAdd.Name + "/assets/" + fixture.TestAssetForGroupRelationAdd.Id;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupAssetIDsAsync(fixture.TestGroupForGroupRelationAdd.Name);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"AssetLink_{fixture.TestGroupForGroupRelationAdd.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 1);
             Assert.True(assetIds[0] == fixture.TestAssetForGroupRelationAdd.Id);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPost")]
-        public async void RemoveAssetFromAssetGroup()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPost")]
+        public async Task RemoveAssetFromAssetGroup()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForGroupRelationDelete.Name + "/assets/" + fixture.TestAssetForGroupRelationDelete.Id;
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestGroupForGroupRelationDelete.Name + "/assets/" + fixture.TestAssetForGroupRelationDelete.Id;
             var createResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(createResponse.Status == HttpStatusCode.NoContent);
 
             var deleteResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupAssetIDsAsync(fixture.TestGroupForGroupRelationDelete.Name);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"AssetLink_{fixture.TestGroupForGroupRelationDelete.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 0);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPost")]
-        public async void AddClientToAssetGroup()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPost")]
+        public async Task AddClientToAssetGroup()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForClientRelationAdd.Name + "/clients/" + fixture.TestAccountId;
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestGroupForClientRelationAdd.Name + "/clients/" + fixture.TestAccountId;
             var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupClientIDsAsync(fixture.TestGroupForClientRelationAdd.Name);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"ClientGroupLink_{fixture.TestGroupForClientRelationAdd.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 1);
             Assert.True(assetIds[0] == fixture.TestAccountId);
         }
 
-        [Fact]
-        [Trait("Category", "Smoke")]
-        [Trait("Category", "AssetGroups")]
-        [Trait("Category", "AssetGroupsPost")]
-        public async void RemoveClientFromAssetGroup()
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPost")]
+        public async Task RemoveClientFromAssetGroup()
         {
-            string url = fixture.ApiEndpointNames["assetGroups"] + "/" + fixture.TestGroupForClientRelationDelete.Name + "/clients/" + fixture.TestAccountId;
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + fixture.TestGroupForClientRelationDelete.Name + "/clients/" + fixture.TestAccountId;
             var createResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(createResponse.Status == HttpStatusCode.NoContent);
 
             var deleteResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            var entities = await fixture.AssetGroupsRepository.GetGroupClientIDsAsync(fixture.TestGroupForClientRelationDelete.Name);
+            var entities = await fixture.AssetGroupsRepository.GetAllAsync($"ClientGroupLink_{fixture.TestGroupForClientRelationDelete.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 0);
