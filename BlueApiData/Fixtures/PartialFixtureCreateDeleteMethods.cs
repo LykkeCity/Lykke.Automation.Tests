@@ -6,6 +6,7 @@ using RestSharp;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Entities.BlueApi;
+using XUnitTestData.Entities.ApiV2;
 
 namespace BlueApiData.Fixtures
 {
@@ -52,6 +53,14 @@ namespace BlueApiData.Fixtures
             }
 
             return true;
+        }
+
+        public async Task<string> GetClientIdByEmail(string email)
+        {
+            PersonalDataEntity entity = await PersonalDataRepository.TryGetAsync(pd => pd.PartitionKey == PersonalDataEntity.GeneratePartitionKey() && pd.Email == email) as PersonalDataEntity;
+            if (entity != null)
+                return entity.RowKey;
+            return null;
         }
     }
 }

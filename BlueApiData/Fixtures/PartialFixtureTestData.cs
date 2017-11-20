@@ -28,17 +28,14 @@ namespace BlueApiData.Fixtures
             _pledgesToDelete = new Dictionary<string, string>();
 
             TestClientId = _configBuilder.Config["AuthClientId"];
-            TestPledgeCreateClientId = _configBuilder.Config["AuthPledgeCreateClientId"];
-            TestPledgeDeleteClientId = _configBuilder.Config["AuthPledgeDeleteClientId"];
-            TestPledgeUpdateClientId = _configBuilder.Config["AuthPledgeUpdateClientId"];
 
             AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
             TwitterSearchQuery = "#dog"; // hard-coded for now, will think of a way to change it dynamically 
             TwitterSearchUntilDate = DateTime.Parse("07-11-2017"); // hard-coded for now, will think of a way to change it dynamically
 
-            TestPledge = await CreateTestPledge(clientId: TestClientId);
-            TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
-            TestPledgeDelete = await CreateTestPledge(TestPledgeDeleteClientId, "DeletePledge");
+            TestPledge = await CreateTestPledge(TestPledgeClientIDs["GetPledge"], "GetPledge");
+            TestPledgeUpdate = await CreateTestPledge(TestPledgeClientIDs["UpdatePledge"], "UpdatePledge");
+            TestPledgeDelete = await CreateTestPledge(TestPledgeClientIDs["DeletePledge"], "DeletePledge");
         }
     }
 }

@@ -55,11 +55,11 @@ namespace AFTests.BlueApi
         [Category("PledgesPost")]
         public async Task CreatePledge()
         {
-            var createdPledge = await _fixture.CreateTestPledge(_fixture.TestPledgeCreateClientId, "CreatePledge");
+            var createdPledge = await _fixture.CreateTestPledge(_fixture.TestPledgeClientIDs["CreatePledge"], "CreatePledge");
             Assert.NotNull(createdPledge);
 
             var createdPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeCreateClientId);
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeClientIDs["CreatePledge"]);
 
             createdPledgeEntity.ShouldBeEquivalentTo(createdPledge, o => o.ExcludingMissingMembers());
         }
@@ -86,7 +86,7 @@ namespace AFTests.BlueApi
             Assert.True(editResponse.Status == HttpStatusCode.NoContent);
 
             var editedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeUpdateClientId);
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeClientIDs["UpdatePledge"]);
 
             editedPledgeEntity.ShouldBeEquivalentTo(editPledge, o => o.ExcludingMissingMembers().Excluding(p => p.ClientId));
         }
@@ -104,7 +104,7 @@ namespace AFTests.BlueApi
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
             var deletedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeDeleteClientId);
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeClientIDs["DeletePledge"]);
             Assert.Null(deletedPledgeEntity);
         }
     }

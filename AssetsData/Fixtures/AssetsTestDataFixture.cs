@@ -29,19 +29,7 @@ namespace AssetsData.Fixtures
         {
             _configBuilder = new ConfigBuilder("Assets");
 
-            var oAuthConsumer = new OAuthConsumer
-            {
-                AuthTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]),
-                AuthPath = _configBuilder.Config["AuthPath"],
-                BaseAuthUrl = _configBuilder.Config["BaseUrlAuth"],
-                AuthUser = new User
-                {
-                    ClientInfo = _configBuilder.Config["AuthClientInfo"],
-                    Email = _configBuilder.Config["AuthEmail"],
-                    PartnerId = _configBuilder.Config["AuthPartnerId"],
-                    Password = _configBuilder.Config["AuthPassword"]
-                }
-            };
+            var oAuthConsumer = new OAuthConsumer(_configBuilder);
 
             this.Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
 
