@@ -22,6 +22,9 @@ namespace AFTests.BlueApi
         [Category("PledgesGet")]
         public async Task GetPledge()
         {
+            _fixture.PrepareDefaultTestPledge().Wait();
+            AddCleanupAction(() => _fixture.DeleteTestPledge().Wait());
+
             var url = ApiPaths.PLEDGES_BASE_PATH;
             var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
@@ -36,26 +39,12 @@ namespace AFTests.BlueApi
         [Test]
         [Category("Smoke")]
         [Category("Pledges")]
-        [Category("PledgesGet")]
-        public async Task GetPledgeById()
-        {
-            var getSingleUrl = ApiPaths.PLEDGES_BASE_PATH;
-
-            var singleResponse = await _fixture.Consumer.ExecuteRequest(getSingleUrl, Helpers.EmptyDictionary, null, Method.GET);
-            Assert.True(singleResponse.Status == HttpStatusCode.OK);
-            var parsedResponseSingle = JsonUtils.DeserializeJson<PledgeDTO>(singleResponse.ResponseJson);
-            _fixture.TestPledge.ShouldBeEquivalentTo(parsedResponseSingle);
-
-        }
-
-        //[Ignore("test will fail")]
-        [Test]
-        [Category("Smoke")]
-        [Category("Pledges")]
         [Category("PledgesPost")]
         public async Task CreatePledge()
         {
+            _fixture.PrepareCreateTestPledge();
             var createdPledge = await _fixture.CreateTestPledge(_fixture.TestPledgeCreateClientId, "CreatePledge");
+            AddCleanupAction(() => _fixture.DeleteTestPledge("CreatePledge").Wait());
             Assert.NotNull(createdPledge);
 
             var createdPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(
@@ -71,6 +60,9 @@ namespace AFTests.BlueApi
         [Category("PledgesPut")]
         public async Task UpdatePledge()
         {
+            _fixture.PrepareUpdateTestPledge().Wait();
+            AddCleanupAction(() => _fixture.DeleteTestPledge("UpdatePledge").Wait());
+
             var editPledge = new PledgeDTO()
             {
                 Id = _fixture.TestPledgeUpdate.Id,
@@ -98,6 +90,9 @@ namespace AFTests.BlueApi
         [Category("PledgesDelete")]
         public async Task DeletePledge()
         {
+            _fixture.PrepareDeleteTestPledge().Wait();
+            AddCleanupAction(() => _fixture.DeleteTestPledge("DeletePledge").Wait());
+
             var url = ApiPaths.PLEDGES_BASE_PATH;
 
             var deleteResponse = await _fixture.PledgeApiConsumers["DeletePledge"].ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
