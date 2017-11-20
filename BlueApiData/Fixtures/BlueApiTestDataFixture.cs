@@ -32,6 +32,7 @@ namespace BlueApiData.Fixtures
         private Dictionary<string, string> _pledgesToDelete;
 
         public GenericRepository<PledgeEntity, IPledgeEntity> PledgeRepository;
+        public GenericRepository<ReferralLinkEntity, IReferralLink> ReferralLinkRepository;
         public PledgeDTO TestPledge;
         public PledgeDTO TestPledgeUpdate;
         public PledgeDTO TestPledgeDelete;
@@ -119,7 +120,8 @@ namespace BlueApiData.Fixtures
             builder.RegisterModule(new BlueApiTestModule(_configBuilder));
             _container = builder.Build();
 
-            PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(this._container);
+            PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(_container);
+            ReferralLinkRepository = RepositoryUtils.ResolveGenericRepository<ReferralLinkEntity, IReferralLink>(_container);
         }
 
         public void Dispose()
