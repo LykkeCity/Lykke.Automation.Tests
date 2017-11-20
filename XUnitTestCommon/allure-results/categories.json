@@ -1,9 +1,0 @@
-[
-  {
-    "name": "Ignored tests",
-    "messageRegex": ".*",
-    "matchedStatuses": [
-      "skipped"
-    ]
-  }
-]

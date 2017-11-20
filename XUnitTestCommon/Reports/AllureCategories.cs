@@ -12,9 +12,11 @@ namespace XUnitTestCommon.Reports
     {
         public string GetJson()
         {
-            var settings = new JsonSerializerSettings();
-            settings.NullValueHandling = NullValueHandling.Ignore;
-            settings.Formatting = Formatting.Indented;
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented
+            };
             settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
 
             return JsonConvert.SerializeObject(GetCategories(), settings);

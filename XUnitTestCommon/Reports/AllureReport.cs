@@ -15,7 +15,6 @@ namespace XUnitTestCommon.Reports
         private static AllureLifecycle _lifecycle;
         private static Dictionary<string, List<dynamic>> _caseStorage = new Dictionary<string, List<dynamic>>();
         private object debugLock = new object();
-        private static string resultDir;
         private static object myLock = new object();
         protected Exception result;
 
@@ -39,12 +38,6 @@ namespace XUnitTestCommon.Reports
         public void RunStarted(string workDirectory)
         {
             _lifecycle = AllureLifecycle.Instance;
-        }
-
-        public void RunFinished()
-        {
-            CreateEnvFile();
-            CreateCategoryFile();
         }
 
         public void CaseStarted(string fullName, string name, string description)
@@ -107,24 +100,6 @@ namespace XUnitTestCommon.Reports
             {
                 _lifecycle.StopStep(fullName);
             }
-        }
-
-        private void CreateEnvFile()
-        {
-            resultDir = @"C:\Users\Todor\Desktop\Lykke.Automation.Tests\XUnitTestCommon\Reports\allure-config\";
-            string environmetFilePath = Path.Combine(resultDir, "environment.properties");
-            string[] lines = new[]
-            {
-                String.Format("{0}={1}", "TestCategory", "Sample category" ?? ""), // work with categories here
-            };
-            File.WriteAllLines(environmetFilePath, lines);
-        }
-
-        private void CreateCategoryFile()
-        {
-            resultDir = @"C:\Users\Todor\Desktop\Lykke.Automation.Tests\XUnitTestCommon\Reports\allure-config\";
-            string categoryFilePath = Path.Combine(resultDir, "categories.json");
-            File.WriteAllText(categoryFilePath, new AllureCategories().GetJson());
         }
 
         private string GetFixtureName(string fullName)
