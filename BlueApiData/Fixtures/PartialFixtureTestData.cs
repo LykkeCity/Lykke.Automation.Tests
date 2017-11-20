@@ -33,8 +33,6 @@ namespace BlueApiData.Fixtures
             TestPledgeUpdateClientId = _configBuilder.Config["AuthPledgeUpdateClientId"];
 
             AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
-            TwitterSearchQuery = "#dog"; // hard-coded for now, will think of a way to change it dynamically 
-            TwitterSearchUntilDate = DateTime.Parse("07-11-2017"); // hard-coded for now, will think of a way to change it dynamically
 
             TestPledge = await CreateTestPledge(clientId: TestClientId);
             TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
