@@ -21,24 +21,34 @@ namespace BlueApiData.Fixtures
             Mapper = config.CreateMapper();
         }
 
-        private async Task PrepareTestData()
+        public async Task PrepareDefaultTestPledge()
         {
-            PrepareMapper();
-
-            _pledgesToDelete = new Dictionary<string, string>();
-
             TestClientId = _configBuilder.Config["AuthClientId"];
-            TestPledgeCreateClientId = _configBuilder.Config["AuthPledgeCreateClientId"];
-            TestPledgeDeleteClientId = _configBuilder.Config["AuthPledgeDeleteClientId"];
-            TestPledgeUpdateClientId = _configBuilder.Config["AuthPledgeUpdateClientId"];
+            TestPledge = await CreateTestPledge(clientId: TestClientId);
+        }
 
+        public void PrepareCreateTestPledge()
+        {
+            TestPledgeCreateClientId = _configBuilder.Config["AuthPledgeCreateClientId"];
+        }
+
+        public async Task PrepareUpdateTestPledge()
+        {
+            TestPledgeUpdateClientId = _configBuilder.Config["AuthPledgeUpdateClientId"];
+            TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
+        }
+
+        public async Task PrepareDeleteTestPledge()
+        {
+            TestPledgeDeleteClientId = _configBuilder.Config["AuthPledgeDeleteClientId"];
+            TestPledgeDelete = await CreateTestPledge(TestPledgeDeleteClientId, "DeletePledge");
+        }
+
+        public void PrepareTwitterData()
+        {
             AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
             TwitterSearchQuery = "#dog"; // hard-coded for now, will think of a way to change it dynamically 
             TwitterSearchUntilDate = DateTime.Parse("07-11-2017"); // hard-coded for now, will think of a way to change it dynamically
-
-            TestPledge = await CreateTestPledge(clientId: TestClientId);
-            TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
-            TestPledgeDelete = await CreateTestPledge(TestPledgeDeleteClientId, "DeletePledge");
         }
     }
 }

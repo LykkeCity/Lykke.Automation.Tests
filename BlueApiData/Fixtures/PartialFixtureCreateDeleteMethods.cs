@@ -34,8 +34,6 @@ namespace BlueApiData.Fixtures
 
             var returnDto = Mapper.Map<PledgeDTO>(pledge);
 
-            _pledgesToDelete.Add(returnDto.Id, consumerIndex);
-
             return returnDto;
         }
 

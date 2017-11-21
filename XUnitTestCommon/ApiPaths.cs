@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Text;
 
 namespace XUnitTestCommon
@@ -33,6 +34,8 @@ namespace XUnitTestCommon
         public static readonly string PLEDGES_BASE_PATH = "/api/pledges";
 
         public static readonly string TWITTER_BASE_PATH = "/api/twitter";
+
+        public static readonly string REFERRAL_LINKS_BASE_PATH = "/api/refLinks";
 
         // API V2 prefix
         public static readonly string ASSETS_V2_BASE_PATH = "/api/v2/assets";

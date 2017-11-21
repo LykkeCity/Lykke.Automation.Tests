@@ -15,7 +15,7 @@ using XUnitTestData.Entities.BlueApi;
 
 namespace BlueApiData.Fixtures
 {
-    public partial class BlueApiTestDataFixture : IDisposable
+    public partial class BlueApiTestDataFixture
     {
         private readonly ConfigBuilder _configBuilder;
         private IContainer _container;
@@ -29,9 +29,8 @@ namespace BlueApiData.Fixtures
         public string TestPledgeUpdateClientId;
         public string TestPledgeDeleteClientId;
 
-        private Dictionary<string, string> _pledgesToDelete;
-
         public GenericRepository<PledgeEntity, IPledgeEntity> PledgeRepository;
+        public GenericRepository<ReferralLinkEntity, IReferralLink> ReferralLinkRepository;
         public PledgeDTO TestPledge;
         public PledgeDTO TestPledgeUpdate;
         public PledgeDTO TestPledgeDelete;
@@ -45,7 +44,7 @@ namespace BlueApiData.Fixtures
 
             PrepareApiConsumers();
             PrepareDependencyContainer();
-            PrepareTestData().Wait();
+            PrepareMapper();
         }
 
         private void PrepareApiConsumers()
@@ -119,17 +118,8 @@ namespace BlueApiData.Fixtures
             builder.RegisterModule(new BlueApiTestModule(_configBuilder));
             _container = builder.Build();
 
-            PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(this._container);
-        }
-
-        public void Dispose()
-        {
-            var deleteTasks = new List<Task<bool>>();
-
-            foreach (KeyValuePair<string, string> pledgeData in _pledgesToDelete) { deleteTasks.Add(DeleteTestPledge(pledgeData.Value)); }
-
-            Task.WhenAll(deleteTasks).Wait();
-            GC.SuppressFinalize(this);
+            PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(_container);
+            ReferralLinkRepository = RepositoryUtils.ResolveGenericRepository<ReferralLinkEntity, IReferralLink>(_container);
         }
     }
 }

@@ -29,6 +29,11 @@ namespace BlueApiData.DependencyInjection
                     new AzureTableStorage<AccountEntity>(
                         _configBuilder.Config["MainConnectionString"], "Accounts", null), "ClientBalance"))
                 .As<IDictionaryRepository<IAccount>>();
+
+            builder.Register(c => new GenericRepository<ReferralLinkEntity, IReferralLink>(
+                    new AzureTableStorage<ReferralLinkEntity>(
+                        _configBuilder.Config["MainConnectionString"], "ReferralLinks", null), "ReferralLink"))
+                .As<IDictionaryRepository<IReferralLink>>();
         }
     }
 }

@@ -21,6 +21,7 @@ namespace AFTests.BlueApi
         {
             string url = ApiPaths.TWITTER_BASE_PATH;
             int pageSize = Helpers.Random.Next(1, 101); // from 1 to 100 records on a page
+            _fixture.PrepareTwitterData();
             var body = new TwitterSearchDTO()
             {
                 SearchQuery = _fixture.TwitterSearchQuery,
