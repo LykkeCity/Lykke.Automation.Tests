@@ -36,6 +36,9 @@ namespace XUnitTestCommon
         public static readonly string TWITTER_BASE_PATH = "/api/twitter";
 
         public static readonly string REFERRAL_LINKS_BASE_PATH = "/api/refLinks";
+        public static readonly string REFERRAL_LINKS_INVITATION_LINK_PATH = "/api/refLinks/request/invitationLink";
+        public static readonly string REFERRAL_LINKS_GIFTCOINS_LINK_PATH = "/api/refLinks/request/giftCoinslLink";
+        public static readonly string REFERRAL_LINKS_CLAIM_LINK_PATH = "/api/refLinks/claim/invitationLink";
 
         // API V2 prefix
         public static readonly string ASSETS_V2_BASE_PATH = "/api/v2/assets";

@@ -5,10 +5,11 @@ using AutoMapper;
 using BlueApiData.DTOs;
 using XUnitTestData.Domains.BlueApi;
 using XUnitTestData.Entities.BlueApi;
+using XUnitTestCommon.Tests;
 
 namespace BlueApiData.Fixtures
 {
-    public partial class BlueApiTestDataFixture
+    public partial class BlueApiTestDataFixture : BaseTest
     {
         private void PrepareMapper()
         {
@@ -23,24 +24,25 @@ namespace BlueApiData.Fixtures
 
         public async Task PrepareDefaultTestPledge()
         {
-            TestClientId = _configBuilder.Config["AuthClientId"];
-            TestPledge = await CreateTestPledge(clientId: TestClientId);
+            TestClientId = this.TestPledgeClientIDs["GetPledge"];
+            TestPledge = await CreateTestPledge(TestClientId, "GetPledge");
         }
 
-        public void PrepareCreateTestPledge()
+        public async void PrepareCreateTestPledge()
         {
-            TestPledgeCreateClientId = _configBuilder.Config["AuthPledgeCreateClientId"];
+            TestPledgeCreateClientId = this.TestPledgeClientIDs["CreatePledge"];
+            TestPledge = await CreateTestPledge(TestPledgeCreateClientId, "CreatePledge");
         }
 
         public async Task PrepareUpdateTestPledge()
         {
-            TestPledgeUpdateClientId = _configBuilder.Config["AuthPledgeUpdateClientId"];
+            TestPledgeUpdateClientId = this.TestPledgeClientIDs["UpdatePledge"];
             TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
         }
 
         public async Task PrepareDeleteTestPledge()
         {
-            TestPledgeDeleteClientId = _configBuilder.Config["AuthPledgeDeleteClientId"];
+            TestPledgeDeleteClientId = this.TestPledgeClientIDs["DeletePledge"];
             TestPledgeDelete = await CreateTestPledge(TestPledgeDeleteClientId, "DeletePledge");
         }
 
@@ -48,7 +50,7 @@ namespace BlueApiData.Fixtures
         {
             AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
             TwitterSearchQuery = "#dog"; // hard-coded for now, will think of a way to change it dynamically 
-            TwitterSearchUntilDate = DateTime.Parse("07-11-2017"); // hard-coded for now, will think of a way to change it dynamically
+            TwitterSearchUntilDate = DateTime.Parse("07-11-2017"); // hard-coded for now, will think of a way to change it dynamically  
         }
     }
 }

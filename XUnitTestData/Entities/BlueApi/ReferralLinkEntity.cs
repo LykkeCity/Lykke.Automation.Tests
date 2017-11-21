@@ -8,7 +8,7 @@ namespace XUnitTestData.Entities.BlueApi
     {
         public static string GeneratePartitionKey()
         {
-            return "Pledge";
+            return "ReferallLink";
         }
 
         public string Id => RowKey;

@@ -6,6 +6,7 @@ using NUnit.Framework;
 using RestSharp;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
+using BlueApiData.DTOs.ReferralLinks;
 
 namespace AFTests.BlueApi
 {
@@ -19,10 +20,10 @@ namespace AFTests.BlueApi
         [Category("RequestInvitationLinkForNonExistingClient")]
         public async Task RequestInvitationLinkForNonExistingClient()
         {
-            var url = $"{ApiPaths.REFERRAL_LINKS_BASE_PATH}/request/invitationLink";
+            var url = ApiPaths.REFERRAL_LINKS_INVITATION_LINK_PATH;
             var body = JsonUtils.SerializeObject(new RequestInvitationLinkRequestDto { SenderClientId = "123" });
 
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
 
             Assert.True(response.Status == HttpStatusCode.BadRequest);
         }
@@ -33,10 +34,11 @@ namespace AFTests.BlueApi
         [Category("RequestInvitationLinkForExistingClient")]
         public async Task RequestInvitationLinkForExistingClient()
         {
-            var url = $"{ApiPaths.REFERRAL_LINKS_BASE_PATH}/request/invitationLink";
-            var body = JsonUtils.SerializeObject(new RequestInvitationLinkRequestDto { SenderClientId = _fixture.TestClientId });
+            //this.PrepareReferralLinksData();
+            var url = ApiPaths.REFERRAL_LINKS_INVITATION_LINK_PATH;
+            var body = JsonUtils.SerializeObject(new RequestInvitationLinkRequestDto { SenderClientId = this.TestClientId });
 
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
 
             Assert.True(response.Status == HttpStatusCode.Created);
 
@@ -54,10 +56,10 @@ namespace AFTests.BlueApi
         [Category("RequestGiftCoinsLinkForNonExistingClient")]
         public async Task RequestGiftCoinsLinkForNonExistingClient()
         {
-            var url = $"{ApiPaths.REFERRAL_LINKS_BASE_PATH}/request/giftCoinslLink";
+            var url = ApiPaths.REFERRAL_LINKS_GIFTCOINS_LINK_PATH;
             var body = JsonUtils.SerializeObject(new RequestGiftCoinsLinkRequestDto { SenderClientId = "123" });
 
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
 
             Assert.True(response.Status == HttpStatusCode.BadRequest);
         }
@@ -68,10 +70,10 @@ namespace AFTests.BlueApi
         [Category("RequestGiftCoinsLinkForInvalidAsset")]
         public async Task RequestGiftCoinsLinkForInvalidAsset()
         {
-            var url = $"{ApiPaths.REFERRAL_LINKS_BASE_PATH}/request/giftCoinslLink";
+            var url = ApiPaths.REFERRAL_LINKS_GIFTCOINS_LINK_PATH;
             var body = JsonUtils.SerializeObject(new RequestGiftCoinsLinkRequestDto { Asset = "123" });
 
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
 
             Assert.True(response.Status == HttpStatusCode.BadRequest);
         }
@@ -82,10 +84,10 @@ namespace AFTests.BlueApi
         [Category("RequestGiftCoinsLinkForInvalidAmount")]
         public async Task RequestGiftCoinsLinkForInvalidAmount()
         {
-            var url = $"{ApiPaths.REFERRAL_LINKS_BASE_PATH}/request/giftCoinslLink";
+            var url = ApiPaths.REFERRAL_LINKS_GIFTCOINS_LINK_PATH;
             var body = JsonUtils.SerializeObject(new RequestGiftCoinsLinkRequestDto { Amount = 123 });
 
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
 
             Assert.True(response.Status == HttpStatusCode.BadRequest);
         }
@@ -96,11 +98,56 @@ namespace AFTests.BlueApi
         [Category("RequestGiftCoinsLinkForInvalidAllParams")]
         public async Task RequestGiftCoinsLinkForInvalidAllParams()
         {
-            var url = $"{ApiPaths.REFERRAL_LINKS_BASE_PATH}/request/giftCoinslLink";
+            var url = ApiPaths.REFERRAL_LINKS_GIFTCOINS_LINK_PATH;
             var body = JsonUtils.SerializeObject(new RequestGiftCoinsLinkRequestDto { Asset = "123", Amount = 123, SenderClientId = "123"});
 
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
 
+            Assert.True(response.Status == HttpStatusCode.BadRequest);
+        }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("ReferralLinks")]
+        [Category("ClaimInvitationLink")]
+        public async Task ClaimInvitationLink()
+        {
+            //this.PrepareReferralLinksData();
+            var url = ApiPaths.REFERRAL_LINKS_CLAIM_LINK_PATH;
+
+            //send request without data 
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
+            Assert.True(response.Status == HttpStatusCode.BadRequest);
+
+            var body = new InvitationLinkClaimDTO()
+            {
+                RecipientClientId = GlobalConstants.AutoTest,
+                ReferalLinkId = GlobalConstants.AutoTest,
+                ReferalLinkUrl = GlobalConstants.AutoTest,
+                IsNewClient = false
+            };
+
+            //send request with wrong data 
+            response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
+            Assert.True(response.Status == HttpStatusCode.BadRequest);
+
+            //var validLink = await this.GetFirstLink();
+            //body = new InvitationLinkClaimDTO()
+            //{
+            //    RecipientClientId = "",
+            //    ReferalLinkId = validLink.Id,
+            //    ReferalLinkUrl = validLink.Url,
+            //    IsNewClient = false
+            //};
+
+            //send request without a client id
+            response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
+            Assert.True(response.Status == HttpStatusCode.BadRequest);
+
+            body.RecipientClientId = this.TestClientId;
+            
+            //send request with already claimed client
+            response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
             Assert.True(response.Status == HttpStatusCode.BadRequest);
         }
     }

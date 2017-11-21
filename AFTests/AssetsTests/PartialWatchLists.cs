@@ -25,12 +25,12 @@ namespace AFTests.AssetsTests
         public async Task GetAllWatchListsPredefined()
         {
             string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             List<WatchListDTO> parsedResponse = JsonUtils.DeserializeJson<List<WatchListDTO>>(response.ResponseJson);
 
-            foreach (WatchListEntity entity in fixture.AllWatchListsFromDBPredefined)
+            foreach (WatchListEntity entity in this.AllWatchListsFromDBPredefined)
             {
                 WatchListDTO parsedMatch = parsedResponse.Where(p => p.Id == entity.Id).FirstOrDefault();
                 entity.ShouldBeEquivalentTo(parsedMatch, o => o
@@ -55,21 +55,21 @@ namespace AFTests.AssetsTests
         [Category("WatchListGet")]
         public async Task GetSingleWatchListsPredefined()
         {
-            string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH + "/" + fixture.TestWatchListPredefined.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH + "/" + this.TestWatchListPredefined.Id;
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             WatchListDTO parsedResponse = JsonUtils.DeserializeJson<WatchListDTO>(response.ResponseJson);
-            fixture.TestWatchListPredefined.ShouldBeEquivalentTo(parsedResponse, o => o
+            this.TestWatchListPredefined.ShouldBeEquivalentTo(parsedResponse, o => o
             .ExcludingMissingMembers()
             .Excluding(e => e.AssetIds)
             .Excluding(e => e.ReadOnly));
 
             Assert.True(parsedResponse.ReadOnly);
 
-            fixture.TestWatchListPredefined.AssetIDsList.Should().HaveSameCount(parsedResponse.AssetIds);
+            this.TestWatchListPredefined.AssetIDsList.Should().HaveSameCount(parsedResponse.AssetIds);
 
-            foreach (string assetId in fixture.TestWatchListPredefined.AssetIDsList)
+            foreach (string assetId in this.TestWatchListPredefined.AssetIDsList)
             {
                 parsedResponse.AssetIds.Should().Contain(assetId);
             }
@@ -81,10 +81,10 @@ namespace AFTests.AssetsTests
         [Category("WatchListPost")]
         public async Task CreatePredefinedWatchList()
         {
-            WatchListDTO createdDTO = await fixture.CreateTestWatchList();
+            WatchListDTO createdDTO = await this.CreateTestWatchList();
             Assert.NotNull(createdDTO);
 
-            WatchListEntity entity = await fixture.WatchListRepository.TryGetAsync("PublicWatchList", createdDTO.Id) as WatchListEntity;
+            WatchListEntity entity = await this.WatchListRepository.TryGetAsync("PublicWatchList", createdDTO.Id) as WatchListEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(createdDTO, o => o
             .ExcludingMissingMembers()
@@ -108,19 +108,19 @@ namespace AFTests.AssetsTests
             string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH;
             WatchListDTO updateWatchList = new WatchListDTO()
             {
-                Id = fixture.TestWatchListPredefinedUpdate.Id,
-                Name = fixture.TestWatchListPredefinedUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Id = this.TestWatchListPredefinedUpdate.Id,
+                Name = this.TestWatchListPredefinedUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
                 Order = Helpers.Random.Next(1, 100),
-                ReadOnly = fixture.TestWatchListPredefinedUpdate.ReadOnly,
-                AssetIds = fixture.TestWatchListPredefinedUpdate.AssetIds
+                ReadOnly = this.TestWatchListPredefinedUpdate.ReadOnly,
+                AssetIds = this.TestWatchListPredefinedUpdate.AssetIds
             };
             updateWatchList.AssetIds.Add("AutoTest");
             string updateParam = JsonUtils.SerializeObject(updateWatchList);
 
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            WatchListEntity entity = await fixture.WatchListRepository.TryGetAsync("PublicWatchList", updateWatchList.Id) as WatchListEntity;
+            WatchListEntity entity = await this.WatchListRepository.TryGetAsync("PublicWatchList", updateWatchList.Id) as WatchListEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(updateWatchList, o => o
             .ExcludingMissingMembers()
@@ -141,11 +141,11 @@ namespace AFTests.AssetsTests
         [Category("WatchListDelete")]
         public async Task DeletePredefinedWatchList()
         {
-            string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH + "/" + fixture.TestWatchListPredefinedDelete.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+            string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH + "/" + this.TestWatchListPredefinedDelete.Id;
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            WatchListEntity entity = await fixture.WatchListRepository.TryGetAsync("PublicWatchList", fixture.TestWatchListPredefinedDelete.Id) as WatchListEntity;
+            WatchListEntity entity = await this.WatchListRepository.TryGetAsync("PublicWatchList", this.TestWatchListPredefinedDelete.Id) as WatchListEntity;
             Assert.Null(entity);
         }
         #endregion
@@ -160,14 +160,14 @@ namespace AFTests.AssetsTests
             string url = ApiPaths.WATCH_LIST_CUSTOM_PATH;
             Dictionary<string, string> queryParams = new Dictionary<string, string>
             {
-                { "userId", fixture.TestWatchListCustom.PartitionKey }
+                { "userId", this.TestWatchListCustom.PartitionKey }
             };
 
-            var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             List<WatchListDTO> parsedResponse = JsonUtils.DeserializeJson<List<WatchListDTO>>(response.ResponseJson);
-            List<WatchListEntity> userWatchLists = fixture.AllWatchListsFromDBCustom.Where(w => w.PartitionKey == fixture.TestWatchListCustom.PartitionKey).ToList();
+            List<WatchListEntity> userWatchLists = this.AllWatchListsFromDBCustom.Where(w => w.PartitionKey == this.TestWatchListCustom.PartitionKey).ToList();
 
             foreach (WatchListEntity entity in userWatchLists)
             {
@@ -192,24 +192,24 @@ namespace AFTests.AssetsTests
         [Category("WatchListGet")]
         public async Task GetSingleWatchListsCustom()
         {
-            string url = ApiPaths.WATCH_LIST_CUSTOM_PATH  + "/" + fixture.TestWatchListCustom.Id;
+            string url = ApiPaths.WATCH_LIST_CUSTOM_PATH  + "/" + this.TestWatchListCustom.Id;
             Dictionary<string, string> queryParams = new Dictionary<string, string>
             {
-                { "userId", fixture.TestWatchListCustom.PartitionKey }
+                { "userId", this.TestWatchListCustom.PartitionKey }
             };
 
-            var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             WatchListDTO parsedResponse = JsonUtils.DeserializeJson<WatchListDTO>(response.ResponseJson);
-            fixture.TestWatchListCustom.ShouldBeEquivalentTo(parsedResponse, o => o
+            this.TestWatchListCustom.ShouldBeEquivalentTo(parsedResponse, o => o
             .ExcludingMissingMembers()
             .Excluding(e => e.AssetIds)
             .Excluding(e => e.ReadOnly));
 
             Assert.False(parsedResponse.ReadOnly);
 
-            foreach (string assetId in fixture.TestWatchListCustom.AssetIDsList)
+            foreach (string assetId in this.TestWatchListCustom.AssetIDsList)
             {
                 parsedResponse.AssetIds.Should().Contain(assetId);
             }
@@ -221,10 +221,10 @@ namespace AFTests.AssetsTests
         [Category("WatchListPost")]
         public async Task CreateCustomWatchList()
         {
-            WatchListDTO createdDTO = await fixture.CreateTestWatchList(fixture.TestAccountId);
+            WatchListDTO createdDTO = await this.CreateTestWatchList(this.TestAccountId);
             Assert.NotNull(createdDTO);
 
-            WatchListEntity entity = await fixture.WatchListRepository.TryGetAsync(fixture.TestAccountId, createdDTO.Id) as WatchListEntity;
+            WatchListEntity entity = await this.WatchListRepository.TryGetAsync(this.TestAccountId, createdDTO.Id) as WatchListEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(createdDTO, o => o
             .ExcludingMissingMembers()
@@ -248,23 +248,23 @@ namespace AFTests.AssetsTests
             string url = ApiPaths.WATCH_LIST_CUSTOM_PATH;
             Dictionary<string, string> queryParams = new Dictionary<string, string>
             {
-                { "userId", fixture.TestAccountId }
+                { "userId", this.TestAccountId }
             };
             WatchListDTO updateWatchList = new WatchListDTO()
             {
-                Id = fixture.TestWatchListCustomUpdate.Id,
-                Name = fixture.TestWatchListCustomUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Id = this.TestWatchListCustomUpdate.Id,
+                Name = this.TestWatchListCustomUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
                 Order = Helpers.Random.Next(1, 100),
-                ReadOnly = fixture.TestWatchListCustomUpdate.ReadOnly,
-                AssetIds = fixture.TestWatchListCustomUpdate.AssetIds
+                ReadOnly = this.TestWatchListCustomUpdate.ReadOnly,
+                AssetIds = this.TestWatchListCustomUpdate.AssetIds
             };
             updateWatchList.AssetIds.Add("AutoTest");
             string updateParam = JsonUtils.SerializeObject(updateWatchList);
 
-            var response = await fixture.Consumer.ExecuteRequest(url, queryParams, updateParam, Method.PUT);
+            var response = await this.Consumer.ExecuteRequest(url, queryParams, updateParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            WatchListEntity entity = await fixture.WatchListRepository.TryGetAsync(fixture.TestAccountId, updateWatchList.Id) as WatchListEntity;
+            WatchListEntity entity = await this.WatchListRepository.TryGetAsync(this.TestAccountId, updateWatchList.Id) as WatchListEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(updateWatchList, o => o
             .ExcludingMissingMembers()
@@ -285,16 +285,16 @@ namespace AFTests.AssetsTests
         [Category("WatchListDelete")]
         public async Task DeleteCustomWatchList()
         {
-            string url = ApiPaths.WATCH_LIST_CUSTOM_PATH + "/" + fixture.TestWatchListCustomDelete.Id;
+            string url = ApiPaths.WATCH_LIST_CUSTOM_PATH + "/" + this.TestWatchListCustomDelete.Id;
             Dictionary<string, string> queryParams = new Dictionary<string, string>
             {
-                { "userId", fixture.TestAccountId }
+                { "userId", this.TestAccountId }
             };
 
-            var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.DELETE);
+            var response = await this.Consumer.ExecuteRequest(url, queryParams, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            WatchListEntity entity = await fixture.WatchListRepository.TryGetAsync(fixture.TestAccountId, fixture.TestWatchListCustomDelete.Id) as WatchListEntity;
+            WatchListEntity entity = await this.WatchListRepository.TryGetAsync(this.TestAccountId, this.TestWatchListCustomDelete.Id) as WatchListEntity;
             Assert.Null(entity);
         }
         #endregion
@@ -308,15 +308,15 @@ namespace AFTests.AssetsTests
             string url = ApiPaths.WATCH_LIST_ALL_PATH;
             Dictionary<string, string> queryParams = new Dictionary<string, string>
             {
-                { "userId", fixture.TestWatchListCustom.PartitionKey }
+                { "userId", this.TestWatchListCustom.PartitionKey }
             };
 
-            var response = await fixture.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, queryParams, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             List<WatchListDTO> parsedResponse = JsonUtils.DeserializeJson<List<WatchListDTO>>(response.ResponseJson);
-            List<WatchListEntity> userWatchLists = fixture.AllWatchListsFromDBCustom.Where(w => w.PartitionKey == fixture.TestWatchListCustom.PartitionKey).ToList();
-            userWatchLists.AddRange(fixture.AllWatchListsFromDBPredefined);
+            List<WatchListEntity> userWatchLists = this.AllWatchListsFromDBCustom.Where(w => w.PartitionKey == this.TestWatchListCustom.PartitionKey).ToList();
+            userWatchLists.AddRange(this.AllWatchListsFromDBPredefined);
 
             foreach (WatchListEntity entity in userWatchLists)
             {

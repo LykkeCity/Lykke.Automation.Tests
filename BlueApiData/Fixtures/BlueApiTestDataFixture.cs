@@ -12,12 +12,17 @@ using XUnitTestData.Domains.BlueApi;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Repositories;
 using XUnitTestData.Entities.BlueApi;
+using XUnitTestData.Domains.ApiV2;
+using XUnitTestData.Entities.ApiV2;
+using NUnit.Framework;
+using XUnitTestCommon.Tests;
 
 namespace BlueApiData.Fixtures
 {
-    public partial class BlueApiTestDataFixture
+    [TestFixture]
+    public partial class BlueApiTestDataFixture: BaseTest
     {
-        private readonly ConfigBuilder _configBuilder;
+        private ConfigBuilder _configBuilder;
         private IContainer _container;
         public IMapper Mapper;
 
@@ -25,91 +30,57 @@ namespace BlueApiData.Fixtures
         public string AccountEmail;
         public string TwitterSearchQuery;
         public DateTime TwitterSearchUntilDate;
-        public string TestPledgeCreateClientId;
-        public string TestPledgeUpdateClientId;
-        public string TestPledgeDeleteClientId;
+        public Dictionary<string, string> TestPledgeClientIDs;
 
         public GenericRepository<PledgeEntity, IPledgeEntity> PledgeRepository;
+        public GenericRepository<PersonalDataEntity, IPersonalData> PersonalDataRepository;
         public GenericRepository<ReferralLinkEntity, IReferralLink> ReferralLinkRepository;
+        public string TestPledgeCreateClientId;
         public PledgeDTO TestPledge;
+        public string TestPledgeUpdateClientId;
         public PledgeDTO TestPledgeUpdate;
+        public string TestPledgeDeleteClientId;
         public PledgeDTO TestPledgeDelete;
         public ApiConsumer Consumer;
 
         public Dictionary<string, ApiConsumer> PledgeApiConsumers;
 
-        public BlueApiTestDataFixture()
+        [OneTimeSetUp]
+        public void Initialize()
         {
             _configBuilder = new ConfigBuilder("BlueApi");
 
-            PrepareApiConsumers();
             PrepareDependencyContainer();
+            PrepareApiConsumers().Wait();
             PrepareMapper();
         }
 
-        private void PrepareApiConsumers()
+        private async Task PrepareApiConsumers()
         {
-            var oAuthConsumer = new OAuthConsumer
-            {
-                AuthTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]),
-                AuthPath = _configBuilder.Config["AuthPath"],
-                BaseAuthUrl = _configBuilder.Config["BaseUrlAuth"],
-                AuthUser = new User
-                {
-                    ClientInfo = _configBuilder.Config["AuthClientInfo"],
-                    Email = _configBuilder.Config["AuthEmail"],
-                    PartnerId = _configBuilder.Config["AuthPartnerId"],
-                    Password = _configBuilder.Config["AuthPassword"]
-                }
-            };
+            var oAuthConsumer = new OAuthConsumer(_configBuilder);
 
             Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
 
             PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
-            oAuthConsumer = new OAuthConsumer
-            {
-                AuthTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]),
-                AuthPath = _configBuilder.Config["AuthPath"],
-                BaseAuthUrl = _configBuilder.Config["BaseUrlAuth"],
-                AuthUser = new User
-                {
-                    ClientInfo = _configBuilder.Config["AuthClientInfo"],
-                    Email = _configBuilder.Config["PledgeCreateAuthEmail"],
-                    PartnerId = _configBuilder.Config["AuthPartnerId"],
-                    Password = _configBuilder.Config["AuthPassword"]
-                }
-            };
-            PledgeApiConsumers.Add("CreatePledge", new ApiConsumer(_configBuilder, oAuthConsumer));
+            TestPledgeClientIDs = new Dictionary<string, string>();
 
-            oAuthConsumer = new OAuthConsumer
+            List<Task> ceratePledgesTasks = new List<Task>()
             {
-                AuthTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]),
-                AuthPath = _configBuilder.Config["AuthPath"],
-                BaseAuthUrl = _configBuilder.Config["BaseUrlAuth"],
-                AuthUser = new User
-                {
-                    ClientInfo = _configBuilder.Config["AuthClientInfo"],
-                    Email = _configBuilder.Config["PledgeUpdateAuthEmail"],
-                    PartnerId = _configBuilder.Config["AuthPartnerId"],
-                    Password = _configBuilder.Config["AuthPassword"]
-                }
+                CreatePledgeClientAndApiConsumer("GetPledge"),
+                CreatePledgeClientAndApiConsumer("CreatePledge"),
+                CreatePledgeClientAndApiConsumer("UpdatePledge"),
+                CreatePledgeClientAndApiConsumer("DeletePledge"),
             };
-            PledgeApiConsumers.Add("UpdatePledge", new ApiConsumer(_configBuilder, oAuthConsumer));
 
-            oAuthConsumer = new OAuthConsumer
-            {
-                AuthTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]),
-                AuthPath = _configBuilder.Config["AuthPath"],
-                BaseAuthUrl = _configBuilder.Config["BaseUrlAuth"],
-                AuthUser = new User
-                {
-                    ClientInfo = _configBuilder.Config["AuthClientInfo"],
-                    Email = _configBuilder.Config["PledgeDeleteAuthEmail"],
-                    PartnerId = _configBuilder.Config["AuthPartnerId"],
-                    Password = _configBuilder.Config["AuthPassword"]
-                }
-            };
-            PledgeApiConsumers.Add("DeletePledge", new ApiConsumer(_configBuilder, oAuthConsumer));
+            await Task.WhenAll(ceratePledgesTasks);
+        }
+
+        private async Task CreatePledgeClientAndApiConsumer(string purpose)
+        {
+            OAuthConsumer oAuthConsumer = new OAuthConsumer(_configBuilder);
+            User createPledgeUser = await oAuthConsumer.RegisterNewUser();
+            TestPledgeClientIDs[purpose] = await GetClientIdByEmail(createPledgeUser.Email);
+            PledgeApiConsumers.Add(purpose, new ApiConsumer(_configBuilder, oAuthConsumer));
         }
 
         private void PrepareDependencyContainer()
@@ -118,8 +89,15 @@ namespace BlueApiData.Fixtures
             builder.RegisterModule(new BlueApiTestModule(_configBuilder));
             _container = builder.Build();
 
-            PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(_container);
+            PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(this._container);
+            PersonalDataRepository = RepositoryUtils.ResolveGenericRepository<PersonalDataEntity, IPersonalData>(this._container);
             ReferralLinkRepository = RepositoryUtils.ResolveGenericRepository<ReferralLinkEntity, IReferralLink>(_container);
+        }
+
+        [OneTimeTearDown]
+        public void Cleanup()
+        {
+            
         }
     }
 }

@@ -16,15 +16,16 @@ using AssetsData.DTOs.Assets;
 using RestSharp;
 using XUnitTestData.Domains.Authentication;
 using XUnitTestData.Entities;
+using NUnit.Framework;
 
 namespace ApiV2Data.Fixtures
 {
-    public partial class ApiV2TestDataFixture : IDisposable
+    [TestFixture]
+    public partial class ApiV2TestDataFixture
     {
         private ConfigBuilder _configBuilder;
         private IContainer _container;
 
-        private List<string> WalletsToDelete;
         private List<string> OperationsToCancel;
         private List<string> _walletsToDelete;
 
@@ -57,7 +58,8 @@ namespace ApiV2Data.Fixtures
         public ApiConsumer Consumer;
         public MatchingEngineConsumer MEConsumer;
 
-        public ApiV2TestDataFixture()
+        [OneTimeSetUp]
+        public void Initialize()
         {
             _configBuilder = new ConfigBuilder("ApiV2");
 
@@ -67,20 +69,7 @@ namespace ApiV2Data.Fixtures
                 MEConsumer = new MatchingEngineConsumer(MeConfig.Config["BaseUrl"], port);
             }
 
-            var oAuthConsumer = new OAuthConsumer
-            {
-                AuthTokenTimeout = Int32.Parse(_configBuilder.Config["AuthTokenTimeout"]),
-                AuthPath = _configBuilder.Config["AuthPath"],
-                BaseAuthUrl = _configBuilder.Config["BaseUrlAuth"],
-                AuthUser = new User
-                {
-                    ClientInfo = _configBuilder.Config["AuthClientInfo"],
-                    Email = _configBuilder.Config["AuthEmail"],
-                    PartnerId = _configBuilder.Config["AuthPartnerId"],
-                    Password = _configBuilder.Config["AuthPassword"]
-                }
-            };
-
+            var oAuthConsumer = new OAuthConsumer(_configBuilder);
             Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
 
             PrepareDependencyContainer();
@@ -103,17 +92,13 @@ namespace ApiV2Data.Fixtures
 
         private async Task PrepareTestData()
         {        
-
-            WalletsToDelete = new List<string>();
+            _walletsToDelete = new List<string>();
             OperationsToCancel = new List<string>();
 
-            _walletsToDelete = new List<string>();
             TestClientId = this._configBuilder.Config["AuthClientId"];
             var walletsFromDB = this.WalletRepository.GetAllAsync(w => w.ClientId == TestClientId && w.State != "deleted");
             var operationsFromDB = this.OperationsRepository.GetAllAsync(o => o.PartitionKey == OperationsEntity.GeneratePartitionKey() && o.ClientId.ToString() == TestClientId);
 
-            this.AllWalletsFromDb = (await walletsFromDB).Cast<WalletEntity>().ToList();
-            this.TestWallet = AllWalletsFromDb.Where(w => w.RowKey == "fd0f7373-301e-42c0-83a2-1d7b691676c3").FirstOrDefault(); //TODO hardcoded
             this.TestAssetId = "LKK";
             this.AssetPrecission = 2;
             this.TestWalletWithBalance = "fd0f7373-301e-42c0-83a2-1d7b691676c3";
@@ -135,11 +120,10 @@ namespace ApiV2Data.Fixtures
             await Consumer.ExecuteRequest(ApiPaths.ASSETS_BASEASSET_PATH, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
         }
 
-        public void Dispose()
+        [OneTimeTearDown]
+        public void Cleanup()
         {
             var deleteTasks = new List<Task<bool>>();
-
-            foreach (string walletId in WalletsToDelete) { deleteTasks.Add(DeleteTestWallet(walletId)); }
 
             foreach (string operationId in OperationsToCancel) { deleteTasks.Add(CancelTestOperation(operationId)); }
 

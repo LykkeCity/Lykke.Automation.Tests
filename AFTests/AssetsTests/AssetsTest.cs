@@ -4,20 +4,16 @@ using System.Net;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using XUnitTestCommon;
-using XUnitTestCommon.Tests;
 
 namespace AFTests.AssetsTests
 {
 
     [Category("FullRegression")]
     [Category("AssetsService")]
-    public partial class AssetsTest: BaseTest
+    public partial class AssetsTest : AssetsTestDataFixture
     {
-        private AssetsTestDataFixture fixture;
-
         public AssetsTest()
         {
-            this.fixture = new AssetsTestDataFixture();
         }
 
         #region IsAlive
@@ -28,7 +24,7 @@ namespace AFTests.AssetsTests
         public async Task IsAlive()
         {
             string url = ApiPaths.ISALIVE_BASE_PATH;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             Assert.True(response.ResponseJson.Contains("\"Env\":"));

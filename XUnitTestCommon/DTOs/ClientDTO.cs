@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace XUnitTestData.Domains.ApiV2
+namespace XUnitTestCommon.DTOs
 {
     public class ClientDTO
     {
@@ -33,7 +33,5 @@ namespace XUnitTestData.Domains.ApiV2
         public string ContactPhone { get; set; }
         public string Password { get; set; }
         public string Hint { get; set; }
-        public string ClientInfo { get; set; }
-        public string PartnerId { get; set; }
     }
 }

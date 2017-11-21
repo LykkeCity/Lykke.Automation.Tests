@@ -1,12 +1,12 @@
-﻿using ApiV2Data.Fixtures;
-using RestSharp;
-using System;
+﻿using RestSharp;
+using System.Net;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
-using XUnitTestData.Domains.ApiV2;
 using XUnitTestData.Entities.ApiV2;
+using XUnitTestCommon.DTOs;
+using XUnitTestData.Domains.Authentication;
 
 namespace AFTests.ApiV2
 {
@@ -14,12 +14,11 @@ namespace AFTests.ApiV2
     [Category("ApiV2Service")]
     public partial class ApiV2Tests
     {
-        [Ignore("ApiV2 currently has some issues")]
         [Test]
         [Category("Smoke")]
         [Category("Client")]
         [Category("ClientPost")]
-        public async Task RegisterClient()
+        public async Task RegisterAuthClient()
         {
             string url = ApiPaths.CLIENT_REGISTER_PATH;
 
@@ -29,20 +28,38 @@ namespace AFTests.ApiV2
                 FullName = Helpers.RandomString(5) + " " + Helpers.RandomString(8),
                 ContactPhone = Helpers.Random.Next(1000000, 9999999).ToString(),
                 Password = Helpers.RandomString(10),
-                Hint = Helpers.RandomString(3),
-                ClientInfo = Helpers.RandomString(5),
-                PartnerId = Guid.NewGuid().ToString()
+                Hint = Helpers.RandomString(3)
             };
 
             string registerParam = JsonUtils.SerializeObject(registerDTO);
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, registerParam, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, registerParam, Method.POST);
 
             Assert.True(response.Status == System.Net.HttpStatusCode.OK);
 
             ClientDTO parsedResponse = JsonUtils.DeserializeJson<ClientDTO>(response.ResponseJson);
 
-            PersonalDataEntity entity = await _fixture.PersonalDataRepository.TryGetAsync(
-                p => p.PartitionKey == PersonalDataEntity.GeneratePartitionKey() && p.Email == registerDTO.Email) as PersonalDataEntity;
+            PersonalDataEntity entity = await this.PersonalDataRepository.TryGetAsync(
+                p => p.PartitionKey == PersonalDataEntity.GeneratePartitionKey() && p.Email == registerDTO.Email.ToLower()) as PersonalDataEntity;
+
+            Assert.NotNull(entity);
+
+            Assert.True(entity.ContactPhone == registerDTO.ContactPhone);
+            Assert.True(entity.FullName == registerDTO.FullName);
+            Assert.True(entity.PasswordHint == registerDTO.Hint);
+
+            //Authentication
+            User newUser = new User()
+            {
+                Email = registerDTO.Email,
+                Password = registerDTO.Password
+            };
+            string userParam = JsonUtils.SerializeObject(newUser);
+
+
+            string authUrl = ApiPaths.CLIENT_BASE_PATH + "/auth";
+            var authResponse = await this.Consumer.ExecuteRequest(authUrl, Helpers.EmptyDictionary, userParam, Method.POST);
+
+            Assert.True(authResponse.Status == HttpStatusCode.OK);
         }
     }
 }

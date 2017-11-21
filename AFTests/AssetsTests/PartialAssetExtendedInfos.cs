@@ -24,16 +24,16 @@ namespace AFTests.AssetsTests
         public async Task GetAllAssetExtendedInfos()
         {
             string url = ApiPaths.ASSET_EXTENDED_INFO_PATH;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             List<AssetExtendedInfoDTO> parsedResponse = JsonUtils.DeserializeJson<List<AssetExtendedInfoDTO>>(response.ResponseJson);
             Assert.NotNull(parsedResponse);
 
-            for (int i = 0; i < fixture.AllAssetExtendedInfosFromDB.Count; i++)
+            for (int i = 0; i < this.AllAssetExtendedInfosFromDB.Count; i++)
             {
-                fixture.AllAssetExtendedInfosFromDB[i].ShouldBeEquivalentTo(
-                    parsedResponse.Where(a => a.Id == fixture.AllAssetExtendedInfosFromDB[i].Id).FirstOrDefault()
+                this.AllAssetExtendedInfosFromDB[i].ShouldBeEquivalentTo(
+                    parsedResponse.Where(a => a.Id == this.AllAssetExtendedInfosFromDB[i].Id).FirstOrDefault()
                     , o => o.ExcludingMissingMembers());
             }
         }
@@ -44,14 +44,14 @@ namespace AFTests.AssetsTests
         [Category("AssetExtendedInfoGet")]
         public async Task GetSingleAssetExtendedInfo()
         {
-            string url = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/" + fixture.TestAssetExtendedInfo.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/" + this.TestAssetExtendedInfo.Id;
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             AssetExtendedInfoDTO parsedResponse = JsonUtils.DeserializeJson<AssetExtendedInfoDTO>(response.ResponseJson);
             Assert.NotNull(parsedResponse);
 
-            fixture.TestAssetExtendedInfo.ShouldBeEquivalentTo(parsedResponse, o => o
+            this.TestAssetExtendedInfo.ShouldBeEquivalentTo(parsedResponse, o => o
             .ExcludingMissingMembers());
         }
 
@@ -61,15 +61,15 @@ namespace AFTests.AssetsTests
         [Category("AssetExtendedInfoGet")]
         public async Task CheckIfAssetExtendedInfoExists()
         {
-            string url = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/" + fixture.TestAssetExtendedInfo.Id + "/exists";
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/" + this.TestAssetExtendedInfo.Id + "/exists";
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             bool parsedResponse = JsonUtils.DeserializeJson<bool>(response.ResponseJson);
             Assert.NotNull(parsedResponse);
             Assert.True(parsedResponse);
 
             string badUrl = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/AutoTestAssetThatDoesntExist/exists";
-            var badResponse = await fixture.Consumer.ExecuteRequest(badUrl, Helpers.EmptyDictionary, null, Method.GET);
+            var badResponse = await this.Consumer.ExecuteRequest(badUrl, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(badResponse);
             bool badParsedResponse = JsonUtils.DeserializeJson<bool>(badResponse.ResponseJson);
             Assert.NotNull(badParsedResponse);
@@ -82,10 +82,10 @@ namespace AFTests.AssetsTests
         [Category("AssetExtendedInfoPost")]
         public async Task CreateAssetExtendedInfo()
         {
-            AssetExtendedInfoDTO createdInfo = await fixture.CreateTestAssetExtendedInfo();
+            AssetExtendedInfoDTO createdInfo = await this.CreateTestAssetExtendedInfo();
             Assert.NotNull(createdInfo);
 
-            AssetExtendedInfosEntity checkDbCreated = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(createdInfo.Id);
+            AssetExtendedInfosEntity checkDbCreated = (AssetExtendedInfosEntity)await this.AssetExtendedInfosManager.TryGetAsync(createdInfo.Id);
             checkDbCreated.ShouldBeEquivalentTo(createdInfo, o => o
             .ExcludingMissingMembers());
         }
@@ -100,21 +100,21 @@ namespace AFTests.AssetsTests
 
             AssetExtendedInfoDTO updateExtendedInfo = new AssetExtendedInfoDTO()
             {
-                Id = fixture.TestAssetExtendedInfoUpdate.Id,
-                AssetClass = fixture.TestAssetExtendedInfoUpdate.AssetClass,
-                AssetDescriptionUrl = fixture.TestAssetExtendedInfoUpdate.AssetDescriptionUrl,
-                Description = fixture.TestAssetExtendedInfoUpdate.Description,
-                FullName = fixture.TestAssetExtendedInfoUpdate.FullName + "_autotestt",
-                MarketCapitalization = fixture.TestAssetExtendedInfoUpdate.MarketCapitalization,
-                NumberOfCoins = fixture.TestAssetExtendedInfoUpdate.NumberOfCoins,
-                PopIndex = fixture.TestAssetExtendedInfoUpdate.PopIndex
+                Id = this.TestAssetExtendedInfoUpdate.Id,
+                AssetClass = this.TestAssetExtendedInfoUpdate.AssetClass,
+                AssetDescriptionUrl = this.TestAssetExtendedInfoUpdate.AssetDescriptionUrl,
+                Description = this.TestAssetExtendedInfoUpdate.Description,
+                FullName = this.TestAssetExtendedInfoUpdate.FullName + "_autotestt",
+                MarketCapitalization = this.TestAssetExtendedInfoUpdate.MarketCapitalization,
+                NumberOfCoins = this.TestAssetExtendedInfoUpdate.NumberOfCoins,
+                PopIndex = this.TestAssetExtendedInfoUpdate.PopIndex
             };
             string updateParam = JsonUtils.SerializeObject(updateExtendedInfo);
 
-            var updateResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
+            var updateResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
-            AssetExtendedInfosEntity checkDbUpdated = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(fixture.TestAssetExtendedInfoUpdate.Id);
+            AssetExtendedInfosEntity checkDbUpdated = (AssetExtendedInfosEntity)await this.AssetExtendedInfosManager.TryGetAsync(this.TestAssetExtendedInfoUpdate.Id);
             checkDbUpdated.ShouldBeEquivalentTo(updateParam, o => o
             .ExcludingMissingMembers());
         }
@@ -125,11 +125,11 @@ namespace AFTests.AssetsTests
         [Category("AssetExtendedInfoDelete")]
         public async Task DeleteAssetExtendedInfo()
         {
-            string deleteUrl = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/" + fixture.TestAssetExtendedInfoDelete.Id;
-            var deleteResponse = await fixture.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
+            string deleteUrl = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/" + this.TestAssetExtendedInfoDelete.Id;
+            var deleteResponse = await this.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            AssetExtendedInfosEntity checkDbDeleted = (AssetExtendedInfosEntity)await fixture.AssetExtendedInfosManager.TryGetAsync(fixture.TestAssetExtendedInfoDelete.Id);
+            AssetExtendedInfosEntity checkDbDeleted = (AssetExtendedInfosEntity)await this.AssetExtendedInfosManager.TryGetAsync(this.TestAssetExtendedInfoDelete.Id);
             Assert.Null(checkDbDeleted);
         }
 
