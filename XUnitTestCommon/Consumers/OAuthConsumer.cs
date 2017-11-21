@@ -104,7 +104,7 @@ namespace XUnitTestCommon.Consumers
         /// </summary>
         /// <param name="registrationInfo"></param>
         /// <returns></returns>
-        public async Task<User> RegisterNewUser(ClientRegisterDTO registrationInfo = null)
+        public async Task<ClientRegisterDTO> RegisterNewUser(ClientRegisterDTO registrationInfo = null)
         {
             var regClient = new RestClient(BaseRegisterUrl);
             var regRequest = new RestRequest(RegisterPath, Method.POST);
@@ -131,7 +131,7 @@ namespace XUnitTestCommon.Consumers
                     Password = registerDTO.Password
                 };
 
-                return this.AuthUser;
+                return registerDTO;
             }
 
             return null;

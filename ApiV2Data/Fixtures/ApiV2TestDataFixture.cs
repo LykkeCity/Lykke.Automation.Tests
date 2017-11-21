@@ -17,6 +17,7 @@ using RestSharp;
 using XUnitTestData.Domains.Authentication;
 using XUnitTestData.Entities;
 using NUnit.Framework;
+using XUnitTestCommon.DTOs;
 
 namespace ApiV2Data.Fixtures
 {
@@ -54,9 +55,12 @@ namespace ApiV2Data.Fixtures
         public OperationCreateReturnDTO TestOperationCreateDetails;
         public OperationCreateReturnDTO TestOperationRegisterDetails;
 
+        public ClientRegisterDTO ClientInfoInstance;
+
         public GenericRepository<TradersEntity, ITrader> TradersRepository;
         public ApiConsumer Consumer;
         public MatchingEngineConsumer MEConsumer;
+        public ApiConsumer ClientInfoConsumer;
 
         [OneTimeSetUp]
         public void Initialize()
@@ -114,6 +118,11 @@ namespace ApiV2Data.Fixtures
 
             this.TestOperationCreateDetails = await CreateTestOperation();
             this.TestOperationRegisterDetails = await CreateTestOperation();
+
+
+            OAuthConsumer clientInfoAuth = new OAuthConsumer(_configBuilder);
+            this.ClientInfoInstance = await clientInfoAuth.RegisterNewUser();
+            this.ClientInfoConsumer = new ApiConsumer(_configBuilder, clientInfoAuth);
 
             // set the id to the default one in case it has been changed by any test
             BaseAssetDTO body = new BaseAssetDTO(this.TestAssetId);

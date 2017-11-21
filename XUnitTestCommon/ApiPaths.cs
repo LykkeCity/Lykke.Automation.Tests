@@ -23,6 +23,7 @@ namespace XUnitTestCommon
 
         public static readonly string CLIENT_BASE_PATH = "/api/client";
         public static readonly string CLIENT_REGISTER_PATH = "/api/client/register";
+        public static readonly string CLIENT_INFO_PATH = "/api/client/userInfo";
 
         public static readonly string ASSETS_BASE_PATH = "/api/assets";
         public static readonly string ASSETS_BASEASSET_PATH = "/api/assets/baseAsset";

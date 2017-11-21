@@ -7,6 +7,7 @@ using XUnitTestCommon.Utils;
 using XUnitTestData.Entities.ApiV2;
 using XUnitTestCommon.DTOs;
 using XUnitTestData.Domains.Authentication;
+using ApiV2Data.DTOs;
 
 namespace AFTests.ApiV2
 {
@@ -38,14 +39,27 @@ namespace AFTests.ApiV2
 
             ClientDTO parsedResponse = JsonUtils.DeserializeJson<ClientDTO>(response.ResponseJson);
 
-            PersonalDataEntity entity = await this.PersonalDataRepository.TryGetAsync(
+            PersonalDataEntity pdEntity = await this.PersonalDataRepository.TryGetAsync(
                 p => p.PartitionKey == PersonalDataEntity.GeneratePartitionKey() && p.Email == registerDTO.Email.ToLower()) as PersonalDataEntity;
 
-            Assert.NotNull(entity);
+            Assert.NotNull(pdEntity);
 
-            Assert.True(entity.ContactPhone == registerDTO.ContactPhone);
-            Assert.True(entity.FullName == registerDTO.FullName);
-            Assert.True(entity.PasswordHint == registerDTO.Hint);
+            Assert.True(pdEntity.ContactPhone == registerDTO.ContactPhone);
+            Assert.True(pdEntity.FullName == registerDTO.FullName);
+            Assert.True(pdEntity.PasswordHint == registerDTO.Hint);
+
+            TradersEntity traderEntity = await this.TradersRepository.TryGetAsync(
+                t => t.PartitionKey == "Trader" && t.Id == pdEntity.RowKey
+                ) as TradersEntity;
+
+            Assert.NotNull(traderEntity);
+
+
+            TradersEntity traderEmailEntity = await this.TradersRepository.TryGetAsync(
+                t => t.PartitionKey == "IndexEmail" && t.Id == registerDTO.Email && t.PrimaryRowKey == pdEntity.RowKey
+                ) as TradersEntity;
+
+            Assert.NotNull(traderEmailEntity);
 
             //Authentication
             User newUser = new User()
@@ -61,5 +75,24 @@ namespace AFTests.ApiV2
 
             Assert.True(authResponse.Status == HttpStatusCode.OK);
         }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("Client")]
+        [Category("ClientPost")]
+        public async Task UserInfo()
+        {
+            string url = ApiPaths.CLIENT_INFO_PATH;
+            var response = await this.ClientInfoConsumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            ClientInfoDTO parsedResponse = JsonUtils.DeserializeJson<ClientInfoDTO>(response.ResponseJson);
+            Assert.True(parsedResponse.Email == ClientInfoInstance.Email);
+            //Assert.True(parsedResponse.FirstName == ClientInfoInstance.FullName);
+            //Assert.True(parsedResponse.LastName == ClientInfoInstance.FullName);
+
+        }
+
+
     }
 }
