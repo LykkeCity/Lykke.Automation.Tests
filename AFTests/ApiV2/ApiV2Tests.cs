@@ -5,13 +5,10 @@ namespace AFTests.ApiV2
 {
     [Category("FullRegression")]
     [Category("ApiV2Service")]
-    public partial class ApiV2Tests
+    public partial class ApiV2Tests : ApiV2TestDataFixture
     {
-        private ApiV2TestDataFixture _fixture;
-
         public ApiV2Tests()
         {
-            this._fixture = new ApiV2TestDataFixture();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace AFTests.ApiV2
         [Category("Smoke")]
         [Category("Client")]
         [Category("ClientPost")]
-        public async Task RegisterClient()
+        public async Task RegisterAuthClient()
         {
             string url = ApiPaths.CLIENT_REGISTER_PATH;
 
@@ -32,14 +32,22 @@ namespace AFTests.ApiV2
             };
 
             string registerParam = JsonUtils.SerializeObject(registerDTO);
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, registerParam, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, registerParam, Method.POST);
 
             Assert.True(response.Status == System.Net.HttpStatusCode.OK);
 
             ClientDTO parsedResponse = JsonUtils.DeserializeJson<ClientDTO>(response.ResponseJson);
 
+            PersonalDataEntity entity = await this.PersonalDataRepository.TryGetAsync(
+                p => p.PartitionKey == PersonalDataEntity.GeneratePartitionKey() && p.Email == registerDTO.Email.ToLower()) as PersonalDataEntity;
 
-            //test auth
+            Assert.NotNull(entity);
+
+            Assert.True(entity.ContactPhone == registerDTO.ContactPhone);
+            Assert.True(entity.FullName == registerDTO.FullName);
+            Assert.True(entity.PasswordHint == registerDTO.Hint);
+
+            //Authentication
             User newUser = new User()
             {
                 Email = registerDTO.Email,
@@ -49,18 +57,9 @@ namespace AFTests.ApiV2
 
 
             string authUrl = ApiPaths.CLIENT_BASE_PATH + "/auth";
-            var authResponse = await _fixture.Consumer.ExecuteRequest(authUrl, Helpers.EmptyDictionary, userParam, Method.POST);
+            var authResponse = await this.Consumer.ExecuteRequest(authUrl, Helpers.EmptyDictionary, userParam, Method.POST);
 
             Assert.True(authResponse.Status == HttpStatusCode.OK);
-
-            PersonalDataEntity entity = await _fixture.PersonalDataRepository.TryGetAsync(
-                p => p.PartitionKey == PersonalDataEntity.GeneratePartitionKey() && p.Email == registerDTO.Email.ToLower()) as PersonalDataEntity;
-
-            Assert.NotNull(entity);
-
-            Assert.True(entity.ContactPhone == registerDTO.ContactPhone);
-            Assert.True(entity.FullName == registerDTO.FullName);
-            Assert.True(entity.PasswordHint == registerDTO.Hint);
         }
     }
 }

@@ -23,29 +23,13 @@ namespace AFTests.BlueApi
         public async Task GetPledge()
         {
             var url = ApiPaths.PLEDGES_BASE_PATH;
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.PledgeApiConsumers["GetPledge"].ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
 
             var parsedResponse = JsonUtils.DeserializeJson<PledgeDTO>(response.ResponseJson);
 
-            _fixture.TestPledge.ShouldBeEquivalentTo(parsedResponse);
-        }
-
-        //[Ignore("test will fail")]
-        [Test]
-        [Category("Smoke")]
-        [Category("Pledges")]
-        [Category("PledgesGet")]
-        public async Task GetPledgeById()
-        {
-            var getSingleUrl = ApiPaths.PLEDGES_BASE_PATH;
-
-            var singleResponse = await _fixture.Consumer.ExecuteRequest(getSingleUrl, Helpers.EmptyDictionary, null, Method.GET);
-            Assert.True(singleResponse.Status == HttpStatusCode.OK);
-            var parsedResponseSingle = JsonUtils.DeserializeJson<PledgeDTO>(singleResponse.ResponseJson);
-            _fixture.TestPledge.ShouldBeEquivalentTo(parsedResponseSingle);
-
+            this.TestPledge.ShouldBeEquivalentTo(parsedResponse);
         }
 
         //[Ignore("test will fail")]
@@ -55,11 +39,11 @@ namespace AFTests.BlueApi
         [Category("PledgesPost")]
         public async Task CreatePledge()
         {
-            var createdPledge = await _fixture.CreateTestPledge(_fixture.TestPledgeClientIDs["CreatePledge"], "CreatePledge");
+            var createdPledge = await this.CreateTestPledge(this.TestPledgeClientIDs["CreatePledge"], "CreatePledge");
             Assert.NotNull(createdPledge);
 
-            var createdPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeClientIDs["CreatePledge"]);
+            var createdPledgeEntity = (PledgeEntity)await this.PledgeRepository.TryGetAsync(
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.TestPledgeClientIDs["CreatePledge"]);
 
             createdPledgeEntity.ShouldBeEquivalentTo(createdPledge, o => o.ExcludingMissingMembers());
         }
@@ -73,20 +57,20 @@ namespace AFTests.BlueApi
         {
             var editPledge = new PledgeDTO()
             {
-                Id = _fixture.TestPledgeUpdate.Id,
-                ClientId = _fixture.TestPledgeUpdate.ClientId,
+                Id = this.TestPledgeUpdate.Id,
+                ClientId = this.TestPledgeUpdate.ClientId,
                 CO2Footprint = Helpers.Random.Next(100, 100000),
                 ClimatePositiveValue = Helpers.Random.Next(100, 100000)
             };
 
             var url = ApiPaths.PLEDGES_BASE_PATH;
             var editParam = JsonUtils.SerializeObject(editPledge);
-            var editResponse = await _fixture.PledgeApiConsumers["UpdatePledge"].ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
+            var editResponse = await this.PledgeApiConsumers["UpdatePledge"].ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
 
             Assert.True(editResponse.Status == HttpStatusCode.NoContent);
 
-            var editedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeClientIDs["UpdatePledge"]);
+            var editedPledgeEntity = (PledgeEntity)await this.PledgeRepository.TryGetAsync(
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.TestPledgeClientIDs["UpdatePledge"]);
 
             editedPledgeEntity.ShouldBeEquivalentTo(editPledge, o => o.ExcludingMissingMembers().Excluding(p => p.ClientId));
         }
@@ -100,11 +84,11 @@ namespace AFTests.BlueApi
         {
             var url = ApiPaths.PLEDGES_BASE_PATH;
 
-            var deleteResponse = await _fixture.PledgeApiConsumers["DeletePledge"].ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+            var deleteResponse = await this.PledgeApiConsumers["DeletePledge"].ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            var deletedPledgeEntity = (PledgeEntity)await _fixture.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == _fixture.TestPledgeClientIDs["DeletePledge"]);
+            var deletedPledgeEntity = (PledgeEntity)await this.PledgeRepository.TryGetAsync(
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.TestPledgeClientIDs["DeletePledge"]);
             Assert.Null(deletedPledgeEntity);
         }
     }

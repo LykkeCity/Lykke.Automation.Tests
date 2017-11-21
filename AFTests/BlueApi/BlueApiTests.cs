@@ -9,13 +9,10 @@ namespace AFTests.BlueApi
 {
     [Category("FullRegression")]
     [Category("BlueApiService")]
-    public partial class BlueApiTests
+    public partial class BlueApiTests : BlueApiTestDataFixture
     {
-        private readonly BlueApiTestDataFixture _fixture;
-
         public BlueApiTests()
         {
-            this._fixture = new BlueApiTestDataFixture();
         }
 
         #region IsAlive
@@ -26,7 +23,7 @@ namespace AFTests.BlueApi
         public async Task IsAlive()
         {
             string url = ApiPaths.ISALIVE_BASE_PATH;
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             Assert.True(response.ResponseJson.Contains("\"Env\":"));

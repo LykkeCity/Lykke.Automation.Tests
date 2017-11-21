@@ -14,12 +14,14 @@ using XUnitTestData.Repositories;
 using XUnitTestData.Entities.BlueApi;
 using XUnitTestData.Domains.ApiV2;
 using XUnitTestData.Entities.ApiV2;
+using NUnit.Framework;
 
 namespace BlueApiData.Fixtures
 {
-    public partial class BlueApiTestDataFixture : IDisposable
+    [TestFixture]
+    public partial class BlueApiTestDataFixture
     {
-        private readonly ConfigBuilder _configBuilder;
+        private ConfigBuilder _configBuilder;
         private IContainer _container;
         public IMapper Mapper;
 
@@ -40,7 +42,8 @@ namespace BlueApiData.Fixtures
 
         public Dictionary<string, ApiConsumer> PledgeApiConsumers;
 
-        public BlueApiTestDataFixture()
+        [OneTimeSetUp]
+        public void Initialize()
         {
             _configBuilder = new ConfigBuilder("BlueApi");
 
@@ -87,7 +90,8 @@ namespace BlueApiData.Fixtures
             PersonalDataRepository = RepositoryUtils.ResolveGenericRepository<PersonalDataEntity, IPersonalData>(this._container);
         }
 
-        public void Dispose()
+        [OneTimeTearDown]
+        public void Cleanup()
         {
             var deleteTasks = new List<Task<bool>>();
 

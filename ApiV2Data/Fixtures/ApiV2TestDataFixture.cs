@@ -16,10 +16,12 @@ using AssetsData.DTOs.Assets;
 using RestSharp;
 using XUnitTestData.Domains.Authentication;
 using XUnitTestData.Entities;
+using NUnit.Framework;
 
 namespace ApiV2Data.Fixtures
 {
-    public partial class ApiV2TestDataFixture : IDisposable
+    [TestFixture]
+    public partial class ApiV2TestDataFixture
     {
         private ConfigBuilder _configBuilder;
         private IContainer _container;
@@ -56,7 +58,8 @@ namespace ApiV2Data.Fixtures
         public ApiConsumer Consumer;
         public MatchingEngineConsumer MEConsumer;
 
-        public ApiV2TestDataFixture()
+        [OneTimeSetUp]
+        public void Initialize()
         {
             _configBuilder = new ConfigBuilder("ApiV2");
 
@@ -117,7 +120,8 @@ namespace ApiV2Data.Fixtures
             await Consumer.ExecuteRequest(ApiPaths.ASSETS_BASEASSET_PATH, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
         }
 
-        public void Dispose()
+        [OneTimeTearDown]
+        public void Cleanup()
         {
             var deleteTasks = new List<Task<bool>>();
 

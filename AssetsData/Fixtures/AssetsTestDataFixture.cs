@@ -13,10 +13,12 @@ using AutoMapper;
 using XUnitTestData.Domains.Authentication;
 using XUnitTestData.Repositories.ApiV2;
 using XUnitTestData.Entities.Assets;
+using NUnit.Framework;
 
 namespace AssetsData.Fixtures
 {
-    public partial class AssetsTestDataFixture : IDisposable
+    [TestFixture]
+    public partial class AssetsTestDataFixture
     {
         public ApiConsumer Consumer;
 
@@ -25,7 +27,8 @@ namespace AssetsData.Fixtures
 
         private ConfigBuilder _configBuilder;
 
-        public AssetsTestDataFixture()
+        [OneTimeSetUp]
+        public void Initialize()
         {
             _configBuilder = new ConfigBuilder("Assets");
 
@@ -62,7 +65,8 @@ namespace AssetsData.Fixtures
             WatchListRepository = container.Resolve<IDictionaryRepository<IWatchList>>() as WatchListRepository;
         }
 
-        public void Dispose()
+        [OneTimeTearDown]
+        public void Cleanup()
         {
             List<Task<bool>> deleteTasks = new List<Task<bool>>();
 
