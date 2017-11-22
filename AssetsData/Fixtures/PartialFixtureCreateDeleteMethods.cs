@@ -9,10 +9,11 @@ using System.Net;
 using AssetsData.DTOs.Assets;
 using System.Collections.Generic;
 using XUnitTestData.Entities.Assets;
+using XUnitTestCommon.Tests;
 
 namespace AssetsData.Fixtures
 {
-    public partial class AssetsTestDataFixture
+    public partial class AssetsTestDataFixture : BaseTest
     {
         public async Task<AssetDTO> CreateTestAsset()
         {
@@ -34,7 +35,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            AssetsToDelete.Add(newAssetDTO.Id);
+            AddOneTimeCleanupAction(async () => await DeleteTestAsset(newAssetDTO.Id));
 
             return newAssetDTO;
         }
@@ -75,7 +76,7 @@ namespace AssetsData.Fixtures
                 Value = newValue
             };
 
-            this.AssetAtributesToDelete.Add(returnModel);
+            AddOneTimeCleanupAction(async () => await DeleteTestAssetAttribute(returnModel.AssetId, returnModel.Key));
 
             return returnModel;
         }
@@ -108,7 +109,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            this.AssetCategoriesToDelete.Add(newCategory.Id);
+            AddOneTimeCleanupAction(async () => await DeleteTestAssetCategory(newCategory.Id));
 
             return newCategory;
         }
@@ -140,7 +141,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            this.AssetExtendedInfosToDelete.Add(newExtendedInfo.Id);
+            AddOneTimeCleanupAction(async () => await DeleteTestAssetExtendedInfo(newExtendedInfo.Id));
 
             return newExtendedInfo;
         }
@@ -171,7 +172,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            AssetGroupsToDelete.Add(newAssetGroup.Name);
+            AddOneTimeCleanupAction(async () => await DeleteTestAssetGroup(newAssetGroup.Name));
 
             return newAssetGroup;
         }
@@ -219,7 +220,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            AssetPairsToDelete.Add(createDTO.Id);
+            AddOneTimeCleanupAction(async () => await DeleteTestAssetPair(createDTO.Id));
 
             return createDTO;
         }
@@ -253,7 +254,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            AssetIssuersToDelete.Add(createDTO.Id);
+            AddOneTimeCleanupAction(async () => await DeleteTestAssetIssuer(createDTO.Id));
 
             return createDTO;
         }
@@ -290,7 +291,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            MarginAssetPairsToDelete.Add(createDTO.Id);
+            AddOneTimeCleanupAction(async () => await DeleteTestMarginAssetPair(createDTO.Id));
 
             return createDTO;
         }
@@ -327,7 +328,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            MarginAssetsToDelete.Add(createDTO.Id);
+            AddOneTimeCleanupAction(async () => await DeleteTestMarginAsset(createDTO.Id));
 
             return createDTO;
         }
@@ -361,7 +362,7 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            MarginIssuersToDelete.Add(createDTO.Id);
+            AddOneTimeCleanupAction(async () => await DeleteTestMarginIssuer(createDTO.Id));
 
             return createDTO;
         }
@@ -416,15 +417,13 @@ namespace AssetsData.Fixtures
                 return null;
             }
 
-            WatchListsToDelete.Add(createDTO.Id, clientId);
+            AddOneTimeCleanupAction(async () => await DeleteTestWatchList(createDTO.Id, clientId));
 
             return createDTO;
         }
 
-        public async Task<bool> DeleteTestWatchList(KeyValuePair<string, string> WatchListIDs)
+        public async Task<bool> DeleteTestWatchList(string watchListId, string clientId)
         {
-            string watchListId = WatchListIDs.Key;
-            string clientId = WatchListIDs.Value;
             Dictionary<string, string> queryParams = new Dictionary<string, string>();
 
             string url = ApiPaths.WATCH_LIST_BASE_PATH;
@@ -476,7 +475,7 @@ namespace AssetsData.Fixtures
 
             AssetSettingsDTO parsedResponse = JsonUtils.DeserializeJson<AssetSettingsDTO>(response.ResponseJson);
 
-            AssetSettingsToDelete.Add(parsedResponse.Asset);
+            AddOneTimeCleanupAction(async () => await DeleteTestAssetSettings(parsedResponse.Asset));
 
             return parsedResponse;
         }

@@ -27,9 +27,6 @@ namespace ApiV2Data.Fixtures
         private ConfigBuilder _configBuilder;
         private IContainer _container;
 
-        private List<string> OperationsToCancel;
-        private List<string> _walletsToDelete;
-
         public string TestClientId;
 
         public GenericRepository<WalletEntity, IWallet> WalletRepository;
@@ -96,9 +93,6 @@ namespace ApiV2Data.Fixtures
 
         private async Task PrepareTestData()
         {        
-            _walletsToDelete = new List<string>();
-            OperationsToCancel = new List<string>();
-
             TestClientId = this._configBuilder.Config["AuthClientId"];
             var walletsFromDB = this.WalletRepository.GetAllAsync(w => w.ClientId == TestClientId && w.State != "deleted");
             var operationsFromDB = this.OperationsRepository.GetAllAsync(o => o.PartitionKey == OperationsEntity.GeneratePartitionKey() && o.ClientId.ToString() == TestClientId);
@@ -132,13 +126,6 @@ namespace ApiV2Data.Fixtures
         [OneTimeTearDown]
         public void Cleanup()
         {
-            var deleteTasks = new List<Task<bool>>();
-
-            foreach (string operationId in OperationsToCancel) { deleteTasks.Add(CancelTestOperation(operationId)); }
-
-            foreach (string walletId in _walletsToDelete) { deleteTasks.Add(DeleteTestWallet(walletId)); }
-
-            Task.WhenAll(deleteTasks).Wait();
             GC.SuppressFinalize(this);
         }
     }

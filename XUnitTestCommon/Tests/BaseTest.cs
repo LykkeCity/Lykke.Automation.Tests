@@ -17,6 +17,7 @@ namespace XUnitTestCommon.Tests
 
         public static Dictionary<string, List<Response>> responses;
         private readonly List<Action> _cleanupActions = new List<Action>();
+        private readonly List<Action> _oneTimeCleanupActions = new List<Action>();
 
         protected virtual void Initialize() { }
 
@@ -95,6 +96,15 @@ namespace XUnitTestCommon.Tests
             AllureReport.GetInstance().RunStarted(path);
         }
 
+        [OneTimeTearDown]
+        public void OneTimeCleanup()
+        {
+            Console.WriteLine("=============================== Final Cleanup ===============================");
+            Console.WriteLine();
+
+            CallCleanupActions(true);
+        }
+
         #endregion
 
         #region Allure Helpers
@@ -123,12 +133,18 @@ namespace XUnitTestCommon.Tests
 
         #region CleanUp Helpers
 
-        private void CallCleanupActions()
+        private void CallCleanupActions(bool oneTime = false)
         {
-            _cleanupActions.Reverse();
+            List<Action> cleanupActions;
+            if (oneTime)
+                cleanupActions = _oneTimeCleanupActions;
+            else
+                cleanupActions = _cleanupActions;
+
+            cleanupActions.Reverse();
             var exceptions = new List<Exception>();
 
-            foreach (var action in _cleanupActions)
+            foreach (var action in cleanupActions)
             {
                 try
                 {
@@ -150,6 +166,11 @@ namespace XUnitTestCommon.Tests
         public void AddCleanupAction(Action cleanupAction)
         {
             _cleanupActions.Add(cleanupAction);
+        }
+
+        public void AddOneTimeCleanupAction(Action cleanupAction)
+        {
+            _oneTimeCleanupActions.Add(cleanupAction);
         }
         #endregion
 
