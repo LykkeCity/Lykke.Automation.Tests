@@ -27,11 +27,11 @@ namespace AFTests.BlueApi
             {                
                 SearchQuery = Constants.TWITTER_SEARCH_QUERY,
                 MaxResult = 100,
-                AccountEmail = _fixture.AccountEmail,
+                AccountEmail = this.AccountEmail,
                 PageNumber = 1,
                 PageSize = pageSize
             };
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), RestSharp.Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), RestSharp.Method.POST);
 
             // checks if the response is 200 OK
             Assert.True(response.Status == System.Net.HttpStatusCode.OK);
@@ -65,7 +65,7 @@ namespace AFTests.BlueApi
                 SearchQuery = Constants.TWITTER_SEARCH_QUERY,
                 MaxResult = 100,
                 UntilDate = DateTime.Now.AddMinutes(-1), // API updates every 1 min, so new tweets should not be younger than (now - 1 min)
-                AccountEmail = _fixture.AccountEmail,
+                AccountEmail = this.AccountEmail,
                 PageNumber = 1,
                 PageSize = pageSize
             };
