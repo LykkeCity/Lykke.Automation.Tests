@@ -10,7 +10,7 @@ using XUnitTestData.Entities.Assets;
 
 namespace AssetsData.Fixtures
 {
-    public partial class AssetsTestDataFixture : IDisposable
+    public partial class AssetsTestDataFixture
     {
         private async Task prepareTestData()
         {

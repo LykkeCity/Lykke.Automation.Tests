@@ -20,14 +20,15 @@ using MatchingEngineData;
 using XUnitTestData.Entities.MatchingEngine;
 using XUnitTestData.Entities;
 using XUnitTestData.Entities.Assets;
+using NUnit.Framework;
 
 namespace AFTMatchingEngine.Fixtures
 {
-    public class MatchingEngineTestDataFixture : IDisposable
+    [TestFixture]
+    public class MatchingEngineTestDataFixture
     {
         public MatchingEngineConsumer Consumer;
 
-        //public IDictionaryManager<IAccount> AccountManager;
         public GenericRepository<AccountEntity, IAccount> AccountRepository;
         public GenericRepository<CashSwapEntity, ICashSwap> CashSwapRepository;
         public GenericRepository<MarketOrderEntity, IMarketOrderEntity> MarketOrdersRepository;
@@ -60,7 +61,8 @@ namespace AFTMatchingEngine.Fixtures
         private List<string> _createdQueues;
         private IContainer container;
 
-        public MatchingEngineTestDataFixture()
+        [OneTimeSetUp]
+        public void Initialize()
         {
             this._configBuilder = new ConfigBuilder(Constants.ConfigItemName);
             prepareConsumer();
@@ -221,7 +223,8 @@ namespace AFTMatchingEngine.Fixtures
             return Task.FromResult(msg);
         }
 
-        public void Dispose()
+        [OneTimeTearDown]
+        public void Cleanup()
         {
             if (_createdQueues != null)
             {

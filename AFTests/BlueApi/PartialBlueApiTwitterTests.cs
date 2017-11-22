@@ -69,7 +69,7 @@ namespace AFTests.BlueApi
                 PageNumber = 1,
                 PageSize = pageSize
             };
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), RestSharp.Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), RestSharp.Method.POST);
 
             // checks if the response is 200 OK
             Assert.True(response.Status == System.Net.HttpStatusCode.OK);

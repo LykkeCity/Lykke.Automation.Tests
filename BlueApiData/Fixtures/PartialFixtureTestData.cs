@@ -5,10 +5,11 @@ using AutoMapper;
 using BlueApiData.DTOs;
 using XUnitTestData.Domains.BlueApi;
 using XUnitTestData.Entities.BlueApi;
+using XUnitTestCommon.Tests;
 
 namespace BlueApiData.Fixtures
 {
-    public partial class BlueApiTestDataFixture
+    public partial class BlueApiTestDataFixture : BaseTest
     {
         private void PrepareMapper()
         {
@@ -21,22 +22,37 @@ namespace BlueApiData.Fixtures
             Mapper = config.CreateMapper();
         }
 
-        private async Task PrepareTestData()
+        public async Task PrepareDefaultTestPledge()
         {
-            PrepareMapper();
+            TestClientId = this.TestPledgeClientIDs["GetPledge"];
+            TestPledge = await CreateTestPledge(TestClientId, "GetPledge");
+        }
 
-            _pledgesToDelete = new Dictionary<string, string>();
+        public async void PrepareCreateTestPledge()
+        {
+            TestPledgeCreateClientId = this.TestPledgeClientIDs["CreatePledge"];
+            TestPledge = await CreateTestPledge(TestPledgeCreateClientId, "CreatePledge");
+        }
 
-            TestClientId = _configBuilder.Config["AuthClientId"];
-            TestPledgeCreateClientId = _configBuilder.Config["AuthPledgeCreateClientId"];
-            TestPledgeDeleteClientId = _configBuilder.Config["AuthPledgeDeleteClientId"];
-            TestPledgeUpdateClientId = _configBuilder.Config["AuthPledgeUpdateClientId"];
+        public async Task PrepareUpdateTestPledge()
+        {
+            TestPledgeUpdateClientId = this.TestPledgeClientIDs["UpdatePledge"];
+            TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
+        }
 
+        public async Task PrepareDeleteTestPledge()
+        {
+            TestPledgeDeleteClientId = this.TestPledgeClientIDs["DeletePledge"];
+            TestPledgeDelete = await CreateTestPledge(TestPledgeDeleteClientId, "DeletePledge");
+        }
+
+        public void PrepareTwitterData()
+        {
             AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
 
-            TestPledge = await CreateTestPledge(clientId: TestClientId);
-            TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
-            TestPledgeDelete = await CreateTestPledge(TestPledgeDeleteClientId, "DeletePledge");
+        public void GetTestClientId()
+        {
+            this.TestClientId = _configBuilder.Config["AuthClientId"];
         }
     }
 }

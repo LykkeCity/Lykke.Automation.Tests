@@ -21,7 +21,7 @@ namespace AFTests.ApiV2
         {
             var url = ApiPaths.TRANSACTION_HISTORY_BASE_PATH;
 
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.NoContent);
         }
@@ -33,28 +33,28 @@ namespace AFTests.ApiV2
         public async Task GetTransactionHistory()
         {
             //Get an account that has no transaction history
-            var testAccount = (AccountEntity)await _fixture.AccountRepository.TryGetAsync(
-                _fixture.TestClientId
+            var testAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(
+                this.TestClientId
             );
             Assert.NotNull(testAccount);
 
-            var accountBalance = testAccount.BalancesParsed.FirstOrDefault(b => b.Asset == _fixture.TestAssetId);
+            var accountBalance = testAccount.BalancesParsed.FirstOrDefault(b => b.Asset == this.TestAssetId);
             Assert.NotNull(accountBalance);
 
             var realBallance = accountBalance.Balance - accountBalance.Reserved;
 
             //Try to make cash out
             var cashOutId = Guid.NewGuid().ToString();
-            var cashOutAmmount = Math.Round((realBallance / 10) * -1, _fixture.AssetPrecission);
+            var cashOutAmmount = Math.Round((realBallance / 10) * -1, this.AssetPrecission);
 
-            var meGoodCashOutResponse = await _fixture.MEConsumer.Client.CashInOutAsync(
+            var meGoodCashOutResponse = await this.MEConsumer.Client.CashInOutAsync(
                 cashOutId, testAccount.Id, accountBalance.Asset, cashOutAmmount);
 
             Assert.True(meGoodCashOutResponse.Status == MeStatusCodes.Ok);
 
             var url = ApiPaths.TRANSACTION_HISTORY_BASE_PATH;
 
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
         }

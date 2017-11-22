@@ -20,7 +20,7 @@ namespace AFTests.ApiV2
         public async Task GetBaseAsset()
         {
             string url = ApiPaths.ASSETS_BASEASSET_PATH;
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             var baseAssetId = JsonUtils.DeserializeJson<BaseAssetDTO>(response.ResponseJson).BaseAssetId;
@@ -38,7 +38,7 @@ namespace AFTests.ApiV2
             string url = ApiPaths.ASSETS_BASEASSET_PATH;
             string testID = "LKK_TEST";
             BaseAssetDTO body = new BaseAssetDTO(testID);
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             string newBaseAssetId = JsonUtils.DeserializeJson<string>(response.ResponseJson);

@@ -26,17 +26,17 @@ namespace AFTests.AssetsTests
         {
             // Get all assets
             string url = ApiPaths.ASSETS_BASE_PATH;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK, "Actual status code is not OK");
             Assert.NotNull(response.ResponseJson);
 
             List<AssetDTO> parsedResponse = JsonUtils.DeserializeJson<List<AssetDTO>>(response.ResponseJson);
 
-            for (int i = 0; i < fixture.AllAssetsFromDB.Count; i++)
+            for (int i = 0; i < this.AllAssetsFromDB.Count; i++)
             {
-                fixture.AllAssetsFromDB[i].ShouldBeEquivalentTo(
-                    parsedResponse.Where(a => a.Id == fixture.AllAssetsFromDB[i].Id).FirstOrDefault(),
+                this.AllAssetsFromDB[i].ShouldBeEquivalentTo(
+                    parsedResponse.Where(a => a.Id == this.AllAssetsFromDB[i].Id).FirstOrDefault(),
                     o => o.ExcludingMissingMembers().Excluding(m => m.PartnerIds));
             }
         }
@@ -47,15 +47,15 @@ namespace AFTests.AssetsTests
         [Category("AssetsGet")]
         public async Task GetSingleAsset()
         {
-            string url = ApiPaths.ASSETS_BASE_PATH + "/" + fixture.TestAsset.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.ASSETS_BASE_PATH + "/" + this.TestAsset.Id;
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
 
             AssetDTO parsedResponse = JsonUtils.DeserializeJson<AssetDTO>(response.ResponseJson);
 
-            fixture.TestAsset.ShouldBeEquivalentTo(parsedResponse, options => options
+            this.TestAsset.ShouldBeEquivalentTo(parsedResponse, options => options
                 .ExcludingMissingMembers()
                 .Excluding(a => a.PartnerIds));
         }
@@ -66,8 +66,8 @@ namespace AFTests.AssetsTests
         [Category("AssetsGet")]
         public async Task CheckIfAssetExists()
         {
-            string url = ApiPaths.ASSETS_V2_BASE_PATH + "/" + fixture.TestAsset.Id + "/exists";
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.ASSETS_V2_BASE_PATH + "/" + this.TestAsset.Id + "/exists";
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
@@ -84,7 +84,7 @@ namespace AFTests.AssetsTests
         public async Task GetDefault()
         {
             string url = ApiPaths.ASSETS_DEFAULT_PATH;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
@@ -128,32 +128,32 @@ namespace AFTests.AssetsTests
         [Category("AssetsPost")]
         public async Task EnableDisableAsset()
         {
-            string disableUrl = ApiPaths.ASSETS_V2_BASE_PATH + "/" + fixture.TestAsset.Id + "/disable";
-            string enableUrl = ApiPaths.ASSETS_V2_BASE_PATH + "/" + fixture.TestAsset.Id + "/enable";
-            string parameter = JsonUtils.SerializeObject(new { id = fixture.TestAsset.Id });
+            string disableUrl = ApiPaths.ASSETS_V2_BASE_PATH + "/" + this.TestAsset.Id + "/disable";
+            string enableUrl = ApiPaths.ASSETS_V2_BASE_PATH + "/" + this.TestAsset.Id + "/enable";
+            string parameter = JsonUtils.SerializeObject(new { id = this.TestAsset.Id });
             string url;
 
-            if (fixture.TestAsset.IsDisabled)
+            if (this.TestAsset.IsDisabled)
                 url = enableUrl;
             else
                 url = disableUrl;
 
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, parameter, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, parameter, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            AssetEntity entity = await fixture.AssetManager.TryGetAsync(fixture.TestAsset.Id) as AssetEntity;
-            Assert.True(entity.IsDisabled != fixture.TestAsset.IsDisabled);
+            AssetEntity entity = await this.AssetManager.TryGetAsync(this.TestAsset.Id) as AssetEntity;
+            Assert.True(entity.IsDisabled != this.TestAsset.IsDisabled);
 
             if (entity.IsDisabled)
                 url = enableUrl;
             else
                 url = disableUrl;
 
-            var responseAfter = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, parameter, Method.POST);
+            var responseAfter = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, parameter, Method.POST);
             Assert.True(responseAfter.Status == HttpStatusCode.NoContent);
 
-            AssetEntity entityAfter = await fixture.AssetManager.TryGetAsync(fixture.TestAsset.Id) as AssetEntity;
-            Assert.True(entityAfter.IsDisabled == fixture.TestAsset.IsDisabled);
+            AssetEntity entityAfter = await this.AssetManager.TryGetAsync(this.TestAsset.Id) as AssetEntity;
+            Assert.True(entityAfter.IsDisabled == this.TestAsset.IsDisabled);
 
         }
 
@@ -163,10 +163,10 @@ namespace AFTests.AssetsTests
         [Category("AssetsPost")]
         public async Task CreateAsset()
         {
-            AssetDTO createdAsset = await fixture.CreateTestAsset();
+            AssetDTO createdAsset = await this.CreateTestAsset();
             Assert.NotNull(createdAsset);
 
-            AssetEntity entity = await fixture.AssetManager.TryGetAsync(createdAsset.Id) as AssetEntity;
+            AssetEntity entity = await this.AssetManager.TryGetAsync(createdAsset.Id) as AssetEntity;
             entity.ShouldBeEquivalentTo(createdAsset, o => o
             .ExcludingMissingMembers());
 
@@ -179,16 +179,16 @@ namespace AFTests.AssetsTests
         public async Task UpdateAsset()
         {
             string url = ApiPaths.ASSETS_V2_BASE_PATH;
-            AssetDTO updateParamAsset = fixture.TestAssetUpdate;
+            AssetDTO updateParamAsset = this.TestAssetUpdate;
             updateParamAsset.Name += Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTestEdit;
             updateParamAsset.DefinitionUrl += Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest ;
 
             string updateParam = JsonUtils.SerializeObject(updateParamAsset);
 
-            var updateResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
+            var updateResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
-            AssetEntity entityUpdateed = await fixture.AssetManager.TryGetAsync(updateParamAsset.Id) as AssetEntity;
+            AssetEntity entityUpdateed = await this.AssetManager.TryGetAsync(updateParamAsset.Id) as AssetEntity;
             entityUpdateed.ShouldBeEquivalentTo(updateParamAsset, o => o
             .ExcludingMissingMembers());
 
@@ -201,13 +201,13 @@ namespace AFTests.AssetsTests
         [Category("AssetsDelete")]
         public async Task DeleteAsset()
         {
-            string url = ApiPaths.ASSETS_V2_BASE_PATH + "/" + fixture.TestAssetDelete.Id;
-            string deleteParam = JsonUtils.SerializeObject(new { id = fixture.TestAssetDelete.Id });
+            string url = ApiPaths.ASSETS_V2_BASE_PATH + "/" + this.TestAssetDelete.Id;
+            string deleteParam = JsonUtils.SerializeObject(new { id = this.TestAssetDelete.Id });
 
-            var deleteResponse = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, deleteParam, Method.DELETE);
+            var deleteResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, deleteParam, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            AssetEntity entityDeleted = await fixture.AssetManager.TryGetAsync(fixture.TestAssetDelete.Id) as AssetEntity;
+            AssetEntity entityDeleted = await this.AssetManager.TryGetAsync(this.TestAssetDelete.Id) as AssetEntity;
             Assert.Null(entityDeleted);
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Text;
 
 namespace XUnitTestCommon
@@ -22,6 +23,7 @@ namespace XUnitTestCommon
 
         public static readonly string CLIENT_BASE_PATH = "/api/client";
         public static readonly string CLIENT_REGISTER_PATH = "/api/client/register";
+        public static readonly string CLIENT_INFO_PATH = "/api/client/userInfo";
 
         public static readonly string ASSETS_BASE_PATH = "/api/assets";
         public static readonly string ASSETS_BASEASSET_PATH = "/api/assets/baseAsset";
@@ -33,6 +35,11 @@ namespace XUnitTestCommon
         public static readonly string PLEDGES_BASE_PATH = "/api/pledges";
 
         public static readonly string TWITTER_BASE_PATH = "/api/twitter";
+
+        public static readonly string REFERRAL_LINKS_BASE_PATH = "/api/refLinks";
+        public static readonly string REFERRAL_LINKS_INVITATION_LINK_PATH = "/api/refLinks/request/invitationLink";
+        public static readonly string REFERRAL_LINKS_GIFTCOINS_LINK_PATH = "/api/refLinks/request/giftCoinslLink";
+        public static readonly string REFERRAL_LINKS_CLAIM_LINK_PATH = "/api/refLinks/claim/invitationLink";
 
         // API V2 prefix
         public static readonly string ASSETS_V2_BASE_PATH = "/api/v2/assets";
