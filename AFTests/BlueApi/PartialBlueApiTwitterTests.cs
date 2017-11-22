@@ -20,6 +20,7 @@ namespace AFTests.BlueApi
         [Category("TwitterPost")]
         public async Task GetTweets()
         {
+            this.PrepareTwitterData();
             string url = ApiPaths.TWITTER_BASE_PATH;
             int pageSize = Helpers.Random.Next(1, 101); // from 1 to 100 records on a page
             var untilDate = DateTime.Now.AddMinutes(-10); // 10 mins before now
@@ -57,6 +58,7 @@ namespace AFTests.BlueApi
         [Category("TwitterPost")]
         public async Task GetTweetsExtendedSearch()
         {
+            this.PrepareTwitterData();
             string url = ApiPaths.TWITTER_BASE_PATH;
             int pageSize = Helpers.Random.Next(1, 101); // from 1 to 100 records on a page
             var body = new TwitterSearchDTO()
