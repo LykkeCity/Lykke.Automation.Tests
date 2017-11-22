@@ -50,6 +50,8 @@ namespace BlueApiData.Fixtures
         {
             AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
 
+        }
+
         public void GetTestClientId()
         {
             this.TestClientId = _configBuilder.Config["AuthClientId"];
