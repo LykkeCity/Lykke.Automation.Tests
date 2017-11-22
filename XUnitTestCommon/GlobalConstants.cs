@@ -8,6 +8,6 @@ namespace XUnitTestCommon
     {
         public static readonly string AutoTest = "_AutoTest";
         public static readonly string AutoTestEdit = "_AutoTestEdit";
-        public static readonly string AutoTestEmail = "_AutoTest@auto.test";
+        public static readonly string AutoTestEmail = "_autotest@auto.test";
     }
 }

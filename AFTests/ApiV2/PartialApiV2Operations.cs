@@ -22,12 +22,12 @@ namespace AFTests.ApiV2
         [Category("OperationsGet")]
         public async Task GetOperationById()
         {
-            string url = ApiPaths.OPERATIONS_BASE_PATH + "/" + _fixture.TestOperation.Id;
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.OPERATIONS_BASE_PATH + "/" + this.TestOperation.Id;
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             OperationDTO parsedResponse = JsonUtils.DeserializeJson<OperationDTO>(response.ResponseJson);
-            OperationsEntity entity = await _fixture.OperationsRepository.TryGetAsync(parsedResponse.Id) as OperationsEntity;
+            OperationsEntity entity = await this.OperationsRepository.TryGetAsync(parsedResponse.Id) as OperationsEntity;
 
             OperationContext entityContext = JsonUtils.DeserializeJson<OperationContext>(entity.Context);
 
@@ -44,10 +44,10 @@ namespace AFTests.ApiV2
         [Category("OperationsPost")]
         public async Task CreateOperation()
         {
-            OperationCreateReturnDTO createdDTO = await _fixture.CreateTestOperation();
+            OperationCreateReturnDTO createdDTO = await this.CreateTestOperation();
             Assert.NotNull(createdDTO);
-            OperationsEntity entity = await _fixture.OperationsRepository.TryGetAsync(createdDTO.Id) as OperationsEntity;
-            OperationsEntity createdEntity = await _fixture.OperationsRepository.TryGetAsync("Created", createdDTO.Id) as OperationsEntity;
+            OperationsEntity entity = await this.OperationsRepository.TryGetAsync(createdDTO.Id) as OperationsEntity;
+            OperationsEntity createdEntity = await this.OperationsRepository.TryGetAsync("Created", createdDTO.Id) as OperationsEntity;
             Assert.NotNull(createdEntity);
 
             Assert.True(entity.StatusString == "Created");
@@ -60,12 +60,12 @@ namespace AFTests.ApiV2
         [Category("OperationsPost")]
         public async Task CancelOperation()
         {
-            string url = ApiPaths.OPERATIONS_CANCEL_PATH + "/" + _fixture.TestOperationCancel.Id;
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
+            string url = ApiPaths.OPERATIONS_CANCEL_PATH + "/" + this.TestOperationCancel.Id;
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(response.Status == HttpStatusCode.OK);
 
-            OperationsEntity entity = await _fixture.OperationsRepository.TryGetAsync(_fixture.TestOperationCancel.Id) as OperationsEntity;
-            OperationsEntity canceledEntity = await _fixture.OperationsRepository.TryGetAsync("Canceled", _fixture.TestOperationCancel.Id) as OperationsEntity;
+            OperationsEntity entity = await this.OperationsRepository.TryGetAsync(this.TestOperationCancel.Id) as OperationsEntity;
+            OperationsEntity canceledEntity = await this.OperationsRepository.TryGetAsync("Canceled", this.TestOperationCancel.Id) as OperationsEntity;
             Assert.NotNull(canceledEntity);
 
             Assert.True(entity.StatusString == "Canceled");
@@ -80,16 +80,16 @@ namespace AFTests.ApiV2
             string url = ApiPaths.OPERATIONS_DETAILS_CREATE_PATH;
             OperationDetailsDTO createDTO = new OperationDetailsDTO()
             {
-                TransactionId = _fixture.TestOperationCreateDetails.Id,
+                TransactionId = this.TestOperationCreateDetails.Id,
                 Comment = Guid.NewGuid().ToString() + GlobalConstants.AutoTest
             };
             string createParam = JsonUtils.SerializeObject(createDTO);
 
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
             Assert.True(response.Status == HttpStatusCode.OK);
 
-            OperationDetailsEntity entity = await _fixture.OperationDetailsRepository.TryGetAsync(
-                d => d.PartitionKey == _fixture.TestClientId && d.TransactionId == _fixture.TestOperationCreateDetails.Id) as OperationDetailsEntity;
+            OperationDetailsEntity entity = await this.OperationDetailsRepository.TryGetAsync(
+                d => d.PartitionKey == this.TestClientId && d.TransactionId == this.TestOperationCreateDetails.Id) as OperationDetailsEntity;
             Assert.NotNull(entity);
 
             Assert.True(entity.Comment == createDTO.Comment);
@@ -104,17 +104,17 @@ namespace AFTests.ApiV2
             string url = ApiPaths.OPERATIONS_DETAILS_REGISTER_PATH;
             OperationDetailsDTO createDTO = new OperationDetailsDTO()
             {
-                TransactionId = _fixture.TestOperationRegisterDetails.Id,
+                TransactionId = this.TestOperationRegisterDetails.Id,
                 Comment = Guid.NewGuid().ToString() + GlobalConstants.AutoTest
             };
             string createParam = JsonUtils.SerializeObject(createDTO);
 
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, createParam, Method.POST);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             OperationDetailsReturnDTO parsedResponse = JsonUtils.DeserializeJson<OperationDetailsReturnDTO>(response.ResponseJson);
 
-            OperationDetailsEntity entity = await _fixture.OperationDetailsRepository.TryGetAsync(_fixture.TestClientId, parsedResponse.Id) as OperationDetailsEntity;
+            OperationDetailsEntity entity = await this.OperationDetailsRepository.TryGetAsync(this.TestClientId, parsedResponse.Id) as OperationDetailsEntity;
             Assert.NotNull(entity);
 
             Assert.True(entity.TransactionId == createDTO.TransactionId);

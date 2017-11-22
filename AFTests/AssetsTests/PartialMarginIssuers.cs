@@ -23,14 +23,14 @@ namespace AFTests.AssetsTests
         public async Task GetAllMarginIssuers()
         {
             string url = ApiPaths.MARGIN_ISSUERS_PATH;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             MarginIssuerReturnDTO parsedResponse = JsonUtils.DeserializeJson<MarginIssuerReturnDTO>(response.ResponseJson);
 
-            for (int i = 0; i < fixture.AllMarginIssuersFromDB.Count; i++)
+            for (int i = 0; i < this.AllMarginIssuersFromDB.Count; i++)
             {
-                fixture.AllMarginIssuersFromDB[i].ShouldBeEquivalentTo(parsedResponse.Items.Where(p => p.Id == fixture.AllMarginIssuersFromDB[i].Id).FirstOrDefault(),
+                this.AllMarginIssuersFromDB[i].ShouldBeEquivalentTo(parsedResponse.Items.Where(p => p.Id == this.AllMarginIssuersFromDB[i].Id).FirstOrDefault(),
                 o => o.ExcludingMissingMembers());
             }
         }
@@ -41,13 +41,13 @@ namespace AFTests.AssetsTests
         [Category("MarginIssuersGet")]
         public async Task GetSingleMarginIssuer()
         {
-            string url = ApiPaths.MARGIN_ISSUERS_PATH + "/" + fixture.TestMarginIssuer.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.MARGIN_ISSUERS_PATH + "/" + this.TestMarginIssuer.Id;
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             MarginIssuerDTO parsedResponse = JsonUtils.DeserializeJson<MarginIssuerDTO>(response.ResponseJson);
 
-            fixture.TestMarginIssuer.ShouldBeEquivalentTo(parsedResponse, o => o
+            this.TestMarginIssuer.ShouldBeEquivalentTo(parsedResponse, o => o
             .ExcludingMissingMembers());
         }
 
@@ -57,8 +57,8 @@ namespace AFTests.AssetsTests
         [Category("MarginIssuersGet")]
         public async Task CheckIfMarginIssuerExists()
         {
-            string url = ApiPaths.MARGIN_ISSUERS_PATH + "/" + fixture.TestMarginIssuer.Id + "/exists";
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.MARGIN_ISSUERS_PATH + "/" + this.TestMarginIssuer.Id + "/exists";
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             bool parsedResponse = JsonUtils.DeserializeJson<bool>(response.ResponseJson);
@@ -72,10 +72,10 @@ namespace AFTests.AssetsTests
         [Category("IssuersPost")]
         public async Task CreateMarginIssuer()
         {
-            MarginIssuerDTO createdIssuer = await fixture.CreateTestMarginIssuer();
+            MarginIssuerDTO createdIssuer = await this.CreateTestMarginIssuer();
             Assert.NotNull(createdIssuer);
 
-            MarginIssuerEntity entity = await fixture.MarginIssuerManager.TryGetAsync(createdIssuer.Id) as MarginIssuerEntity;
+            MarginIssuerEntity entity = await this.MarginIssuerManager.TryGetAsync(createdIssuer.Id) as MarginIssuerEntity;
             entity.ShouldBeEquivalentTo(createdIssuer, o => o
             .ExcludingMissingMembers());
         }
@@ -89,16 +89,16 @@ namespace AFTests.AssetsTests
             string url = ApiPaths.MARGIN_ISSUERS_PATH;
             MarginIssuerDTO editIssuer = new MarginIssuerDTO()
             {
-                Id = fixture.TestMarginIssuerUpdate.Id,
-                IconUrl = fixture.TestMarginIssuerUpdate.IconUrl + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
-                Name = fixture.TestMarginIssuerUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Id = this.TestMarginIssuerUpdate.Id,
+                IconUrl = this.TestMarginIssuerUpdate.IconUrl + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Name = this.TestMarginIssuerUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
             };
             string editParam = JsonUtils.SerializeObject(editIssuer);
 
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.OK); //HttpStatusCode.NoContent
 
-            MarginIssuerEntity entity = await fixture.MarginIssuerManager.TryGetAsync(fixture.TestMarginIssuerUpdate.Id) as MarginIssuerEntity;
+            MarginIssuerEntity entity = await this.MarginIssuerManager.TryGetAsync(this.TestMarginIssuerUpdate.Id) as MarginIssuerEntity;
             entity.ShouldBeEquivalentTo(editIssuer, o => o
             .ExcludingMissingMembers());
 
@@ -110,11 +110,11 @@ namespace AFTests.AssetsTests
         [Category("IssuersDelete")]
         public async Task DeleteMarginIssuer()
         {
-            string url = ApiPaths.MARGIN_ISSUERS_PATH + "/" + fixture.TestMarginIssuerDelete.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+            string url = ApiPaths.MARGIN_ISSUERS_PATH + "/" + this.TestMarginIssuerDelete.Id;
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            MarginIssuerEntity entity = await fixture.MarginIssuerManager.TryGetAsync(fixture.TestMarginIssuerDelete.Id) as MarginIssuerEntity;
+            MarginIssuerEntity entity = await this.MarginIssuerManager.TryGetAsync(this.TestMarginIssuerDelete.Id) as MarginIssuerEntity;
             Assert.Null(entity);
         }
     }

@@ -2,7 +2,7 @@
 {
     public interface ITrader : IDictionaryItem
     {
-        string PrimeryPartitionKey { get; set; }
-        string PrimeryRowKey { get; set; }
+        string PrimaryPartitionKey { get; set; }
+        string PrimaryRowKey { get; set; }
     }
 }

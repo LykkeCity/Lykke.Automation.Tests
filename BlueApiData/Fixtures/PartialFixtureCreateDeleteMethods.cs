@@ -6,6 +6,7 @@ using RestSharp;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Entities.BlueApi;
+using XUnitTestData.Entities.ApiV2;
 
 namespace BlueApiData.Fixtures
 {
@@ -30,11 +31,12 @@ namespace BlueApiData.Fixtures
             }
 
             var pledge = await PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == clientId);
+                p =>
+                {
+                    return p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == clientId;
+                });
 
             var returnDto = Mapper.Map<PledgeDTO>(pledge);
-
-            _pledgesToDelete.Add(returnDto.Id, consumerIndex);
 
             return returnDto;
         }
@@ -52,6 +54,14 @@ namespace BlueApiData.Fixtures
             }
 
             return true;
+        }
+
+        public async Task<string> GetClientIdByEmail(string email)
+        {
+            PersonalDataEntity entity = await PersonalDataRepository.TryGetAsync(pd => pd.PartitionKey == PersonalDataEntity.GeneratePartitionKey() && pd.Email == email) as PersonalDataEntity;
+            if (entity != null)
+                return entity.RowKey;
+            return null;
         }
     }
 }
