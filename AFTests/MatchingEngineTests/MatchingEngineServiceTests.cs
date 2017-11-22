@@ -10,12 +10,13 @@ using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using System.Threading.Tasks;
 using XUnitTestData.Entities;
+using XUnitTestCommon.Tests;
 
 namespace AFTMatchingEngine
 {
     [Category("FullRegression")]
     [Category("MatchingEngine")]
-    public class MatchingEngineServiceTests
+    public class MatchingEngineServiceTests: BaseTest
     {
         private MatchingEngineTestDataFixture fixture;
 

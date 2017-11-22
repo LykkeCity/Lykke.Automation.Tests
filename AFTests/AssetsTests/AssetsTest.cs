@@ -4,13 +4,14 @@ using System.Net;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using XUnitTestCommon;
+using XUnitTestCommon.Tests;
 
 namespace AFTests.AssetsTests
 {
 
     [Category("FullRegression")]
     [Category("AssetsService")]
-    public partial class AssetsTest
+    public partial class AssetsTest: BaseTest
     {
         private AssetsTestDataFixture fixture;
 
