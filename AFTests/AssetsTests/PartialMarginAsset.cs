@@ -24,12 +24,12 @@ namespace AFTests.AssetsTests
         public async Task GetAllMarginAssets()
         {
             string url = ApiPaths.MARGIN_ASSET_BASE_PATH;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             List<MarginAssetDTO> parsedResponse = JsonUtils.DeserializeJson<List<MarginAssetDTO>>(response.ResponseJson);
 
-            foreach (MarginAssetEntity entity in fixture.AllMarginAssetsFromDB)
+            foreach (MarginAssetEntity entity in this.AllMarginAssetsFromDB)
             {
                 entity.ShouldBeEquivalentTo(parsedResponse.Where(a => a.Id == entity.Id).FirstOrDefault(), o => o
                 .ExcludingMissingMembers());
@@ -42,13 +42,13 @@ namespace AFTests.AssetsTests
         [Category("MarginAssetsGet")]
         public async Task GetSingleMarginAssets()
         {
-            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + fixture.TestMarginAsset.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + this.TestMarginAsset.Id;
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             MarginAssetDTO parsedResponse = JsonUtils.DeserializeJson<MarginAssetDTO>(response.ResponseJson);
 
-            fixture.TestMarginAsset.ShouldBeEquivalentTo(parsedResponse, o => o
+            this.TestMarginAsset.ShouldBeEquivalentTo(parsedResponse, o => o
             .ExcludingMissingMembers());
         }
 
@@ -58,8 +58,8 @@ namespace AFTests.AssetsTests
         [Category("MarginAssetsGet")]
         public async Task CheckIfMarginAssetsExists()
         {
-            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + fixture.TestMarginAsset.Id + "/exists";
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + this.TestMarginAsset.Id + "/exists";
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             bool parsedResponse = JsonUtils.DeserializeJson<bool>(response.ResponseJson);
@@ -72,10 +72,10 @@ namespace AFTests.AssetsTests
         [Category("MarginAssetsPost")]
         public async Task CreateMarginAsset()
         {
-            MarginAssetDTO createdDTO = await fixture.CreateTestMarginAsset();
+            MarginAssetDTO createdDTO = await this.CreateTestMarginAsset();
             Assert.NotNull(createdDTO);
 
-            MarginAssetEntity entity = await fixture.MarginAssetManager.TryGetAsync(createdDTO.Id) as MarginAssetEntity;
+            MarginAssetEntity entity = await this.MarginAssetManager.TryGetAsync(createdDTO.Id) as MarginAssetEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(createdDTO, o => o.ExcludingMissingMembers());
         }
@@ -89,20 +89,20 @@ namespace AFTests.AssetsTests
             string url = ApiPaths.MARGIN_ASSET_BASE_PATH;
             MarginAssetDTO updateDTO = new MarginAssetDTO()
             {
-                Id = fixture.TestMarginAssetUpdate.Id,
-                Name = fixture.TestMarginAssetUpdate.Name,
-                IdIssuer = fixture.TestMarginAssetUpdate.IdIssuer,
-                Symbol = fixture.TestMarginAssetUpdate.Symbol,
+                Id = this.TestMarginAssetUpdate.Id,
+                Name = this.TestMarginAssetUpdate.Name,
+                IdIssuer = this.TestMarginAssetUpdate.IdIssuer,
+                Symbol = this.TestMarginAssetUpdate.Symbol,
                 Accuracy = Helpers.Random.Next(2,8),
                 DustLimit = Helpers.Random.NextDouble(),
                 Multiplier = Helpers.Random.NextDouble()
             };
 
             string updateParam = JsonUtils.SerializeObject(updateDTO);
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            MarginAssetEntity entity = await fixture.MarginAssetManager.TryGetAsync(updateDTO.Id) as MarginAssetEntity;
+            MarginAssetEntity entity = await this.MarginAssetManager.TryGetAsync(updateDTO.Id) as MarginAssetEntity;
             Assert.NotNull(entity);
             entity.ShouldBeEquivalentTo(updateDTO, o => o.ExcludingMissingMembers());
 
@@ -114,11 +114,11 @@ namespace AFTests.AssetsTests
         [Category("MarginAssetsDelete")]
         public async Task DeleteMarginAsset()
         {
-            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + fixture.TestMarginAssetDelete.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + this.TestMarginAssetDelete.Id;
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            MarginAssetEntity entity = await fixture.MarginAssetManager.TryGetAsync(fixture.TestMarginAssetDelete.Id) as MarginAssetEntity;
+            MarginAssetEntity entity = await this.MarginAssetManager.TryGetAsync(this.TestMarginAssetDelete.Id) as MarginAssetEntity;
             Assert.Null(entity);
         }
     }

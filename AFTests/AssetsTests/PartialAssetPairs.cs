@@ -24,15 +24,15 @@ namespace AFTests.AssetsTests
         public async Task GetAllAssetPairs()
         {
             string url = ApiPaths.ASSET_PAIRS_PATH;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             List<AssetPairDTO> parsedResponse = JsonUtils.DeserializeJson<List<AssetPairDTO>>(response.ResponseJson);
 
-            for (int i = 0; i < fixture.AllAssetPairsFromDB.Count; i++)
+            for (int i = 0; i < this.AllAssetPairsFromDB.Count; i++)
             {
-                fixture.AllAssetPairsFromDB[i].ShouldBeEquivalentTo(parsedResponse.Where(p => p.Id == fixture.AllAssetPairsFromDB[i].Id).FirstOrDefault(), o => o
+                this.AllAssetPairsFromDB[i].ShouldBeEquivalentTo(parsedResponse.Where(p => p.Id == this.AllAssetPairsFromDB[i].Id).FirstOrDefault(), o => o
                 .ExcludingMissingMembers());
             }
         }
@@ -43,13 +43,13 @@ namespace AFTests.AssetsTests
         [Category("AsestPairsGet")]
         public async Task GetSingleAssetPair()
         {
-            string url = ApiPaths.ASSET_PAIRS_PATH + "/" + fixture.TestAssetPair.Id;
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.ASSET_PAIRS_PATH + "/" + this.TestAssetPair.Id;
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             AssetPairDTO parsedResponse = JsonUtils.DeserializeJson<AssetPairDTO>(response.ResponseJson);
-            fixture.TestAssetPair.ShouldBeEquivalentTo(parsedResponse, o => o
+            this.TestAssetPair.ShouldBeEquivalentTo(parsedResponse, o => o
             .ExcludingMissingMembers());
 
         }
@@ -60,8 +60,8 @@ namespace AFTests.AssetsTests
         [Category("AsestPairsGet")]
         public async Task CheckIfAssetPairExists()
         {
-            string url = ApiPaths.ASSET_PAIRS_PATH + "/" + fixture.TestAssetPair.Id + "/exists";
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            string url = ApiPaths.ASSET_PAIRS_PATH + "/" + this.TestAssetPair.Id + "/exists";
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.NotNull(response);
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -76,10 +76,10 @@ namespace AFTests.AssetsTests
         [Category("AsestPairsPost")]
         public async Task CreateAssetPair()
         {
-            AssetPairDTO newAssetPair = await fixture.CreateTestAssetPair();
+            AssetPairDTO newAssetPair = await this.CreateTestAssetPair();
             Assert.NotNull(newAssetPair);
 
-            AssetPairEntity entity = await fixture.AssetPairManager.TryGetAsync(newAssetPair.Id) as AssetPairEntity;
+            AssetPairEntity entity = await this.AssetPairManager.TryGetAsync(newAssetPair.Id) as AssetPairEntity;
             entity.ShouldBeEquivalentTo(newAssetPair, o => o
             .ExcludingMissingMembers());
         }
@@ -94,22 +94,22 @@ namespace AFTests.AssetsTests
             AssetPairDTO updateAssetPair = new AssetPairDTO()
             {
                 Accuracy = Helpers.Random.Next(2, 8),
-                BaseAssetId = fixture.TestAssetPairUpdate.BaseAssetId,
-                Id = fixture.TestAssetPairUpdate.Id,
-                InvertedAccuracy = fixture.TestAssetPairUpdate.InvertedAccuracy,
-                IsDisabled = fixture.TestAssetPairUpdate.IsDisabled,
-                Name = fixture.TestAssetPairUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
-                QuotingAssetId = fixture.TestAssetPairUpdate.QuotingAssetId,
-                Source = fixture.TestAssetPairUpdate.Source,
-                Source2 = fixture.TestAssetPairUpdate.Source2
+                BaseAssetId = this.TestAssetPairUpdate.BaseAssetId,
+                Id = this.TestAssetPairUpdate.Id,
+                InvertedAccuracy = this.TestAssetPairUpdate.InvertedAccuracy,
+                IsDisabled = this.TestAssetPairUpdate.IsDisabled,
+                Name = this.TestAssetPairUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                QuotingAssetId = this.TestAssetPairUpdate.QuotingAssetId,
+                Source = this.TestAssetPairUpdate.Source,
+                Source2 = this.TestAssetPairUpdate.Source2
             };
             string updateParam = JsonUtils.SerializeObject(updateAssetPair);
 
-            var response = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.NotNull(response);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            AssetPairEntity entity = await fixture.AssetPairManager.TryGetAsync(updateAssetPair.Id) as AssetPairEntity;
+            AssetPairEntity entity = await this.AssetPairManager.TryGetAsync(updateAssetPair.Id) as AssetPairEntity;
             entity.ShouldBeEquivalentTo(updateAssetPair, o => o
             .ExcludingMissingMembers());
 
@@ -121,12 +121,12 @@ namespace AFTests.AssetsTests
         [Category("AsestPairsDelete")]
         public async Task DeleteAssetPair()
         {
-            string url = ApiPaths.ASSET_PAIRS_PATH + "/" + fixture.TestAssetPairDelete.Id;
-            var result = await fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
+            string url = ApiPaths.ASSET_PAIRS_PATH + "/" + this.TestAssetPairDelete.Id;
+            var result = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.NotNull(result);
             Assert.True(result.Status == HttpStatusCode.NoContent);
 
-            AssetPairEntity entity = await fixture.AssetPairManager.TryGetAsync(fixture.TestAssetPairDelete.Id) as AssetPairEntity;
+            AssetPairEntity entity = await this.AssetPairManager.TryGetAsync(this.TestAssetPairDelete.Id) as AssetPairEntity;
             Assert.Null(entity);
         }
 

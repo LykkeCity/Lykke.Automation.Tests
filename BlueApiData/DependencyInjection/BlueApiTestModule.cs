@@ -2,8 +2,10 @@
 using AzureStorage.Tables;
 using XUnitTestCommon;
 using XUnitTestData.Domains;
+using XUnitTestData.Domains.ApiV2;
 using XUnitTestData.Domains.BlueApi;
 using XUnitTestData.Entities;
+using XUnitTestData.Entities.ApiV2;
 using XUnitTestData.Entities.BlueApi;
 using XUnitTestData.Repositories;
 
@@ -29,6 +31,16 @@ namespace BlueApiData.DependencyInjection
                     new AzureTableStorage<AccountEntity>(
                         _configBuilder.Config["MainConnectionString"], "Accounts", null), "ClientBalance"))
                 .As<IDictionaryRepository<IAccount>>();
+
+            builder.Register(c => new GenericRepository<PersonalDataEntity, IPersonalData>(
+                   new AzureTableStorage<PersonalDataEntity>(
+                       _configBuilder.Config["MainConnectionString"], "PersonalData", null), "PD"))
+               .As<IDictionaryRepository<IPersonalData>>();
+
+            builder.Register(c => new GenericRepository<ReferralLinkEntity, IReferralLink>(
+                    new AzureTableStorage<ReferralLinkEntity>(
+                        _configBuilder.Config["MainConnectionString"], "ReferralLinks", null), "ReferallLink"))
+                .As<IDictionaryRepository<IReferralLink>>();
         }
     }
 }

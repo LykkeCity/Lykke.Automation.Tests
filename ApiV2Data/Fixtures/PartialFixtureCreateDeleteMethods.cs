@@ -11,7 +11,7 @@ using XUnitTestCommon.Utils;
 
 namespace ApiV2Data.Fixtures
 {
-    public partial class ApiV2TestDataFixture : IDisposable
+    public partial class ApiV2TestDataFixture
     {
         public async Task<WalletDTO> CreateTestWallet(bool isHFT = false)
         {

@@ -4,6 +4,7 @@ using BlueApiData.Fixtures;
 using NUnit.Framework;
 using RestSharp;
 using XUnitTestCommon;
+using XUnitTestCommon.Tests;
 
 namespace AFTests.BlueApi
 {
@@ -11,11 +12,8 @@ namespace AFTests.BlueApi
     [Category("BlueApiService")]
     public partial class BlueApiTests
     {
-        private readonly BlueApiTestDataFixture _fixture;
-
         public BlueApiTests()
         {
-            this._fixture = new BlueApiTestDataFixture();
         }
 
         #region IsAlive
@@ -26,7 +24,7 @@ namespace AFTests.BlueApi
         public async Task IsAlive()
         {
             string url = ApiPaths.ISALIVE_BASE_PATH;
-            var response = await _fixture.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
             Assert.True(response.Status == HttpStatusCode.OK);
 
             Assert.True(response.ResponseJson.Contains("\"Env\":"));
