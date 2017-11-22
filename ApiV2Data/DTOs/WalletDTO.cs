@@ -27,6 +27,7 @@ namespace ApiV2Data.DTOs
     {
         public string AssetId { get; set; }
         public double Balance { get; set; }
+        public double Reserved { get; set; }
     }
 
     public class WalletCreateDTO
