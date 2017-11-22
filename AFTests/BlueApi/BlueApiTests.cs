@@ -4,12 +4,13 @@ using BlueApiData.Fixtures;
 using NUnit.Framework;
 using RestSharp;
 using XUnitTestCommon;
+using XUnitTestCommon.Tests;
 
 namespace AFTests.BlueApi
 {
     [Category("FullRegression")]
     [Category("BlueApiService")]
-    public partial class BlueApiTests
+    public partial class BlueApiTests: BaseTest
     {
         private readonly BlueApiTestDataFixture _fixture;
 
