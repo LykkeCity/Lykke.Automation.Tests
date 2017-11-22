@@ -62,5 +62,7 @@ namespace XUnitTestCommon
         public static readonly string WATCH_LIST_PREDEFINED_PATH = "/api/v2/watch-lists/predefined";
         public static readonly string WATCH_LIST_CUSTOM_PATH = "/api/v2/watch-lists/custom";
         public static readonly string WATCH_LIST_ALL_PATH = "/api/v2/watch-lists/all";
+
+        public static readonly string ERC20TOKENS_BASE_PATH = "/api/v2/erc20-tokens";
     }    
 }
