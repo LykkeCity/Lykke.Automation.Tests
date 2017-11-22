@@ -34,8 +34,8 @@ namespace AFTests.BlueApi
         [Category("RequestInvitationLinkForExistingClient")]
         public async Task RequestInvitationLinkForExistingClient()
         {
-            //this.PrepareReferralLinksData();
-            var url = ApiPaths.REFERRAL_LINKS_INVITATION_LINK_PATH;
+            this.GetTestClientId();
+             var url = ApiPaths.REFERRAL_LINKS_INVITATION_LINK_PATH;
             var body = JsonUtils.SerializeObject(new RequestInvitationLinkRequestDto { SenderClientId = this.TestClientId });
 
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
@@ -106,6 +106,7 @@ namespace AFTests.BlueApi
             Assert.True(response.Status == HttpStatusCode.BadRequest);
         }
 
+        [Ignore("Invalid test")]
         [Test]
         [Category("Smoke")]
         [Category("ReferralLinks")]
