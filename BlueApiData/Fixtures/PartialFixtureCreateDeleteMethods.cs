@@ -55,13 +55,5 @@ namespace BlueApiData.Fixtures
 
             return true;
         }
-
-        public async Task<string> GetClientIdByEmail(string email)
-        {
-            PersonalDataEntity entity = await PersonalDataRepository.TryGetAsync(pd => pd.PartitionKey == PersonalDataEntity.GeneratePartitionKey() && pd.Email == email) as PersonalDataEntity;
-            if (entity != null)
-                return entity.RowKey;
-            return null;
-        }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using XUnitTestData.Domains.Authentication;
 
 namespace XUnitTestCommon.Consumers
 {
@@ -17,6 +18,8 @@ namespace XUnitTestCommon.Consumers
         private readonly ConfigBuilder _configBuilder;
 
         private readonly OAuthConsumer _oAuthConsumer;
+
+        public UserExtended ClientInfo => _oAuthConsumer.ClientInfo;
 
         public ApiConsumer(ConfigBuilder configBuilder, OAuthConsumer oAuthConsumer)
         {

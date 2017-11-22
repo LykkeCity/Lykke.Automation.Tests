@@ -80,8 +80,9 @@ namespace BlueApiData.Fixtures
         {
             OAuthConsumer oAuthConsumer = new OAuthConsumer(_configBuilder);
             ClientRegisterDTO createPledgeUser = await oAuthConsumer.RegisterNewUser();
-            TestPledgeClientIDs[purpose] = await GetClientIdByEmail(createPledgeUser.Email);
-            PledgeApiConsumers.Add(purpose, new ApiConsumer(_configBuilder, oAuthConsumer));
+            ApiConsumer consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
+            TestPledgeClientIDs[purpose] = consumer.ClientInfo.ClientId;
+            PledgeApiConsumers.Add(purpose, consumer);
         }
 
         private void PrepareDependencyContainer()

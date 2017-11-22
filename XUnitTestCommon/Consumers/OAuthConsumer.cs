@@ -6,7 +6,10 @@ using RestSharp;
 using XUnitTestCommon.DTOs;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Domains.Authentication;
-using User = XUnitTestData.Domains.Authentication.User;
+using XUnitTestData.Repositories;
+using XUnitTestData.Entities.ApiV2;
+using XUnitTestData.Domains.ApiV2;
+using AzureStorage.Tables;
 
 namespace XUnitTestCommon.Consumers
 {
@@ -18,8 +21,10 @@ namespace XUnitTestCommon.Consumers
         public string RegisterPath { get; set; }
         public int AuthTokenTimeout { get; set; }
         public User AuthUser { get; set; }
+        public UserExtended ClientInfo { get; set; }
         public string AuthToken { get; private set; }
 
+        private string UserDataConnectionString { get; set; }
         private DateTime? _tokenUpdateTime;
 
         public OAuthConsumer() { }
@@ -31,32 +36,21 @@ namespace XUnitTestCommon.Consumers
             RegisterPath = config.Config["RegisterPath"];
             BaseAuthUrl = config.Config["BaseUrlAuth"];
             BaseRegisterUrl = config.Config["BaseUrlRegister"];
+            UserDataConnectionString = config.Config["MainConnectionString"];
             AuthUser = new User
             {
                 Email = config.Config["AuthEmail"],
                 Password = config.Config["AuthPassword"]
             };
-        }
 
-        public OAuthConsumer(string baseAuthUrl, string authPath, int authTokenTimeout, User authUser)
-        {
-            BaseAuthUrl = baseAuthUrl;
-            AuthPath = authPath;
-            AuthTokenTimeout = authTokenTimeout;
-            AuthUser = authUser;
-        }
 
-        public OAuthConsumer(string baseAuthUrl, string authPath, int authTokenTimeout, string registerPath)
-        {
-            BaseAuthUrl = baseAuthUrl;
-            AuthPath = authPath;
-            AuthTokenTimeout = authTokenTimeout;
-            RegisterPath = RegisterPath;
         }
 
         public async Task<bool> Authenticate()
         {
-            return await UpdateToken();
+            Task<bool> tokenTask = UpdateToken();
+            await UpdateClientInfo();
+            return await tokenTask;
         }
 
         public async Task<bool> UpdateToken()
@@ -99,6 +93,34 @@ namespace XUnitTestCommon.Consumers
             return token.AccessToken;
         }
 
+        private async Task UpdateClientInfo()
+        {
+            var TradersRepository = new GenericRepository<TradersEntity, ITrader>(new AzureTableStorage<TradersEntity>(UserDataConnectionString, "Traders", null));
+            var WalletsRepository = new GenericRepository<WalletEntity, IWallet>(new AzureTableStorage<WalletEntity>(UserDataConnectionString, "Wallets", null));
+
+            string clientId = null;
+            string walletId = null;
+
+            TradersEntity tEntity = await TradersRepository.TryGetAsync(t => t.PartitionKey == "IndexEmail" && t.Id == AuthUser.Email ) as TradersEntity;
+            if (tEntity != null)
+            {
+                clientId = tEntity.PrimaryRowKey;
+
+                WalletEntity wEntity = await WalletsRepository.TryGetAsync(w => w.PartitionKey == clientId && w.Name == "Trading" && w.Type == "Trading") as WalletEntity;
+
+                if (wEntity != null)
+                    walletId = wEntity.Id;
+            }
+
+            this.ClientInfo = new UserExtended()
+            {
+                Email = AuthUser.Email,
+                Password = AuthUser.Password,
+                ClientId = clientId,
+                TradingWalletId = walletId
+            };
+        }
+
         /// <summary>
         /// Registers new user. If another user was inputted via one of the constructors it will be overwritten.
         /// </summary>
@@ -130,6 +152,8 @@ namespace XUnitTestCommon.Consumers
                     Email = registerDTO.Email,
                     Password = registerDTO.Password
                 };
+
+                await this.Authenticate();
 
                 return registerDTO;
             }
