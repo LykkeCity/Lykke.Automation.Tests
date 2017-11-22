@@ -49,8 +49,7 @@ namespace BlueApiData.Fixtures
         public void PrepareTwitterData()
         {
             AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
-            TwitterSearchQuery = "#dog"; // hard-coded for now, will think of a way to change it dynamically 
-            TwitterSearchUntilDate = DateTime.Parse("07-11-2017"); // hard-coded for now, will think of a way to change it dynamically  
+
         }
 
         public void GetTestClientId()
