@@ -70,5 +70,32 @@ namespace AFTests.AssetsTests
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
         }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("Erc20Tokens")]
+        [Category("Erc20TokensCreate")]
+        public async Task CreateErc20Token()
+        {
+            var url = ApiPaths.ERC20TOKENS_BASE_PATH;
+            var rndValue = new Random(1000000).Next().ToString();
+            var body = new
+            {
+                AssetId = "a53c1e38-9128-416f-b976-19996abfc4dd",
+                Address = $"0x+fake_{rndValue}",
+                BlockHash = "fake",
+                BlockTimestamp = rndValue,
+                DeployerAddress = "fake",
+                TokenDecimals = 1,
+                TokenName = String.Empty,
+                TokenSymbol = "fake",
+                TokenTotalSupply = "1",
+                TransactionHash = "fake"
+            };
+
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
+
+            Assert.True(response.Status == HttpStatusCode.OK);
+        }
     }
 }
