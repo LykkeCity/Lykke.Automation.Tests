@@ -63,6 +63,7 @@ namespace AssetsData.Fixtures
             MarginIssuerManager = RepositoryUtils.ResolveGenericRepository<MarginIssuerEntity, IMarginIssuer>(container);
 
             WatchListRepository = container.Resolve<IDictionaryRepository<IWatchList>>() as WatchListRepository;
+            Erc20TokensRepository = RepositoryUtils.ResolveGenericRepository<Erc20TokenEntity, IErc20Token>(container);
         }
 
         [OneTimeTearDown]

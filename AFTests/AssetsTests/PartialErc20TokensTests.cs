@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using AssetsData.DTOs.Assets;
 using NUnit.Framework;
 using RestSharp;
+using RestSharp.Extensions.MonoHttp;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 
@@ -78,8 +80,8 @@ namespace AFTests.AssetsTests
         public async Task CreateErc20Token()
         {
             var url = ApiPaths.ERC20TOKENS_BASE_PATH;
-            var rndValue = new Random(1000000).Next().ToString();
-            var body = new
+            var rndValue = new Random(1000000).Next();
+            var body = new Erc20TokenDto
             {
                 AssetId = "a53c1e38-9128-416f-b976-19996abfc4dd",
                 Address = $"0x+fake_{rndValue}",
@@ -96,6 +98,51 @@ namespace AFTests.AssetsTests
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
 
             Assert.True(response.Status == HttpStatusCode.OK);
+        }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("Erc20Tokens")]
+        [Category("Erc20TokensUpdate")]
+        public async Task UpdateErc20Token()
+        {
+            //REMARK: It is expected for update token to create new one 
+            //if the one we are trying to update does not exist
+            var url = ApiPaths.ERC20TOKENS_BASE_PATH;
+            var rndValue = new Random(1000000).Next();
+            var body = new Erc20TokenDto
+            {
+                AssetId = "a53c1e38-9128-416f-b976-19996abfc4dd",
+                Address = $"0x+fake_{rndValue}",
+                BlockHash = "fake",
+                BlockTimestamp = rndValue,
+                DeployerAddress = "fake",
+                TokenDecimals = 1,
+                TokenName = String.Empty,
+                TokenSymbol = "fake",
+                TokenTotalSupply = "1",
+                TransactionHash = "fake"
+            };
+
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.PUT);
+
+            Assert.True(response.Status == HttpStatusCode.NoContent);
+        }
+
+        [Ignore("Test will fail, cause when we try to add same asset second time it will throw an error")]
+        [Test]
+        [Category("Smoke")]
+        [Category("Erc20Tokens")]
+        [Category("Erc20TokensCreateAsset")]
+        public async Task CreateErc20TokenAsset()
+        {
+            var address = HttpUtility.UrlEncode("0x+fake010897");
+            var url = $"{ApiPaths.ERC20TOKENS_BASE_PATH}/{address}/create-asset";
+
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.PUT);
+
+            Assert.True(response.Status == HttpStatusCode.Created);
+            Assert.NotNull(response.ResponseJson);
         }
     }
 }

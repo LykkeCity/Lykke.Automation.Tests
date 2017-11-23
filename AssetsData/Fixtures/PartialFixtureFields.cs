@@ -98,6 +98,7 @@ namespace AssetsData.Fixtures
         public GenericRepository<MarginAssetPairsEntity, IMarginAssetPairs> MarginAssetPairManager;
         public GenericRepository<MarginAssetEntity, IMarginAsset> MarginAssetManager;
         public GenericRepository<MarginIssuerEntity, IMarginIssuer> MarginIssuerManager;
+        public GenericRepository<Erc20TokenEntity, IErc20Token> Erc20TokensRepository;
 
         public AssetAttributesRepository AssetAttributesRepository;
         public GenericRepository<AssetGroupEntity, IAssetGroup> AssetGroupsRepository;

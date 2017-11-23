@@ -40,6 +40,7 @@ namespace AssetsData.Fixtures
                 cfg.CreateMap<AssetSettingsEntity, AssetSettingsDTO>();
                 cfg.CreateMap<AssetSettingsDTO, AssetSettingsCreateDTO>();
                 cfg.CreateMap<AssetSettingsCreateDTO, AssetSettingsDTO>();
+                cfg.CreateMap<Erc20TokenEntity, Erc20TokenDto>().ReverseMap();
             });
 
             this.mapper = config.CreateMapper();
