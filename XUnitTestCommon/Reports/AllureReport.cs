@@ -13,7 +13,6 @@ namespace XUnitTestCommon.Reports
     {
         private static AllureReport allureReport;
         private static AllureLifecycle _lifecycle;
-        private static string _timestamp;
         private static Dictionary<string, List<dynamic>> _caseStorage = new Dictionary<string, List<dynamic>>();
         private object debugLock = new object();
         private static object myLock = new object();
@@ -39,7 +38,6 @@ namespace XUnitTestCommon.Reports
         public void RunStarted(string workDirectory)
         {
             _lifecycle = AllureLifecycle.Instance;
-            _timestamp = Helpers.GenerateTimeStamp();
         }
 
         public void CaseStarted(string fullName, string name, string description)
@@ -58,7 +56,7 @@ namespace XUnitTestCommon.Reports
                 string fixtureName = GetFixtureName(fullName);
 
                 List<Attachment> attaches = new List<Attachment>();
-                var testLogPath = TestContext.CurrentContext.WorkDirectory + $"/allure-results/Test_{_timestamp}.log";
+                var testLogPath = TestContext.CurrentContext.WorkDirectory + $"/allure-results/Test_{Helpers.GenerateTimeStamp()}.log";
                 var log = Logger.GetLog();
                 File.WriteAllText(testLogPath, log);
                 attaches.Add(new Attachment() { name = "TestLog", source = testLogPath, type = "application/json" });
