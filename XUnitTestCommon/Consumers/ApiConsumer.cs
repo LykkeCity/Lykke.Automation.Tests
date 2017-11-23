@@ -15,23 +15,33 @@ namespace XUnitTestCommon.Consumers
         private RestClient _client;
         private RestRequest _request;
 
-        private readonly ConfigBuilder _configBuilder;
-
         private readonly OAuthConsumer _oAuthConsumer;
 
-        public UserExtended ClientInfo => _oAuthConsumer.ClientInfo;
+        public UserExtended ClientInfo {
+            get
+            {
+                if (_oAuthConsumer != null)
+                    return _oAuthConsumer.ClientInfo;
+                return null;
+            }
+            private set { }
+        }
 
-        public ApiConsumer(ConfigBuilder configBuilder, OAuthConsumer oAuthConsumer)
+        public ApiConsumer(string urlPrefix, string baseUrl, bool isHttps, OAuthConsumer oAuthConsumer = null)
         {
-            _configBuilder = configBuilder;
+            _urlPrefix = urlPrefix;
+            _baseUrl = baseUrl;
+            _isSecure = isHttps;
 
-            _urlPrefix = _configBuilder.Config["UrlPefix"];
-            _baseUrl = _configBuilder.Config["BaseUrl"];
-            _isSecure = Boolean.Parse(_configBuilder.Config["IsHttps"]);
 
             _oAuthConsumer = oAuthConsumer;
-            _oAuthConsumer.Authenticate().Wait();
+            if (_oAuthConsumer != null)
+                _oAuthConsumer.Authenticate().Wait();
         }
+
+        public ApiConsumer(ConfigBuilder configBuilder, OAuthConsumer oAuthConsumer = null)
+            : this(configBuilder.Config["UrlPefix"], configBuilder.Config["BaseUrl"], Boolean.Parse(configBuilder.Config["IsHttps"]), oAuthConsumer)
+        { }
 
         public async Task<Response> ExecuteRequest(string path, Dictionary<string, string> queryParams, string body, Method method)
         {
@@ -46,8 +56,11 @@ namespace XUnitTestCommon.Consumers
                 _request.AddParameter("application/json", body, ParameterType.RequestBody);
             }
 
-            await _oAuthConsumer.UpdateToken();
-            _request.AddParameter("Authorization", "Bearer " + _oAuthConsumer.AuthToken, ParameterType.HttpHeader);
+            if (_oAuthConsumer != null)
+            {
+                await _oAuthConsumer.UpdateToken();
+                _request.AddParameter("Authorization", "Bearer " + _oAuthConsumer.AuthToken, ParameterType.HttpHeader);
+            }
 
             var response = await _client.ExecuteAsync(_request);
 

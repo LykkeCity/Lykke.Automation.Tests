@@ -18,6 +18,7 @@ using XUnitTestData.Domains.Authentication;
 using XUnitTestData.Entities;
 using NUnit.Framework;
 using XUnitTestCommon.DTOs;
+using XUnitTestCommon.GlobalActions;
 
 namespace ApiV2Data.Fixtures
 {
@@ -117,6 +118,7 @@ namespace ApiV2Data.Fixtures
             OAuthConsumer clientInfoAuth = new OAuthConsumer(_configBuilder);
             this.ClientInfoInstance = await clientInfoAuth.RegisterNewUser();
             this.ClientInfoConsumer = new ApiConsumer(_configBuilder, clientInfoAuth);
+            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(ClientInfoConsumer.ClientInfo.ClientId));
 
             // set the id to the default one in case it has been changed by any test
             BaseAssetDTO body = new BaseAssetDTO(this.TestAssetId);
