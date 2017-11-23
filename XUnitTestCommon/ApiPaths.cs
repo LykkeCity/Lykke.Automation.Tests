@@ -32,6 +32,7 @@ namespace XUnitTestCommon
 
         public static readonly string TRANSACTION_HISTORY_BASE_PATH = "/api/transactionHistory";
 
+        // blue API
         public static readonly string PLEDGES_BASE_PATH = "/api/pledges";
 
         public static readonly string TWITTER_BASE_PATH = "/api/twitter";
