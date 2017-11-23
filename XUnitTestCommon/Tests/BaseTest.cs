@@ -16,8 +16,8 @@ namespace XUnitTestCommon.Tests
         public IList<string> schemesError;
 
         public static Dictionary<string, List<Response>> responses;
-        private readonly List<Action> _cleanupActions = new List<Action>();
-        private readonly List<Action> _oneTimeCleanupActions = new List<Action>();
+        private readonly List<Func<Task>> _cleanupActions = new List<Func<Task>>();
+        private readonly List<Func<Task>> _oneTimeCleanupActions = new List<Func<Task>>();
 
         protected virtual void Initialize() { }
 
@@ -135,7 +135,7 @@ namespace XUnitTestCommon.Tests
 
         private void CallCleanupActions(bool oneTime = false)
         {
-            List<Action> cleanupActions;
+            List<Func<Task>> cleanupActions;
             if (oneTime)
                 cleanupActions = _oneTimeCleanupActions;
             else
@@ -143,12 +143,13 @@ namespace XUnitTestCommon.Tests
 
             cleanupActions.Reverse();
             var exceptions = new List<Exception>();
+            var startedTasks = new List<Task>();
 
             foreach (var action in cleanupActions)
             {
                 try
                 {
-                    action();
+                    startedTasks.Add(action());
                 }
                 catch (Exception ex)
                 {
@@ -157,18 +158,20 @@ namespace XUnitTestCommon.Tests
                 }
             }
 
+            Task.WhenAll(startedTasks).Wait();
+
             if (exceptions.Count == 0)
                 return;
 
             throw new AggregateException("Multiple exceptions occurred in Cleanup. See test log for more details", exceptions);
         }
 
-        public void AddCleanupAction(Action cleanupAction)
+        public void AddCleanupAction(Func<Task> cleanupAction)
         {
             _cleanupActions.Add(cleanupAction);
         }
 
-        public void AddOneTimeCleanupAction(Action cleanupAction)
+        public void AddOneTimeCleanupAction(Func<Task> cleanupAction)
         {
             _oneTimeCleanupActions.Add(cleanupAction);
         }
