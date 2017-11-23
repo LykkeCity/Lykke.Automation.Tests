@@ -17,28 +17,14 @@ namespace AFTests.BlueApi
         [Test]
         [Category("Smoke")]
         [Category("ReferralLinks")]
-        [Category("RequestInvitationLinkForNonExistingClient")]
-        public async Task RequestInvitationLinkForNonExistingClient()
+        [Category("RequestInvitationLink")]
+        public async Task RequestInvitationLink()
         {
+            await this.PrepareRequestInvitationLink();
+
             var url = ApiPaths.REFERRAL_LINKS_INVITATION_LINK_PATH;
-            var body = JsonUtils.SerializeObject(new RequestInvitationLinkRequestDto { SenderClientId = "123" });
 
-            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
-
-            Assert.True(response.Status == HttpStatusCode.BadRequest);
-        }
-
-        [Test]
-        [Category("Smoke")]
-        [Category("ReferralLinks")]
-        [Category("RequestInvitationLinkForExistingClient")]
-        public async Task RequestInvitationLinkForExistingClient()
-        {
-            this.GetTestClientId();
-             var url = ApiPaths.REFERRAL_LINKS_INVITATION_LINK_PATH;
-            var body = JsonUtils.SerializeObject(new RequestInvitationLinkRequestDto { SenderClientId = this.TestClientId });
-
-            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, body, Method.POST);
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.Created);
 
@@ -48,6 +34,10 @@ namespace AFTests.BlueApi
             Assert.True(!String.IsNullOrEmpty(parsedResponse.RefLinkId));
             Assert.True(Guid.TryParse(parsedResponse.RefLinkId, out refLinkId));
             Assert.True(refLinkId != Guid.Empty);
+
+            //Attempt to request second invitation link should fail
+            response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.True(response.Status != HttpStatusCode.Created);
         }
 
         [Test]

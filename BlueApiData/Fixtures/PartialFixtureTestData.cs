@@ -6,6 +6,7 @@ using BlueApiData.DTOs;
 using XUnitTestData.Domains.BlueApi;
 using XUnitTestData.Entities.BlueApi;
 using XUnitTestCommon.Tests;
+using System.Linq;
 
 namespace BlueApiData.Fixtures
 {
@@ -44,6 +45,16 @@ namespace BlueApiData.Fixtures
         {
             TestPledgeDeleteClientId = this.TestPledgeClientIDs["DeletePledge"];
             TestPledgeDelete = await CreateTestPledge(TestPledgeDeleteClientId, "DeletePledge");
+        }
+
+        public async Task PrepareRequestInvitationLink()
+        {
+            this.InvitationLinkRequestConsumer = (await RegisterNUsers(1)).FirstOrDefault();
+        }
+
+        public async Task PrepareClainInvitationLink()
+        {
+            this.InvitationLinkClaimersConsumers = await RegisterNUsers(5);
         }
 
         public void PrepareTwitterData()

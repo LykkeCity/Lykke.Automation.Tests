@@ -22,7 +22,7 @@ using XUnitTestCommon.GlobalActions;
 namespace BlueApiData.Fixtures
 {
     [TestFixture]
-    public partial class BlueApiTestDataFixture: BaseTest
+    public partial class BlueApiTestDataFixture : BaseTest
     {
         private ConfigBuilder _configBuilder;
         private IContainer _container;
@@ -46,6 +46,9 @@ namespace BlueApiData.Fixtures
         public ApiConsumer Consumer;
 
         public Dictionary<string, ApiConsumer> PledgeApiConsumers;
+
+        public ApiConsumer InvitationLinkRequestConsumer;
+        public List<ApiConsumer> InvitationLinkClaimersConsumers;
 
         [OneTimeSetUp]
         public void Initialize()
@@ -86,6 +89,20 @@ namespace BlueApiData.Fixtures
 
             TestPledgeClientIDs[purpose] = consumer.ClientInfo.ClientId;
             PledgeApiConsumers.Add(purpose, consumer);
+        }
+
+        private async Task<List<ApiConsumer>> RegisterNUsers(int n)
+        {
+            List<ApiConsumer> result = new List<ApiConsumer>();
+
+            for (int i = 0; i < n; i++)
+            {
+                OAuthConsumer oAuthConsumer = new OAuthConsumer(_configBuilder);
+                ClientRegisterDTO createPledgeUser = await oAuthConsumer.RegisterNewUser();
+                result.Add(new ApiConsumer(_configBuilder, oAuthConsumer));
+            }
+
+            return result;
         }
 
         private void PrepareDependencyContainer()
