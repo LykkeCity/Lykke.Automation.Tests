@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using RestSharp;
@@ -43,12 +44,28 @@ namespace AFTests.AssetsTests
         [Category("Erc20TokensGetByAddress")]
         public async Task GetErc20TokenByAddress()
         {
-            var url = $"{ApiPaths.ERC20TOKENS_BASE_PATH}/address";
-            var body = new
+            var address = "0x+fake010447"; //TODO: Check if we should put this in constants
+            var url = $"{ApiPaths.ERC20TOKENS_BASE_PATH}/{address}";
+
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+
+            Assert.True(response.Status == HttpStatusCode.OK);
+            Assert.NotNull(response.ResponseJson);
+        }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("Erc20Tokens")]
+        [Category("Erc20TokensGetBySpecification")]
+        public async Task GetErc20TokensBySpecifications()
+        {
+            var url = $"{ApiPaths.ERC20TOKENS_BASE_PATH}/__specification";
+            var body = new 
             {
-                address = "0x0c098d65f60ea5cfb27b7efe36b7de8db7622a7e" //TODO: Check if we should put this in constants
+                Ids = new string[] { "a53c1e38-9128-416f-b976-19996abfc4dd", "0802abbd-da3b-42fe-93bb-83aec041997a" } //TODO: Check if we should put this in constants
             };
-            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.GET);
+
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
 
             Assert.True(response.Status == HttpStatusCode.OK);
             Assert.NotNull(response.ResponseJson);
