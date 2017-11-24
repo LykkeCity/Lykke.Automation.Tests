@@ -14,11 +14,12 @@ using XUnitTestData.Domains.Authentication;
 using XUnitTestData.Repositories.ApiV2;
 using XUnitTestData.Entities.Assets;
 using NUnit.Framework;
+using XUnitTestCommon.Tests;
 
 namespace AssetsData.Fixtures
 {
     [TestFixture]
-    public partial class AssetsTestDataFixture
+    public partial class AssetsTestDataFixture: BaseTest
     {
         public ApiConsumer Consumer;
 
