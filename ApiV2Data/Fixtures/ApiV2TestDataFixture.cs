@@ -19,11 +19,12 @@ using XUnitTestData.Entities;
 using NUnit.Framework;
 using XUnitTestCommon.DTOs;
 using XUnitTestCommon.GlobalActions;
+using XUnitTestCommon.Tests;
 
 namespace ApiV2Data.Fixtures
 {
     [TestFixture]
-    public partial class ApiV2TestDataFixture
+    public partial class ApiV2TestDataFixture: BaseTest
     {
         private ConfigBuilder _configBuilder;
         private IContainer _container;

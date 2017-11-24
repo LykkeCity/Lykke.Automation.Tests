@@ -56,7 +56,7 @@ namespace XUnitTestCommon.Reports
                 string fixtureName = GetFixtureName(fullName);
 
                 List<Attachment> attaches = new List<Attachment>();
-                var testLogPath = TestContext.CurrentContext.WorkDirectory + $"/allure-results/{Guid.NewGuid()}.log";
+                var testLogPath = TestContext.CurrentContext.WorkDirectory + $"/allure-results/Test_{Helpers.GenerateTimeStamp()}.log";
                 var log = Logger.GetLog();
                 File.WriteAllText(testLogPath, log);
                 attaches.Add(new Attachment() { name = "TestLog", source = testLogPath, type = "application/json" });
