@@ -33,10 +33,6 @@ namespace XUnitTestCommon.DTOs
         public string ContactPhone { get; set; }
         public string Password { get; set; }
         public string Hint { get; set; }
-<<<<<<< HEAD
-        public string PartnerId { get; set; }
-        public string ClientInfo { get; set; }
-=======
         public string ClientInfo { get; set; }
         public string UserAgent { get; set; }
         public string PartnerId { get; set; }
@@ -67,6 +63,5 @@ namespace XUnitTestCommon.DTOs
         public string PartnerId { get; set; }
         public bool IsReviewAccount { get; set; }
         public bool IsTrusted { get; set; }
->>>>>>> 06617bf6829d2307c9050e174fa1ab237e39489d
     }
 }

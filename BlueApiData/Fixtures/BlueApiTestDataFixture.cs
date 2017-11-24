@@ -80,21 +80,15 @@ namespace BlueApiData.Fixtures
             };
 
             await Task.WhenAll(createPledgesTasks);
+
+            ClientAccountConsumer = new ApiConsumer(_clientAccountConfigBuilder);
         }
 
         private async Task CreatePledgeClientAndApiConsumer(string purpose)
         {
-<<<<<<< HEAD
-            var oAuthConsumer = new OAuthConsumer(_configBuilder);
-            var createPledgeUser = await oAuthConsumer.RegisterNewUser();
-            var consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
-
-            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.ClientId));
-=======
             ApiConsumer consumer = new ApiConsumer(_configBuilder);
             await consumer.RegisterNewUser();
             AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.Account.Id));
->>>>>>> 06617bf6829d2307c9050e174fa1ab237e39489d
 
             TestPledgeClientIDs[purpose] = consumer.ClientInfo.Account.Id;
             PledgeApiConsumers.Add(purpose, consumer);
@@ -119,9 +113,9 @@ namespace BlueApiData.Fixtures
 
         public async Task CreateLykkeBluePartnerClientAndApiConsumer()
         {
-            var clientInfoAuth = new OAuthConsumer(_configBuilder);
+            var consumer = new ApiConsumer(_configBuilder);
 
-            ClientInfoInstance = await clientInfoAuth.RegisterNewUser(
+            await consumer.RegisterNewUser(
                 new ClientRegisterDTO
                 {
                     Email = Helpers.RandomString(8) + GlobalConstants.AutoTestEmail,
@@ -133,23 +127,12 @@ namespace BlueApiData.Fixtures
                 }
             );
 
-            ClientInfoConsumer = new ApiConsumer(_configBuilder, clientInfoAuth);
-
-            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(clientInfoAuth.ClientInfo.ClientId));
-            //AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(ClientInfoConsumer.ClientInfo.ClientId));
+            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.Account.Id));
         }
 
-        public void CreateClientAccountApiConsumer()
+        public async Task CreateTestPartnerClient()
         {
-            var clientInfoAuth = new OAuthConsumer(_clientAccountConfigBuilder);
-            ClientAccountConsumer = new ApiConsumer(_clientAccountConfigBuilder, clientInfoAuth);
-        }
-
-        public async Task RegisterNewUserForTestPartner()
-        {
-            var clientInfoAuth = new OAuthConsumer(_clientAccountConfigBuilder);
-
-            ClientInfoInstance = await clientInfoAuth.RegisterNewUser(
+            await ClientAccountConsumer.RegisterNewUser(
                 new ClientRegisterDTO
                 {
                     Email = Helpers.RandomString(8) + GlobalConstants.AutoTestEmail,
@@ -161,7 +144,7 @@ namespace BlueApiData.Fixtures
                 }
             );
 
-            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(clientInfoAuth.ClientInfo.ClientId));
+            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(ClientAccountConsumer.ClientInfo.Account.Id));
         }
     }
 }

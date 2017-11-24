@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using BlueApiData.DTOs;
 using NUnit.Framework;
@@ -19,7 +20,6 @@ namespace AFTests.BlueApi
         public async Task GetUsersCountByLykkeBluePartner()
         {
             var url = $"{ApiPaths.CLIENT_BASE_PATH}/getUsersCountByPartner";
-
             var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
@@ -29,8 +29,6 @@ namespace AFTests.BlueApi
             Assert.IsNotNull(parsedResponse);
 
             var originalCount = parsedResponse.Count;
-
-
             await CreateLykkeBluePartnerClientAndApiConsumer();
 
             response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -49,32 +47,27 @@ namespace AFTests.BlueApi
         [Test]
         [Category("Smoke")]
         [Category("Client")]
-        [Category("GetUsersCountByLykkeBluePartner")]
+        [Category("GetUsersCountByTestPartner")]
         public async Task GetUsersCountByTestPartner()
         {
-            var url = $"{ApiPaths.CLIENT_BASE_PATH}/getUsersCountByPartner";
+            var url = "/api/Partners/getUsersCount";
+            var queryParams = new Dictionary<string, string>()
+            {
+                { "partnerId", "NewTestPartner" }
+            };
 
-            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
-
-            Assert.True(response.Status == HttpStatusCode.OK);
-
-            var parsedResponse = JsonUtils.DeserializeJson<GetUsersCountByPartnerDto>(response.ResponseJson);
-
-            Assert.IsNotNull(parsedResponse);
-
-            var originalCount = parsedResponse.Count;
-
-            await CreateLykkeBluePartnerClientAndApiConsumer();
-
-            response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await ClientAccountConsumer.ExecuteRequest(url, queryParams, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
 
-            parsedResponse = JsonUtils.DeserializeJson<GetUsersCountByPartnerDto>(response.ResponseJson);
+            var originalCount = int.Parse(response.ResponseJson);
+            await CreateTestPartnerClient();
 
-            Assert.IsNotNull(parsedResponse);
+            response = await ClientAccountConsumer.ExecuteRequest(url, queryParams, null, Method.GET);
 
-            var newCount = parsedResponse.Count;
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            var newCount = int.Parse(response.ResponseJson);
 
             Assert.True(newCount > originalCount);
         }
