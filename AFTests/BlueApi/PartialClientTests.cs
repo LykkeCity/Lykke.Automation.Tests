@@ -15,12 +15,12 @@ namespace AFTests.BlueApi
         [Test]
         [Category("Smoke")]
         [Category("Client")]
-        [Category("GetUsersCountByPartner")]
-        public async Task GetUsersCountByPartner()
+        [Category("GetUsersCountByLykkeBluePartner")]
+        public async Task GetUsersCountByLykkeBluePartner()
         {
             var url = $"{ApiPaths.CLIENT_BASE_PATH}/getUsersCountByPartner";
 
-            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
 
@@ -30,9 +30,43 @@ namespace AFTests.BlueApi
 
             var originalCount = parsedResponse.Count;
 
-            await CreateLykkeBlueClientAndApiConsumer();
 
-            response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            await CreateLykkeBluePartnerClientAndApiConsumer();
+
+            response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            parsedResponse = JsonUtils.DeserializeJson<GetUsersCountByPartnerDto>(response.ResponseJson);
+
+            Assert.IsNotNull(parsedResponse);
+
+            var newCount = parsedResponse.Count;
+
+            Assert.True(newCount > originalCount);
+        }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("Client")]
+        [Category("GetUsersCountByLykkeBluePartner")]
+        public async Task GetUsersCountByTestPartner()
+        {
+            var url = $"{ApiPaths.CLIENT_BASE_PATH}/getUsersCountByPartner";
+
+            var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            var parsedResponse = JsonUtils.DeserializeJson<GetUsersCountByPartnerDto>(response.ResponseJson);
+
+            Assert.IsNotNull(parsedResponse);
+
+            var originalCount = parsedResponse.Count;
+
+            await CreateLykkeBluePartnerClientAndApiConsumer();
+
+            response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);
 

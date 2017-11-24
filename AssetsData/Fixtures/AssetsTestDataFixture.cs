@@ -33,9 +33,7 @@ namespace AssetsData.Fixtures
         {
             _configBuilder = new ConfigBuilder("Assets");
 
-            var oAuthConsumer = new OAuthConsumer(_configBuilder);
-
-            this.Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
+            this.Consumer = new ApiConsumer(_configBuilder);
 
             prepareDependencyContainer();
             prepareTestData().Wait();
