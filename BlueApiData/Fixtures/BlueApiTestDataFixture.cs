@@ -80,12 +80,11 @@ namespace BlueApiData.Fixtures
 
         public async Task CreatePledgeClientAndApiConsumer(string purpose)
         {
-            OAuthConsumer oAuthConsumer = new OAuthConsumer(_configBuilder);
-            ClientRegisterDTO createPledgeUser = await oAuthConsumer.RegisterNewUser();
-            ApiConsumer consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
-            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.ClientId));
+            ApiConsumer consumer = new ApiConsumer(_configBuilder);
+            await consumer.RegisterNewUser();
+            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.Account.Id));
 
-            TestPledgeClientIDs[purpose] = consumer.ClientInfo.ClientId;
+            TestPledgeClientIDs[purpose] = consumer.ClientInfo.Account.Id;
             PledgeApiConsumers.Add(purpose, consumer);
         }
 
