@@ -63,5 +63,10 @@ namespace XUnitTestCommon
         public static readonly string WATCH_LIST_PREDEFINED_PATH = "/api/v2/watch-lists/predefined";
         public static readonly string WATCH_LIST_CUSTOM_PATH = "/api/v2/watch-lists/custom";
         public static readonly string WATCH_LIST_ALL_PATH = "/api/v2/watch-lists/all";
+
+        //client account service
+        public static readonly string CLIENT_ACCOUNT_SERVICE_PREFIX = "client-account";
+        public static readonly string CLIENT_ACCOUNT_SERVICE_BASEURL = "lykke-service.svc.cluster.local";
+        public static readonly string CLIENT_ACCOUNT_PATH = "/api/ClientAccount";
     }    
 }

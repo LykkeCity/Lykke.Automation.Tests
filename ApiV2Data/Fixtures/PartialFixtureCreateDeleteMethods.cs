@@ -7,11 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
+using XUnitTestCommon.Tests;
 using XUnitTestCommon.Utils;
 
 namespace ApiV2Data.Fixtures
 {
-    public partial class ApiV2TestDataFixture
+    public partial class ApiV2TestDataFixture : BaseTest
     {
         public async Task<WalletDTO> CreateTestWallet(bool isHFT = false)
         {
@@ -48,7 +49,7 @@ namespace ApiV2Data.Fixtures
                 returnModel = JsonUtils.DeserializeJson<WalletDTO>(response.ResponseJson);
             }
 
-            _walletsToDelete.Add(returnModel.Id);
+            AddOneTimeCleanupAction(async () => await DeleteTestWallet(returnModel.Id));
 
             return returnModel;
         }
@@ -91,7 +92,7 @@ namespace ApiV2Data.Fixtures
                 Id = parsedResponse
             };
 
-            OperationsToCancel.Add(returnDTO.Id);
+            AddOneTimeCleanupAction(async () => await CancelTestOperation(returnDTO.Id));
 
             return returnDTO;
         }
