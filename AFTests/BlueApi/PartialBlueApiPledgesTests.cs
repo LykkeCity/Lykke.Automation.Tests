@@ -22,7 +22,7 @@ namespace AFTests.BlueApi
         [Category("PledgesGet")]
         public async Task GetPledge()
         {
-            this.PrepareDefaultTestPledge().Wait();
+            await this.PrepareDefaultTestPledge();
             this.AddCleanupAction(async () => await this.DeleteTestPledge());
 
             var url = ApiPaths.PLEDGES_BASE_PATH;
@@ -42,7 +42,7 @@ namespace AFTests.BlueApi
         [Category("PledgesPost")]
         public async Task CreatePledge()
         {
-            this.PrepareCreateTestPledge();
+            await this.PrepareCreateTestPledge();
             var createdPledge = await this.CreateTestPledge(this.TestPledgeCreateClientId, "CreatePledge");
             AddCleanupAction(async () => await this.DeleteTestPledge("CreatePledge"));
             Assert.NotNull(createdPledge);
@@ -60,7 +60,7 @@ namespace AFTests.BlueApi
         [Category("PledgesPut")]
         public async Task UpdatePledge()
         {
-            this.PrepareUpdateTestPledge().Wait();
+            await this.PrepareUpdateTestPledge();
             AddCleanupAction(async () => await this.DeleteTestPledge("UpdatePledge"));
 
             var editPledge = new PledgeDTO()
@@ -90,7 +90,7 @@ namespace AFTests.BlueApi
         [Category("PledgesDelete")]
         public async Task DeletePledge()
         {
-            this.PrepareDeleteTestPledge().Wait();
+            await this.PrepareDeleteTestPledge();
             AddCleanupAction(async () => await this.DeleteTestPledge("DeletePledge"));
 
             var url = ApiPaths.PLEDGES_BASE_PATH;

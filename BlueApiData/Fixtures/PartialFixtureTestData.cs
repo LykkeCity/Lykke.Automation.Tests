@@ -7,6 +7,7 @@ using XUnitTestData.Domains.BlueApi;
 using XUnitTestData.Entities.BlueApi;
 using XUnitTestCommon.Tests;
 using System.Linq;
+using XUnitTestCommon.Consumers;
 
 namespace BlueApiData.Fixtures
 {
@@ -25,24 +26,28 @@ namespace BlueApiData.Fixtures
 
         public async Task PrepareDefaultTestPledge()
         {
+            await CreatePledgeClientAndApiConsumer("GetPledge");
             TestClientId = this.TestPledgeClientIDs["GetPledge"];
             TestPledge = await CreateTestPledge(TestClientId, "GetPledge");
         }
 
-        public async void PrepareCreateTestPledge()
+        public async Task PrepareCreateTestPledge()
         {
+            await CreatePledgeClientAndApiConsumer("CreatePledge");
             TestPledgeCreateClientId = this.TestPledgeClientIDs["CreatePledge"];
             TestPledge = await CreateTestPledge(TestPledgeCreateClientId, "CreatePledge");
         }
 
         public async Task PrepareUpdateTestPledge()
         {
+            await CreatePledgeClientAndApiConsumer("UpdatePledge");
             TestPledgeUpdateClientId = this.TestPledgeClientIDs["UpdatePledge"];
             TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
         }
 
         public async Task PrepareDeleteTestPledge()
         {
+            await CreatePledgeClientAndApiConsumer("DeletePledge");
             TestPledgeDeleteClientId = this.TestPledgeClientIDs["DeletePledge"];
             TestPledgeDelete = await CreateTestPledge(TestPledgeDeleteClientId, "DeletePledge");
         }
@@ -54,7 +59,9 @@ namespace BlueApiData.Fixtures
 
         public async Task PrepareClainInvitationLink()
         {
-            this.InvitationLinkClaimersConsumers = await RegisterNUsers(5);
+            this.InvitationLinkClaimersConsumers = await RegisterNUsers(7);
+            //give tree coins to client who creates invitation link
+            await MEConsumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), InvitationLinkClaimersConsumers[0].ClientInfo.ClientId, "TREE", 100.0);
         }
 
         public void PrepareTwitterData()

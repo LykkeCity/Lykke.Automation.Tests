@@ -44,6 +44,7 @@ namespace BlueApiData.Fixtures
         public string TestPledgeDeleteClientId;
         public PledgeDTO TestPledgeDelete;
         public ApiConsumer Consumer;
+        public MatchingEngineConsumer MEConsumer;
 
         public Dictionary<string, ApiConsumer> PledgeApiConsumers;
 
@@ -66,21 +67,18 @@ namespace BlueApiData.Fixtures
 
             Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
 
+            ConfigBuilder MeConfig = new ConfigBuilder("MatchingEngine");
+            if (Int32.TryParse(MeConfig.Config["Port"], out int port))
+            {
+                MEConsumer = new MatchingEngineConsumer(MeConfig.Config["BaseUrl"], port);
+            }
+
             PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
             TestPledgeClientIDs = new Dictionary<string, string>();
 
-            List<Task> ceratePledgesTasks = new List<Task>()
-            {
-                CreatePledgeClientAndApiConsumer("GetPledge"),
-                CreatePledgeClientAndApiConsumer("CreatePledge"),
-                CreatePledgeClientAndApiConsumer("UpdatePledge"),
-                CreatePledgeClientAndApiConsumer("DeletePledge"),
-            };
-
-            await Task.WhenAll(ceratePledgesTasks);
         }
 
-        private async Task CreatePledgeClientAndApiConsumer(string purpose)
+        public async Task CreatePledgeClientAndApiConsumer(string purpose)
         {
             OAuthConsumer oAuthConsumer = new OAuthConsumer(_configBuilder);
             ClientRegisterDTO createPledgeUser = await oAuthConsumer.RegisterNewUser();
@@ -99,6 +97,8 @@ namespace BlueApiData.Fixtures
             {
                 OAuthConsumer oAuthConsumer = new OAuthConsumer(_configBuilder);
                 ClientRegisterDTO createPledgeUser = await oAuthConsumer.RegisterNewUser();
+                ApiConsumer consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
+                AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.ClientId));
                 result.Add(new ApiConsumer(_configBuilder, oAuthConsumer));
             }
 
