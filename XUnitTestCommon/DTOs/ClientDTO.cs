@@ -33,5 +33,7 @@ namespace XUnitTestCommon.DTOs
         public string ContactPhone { get; set; }
         public string Password { get; set; }
         public string Hint { get; set; }
+        public string PartnerId { get; set; }
+        public string ClientInfo { get; set; }
     }
 }

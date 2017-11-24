@@ -27,6 +27,22 @@ namespace AFTests.BlueApi
             var parsedResponse = JsonUtils.DeserializeJson<GetUsersCountByPartnerDto>(response.ResponseJson);
 
             Assert.IsNotNull(parsedResponse);
+
+            var originalCount = parsedResponse.Count;
+
+            await CreateLykkeBlueClientAndApiConsumer();
+
+            response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            parsedResponse = JsonUtils.DeserializeJson<GetUsersCountByPartnerDto>(response.ResponseJson);
+
+            Assert.IsNotNull(parsedResponse);
+
+            var newCount = parsedResponse.Count;
+
+            Assert.True(newCount > originalCount);
         }
     }
 }

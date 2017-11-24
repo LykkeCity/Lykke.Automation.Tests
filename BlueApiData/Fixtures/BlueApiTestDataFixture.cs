@@ -44,6 +44,8 @@ namespace BlueApiData.Fixtures
         public string TestPledgeDeleteClientId;
         public PledgeDTO TestPledgeDelete;
         public ApiConsumer Consumer;
+        public ClientRegisterDTO ClientInfoInstance;
+        public ApiConsumer ClientInfoConsumer;
 
         public Dictionary<string, ApiConsumer> PledgeApiConsumers;
 
@@ -66,7 +68,7 @@ namespace BlueApiData.Fixtures
             PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
             TestPledgeClientIDs = new Dictionary<string, string>();
 
-            List<Task> ceratePledgesTasks = new List<Task>()
+            var ceratePledgesTasks = new List<Task>()
             {
                 CreatePledgeClientAndApiConsumer("GetPledge"),
                 CreatePledgeClientAndApiConsumer("CreatePledge"),
@@ -79,13 +81,33 @@ namespace BlueApiData.Fixtures
 
         private async Task CreatePledgeClientAndApiConsumer(string purpose)
         {
-            OAuthConsumer oAuthConsumer = new OAuthConsumer(_configBuilder);
-            ClientRegisterDTO createPledgeUser = await oAuthConsumer.RegisterNewUser();
-            ApiConsumer consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
+            var oAuthConsumer = new OAuthConsumer(_configBuilder);
+            var createPledgeUser = await oAuthConsumer.RegisterNewUser();
+            var consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
+
             AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.ClientId));
 
             TestPledgeClientIDs[purpose] = consumer.ClientInfo.ClientId;
             PledgeApiConsumers.Add(purpose, consumer);
+        }
+
+        public async Task CreateLykkeBlueClientAndApiConsumer()
+        {
+            var clientInfoAuth = new OAuthConsumer(_configBuilder);
+            ClientInfoInstance = await clientInfoAuth.RegisterNewUser(
+                new ClientRegisterDTO
+                {
+                    Email = Helpers.RandomString(8) + GlobalConstants.AutoTestEmail,
+                    FullName = Helpers.RandomString(5) + " " + Helpers.RandomString(8),
+                    ContactPhone = Helpers.Random.Next(1000000, 9999999).ToString(),
+                    Password = Helpers.RandomString(10),
+                    Hint = Helpers.RandomString(3),
+                    PartnerId = "Lykke.blue"
+                }
+            );
+            ClientInfoConsumer = new ApiConsumer(_configBuilder, clientInfoAuth);
+
+            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(ClientInfoConsumer.ClientInfo.ClientId));
         }
 
         private void PrepareDependencyContainer()
@@ -94,8 +116,8 @@ namespace BlueApiData.Fixtures
             builder.RegisterModule(new BlueApiTestModule(_configBuilder));
             _container = builder.Build();
 
-            PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(this._container);
-            PersonalDataRepository = RepositoryUtils.ResolveGenericRepository<PersonalDataEntity, IPersonalData>(this._container);
+            PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(_container);
+            PersonalDataRepository = RepositoryUtils.ResolveGenericRepository<PersonalDataEntity, IPersonalData>(_container);
             ReferralLinkRepository = RepositoryUtils.ResolveGenericRepository<ReferralLinkEntity, IReferralLink>(_container);
         }
 
