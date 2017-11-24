@@ -21,7 +21,7 @@ namespace XUnitTestCommon.Consumers
         public string RegisterPath { get; set; }
         public int AuthTokenTimeout { get; set; }
         public User AuthUser { get; set; }
-        public UserExtended ClientInfo { get; set; }
+        public ClientRegisterResponseDTO ClientInfo { get; set; }
         public string AuthToken { get; private set; }
 
         private string UserDataConnectionString { get; set; }
@@ -49,7 +49,7 @@ namespace XUnitTestCommon.Consumers
         public async Task<bool> Authenticate()
         {
             Task<bool> tokenTask = UpdateToken();
-            await UpdateClientInfo();
+            //await UpdateClientInfo();
             return await tokenTask;
         }
 
@@ -93,40 +93,12 @@ namespace XUnitTestCommon.Consumers
             return token.AccessToken;
         }
 
-        private async Task UpdateClientInfo()
-        {
-            var TradersRepository = new GenericRepository<TradersEntity, ITrader>(new AzureTableStorage<TradersEntity>(UserDataConnectionString, "Traders", null));
-            var WalletsRepository = new GenericRepository<WalletEntity, IWallet>(new AzureTableStorage<WalletEntity>(UserDataConnectionString, "Wallets", null));
-
-            string clientId = null;
-            string walletId = null;
-
-            TradersEntity tEntity = await TradersRepository.TryGetAsync(t => t.PartitionKey == "IndexEmail" && t.Id == AuthUser.Email ) as TradersEntity;
-            if (tEntity != null)
-            {
-                clientId = tEntity.PrimaryRowKey;
-
-                WalletEntity wEntity = await WalletsRepository.TryGetAsync(w => w.PartitionKey == clientId && w.Name == "Trading" && w.Type == "Trading") as WalletEntity;
-
-                if (wEntity != null)
-                    walletId = wEntity.Id;
-            }
-
-            this.ClientInfo = new UserExtended()
-            {
-                Email = AuthUser.Email,
-                Password = AuthUser.Password,
-                ClientId = clientId,
-                TradingWalletId = walletId
-            };
-        }
-
         /// <summary>
         /// Registers new user. If another user was inputted via one of the constructors it will be overwritten.
         /// </summary>
         /// <param name="registrationInfo"></param>
         /// <returns></returns>
-        public async Task<ClientRegisterDTO> RegisterNewUser(ClientRegisterDTO registrationInfo = null)
+        public async Task<ClientRegisterResponseDTO> RegisterNewUser(ClientRegisterDTO registrationInfo = null)
         {
             var regClient = new RestClient(BaseRegisterUrl);
             var regRequest = new RestRequest(RegisterPath, Method.POST);
@@ -146,16 +118,18 @@ namespace XUnitTestCommon.Consumers
             var regResponse = await regClient.ExecuteAsync(regRequest);
             if (regResponse.StatusCode == HttpStatusCode.OK)
             {
-
+                ClientRegisterResponseDTO parsedRegResponse = JsonUtils.DeserializeJson<ClientRegisterResponseDTO>(regResponse.Content);
                 this.AuthUser = new User()
                 {
                     Email = registerDTO.Email,
                     Password = registerDTO.Password
                 };
 
+                this.ClientInfo = parsedRegResponse;
+
                 await this.Authenticate();
 
-                return registerDTO;
+                return parsedRegResponse;
             }
 
             return null;

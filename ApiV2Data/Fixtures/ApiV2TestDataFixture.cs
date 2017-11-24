@@ -72,8 +72,7 @@ namespace ApiV2Data.Fixtures
                 MEConsumer = new MatchingEngineConsumer(MeConfig.Config["BaseUrl"], port);
             }
 
-            var oAuthConsumer = new OAuthConsumer(_configBuilder);
-            Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
+            Consumer = new ApiConsumer(_configBuilder);
 
             PrepareDependencyContainer();
             PrepareTestData().Wait();
@@ -116,10 +115,9 @@ namespace ApiV2Data.Fixtures
             this.TestOperationRegisterDetails = await CreateTestOperation();
 
 
-            OAuthConsumer clientInfoAuth = new OAuthConsumer(_configBuilder);
-            this.ClientInfoInstance = await clientInfoAuth.RegisterNewUser();
-            this.ClientInfoConsumer = new ApiConsumer(_configBuilder, clientInfoAuth);
-            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(ClientInfoConsumer.ClientInfo.ClientId));
+            this.ClientInfoConsumer = new ApiConsumer(_configBuilder);
+            await this.ClientInfoConsumer.RegisterNewUser();
+            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(ClientInfoConsumer.ClientInfo.Account.Id));
 
             // set the id to the default one in case it has been changed by any test
             BaseAssetDTO body = new BaseAssetDTO(this.TestAssetId);

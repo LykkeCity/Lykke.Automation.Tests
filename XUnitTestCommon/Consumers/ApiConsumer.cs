@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using XUnitTestData.Domains.Authentication;
+using XUnitTestCommon.DTOs;
 
 namespace XUnitTestCommon.Consumers
 {
@@ -17,7 +17,7 @@ namespace XUnitTestCommon.Consumers
 
         private readonly OAuthConsumer _oAuthConsumer;
 
-        public UserExtended ClientInfo {
+        public ClientRegisterResponseDTO ClientInfo {
             get
             {
                 if (_oAuthConsumer != null)
@@ -39,9 +39,14 @@ namespace XUnitTestCommon.Consumers
                 _oAuthConsumer.Authenticate().Wait();
         }
 
-        public ApiConsumer(ConfigBuilder configBuilder, OAuthConsumer oAuthConsumer = null)
+        public ApiConsumer(ConfigBuilder configBuilder, OAuthConsumer oAuthConsumer)
             : this(configBuilder.Config["UrlPefix"], configBuilder.Config["BaseUrl"], Boolean.Parse(configBuilder.Config["IsHttps"]), oAuthConsumer)
         { }
+
+        public ApiConsumer(ConfigBuilder configBuilder) : this(configBuilder, new OAuthConsumer(configBuilder))
+        {
+
+        }
 
         public async Task<Response> ExecuteRequest(string path, Dictionary<string, string> queryParams, string body, Method method)
         {
@@ -65,6 +70,15 @@ namespace XUnitTestCommon.Consumers
             var response = await _client.ExecuteAsync(_request);
 
             return new Response(response.StatusCode, response.Content);
+        }
+
+        public async Task<ClientRegisterResponseDTO> RegisterNewUser(ClientRegisterDTO registerIngo = null)
+        {
+            if (this._oAuthConsumer != null)
+            {
+                return await this._oAuthConsumer.RegisterNewUser(registerIngo);
+            }
+            return null;
         }
 
         private void AddQueryParams(Dictionary<string, string> queryParams)
