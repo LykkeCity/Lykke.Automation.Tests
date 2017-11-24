@@ -123,7 +123,7 @@ namespace BlueApiData.Fixtures
                     ContactPhone = Helpers.Random.Next(1000000, 9999999).ToString(),
                     Password = Helpers.RandomString(10),
                     Hint = Helpers.RandomString(3),
-                    PartnerId = "Lykke.blue"
+                    PartnerId = _configBuilder.Config["LykkeBluePartnerId"] // "Lykke.blue"
                 }
             );
 
@@ -140,7 +140,7 @@ namespace BlueApiData.Fixtures
                     ContactPhone = Helpers.Random.Next(1000000, 9999999).ToString(),
                     Password = Helpers.RandomString(10),
                     Hint = Helpers.RandomString(3),
-                    PartnerId = "NewTestPartner"
+                    PartnerId = _configBuilder.Config["TestPartnerId"] //  "NewTestPartner"
                 }
             );
 

@@ -51,7 +51,7 @@ namespace AFTests.BlueApi
         public async Task GetUsersCountByTestPartner()
         {
             var url = "/api/Partners/getUsersCount";
-            var queryParams = new Dictionary<string, string>()
+            var queryParams = new Dictionary<string, string>
             {
                 { "partnerId", "NewTestPartner" }
             };
