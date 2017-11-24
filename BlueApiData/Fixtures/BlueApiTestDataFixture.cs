@@ -63,9 +63,7 @@ namespace BlueApiData.Fixtures
 
         private async Task PrepareApiConsumers()
         {
-            var oAuthConsumer = new OAuthConsumer(_configBuilder);
-
-            Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
+            Consumer = new ApiConsumer(_configBuilder);
 
             ConfigBuilder MeConfig = new ConfigBuilder("MatchingEngine");
             if (Int32.TryParse(MeConfig.Config["Port"], out int port))
@@ -94,11 +92,10 @@ namespace BlueApiData.Fixtures
 
             for (int i = 0; i < n; i++)
             {
-                OAuthConsumer oAuthConsumer = new OAuthConsumer(_configBuilder);
-                ClientRegisterDTO createPledgeUser = await oAuthConsumer.RegisterNewUser();
-                ApiConsumer consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
-                AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.ClientId));
-                result.Add(new ApiConsumer(_configBuilder, oAuthConsumer));
+                ApiConsumer consumer = new ApiConsumer(_configBuilder);
+                await consumer.RegisterNewUser();
+                AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.Account.Id));
+                result.Add(consumer);
             }
 
             return result;

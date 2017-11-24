@@ -61,7 +61,7 @@ namespace BlueApiData.Fixtures
         {
             this.InvitationLinkClaimersConsumers = await RegisterNUsers(7);
             //give tree coins to client who creates invitation link
-            await MEConsumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), InvitationLinkClaimersConsumers[0].ClientInfo.ClientId, "TREE", 100.0);
+            await MEConsumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), InvitationLinkClaimersConsumers[0].ClientInfo.Account.Id, "TREE", 100.0);
         }
 
         public void PrepareTwitterData()
