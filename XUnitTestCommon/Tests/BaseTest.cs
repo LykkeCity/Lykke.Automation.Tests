@@ -92,7 +92,7 @@ namespace XUnitTestCommon.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            var path = TestContext.CurrentContext.WorkDirectory.Remove(TestContext.CurrentContext.WorkDirectory.IndexOf("bin")) + "TestReportHelpers/";
+            var path = TestContext.CurrentContext.WorkDirectory + Path.DirectorySeparatorChar.ToString() + "TestReportHelpers";
             AllureReport.GetInstance().RunStarted(path);
         }
 
