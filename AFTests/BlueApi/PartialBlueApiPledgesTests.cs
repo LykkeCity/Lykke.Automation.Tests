@@ -43,12 +43,12 @@ namespace AFTests.BlueApi
         public async Task CreatePledge()
         {
             await this.PrepareCreateTestPledge();
-            var createdPledge = await this.CreateTestPledge(this.TestPledgeCreateClientId, "CreatePledge");
+            var createdPledge = await this.CreateTestPledge("CreatePledge");
             AddCleanupAction(async () => await this.DeleteTestPledge("CreatePledge"));
             Assert.NotNull(createdPledge);
 
             var createdPledgeEntity = (PledgeEntity)await this.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.TestPledgeClientIDs["CreatePledge"]);
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == PledgeApiConsumers["CreatePledge"].ClientInfo.Account.Id);
 
             createdPledgeEntity.ShouldBeEquivalentTo(createdPledge, o => o.ExcludingMissingMembers());
         }
@@ -78,7 +78,7 @@ namespace AFTests.BlueApi
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
             var editedPledgeEntity = (PledgeEntity)await this.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.TestPledgeClientIDs["UpdatePledge"]);
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.PledgeApiConsumers["UpdatePledge"].ClientInfo.Account.Id);
 
             editedPledgeEntity.ShouldBeEquivalentTo(editPledge, o => o.ExcludingMissingMembers().Excluding(p => p.ClientId));
         }
@@ -99,7 +99,7 @@ namespace AFTests.BlueApi
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
             var deletedPledgeEntity = (PledgeEntity)await this.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.TestPledgeClientIDs["DeletePledge"]);
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.PledgeApiConsumers["DeletePledge"].ClientInfo.Account.Id);
             Assert.Null(deletedPledgeEntity);
         }
     }

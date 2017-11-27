@@ -181,7 +181,8 @@ namespace AFTests.AssetsTests
 
                 foreach (string assetId in entity.AssetIDsList)
                 {
-                    parsedMatch.AssetIds.Should().Contain(assetId);
+                    if (!string.IsNullOrEmpty(assetId))
+                        parsedMatch.AssetIds.Should().Contain(assetId);
                 }
             }
         }

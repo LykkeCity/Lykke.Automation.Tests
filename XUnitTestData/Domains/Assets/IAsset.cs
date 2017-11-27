@@ -20,7 +20,7 @@ namespace XUnitTestData.Domains.Assets
         string AssetAddress { get; }
         double DustLimit { get; }
         string CategoryId { get; }
-        Blockchain Blockchain { get; }
+        string Blockchain { get; }
         string DefinitionUrl { get; }
         string[] PartnerIds { get; }
         bool NotLykkeAsset { get; }
@@ -31,6 +31,10 @@ namespace XUnitTestData.Domains.Assets
         /// </summary>
         double? LowVolumeAmount { get; set; }
         string DisplayId { get; set; }
+
+        bool IsTradable { get; set; }
+        bool IsTrusted { get; set; }
+        string Type { get; set; }
 
         //deposit flags
         bool BankCardsDepositEnabled { get; }

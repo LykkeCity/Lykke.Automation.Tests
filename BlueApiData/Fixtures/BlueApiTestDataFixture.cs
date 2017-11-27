@@ -28,11 +28,9 @@ namespace BlueApiData.Fixtures
         private IContainer _container;
         public IMapper Mapper;
 
-        public string TestClientId;
         public string AccountEmail;
         public string TwitterSearchQuery;
         public DateTime TwitterSearchUntilDate;
-        public Dictionary<string, string> TestPledgeClientIDs;
 
         public GenericRepository<PledgeEntity, IPledgeEntity> PledgeRepository;
         public GenericRepository<PersonalDataEntity, IPersonalData> PersonalDataRepository;
@@ -72,8 +70,6 @@ namespace BlueApiData.Fixtures
             }
 
             PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
-            TestPledgeClientIDs = new Dictionary<string, string>();
-
         }
 
         public async Task CreatePledgeClientAndApiConsumer(string purpose)
@@ -81,8 +77,6 @@ namespace BlueApiData.Fixtures
             ApiConsumer consumer = new ApiConsumer(_configBuilder);
             await consumer.RegisterNewUser();
             AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.Account.Id));
-
-            TestPledgeClientIDs[purpose] = consumer.ClientInfo.Account.Id;
             PledgeApiConsumers.Add(purpose, consumer);
         }
 

@@ -46,7 +46,7 @@ namespace XUnitTestData.Entities.Assets
         public bool SwiftWithdrawal { get; set; }
         public double DustLimit { get; set; }
         public string CategoryId { get; set; }
-        public Blockchain Blockchain { get; set; }
+        public string Blockchain { get; set; }
         public string DefinitionUrl { get; set; }
         public bool IssueAllowed { get; set; }
         public double? LowVolumeAmount { get; set; }
@@ -55,6 +55,10 @@ namespace XUnitTestData.Entities.Assets
         public string ForwardBaseAsset { get; set; }
         public string ForwardMemoUrl { get; set; }
         public string DisplayId { get; set; }
+
+        public bool IsTradable { get; set; }
+        public bool IsTrusted { get; set; }
+        public string Type { get; set; }
 
         public bool CrosschainWithdrawal { get; set; }
         public string IconUrl { get; set; }
@@ -69,31 +73,7 @@ namespace XUnitTestData.Entities.Assets
 
         public bool NotLykkeAsset { get; set; }
 
-        public override void ReadEntity(IDictionary<string, EntityProperty> properties,
-            OperationContext operationContext)
-        {
-            base.ReadEntity(properties, operationContext);
 
-            foreach (var p in GetType()
-                .GetProperties()
-                .Where(x => x.PropertyType.GetTypeInfo().IsEnum && properties.ContainsKey(x.Name)))
-            {
-                p.SetValue(this, Enum.Parse(p.PropertyType, properties[p.Name].StringValue));
-            }
-        }
 
-        public override IDictionary<string, EntityProperty> WriteEntity(OperationContext operationContext)
-        {
-            var properties = base.WriteEntity(operationContext);
-
-            foreach (var p in GetType()
-                .GetProperties()
-                .Where(x => x.PropertyType.GetTypeInfo().IsEnum))
-            {
-                properties.Add(p.Name, new EntityProperty(p.GetValue(this).ToString()));
-            }
-
-            return properties;
-        }
     }
 }

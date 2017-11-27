@@ -162,7 +162,7 @@ namespace AFTests.ApiV2
         [Category("WalletsGet")]
         public async Task GetWalletBalanceByWalletAndAssetId()
         {
-            string url = ApiPaths.TWITTER_BASE_PATH + "/" + this.TestWallet.Id + "/balances/" + this.TestAssetId;
+            string url = ApiPaths.WALLETS_BASE_PATH + "/" + this.TestWallet.Id + "/balances/" + this.TestAssetId;
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.OK);

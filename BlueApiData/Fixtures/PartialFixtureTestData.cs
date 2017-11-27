@@ -27,29 +27,24 @@ namespace BlueApiData.Fixtures
         public async Task PrepareDefaultTestPledge()
         {
             await CreatePledgeClientAndApiConsumer("GetPledge");
-            TestClientId = this.TestPledgeClientIDs["GetPledge"];
-            TestPledge = await CreateTestPledge(TestClientId, "GetPledge");
+            TestPledge = await CreateTestPledge("GetPledge");
         }
 
         public async Task PrepareCreateTestPledge()
         {
             await CreatePledgeClientAndApiConsumer("CreatePledge");
-            TestPledgeCreateClientId = this.TestPledgeClientIDs["CreatePledge"];
-            TestPledge = await CreateTestPledge(TestPledgeCreateClientId, "CreatePledge");
         }
 
         public async Task PrepareUpdateTestPledge()
         {
             await CreatePledgeClientAndApiConsumer("UpdatePledge");
-            TestPledgeUpdateClientId = this.TestPledgeClientIDs["UpdatePledge"];
-            TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
+            TestPledgeUpdate = await CreateTestPledge("UpdatePledge");
         }
 
         public async Task PrepareDeleteTestPledge()
         {
             await CreatePledgeClientAndApiConsumer("DeletePledge");
-            TestPledgeDeleteClientId = this.TestPledgeClientIDs["DeletePledge"];
-            TestPledgeDelete = await CreateTestPledge(TestPledgeDeleteClientId, "DeletePledge");
+            TestPledgeDelete = await CreateTestPledge("DeletePledge");
         }
 
         public async Task PrepareRequestInvitationLink()
@@ -68,11 +63,6 @@ namespace BlueApiData.Fixtures
         {
             AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
 
-        }
-
-        public void GetTestClientId()
-        {
-            this.TestClientId = _configBuilder.Config["AuthClientId"];
         }
     }
 }
