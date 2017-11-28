@@ -21,7 +21,10 @@ namespace XUnitTestData.Entities.Assets
             set
             {
                 this._assetIdsString = value;
-                this._assetIDsList = value.Split(",").ToList();
+                if (string.IsNullOrEmpty(_assetIdsString))
+                    this._assetIDsList = null;
+                else
+                    this._assetIDsList = value.Split(",").ToList();
             }
         }
         public List<string> AssetIDsList
@@ -33,7 +36,10 @@ namespace XUnitTestData.Entities.Assets
             set
             {
                 this._assetIDsList = value;
-                this._assetIdsString = String.Join(",", value);
+                if (value == null)
+                    this._assetIdsString = null;
+                else
+                    this._assetIdsString = String.Join(",", value);
 
             }
         }

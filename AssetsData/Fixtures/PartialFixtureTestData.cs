@@ -44,7 +44,7 @@ namespace AssetsData.Fixtures
 
             this.mapper = config.CreateMapper();
 
-            var assetsFromDB = AssetReposiutory.GetAllAsync(
+            var assetsFromDB = AssetRepository.GetAllAsync(
                 a => a.PartitionKey == AssetEntity.GeneratePartitionKey()
                 && a.Type != "Erc20Token");
             var AssetExtInfoFromDB = AssetExtendedInfosManager.GetAllAsync();

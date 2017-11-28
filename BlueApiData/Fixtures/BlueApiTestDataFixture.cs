@@ -18,6 +18,7 @@ using NUnit.Framework;
 using XUnitTestCommon.Tests;
 using XUnitTestCommon.DTOs;
 using XUnitTestCommon.GlobalActions;
+using Lykke.Service.Balances.Client;
 
 namespace BlueApiData.Fixtures
 {
@@ -35,6 +36,7 @@ namespace BlueApiData.Fixtures
         public GenericRepository<PledgeEntity, IPledgeEntity> PledgeRepository;
         public GenericRepository<PersonalDataEntity, IPersonalData> PersonalDataRepository;
         public GenericRepository<ReferralLinkEntity, IReferralLink> ReferralLinkRepository;
+
         public string TestPledgeCreateClientId;
         public PledgeDTO TestPledge;
         public string TestPledgeUpdateClientId;
@@ -43,11 +45,14 @@ namespace BlueApiData.Fixtures
         public PledgeDTO TestPledgeDelete;
         public ApiConsumer Consumer;
         public MatchingEngineConsumer MEConsumer;
+        public BalancesClient BalancesClient;
 
         public Dictionary<string, ApiConsumer> PledgeApiConsumers;
 
         public ApiConsumer InvitationLinkRequestConsumer;
         public List<ApiConsumer> InvitationLinkClaimersConsumers;
+        public RequestInvitationLinkResponseDto TestInvitationLink;
+        public ClientRegisterResponseDTO TestInvitationLinkUserData;
 
         [OneTimeSetUp]
         public void Initialize()
@@ -57,6 +62,7 @@ namespace BlueApiData.Fixtures
             PrepareDependencyContainer();
             PrepareApiConsumers().Wait();
             PrepareMapper();
+            PrepareGlobalTestData().Wait();
         }
 
         private async Task PrepareApiConsumers()
@@ -70,6 +76,8 @@ namespace BlueApiData.Fixtures
             }
 
             PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
+
+            this.BalancesClient = new BalancesClient(_configBuilder.Config["BalancesServiceUrl"], null);
         }
 
         public async Task CreatePledgeClientAndApiConsumer(string purpose)
@@ -103,7 +111,7 @@ namespace BlueApiData.Fixtures
 
             PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(this._container);
             PersonalDataRepository = RepositoryUtils.ResolveGenericRepository<PersonalDataEntity, IPersonalData>(this._container);
-            ReferralLinkRepository = RepositoryUtils.ResolveGenericRepository<ReferralLinkEntity, IReferralLink>(_container);
+            ReferralLinkRepository = RepositoryUtils.ResolveGenericRepository<ReferralLinkEntity, IReferralLink>(this._container);
         }
 
         [OneTimeTearDown]

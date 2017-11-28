@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.1.1" />
+    <PackageReference Include="Lykke.Service.Balances.Client" Version="1.0.17" />
     <PackageReference Include="NUnit" Version="3.9.0" />
   </ItemGroup>
 

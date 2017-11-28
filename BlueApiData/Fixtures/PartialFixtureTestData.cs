@@ -8,6 +8,10 @@ using XUnitTestData.Entities.BlueApi;
 using XUnitTestCommon.Tests;
 using System.Linq;
 using XUnitTestCommon.Consumers;
+using XUnitTestCommon;
+using RestSharp;
+using System.Net;
+using XUnitTestCommon.Utils;
 
 namespace BlueApiData.Fixtures
 {
@@ -22,6 +26,19 @@ namespace BlueApiData.Fixtures
             });
 
             Mapper = config.CreateMapper();
+        }
+
+        public async Task PrepareGlobalTestData()
+        {
+            ApiConsumer invConsumer = new ApiConsumer(this._configBuilder);
+            await invConsumer.RegisterNewUser();
+            this.TestInvitationLinkUserData = invConsumer.ClientInfo;
+
+            var createLinkResponse = await invConsumer.ExecuteRequest(ApiPaths.REFERRAL_LINKS_INVITATION_LINK_PATH, Helpers.EmptyDictionary, null, Method.GET);
+            if(createLinkResponse.Status == HttpStatusCode.Created)
+            {
+                this.TestInvitationLink = JsonUtils.DeserializeJson<RequestInvitationLinkResponseDto>(createLinkResponse.ResponseJson);
+            }
         }
 
         public async Task PrepareDefaultTestPledge()
@@ -56,7 +73,7 @@ namespace BlueApiData.Fixtures
         {
             this.InvitationLinkClaimersConsumers = await RegisterNUsers(7);
             //give tree coins to client who creates invitation link
-            await MEConsumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), InvitationLinkClaimersConsumers[0].ClientInfo.Account.Id, "TREE", 100.0);
+            //await MEConsumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), InvitationLinkClaimersConsumers[0].ClientInfo.Account.Id, Constants.TREE_COIN_ID, 100.0);
         }
 
         public void PrepareTwitterData()
