@@ -49,6 +49,7 @@ namespace BlueApiData.Fixtures
 
         public Dictionary<string, ApiConsumer> PledgeApiConsumers;
 
+        public ApiConsumer GlobalConsumer;
         public ApiConsumer InvitationLinkRequestConsumer;
         public List<ApiConsumer> InvitationLinkClaimersConsumers;
         public RequestInvitationLinkResponseDto TestInvitationLink;

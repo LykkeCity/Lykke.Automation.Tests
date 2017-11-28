@@ -143,7 +143,7 @@ namespace AFTests.BlueApi
 
             Assert.True(parsedResponse.Id == this.TestInvitationLink.RefLinkId);
             Assert.True(parsedResponse.Url == this.TestInvitationLink.RefLinkUrl);
-            Assert.True(parsedResponse.SenderClientId == this.TestInvitationLinkUserData.Account.Id);
+            Assert.True(parsedResponse.SenderClientId == this.GlobalConsumer.ClientInfo.Account.Id);
             Assert.True(parsedResponse.Asset == Constants.TREE_COIN_NAME);
             Assert.True(parsedResponse.State == "Created");
             Assert.True(parsedResponse.Amount == 1.0);
@@ -164,11 +164,27 @@ namespace AFTests.BlueApi
 
             Assert.True(parsedResponse.Id == this.TestInvitationLink.RefLinkId);
             Assert.True(parsedResponse.Url == this.TestInvitationLink.RefLinkUrl);
-            Assert.True(parsedResponse.SenderClientId == this.TestInvitationLinkUserData.Account.Id);
+            Assert.True(parsedResponse.SenderClientId == this.GlobalConsumer.ClientInfo.Account.Id);
             Assert.True(parsedResponse.Asset == Constants.TREE_COIN_NAME);
             Assert.True(parsedResponse.State == "Created");
             Assert.True(parsedResponse.Amount == 1.0);
             Assert.True(parsedResponse.Type == "Invitation");
+        }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("ReferralLinks")]
+        [Category("ReferralLinksGet")]
+        public async Task GetRefLinkStatistics()
+        {
+            string url = ApiPaths.REFERRAL_LINKS_BASE_PATH + "/statistics";
+            var response = await this.GlobalConsumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            RefLinksStatisticsDTO parsedResponse = JsonUtils.DeserializeJson<RefLinksStatisticsDTO>(response.ResponseJson);
+
+            Assert.True(parsedResponse.NumberOfInvitationLinksSent == 1);
+            Assert.True(parsedResponse.NumberOfInvitationLinksAccepted == 2);
         }
 
         //[Test]

@@ -12,6 +12,7 @@ using XUnitTestCommon;
 using RestSharp;
 using System.Net;
 using XUnitTestCommon.Utils;
+using BlueApiData.DTOs.ReferralLinks;
 
 namespace BlueApiData.Fixtures
 {
@@ -30,14 +31,27 @@ namespace BlueApiData.Fixtures
 
         public async Task PrepareGlobalTestData()
         {
-            ApiConsumer invConsumer = new ApiConsumer(this._configBuilder);
-            await invConsumer.RegisterNewUser();
-            this.TestInvitationLinkUserData = invConsumer.ClientInfo;
+            Task<List<ApiConsumer>> registerUsersTasks = RegisterNUsers(2);
 
-            var createLinkResponse = await invConsumer.ExecuteRequest(ApiPaths.REFERRAL_LINKS_INVITATION_LINK_PATH, Helpers.EmptyDictionary, null, Method.GET);
+            this.GlobalConsumer = new ApiConsumer(this._configBuilder);
+            await this.GlobalConsumer.RegisterNewUser();
+
+            var createLinkResponse = await this.GlobalConsumer.ExecuteRequest(ApiPaths.REFERRAL_LINKS_INVITATION_LINK_PATH, Helpers.EmptyDictionary, null, Method.GET);
             if(createLinkResponse.Status == HttpStatusCode.Created)
             {
                 this.TestInvitationLink = JsonUtils.DeserializeJson<RequestInvitationLinkResponseDto>(createLinkResponse.ResponseJson);
+            }
+
+            List<ApiConsumer> registeredUsers = await registerUsersTasks;
+            foreach (ApiConsumer consumer in registeredUsers)
+            {
+                var body = new InvitationLinkClaimDTO()
+                {
+                    ReferalLinkId = this.TestInvitationLink.RefLinkId,
+                    ReferalLinkUrl = this.TestInvitationLink.RefLinkUrl,
+                    IsNewClient = true
+                };
+                await consumer.ExecuteRequest(ApiPaths.REFERRAL_LINKS_CLAIM_LINK_PATH, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
             }
         }
 
@@ -72,8 +86,6 @@ namespace BlueApiData.Fixtures
         public async Task PrepareClainInvitationLink()
         {
             this.InvitationLinkClaimersConsumers = await RegisterNUsers(7);
-            //give tree coins to client who creates invitation link
-            //await MEConsumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), InvitationLinkClaimersConsumers[0].ClientInfo.Account.Id, Constants.TREE_COIN_ID, 100.0);
         }
 
         public void PrepareTwitterData()
