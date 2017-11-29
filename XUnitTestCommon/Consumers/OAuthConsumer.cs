@@ -33,9 +33,9 @@ namespace XUnitTestCommon.Consumers
         {
             AuthTokenTimeout = Int32.Parse(config.Config["AuthTokenTimeout"]);
             AuthPath = config.Config["AuthPath"];
-            RegisterPath = "/api/registration";//config.Config["RegisterPath"];
+            RegisterPath = config.Config["RegisterPath"];
             BaseAuthUrl = config.Config["BaseUrlAuth"];
-            BaseRegisterUrl = "http://registration.lykke-service.svc.cluster.local";// config.Config["BaseUrlRegister"];
+            BaseRegisterUrl = config.Config["BaseUrlRegister"];
             UserDataConnectionString = config.Config["MainConnectionString"];
             AuthUser = new User
             {
