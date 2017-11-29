@@ -54,8 +54,6 @@ namespace ApiV2Data.Fixtures
         public OperationCreateReturnDTO TestOperationCreateDetails;
         public OperationCreateReturnDTO TestOperationRegisterDetails;
 
-        public ClientRegisterDTO ClientInfoInstance;
-
         public GenericRepository<TradersEntity, ITrader> TradersRepository;
         public ApiConsumer Consumer;
         public MatchingEngineConsumer MEConsumer;

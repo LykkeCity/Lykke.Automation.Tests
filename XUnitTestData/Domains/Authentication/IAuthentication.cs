@@ -11,6 +11,6 @@ namespace XUnitTestData.Domains.Authentication
         string AuthToken { get; }
 
         Task<bool> Authenticate();
-        Task<bool> UpdateToken();
+        Task<bool> UpdateToken(bool forceUpdate);
     }
 }

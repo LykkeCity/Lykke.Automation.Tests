@@ -45,7 +45,7 @@ namespace AssetsData.Fixtures
             builder.RegisterModule(new AssetsTestModule(_configBuilder));
             container = builder.Build();
 
-            AssetManager = RepositoryUtils.ResolveGenericRepository<AssetEntity, IAsset>(container);
+            AssetReposiutory = RepositoryUtils.ResolveGenericRepository<AssetEntity, IAsset>(container);
             AssetExtendedInfosManager = RepositoryUtils.ResolveGenericRepository<AssetExtendedInfosEntity, IAssetExtendedInfo>(container);
             AssetCategoryManager = RepositoryUtils.ResolveGenericRepository<AssetCategoryEntity, IAssetCategory>(container);
             AssetAttributesManager = container.Resolve<IDictionaryRepository<IAssetAttributes>>() as AssetAttributesRepository;

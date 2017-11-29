@@ -87,7 +87,7 @@ namespace AFTests.ApiV2
             Assert.True(response.Status == HttpStatusCode.OK);
 
             ClientInfoDTO parsedResponse = JsonUtils.DeserializeJson<ClientInfoDTO>(response.ResponseJson);
-            Assert.True(parsedResponse.Email == ClientInfoInstance.Email);
+            Assert.True(parsedResponse.Email == this.ClientInfoConsumer.ClientInfo.Account.Email);
             //Assert.True(parsedResponse.FirstName == ClientInfoInstance.FullName);
             //Assert.True(parsedResponse.LastName == ClientInfoInstance.FullName);
 

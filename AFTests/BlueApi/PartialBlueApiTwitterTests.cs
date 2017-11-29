@@ -43,9 +43,9 @@ namespace AFTests.BlueApi
             Assert.True(tweets.Count <= pageSize);
 
             tweets.ForEach(tweet =>
-            {                
-                //check if the length of the returned tweet is not bigger than 240
-                Assert.True(tweet.Title.Length <= 280);
+            {
+                //check if the tweet matches search query
+                Assert.True(tweet.Title.ToLower().Contains(Constants.TWITTER_SEARCH_QUERY));
 
                 //check if the tweets are published before the until date
                 Assert.True(tweet.Date <= untilDate);
@@ -85,9 +85,6 @@ namespace AFTests.BlueApi
             {
                 //checks if all tweets contain the search query in their title ( may fail for older tweets due to chars limitations )
                 Assert.True(tweet.Title.ToLower().Contains(Constants.TWITTER_SEARCH_QUERY));
-
-                //check if the length of the returned tweet is not bigger than 240
-                Assert.True(tweet.Title.Length <= 280);
 
                 //check if the tweets are published before the until date
                 Assert.True(tweet.Date <= body.UntilDate);

@@ -6,6 +6,8 @@ using BlueApiData.DTOs;
 using XUnitTestData.Domains.BlueApi;
 using XUnitTestData.Entities.BlueApi;
 using XUnitTestCommon.Tests;
+using System.Linq;
+using XUnitTestCommon.Consumers;
 
 namespace BlueApiData.Fixtures
 {
@@ -24,37 +26,43 @@ namespace BlueApiData.Fixtures
 
         public async Task PrepareDefaultTestPledge()
         {
-            TestClientId = this.TestPledgeClientIDs["GetPledge"];
-            TestPledge = await CreateTestPledge(TestClientId, "GetPledge");
+            await CreatePledgeClientAndApiConsumer("GetPledge");
+            TestPledge = await CreateTestPledge("GetPledge");
         }
 
-        public async void PrepareCreateTestPledge()
+        public async Task PrepareCreateTestPledge()
         {
-            TestPledgeCreateClientId = this.TestPledgeClientIDs["CreatePledge"];
-            TestPledge = await CreateTestPledge(TestPledgeCreateClientId, "CreatePledge");
+            await CreatePledgeClientAndApiConsumer("CreatePledge");
         }
 
         public async Task PrepareUpdateTestPledge()
         {
-            TestPledgeUpdateClientId = this.TestPledgeClientIDs["UpdatePledge"];
-            TestPledgeUpdate = await CreateTestPledge(TestPledgeUpdateClientId, "UpdatePledge");
+            await CreatePledgeClientAndApiConsumer("UpdatePledge");
+            TestPledgeUpdate = await CreateTestPledge("UpdatePledge");
         }
 
         public async Task PrepareDeleteTestPledge()
         {
-            TestPledgeDeleteClientId = this.TestPledgeClientIDs["DeletePledge"];
-            TestPledgeDelete = await CreateTestPledge(TestPledgeDeleteClientId, "DeletePledge");
+            await CreatePledgeClientAndApiConsumer("DeletePledge");
+            TestPledgeDelete = await CreateTestPledge("DeletePledge");
+        }
+
+        public async Task PrepareRequestInvitationLink()
+        {
+            this.InvitationLinkRequestConsumer = (await RegisterNUsers(1)).FirstOrDefault();
+        }
+
+        public async Task PrepareClainInvitationLink()
+        {
+            this.InvitationLinkClaimersConsumers = await RegisterNUsers(7);
+            //give tree coins to client who creates invitation link
+            await MEConsumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), InvitationLinkClaimersConsumers[0].ClientInfo.Account.Id, "TREE", 100.0);
         }
 
         public void PrepareTwitterData()
         {
             AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
 
-        }
-
-        public void GetTestClientId()
-        {
-            this.TestClientId = _configBuilder.Config["AuthClientId"];
         }
     }
 }

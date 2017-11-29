@@ -48,17 +48,16 @@ namespace XUnitTestCommon.Consumers
 
         public async Task<bool> Authenticate()
         {
-            Task<bool> tokenTask = UpdateToken();
-            //await UpdateClientInfo();
+            Task<bool> tokenTask = UpdateToken(true);
             return await tokenTask;
         }
 
-        public async Task<bool> UpdateToken()
+        public async Task<bool> UpdateToken(bool forceUpdate = false)
         {
             try
             {
                 //Only update token if it is expired
-                if (!_tokenUpdateTime.HasValue || DateTime.UtcNow.Subtract(_tokenUpdateTime.Value).TotalMilliseconds >= AuthTokenTimeout)
+                if (!_tokenUpdateTime.HasValue || DateTime.UtcNow.Subtract(_tokenUpdateTime.Value).TotalMilliseconds >= AuthTokenTimeout || forceUpdate)
                 {
                     AuthToken = await GetToken();
                     _tokenUpdateTime = DateTime.UtcNow;
