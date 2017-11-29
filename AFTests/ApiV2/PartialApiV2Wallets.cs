@@ -85,6 +85,7 @@ namespace AFTests.ApiV2
                         var parsedBalance = wbDTO.Balances.Where(b => b.AssetId == balanceDTO.Asset).FirstOrDefault();
                         Assert.NotNull(parsedBalance);
                         Assert.True(balanceDTO.Balance == parsedBalance.Balance);
+                        Assert.True(balanceDTO.Reserved == parsedBalance.Reserved);
                     }
                 }
                 else
@@ -143,6 +144,7 @@ namespace AFTests.ApiV2
                 {
                     BalanceDTO balanceDTO = accountEntity.BalancesParsed.Where(b => b.Asset == this.TestAssetId).FirstOrDefault();
                     Assert.True(balanceDTO.Balance == wbDTO.Balances.Balance);
+                    Assert.True(balanceDTO.Reserved == wbDTO.Balances.Reserved);
                 }
                 else
                 {

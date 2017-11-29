@@ -17,6 +17,7 @@ using XUnitTestData.Entities.ApiV2;
 using NUnit.Framework;
 using XUnitTestCommon.Tests;
 using XUnitTestCommon.DTOs;
+using XUnitTestCommon.GlobalActions;
 
 namespace BlueApiData.Fixtures
 {
@@ -78,10 +79,12 @@ namespace BlueApiData.Fixtures
 
         private async Task CreatePledgeClientAndApiConsumer(string purpose)
         {
-            OAuthConsumer oAuthConsumer = new OAuthConsumer(_configBuilder);
-            ClientRegisterDTO createPledgeUser = await oAuthConsumer.RegisterNewUser();
-            TestPledgeClientIDs[purpose] = await GetClientIdByEmail(createPledgeUser.Email);
-            PledgeApiConsumers.Add(purpose, new ApiConsumer(_configBuilder, oAuthConsumer));
+            ApiConsumer consumer = new ApiConsumer(_configBuilder);
+            await consumer.RegisterNewUser();
+            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.Account.Id));
+
+            TestPledgeClientIDs[purpose] = consumer.ClientInfo.Account.Id;
+            PledgeApiConsumers.Add(purpose, consumer);
         }
 
         private void PrepareDependencyContainer()

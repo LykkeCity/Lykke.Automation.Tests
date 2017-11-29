@@ -17,6 +17,8 @@ cat tmp1.txt | sed 's/\\/\\\\/g' > tmp2.txt
 cat tmp2.txt | sed 's/\r/\n/g' > tmp3.txt
 cat tmp3.txt | sed 's/\n/\\n/g' > tmp4.txt
 
+cat tmp4.txt
+
 echo "Sending resutls to Slack"
 echo "curl -X POST -H $H --data-binary @tmp4.txt $url"
 curl -X POST -H $H --data-binary @tmp4.txt $url >out 2>&1

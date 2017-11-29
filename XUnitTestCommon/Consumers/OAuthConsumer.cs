@@ -6,7 +6,10 @@ using RestSharp;
 using XUnitTestCommon.DTOs;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Domains.Authentication;
-using User = XUnitTestData.Domains.Authentication.User;
+using XUnitTestData.Repositories;
+using XUnitTestData.Entities.ApiV2;
+using XUnitTestData.Domains.ApiV2;
+using AzureStorage.Tables;
 
 namespace XUnitTestCommon.Consumers
 {
@@ -18,8 +21,10 @@ namespace XUnitTestCommon.Consumers
         public string RegisterPath { get; set; }
         public int AuthTokenTimeout { get; set; }
         public User AuthUser { get; set; }
+        public ClientRegisterResponseDTO ClientInfo { get; set; }
         public string AuthToken { get; private set; }
 
+        private string UserDataConnectionString { get; set; }
         private DateTime? _tokenUpdateTime;
 
         public OAuthConsumer() { }
@@ -31,32 +36,21 @@ namespace XUnitTestCommon.Consumers
             RegisterPath = config.Config["RegisterPath"];
             BaseAuthUrl = config.Config["BaseUrlAuth"];
             BaseRegisterUrl = config.Config["BaseUrlRegister"];
+            UserDataConnectionString = config.Config["MainConnectionString"];
             AuthUser = new User
             {
                 Email = config.Config["AuthEmail"],
                 Password = config.Config["AuthPassword"]
             };
-        }
 
-        public OAuthConsumer(string baseAuthUrl, string authPath, int authTokenTimeout, User authUser)
-        {
-            BaseAuthUrl = baseAuthUrl;
-            AuthPath = authPath;
-            AuthTokenTimeout = authTokenTimeout;
-            AuthUser = authUser;
-        }
 
-        public OAuthConsumer(string baseAuthUrl, string authPath, int authTokenTimeout, string registerPath)
-        {
-            BaseAuthUrl = baseAuthUrl;
-            AuthPath = authPath;
-            AuthTokenTimeout = authTokenTimeout;
-            RegisterPath = RegisterPath;
         }
 
         public async Task<bool> Authenticate()
         {
-            return await UpdateToken();
+            Task<bool> tokenTask = UpdateToken();
+            //await UpdateClientInfo();
+            return await tokenTask;
         }
 
         public async Task<bool> UpdateToken()
@@ -104,7 +98,7 @@ namespace XUnitTestCommon.Consumers
         /// </summary>
         /// <param name="registrationInfo"></param>
         /// <returns></returns>
-        public async Task<ClientRegisterDTO> RegisterNewUser(ClientRegisterDTO registrationInfo = null)
+        public async Task<ClientRegisterResponseDTO> RegisterNewUser(ClientRegisterDTO registrationInfo = null)
         {
             var regClient = new RestClient(BaseRegisterUrl);
             var regRequest = new RestRequest(RegisterPath, Method.POST);
@@ -124,14 +118,18 @@ namespace XUnitTestCommon.Consumers
             var regResponse = await regClient.ExecuteAsync(regRequest);
             if (regResponse.StatusCode == HttpStatusCode.OK)
             {
-
+                ClientRegisterResponseDTO parsedRegResponse = JsonUtils.DeserializeJson<ClientRegisterResponseDTO>(regResponse.Content);
                 this.AuthUser = new User()
                 {
                     Email = registerDTO.Email,
                     Password = registerDTO.Password
                 };
 
-                return registerDTO;
+                this.ClientInfo = parsedRegResponse;
+
+                await this.Authenticate();
+
+                return parsedRegResponse;
             }
 
             return null;

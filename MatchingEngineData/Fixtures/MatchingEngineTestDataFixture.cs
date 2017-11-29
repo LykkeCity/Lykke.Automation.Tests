@@ -21,11 +21,12 @@ using XUnitTestData.Entities.MatchingEngine;
 using XUnitTestData.Entities;
 using XUnitTestData.Entities.Assets;
 using NUnit.Framework;
+using XUnitTestCommon.Tests;
 
 namespace AFTMatchingEngine.Fixtures
 {
     [TestFixture]
-    public class MatchingEngineTestDataFixture
+    public class MatchingEngineTestDataFixture : BaseTest
     {
         public MatchingEngineConsumer Consumer;
 
@@ -124,7 +125,6 @@ namespace AFTMatchingEngine.Fixtures
 
         private void prepareRabbitQueues()
         {
-            _createdQueues = new List<string>();
             RabbitMQHttpApiConsumer.Setup(new RabbitMQHttpApiSettings(_configBuilder));
 
             
@@ -166,7 +166,7 @@ namespace AFTMatchingEngine.Fixtures
 
             if (IsBinded)
             {
-                _createdQueues.Add(queueName);
+                AddOneTimeCleanupAction(async () => await RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName));
             }
 
             return IsBinded;
@@ -226,24 +226,13 @@ namespace AFTMatchingEngine.Fixtures
         [OneTimeTearDown]
         public void Cleanup()
         {
-            if (_createdQueues != null)
-            {
-                CashInOutSubscription.Stop();
-                CashTransferSubscription.Stop();
-                CashSwapSubscription.Stop();
-                BalanceUpdateSubscription.Stop();
-                LimitOrderSubscription.Stop();
-                TradesOrderSubscription.Stop();
+            CashInOutSubscription.Stop();
+            CashTransferSubscription.Stop();
+            CashSwapSubscription.Stop();
+            BalanceUpdateSubscription.Stop();
+            LimitOrderSubscription.Stop();
+            TradesOrderSubscription.Stop();
 
-                List<Task<bool>> deleteTasks = new List<Task<bool>>();
-
-                foreach (string queueName in _createdQueues)
-                {
-                    deleteTasks.Add(RabbitMQHttpApiConsumer.DeleteQueueAsync(queueName));
-                }
-
-                Task.WhenAll(deleteTasks).Wait();
-            }
         }
     }
 }

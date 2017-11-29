@@ -64,5 +64,10 @@ namespace XUnitTestCommon
         public static readonly string WATCH_LIST_ALL_PATH = "/api/v2/watch-lists/all";
 
         public static readonly string ERC20TOKENS_BASE_PATH = "/api/v2/erc20-tokens";
+      
+        //client account service
+        public static readonly string CLIENT_ACCOUNT_SERVICE_PREFIX = "client-account";
+        public static readonly string CLIENT_ACCOUNT_SERVICE_BASEURL = "lykke-service.svc.cluster.local";
+        public static readonly string CLIENT_ACCOUNT_PATH = "/api/ClientAccount";
     }    
 }

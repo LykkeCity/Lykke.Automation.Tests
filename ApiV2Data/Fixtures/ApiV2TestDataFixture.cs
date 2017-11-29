@@ -18,17 +18,16 @@ using XUnitTestData.Domains.Authentication;
 using XUnitTestData.Entities;
 using NUnit.Framework;
 using XUnitTestCommon.DTOs;
+using XUnitTestCommon.GlobalActions;
+using XUnitTestCommon.Tests;
 
 namespace ApiV2Data.Fixtures
 {
     [TestFixture]
-    public partial class ApiV2TestDataFixture
+    public partial class ApiV2TestDataFixture: BaseTest
     {
         private ConfigBuilder _configBuilder;
         private IContainer _container;
-
-        private List<string> OperationsToCancel;
-        private List<string> _walletsToDelete;
 
         public string TestClientId;
 
@@ -73,8 +72,7 @@ namespace ApiV2Data.Fixtures
                 MEConsumer = new MatchingEngineConsumer(MeConfig.Config["BaseUrl"], port);
             }
 
-            var oAuthConsumer = new OAuthConsumer(_configBuilder);
-            Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
+            Consumer = new ApiConsumer(_configBuilder);
 
             PrepareDependencyContainer();
             PrepareTestData().Wait();
@@ -96,9 +94,6 @@ namespace ApiV2Data.Fixtures
 
         private async Task PrepareTestData()
         {        
-            _walletsToDelete = new List<string>();
-            OperationsToCancel = new List<string>();
-
             TestClientId = this._configBuilder.Config["AuthClientId"];
             var walletsFromDB = this.WalletRepository.GetAllAsync(w => w.ClientId == TestClientId && w.State != "deleted");
             var operationsFromDB = this.OperationsRepository.GetAllAsync(o => o.PartitionKey == OperationsEntity.GeneratePartitionKey() && o.ClientId.ToString() == TestClientId);
@@ -120,9 +115,9 @@ namespace ApiV2Data.Fixtures
             this.TestOperationRegisterDetails = await CreateTestOperation();
 
 
-            OAuthConsumer clientInfoAuth = new OAuthConsumer(_configBuilder);
-            this.ClientInfoInstance = await clientInfoAuth.RegisterNewUser();
-            this.ClientInfoConsumer = new ApiConsumer(_configBuilder, clientInfoAuth);
+            this.ClientInfoConsumer = new ApiConsumer(_configBuilder);
+            await this.ClientInfoConsumer.RegisterNewUser();
+            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(ClientInfoConsumer.ClientInfo.Account.Id));
 
             // set the id to the default one in case it has been changed by any test
             BaseAssetDTO body = new BaseAssetDTO(this.TestAssetId);
@@ -132,13 +127,6 @@ namespace ApiV2Data.Fixtures
         [OneTimeTearDown]
         public void Cleanup()
         {
-            var deleteTasks = new List<Task<bool>>();
-
-            foreach (string operationId in OperationsToCancel) { deleteTasks.Add(CancelTestOperation(operationId)); }
-
-            foreach (string walletId in _walletsToDelete) { deleteTasks.Add(DeleteTestWallet(walletId)); }
-
-            Task.WhenAll(deleteTasks).Wait();
             GC.SuppressFinalize(this);
         }
     }

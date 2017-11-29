@@ -45,19 +45,6 @@ namespace AssetsData.Fixtures
 
             this.mapper = config.CreateMapper();
 
-            this.AssetsToDelete = new List<string>();
-            this.AssetAtributesToDelete = new List<AssetAttributeIdentityDTO>();
-            this.AssetCategoriesToDelete = new List<string>();
-            this.AssetExtendedInfosToDelete = new List<string>();
-            this.AssetGroupsToDelete = new List<string>();
-            this.AssetPairsToDelete = new List<string>();
-            this.AssetIssuersToDelete = new List<string>();
-            this.MarginAssetPairsToDelete = new List<string>();
-            this.MarginAssetsToDelete = new List<string>();
-            this.MarginIssuersToDelete = new List<string>();
-            this.WatchListsToDelete = new Dictionary<string, string>();
-            this.AssetSettingsToDelete = new List<string>();
-
             var assetsFromDB = AssetManager.GetAllAsync();
             var AssetExtInfoFromDB = AssetExtendedInfosManager.GetAllAsync();
             var assetsAttrFromDB = AssetAttributesManager.GetAllAsync();

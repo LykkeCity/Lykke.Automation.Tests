@@ -16,7 +16,8 @@ namespace XUnitTestCommon.Tests
         public IList<string> schemesError;
 
         public static Dictionary<string, List<Response>> responses;
-        private readonly List<Action> _cleanupActions = new List<Action>();
+        private readonly List<Func<Task>> _cleanupActions = new List<Func<Task>>();
+        private readonly List<Func<Task>> _oneTimeCleanupActions = new List<Func<Task>>();
 
         protected virtual void Initialize() { }
 
@@ -91,8 +92,17 @@ namespace XUnitTestCommon.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            var path = TestContext.CurrentContext.WorkDirectory.Remove(TestContext.CurrentContext.WorkDirectory.IndexOf("bin")) + "TestReportHelpers/";
+            var path = TestContext.CurrentContext.WorkDirectory + Path.DirectorySeparatorChar.ToString() + "TestReportHelpers";
             AllureReport.GetInstance().RunStarted(path);
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeCleanup()
+        {
+            Console.WriteLine("=============================== Final Cleanup ===============================");
+            Console.WriteLine();
+
+            CallCleanupActions(true);
         }
 
         #endregion
@@ -123,16 +133,23 @@ namespace XUnitTestCommon.Tests
 
         #region CleanUp Helpers
 
-        private void CallCleanupActions()
+        private void CallCleanupActions(bool oneTime = false)
         {
-            _cleanupActions.Reverse();
-            var exceptions = new List<Exception>();
+            List<Func<Task>> cleanupActions;
+            if (oneTime)
+                cleanupActions = _oneTimeCleanupActions;
+            else
+                cleanupActions = _cleanupActions;
 
-            foreach (var action in _cleanupActions)
+            cleanupActions.Reverse();
+            var exceptions = new List<Exception>();
+            var startedTasks = new List<Task>();
+
+            foreach (var action in cleanupActions)
             {
                 try
                 {
-                    action();
+                    startedTasks.Add(action());
                 }
                 catch (Exception ex)
                 {
@@ -141,15 +158,22 @@ namespace XUnitTestCommon.Tests
                 }
             }
 
+            Task.WhenAll(startedTasks).Wait();
+
             if (exceptions.Count == 0)
                 return;
 
             throw new AggregateException("Multiple exceptions occurred in Cleanup. See test log for more details", exceptions);
         }
 
-        public void AddCleanupAction(Action cleanupAction)
+        public void AddCleanupAction(Func<Task> cleanupAction)
         {
             _cleanupActions.Add(cleanupAction);
+        }
+
+        public void AddOneTimeCleanupAction(Func<Task> cleanupAction)
+        {
+            _oneTimeCleanupActions.Add(cleanupAction);
         }
         #endregion
 

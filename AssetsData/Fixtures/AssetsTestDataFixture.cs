@@ -14,11 +14,12 @@ using XUnitTestData.Domains.Authentication;
 using XUnitTestData.Repositories.ApiV2;
 using XUnitTestData.Entities.Assets;
 using NUnit.Framework;
+using XUnitTestCommon.Tests;
 
 namespace AssetsData.Fixtures
 {
     [TestFixture]
-    public partial class AssetsTestDataFixture
+    public partial class AssetsTestDataFixture: BaseTest
     {
         public ApiConsumer Consumer;
 
@@ -32,9 +33,7 @@ namespace AssetsData.Fixtures
         {
             _configBuilder = new ConfigBuilder("Assets");
 
-            var oAuthConsumer = new OAuthConsumer(_configBuilder);
-
-            this.Consumer = new ApiConsumer(_configBuilder, oAuthConsumer);
+            this.Consumer = new ApiConsumer(_configBuilder);
 
             prepareDependencyContainer();
             prepareTestData().Wait();
@@ -69,22 +68,7 @@ namespace AssetsData.Fixtures
         [OneTimeTearDown]
         public void Cleanup()
         {
-            List<Task<bool>> deleteTasks = new List<Task<bool>>();
 
-            foreach (string assetId in AssetsToDelete) { deleteTasks.Add(DeleteTestAsset(assetId)); }
-            foreach (AssetAttributeIdentityDTO attrDTO in AssetAtributesToDelete) { deleteTasks.Add(DeleteTestAssetAttribute(attrDTO.AssetId, attrDTO.Key)); }
-            foreach (string catId in AssetCategoriesToDelete) { deleteTasks.Add(DeleteTestAssetCategory(catId)); }
-            foreach (string infoId in AssetExtendedInfosToDelete) { deleteTasks.Add(DeleteTestAssetExtendedInfo(infoId)); }
-            foreach (string groupName in AssetGroupsToDelete) { deleteTasks.Add(DeleteTestAssetGroup(groupName)); }
-            foreach (string pairId in AssetPairsToDelete) { deleteTasks.Add(DeleteTestAssetPair(pairId)); }
-            foreach (string issuerId in AssetIssuersToDelete) { deleteTasks.Add(DeleteTestAssetIssuer(issuerId)); }
-            foreach (string pairId in MarginAssetPairsToDelete) { deleteTasks.Add(DeleteTestMarginAssetPair(pairId)); }
-            foreach (string assetId in MarginAssetsToDelete) { deleteTasks.Add(DeleteTestMarginAsset(assetId)); }
-            foreach (string issuerId in MarginIssuersToDelete) { deleteTasks.Add(DeleteTestMarginIssuer(issuerId)); }
-            foreach (KeyValuePair<string, string> watchListIDs in WatchListsToDelete) { deleteTasks.Add(DeleteTestWatchList(watchListIDs)); }
-            foreach (string assetId in AssetSettingsToDelete) { deleteTasks.Add(DeleteTestAssetSettings(assetId)); }
-
-            Task.WhenAll(deleteTasks).Wait();
         }
     }
 }

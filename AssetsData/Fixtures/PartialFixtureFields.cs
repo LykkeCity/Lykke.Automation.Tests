@@ -103,18 +103,5 @@ namespace AssetsData.Fixtures
         public AssetAttributesRepository AssetAttributesRepository;
         public GenericRepository<AssetGroupEntity, IAssetGroup> AssetGroupsRepository;
         public WatchListRepository WatchListRepository;
-
-        private List<string> AssetsToDelete;
-        private List<AssetAttributeIdentityDTO> AssetAtributesToDelete;
-        private List<string> AssetCategoriesToDelete;
-        private List<string> AssetExtendedInfosToDelete;
-        private List<string> AssetGroupsToDelete;
-        private List<string> AssetPairsToDelete;
-        private List<string> AssetIssuersToDelete;
-        private List<string> MarginAssetPairsToDelete;
-        private List<string> MarginAssetsToDelete;
-        private List<string> MarginIssuersToDelete;
-        private Dictionary<string, string> WatchListsToDelete;
-        private List<string> AssetSettingsToDelete;
     }
 }

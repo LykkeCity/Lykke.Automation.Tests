@@ -23,7 +23,7 @@ namespace AFTests.BlueApi
         public async Task GetPledge()
         {
             this.PrepareDefaultTestPledge().Wait();
-            this.AddCleanupAction(() => this.DeleteTestPledge().Wait());
+            this.AddCleanupAction(async () => await this.DeleteTestPledge());
 
             var url = ApiPaths.PLEDGES_BASE_PATH;
             var response = await this.PledgeApiConsumers["GetPledge"].ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -44,7 +44,7 @@ namespace AFTests.BlueApi
         {
             this.PrepareCreateTestPledge();
             var createdPledge = await this.CreateTestPledge(this.TestPledgeCreateClientId, "CreatePledge");
-            AddCleanupAction(() => this.DeleteTestPledge("CreatePledge").Wait());
+            AddCleanupAction(async () => await this.DeleteTestPledge("CreatePledge"));
             Assert.NotNull(createdPledge);
 
             var createdPledgeEntity = (PledgeEntity)await this.PledgeRepository.TryGetAsync(
@@ -61,7 +61,7 @@ namespace AFTests.BlueApi
         public async Task UpdatePledge()
         {
             this.PrepareUpdateTestPledge().Wait();
-            AddCleanupAction(() => this.DeleteTestPledge("UpdatePledge").Wait());
+            AddCleanupAction(async () => await this.DeleteTestPledge("UpdatePledge"));
 
             var editPledge = new PledgeDTO()
             {
@@ -91,7 +91,7 @@ namespace AFTests.BlueApi
         public async Task DeletePledge()
         {
             this.PrepareDeleteTestPledge().Wait();
-            AddCleanupAction(() => this.DeleteTestPledge("DeletePledge").Wait());
+            AddCleanupAction(async () => await this.DeleteTestPledge("DeletePledge"));
 
             var url = ApiPaths.PLEDGES_BASE_PATH;
 
