@@ -30,7 +30,7 @@ namespace AFTests.BlueApi
         {
             await this.PrepareRequestInvitationLink();
 
-            var url = ApiPaths.REFERRAL_LINKS_INVITATION_LINK_PATH;
+            var url = ApiPaths.REFERRAL_LINKS_REQUEST_INVITATION_LINK_PATH;
             var response = await this.InvitationLinkRequestConsumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.True(response.Status == HttpStatusCode.Created);
@@ -61,7 +61,7 @@ namespace AFTests.BlueApi
         {
             await this.PrepareClainInvitationLink();
 
-            var url = ApiPaths.REFERRAL_LINKS_CLAIM_LINK_PATH;
+            var url = ApiPaths.REFERRAL_LINKS_CLAIM_INVITATION_LINK_PATH;
 
             //send request without data 
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
@@ -81,7 +81,7 @@ namespace AFTests.BlueApi
 
 
             //Create link to be claimed
-            var createLinkUrl = ApiPaths.REFERRAL_LINKS_INVITATION_LINK_PATH;
+            var createLinkUrl = ApiPaths.REFERRAL_LINKS_REQUEST_INVITATION_LINK_PATH;
             ApiConsumer createLinkConsumer = this.InvitationLinkClaimersConsumers[0];
             this.InvitationLinkClaimersConsumers.RemoveAt(0);
 
@@ -125,6 +125,13 @@ namespace AFTests.BlueApi
 
                     Assert.True(senderBalance.Balance == 5 * Constants.TREE_COIN_INVIRATION_AWARD);
                     Assert.Null(recieverBalance);
+                }
+
+                //attempt to claim again with single user should result in error
+                if (i == 0)
+                {
+                    var secondClaimResponse = await claimConsumer.ExecuteRequest(url, Helpers.EmptyDictionary, claimParam, Method.POST);
+                    Assert.True(secondClaimResponse.Status != HttpStatusCode.OK);
                 }
             }
         }
@@ -185,6 +192,90 @@ namespace AFTests.BlueApi
 
             Assert.True(parsedResponse.NumberOfInvitationLinksSent == 1);
             Assert.True(parsedResponse.NumberOfInvitationLinksAccepted == 2);
+        }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("ReferralLinks")]
+        [Category("ReferralLinksPost")]
+        public async Task RequestGiftCoinLink()
+        {
+            await PrepareRequestGiftCoinLink();
+
+            string url = ApiPaths.REFERRAL_LINKS_REQUEST_GIFTCOINS_LINK_PATH;
+
+            //Attempt to create giftcoin link with negative ammount
+            RequestGiftCoinsLinkRequestDto requestParam = new RequestGiftCoinsLinkRequestDto()
+            {
+                Asset = Constants.GIFT_COIN_ASSET_NAME,
+                Amount = -0.1
+
+            };
+            var response = await GiftCoinLinkRequestConsumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(requestParam), Method.POST);
+            Assert.True(response.Status == HttpStatusCode.BadRequest);
+
+            //Attempt to create giftcoin link with more money than the user has
+            requestParam = new RequestGiftCoinsLinkRequestDto()
+            {
+                Asset = Constants.GIFT_COIN_ASSET_NAME,
+                Amount = Constants.GIFT_COIN_REQUEST_INITIAL_BALANCE + 1.0
+
+            };
+            response = await GiftCoinLinkRequestConsumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(requestParam), Method.POST);
+            Assert.True(response.Status == HttpStatusCode.BadRequest);
+
+            //Attempt a proper request
+            requestParam = new RequestGiftCoinsLinkRequestDto()
+            {
+                Asset = Constants.GIFT_COIN_ASSET_NAME,
+                Amount = 1.0
+
+            };
+            response = await GiftCoinLinkRequestConsumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(requestParam), Method.POST);
+            Assert.True(response.Status == HttpStatusCode.Created);
+
+            RequestGiftCoinsLinkResponseDto parsedResponse = JsonUtils.DeserializeJson<RequestGiftCoinsLinkResponseDto>(response.ResponseJson);
+
+            Assert.True(Guid.TryParse(parsedResponse.RefLinkId, out var temp));
+            Assert.True(parsedResponse.RefLinkUrl.StartsWith("http"));
+        }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("ReferralLinks")]
+        [Category("ReferralLinksPost")]
+        public async Task ClaimGiftCoinLink()
+        {
+            await PrepareClaimGiftCoinLink();
+            string url = ApiPaths.REFERRAL_LINKS_CLAIM_GIFTCOINS_LINK_PATH;
+
+            ClaimGiftCoinLinkRequest body = new ClaimGiftCoinLinkRequest()
+            {
+                ReferalLinkId = this.TestGiftCoinLink.RefLinkId,
+                ReferalLinkUrl = this.TestGiftCoinLink.RefLinkUrl
+            };
+
+            var response = await this.GiftCoinLinkClaimConsumers[1].ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
+            Assert.True(response.Status == HttpStatusCode.OK);
+
+            //TODO check parsedResponse
+
+            List<ClientBalanceResponseModel> claimedClientBalances =  (await this.BalancesClient.GetClientBalances(this.GiftCoinLinkClaimConsumers[1].ClientInfo.Account.Id)).ToList();
+            ClientBalanceResponseModel claimedBalance = claimedClientBalances.Where(b => b.AssetId == Constants.GIFT_COIN_ASSET_ID).FirstOrDefault();
+            Assert.NotNull(claimedBalance);
+
+            Assert.True(claimedBalance.Balance == Constants.GIFT_COIN_AWARD);
+
+            //Attempt another claim for same link should fail
+            response = await this.GiftCoinLinkClaimConsumers[2].ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
+            Assert.True(response.Status != HttpStatusCode.OK);
+
+            //check sender balance GiftCoinLinkClaimConsumers[0]
+            List<ClientBalanceResponseModel> senderBalances = (await this.BalancesClient.GetClientBalances(GiftCoinLinkClaimConsumers[0].ClientInfo.Account.Id)).ToList();
+            ClientBalanceResponseModel senderBalance = senderBalances.Where(b => b.AssetId == Constants.GIFT_COIN_ASSET_ID).FirstOrDefault();
+
+            Assert.NotNull(senderBalance);
+            Assert.True(senderBalance.Balance == Constants.GIFT_COIN_REQUEST_INITIAL_BALANCE - Constants.GIFT_COIN_AWARD);
         }
 
         //[Test]

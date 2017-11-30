@@ -55,6 +55,10 @@ namespace BlueApiData.Fixtures
         public RequestInvitationLinkResponseDto TestInvitationLink;
         public ClientRegisterResponseDTO TestInvitationLinkUserData;
 
+        public ApiConsumer GiftCoinLinkRequestConsumer;
+        public List<ApiConsumer> GiftCoinLinkClaimConsumers;
+        public RequestGiftCoinsLinkResponseDto TestGiftCoinLink;
+
         [OneTimeSetUp]
         public void Initialize()
         {

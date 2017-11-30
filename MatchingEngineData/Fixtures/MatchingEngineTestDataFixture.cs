@@ -22,6 +22,7 @@ using XUnitTestData.Entities;
 using XUnitTestData.Entities.Assets;
 using NUnit.Framework;
 using XUnitTestCommon.Tests;
+using XUnitTestCommon.GlobalActions;
 
 namespace AFTMatchingEngine.Fixtures
 {
@@ -71,7 +72,7 @@ namespace AFTMatchingEngine.Fixtures
             prepareRabbitMQConnections();
             prepareDependencyContainer();
 
-            prepareTestData();
+            prepareTestData().Wait();
         }
 
         private void prepareDependencyContainer()
@@ -172,12 +173,31 @@ namespace AFTMatchingEngine.Fixtures
             return IsBinded;
         }
 
-        private void prepareTestData()
+        private async Task prepareTestData()
         {
-            TestAccountId1 = Constants.TestAccountId1;
-            TestAccountId2 = Constants.TestAccountId2;
+            ConfigBuilder apiv2Config = new ConfigBuilder("ApiV2");
+            ApiConsumer registerConsumer1 = new ApiConsumer(apiv2Config);
+            ApiConsumer registerConsumer2 = new ApiConsumer(apiv2Config);
+            var registerTestAccount1 = registerConsumer1.RegisterNewUser();
+            var registerTestAccount2 = registerConsumer2.RegisterNewUser();
+
             TestAsset1 = Constants.TestAsset1;
             TestAsset2 = Constants.TestAsset2;
+
+            TestAccountId1 = (await registerTestAccount1)?.Account.Id;
+            TestAccountId2 = (await registerTestAccount2)?.Account.Id;
+
+            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(TestAccountId1));
+            AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(TestAccountId2));
+
+            //give test clients some cash to work with
+            List<Task> giveCashTasks = new List<Task>()
+            {
+                Consumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), TestAccountId1, TestAsset1, Constants.InitialAssetAmmount),
+                Consumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), TestAccountId1, TestAsset2, Constants.InitialAssetAmmount),
+                Consumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), TestAccountId2, TestAsset1, Constants.InitialAssetAmmount),
+                Consumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), TestAccountId2, TestAsset2, Constants.InitialAssetAmmount)
+            };
 
             if (!Int32.TryParse(_configBuilder.Config["AssetPrecission"], out AssetPrecission))
                 AssetPrecission = 2;
@@ -186,6 +206,8 @@ namespace AFTMatchingEngine.Fixtures
             {
                 return await this.AssetPairsRepository.TryGetAsync(TestAsset1 + TestAsset2);
             }).Result;
+
+            await Task.WhenAll(giveCashTasks);
         }
 
         public Task<IRabbitMQOperation> WaitForRabbitMQ<T>(Func<T, bool> lambda) where T : IRabbitMQOperation

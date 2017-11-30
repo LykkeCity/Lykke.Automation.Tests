@@ -24,7 +24,6 @@ namespace XUnitTestCommon.Consumers
         public ClientRegisterResponseDTO ClientInfo { get; set; }
         public string AuthToken { get; private set; }
 
-        private string UserDataConnectionString { get; set; }
         private DateTime? _tokenUpdateTime;
 
         public OAuthConsumer() { }
@@ -36,7 +35,6 @@ namespace XUnitTestCommon.Consumers
             RegisterPath = config.Config["RegisterPath"];
             BaseAuthUrl = config.Config["BaseUrlAuth"];
             BaseRegisterUrl = config.Config["BaseUrlRegister"];
-            UserDataConnectionString = config.Config["MainConnectionString"];
             AuthUser = new User
             {
                 Email = config.Config["AuthEmail"],
