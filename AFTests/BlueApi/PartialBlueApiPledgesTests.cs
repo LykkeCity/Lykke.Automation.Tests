@@ -15,7 +15,6 @@ namespace AFTests.BlueApi
     [Category("BlueApiService")]
     public partial class BlueApiTests: BlueApiTestDataFixture
     {
-        //[Ignore("test will fail")]
         [Test]
         [Category("Smoke")]
         [Category("Pledges")]
@@ -23,7 +22,6 @@ namespace AFTests.BlueApi
         public async Task GetPledge()
         {
             await this.PrepareDefaultTestPledge();
-            this.AddCleanupAction(async () => await this.DeleteTestPledge());
 
             var url = ApiPaths.PLEDGES_BASE_PATH;
             var response = await this.PledgeApiConsumers["GetPledge"].ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -35,7 +33,6 @@ namespace AFTests.BlueApi
             this.TestPledge.ShouldBeEquivalentTo(parsedResponse);
         }
 
-        //[Ignore("test will fail")]
         [Test]
         [Category("Smoke")]
         [Category("Pledges")]
@@ -44,7 +41,6 @@ namespace AFTests.BlueApi
         {
             await this.PrepareCreateTestPledge();
             var createdPledge = await this.CreateTestPledge("CreatePledge");
-            AddCleanupAction(async () => await this.DeleteTestPledge("CreatePledge"));
             Assert.NotNull(createdPledge);
 
             var createdPledgeEntity = (PledgeEntity)await this.PledgeRepository.TryGetAsync(
@@ -53,7 +49,6 @@ namespace AFTests.BlueApi
             createdPledgeEntity.ShouldBeEquivalentTo(createdPledge, o => o.ExcludingMissingMembers());
         }
 
-        //[Ignore("test will fail")]
         [Test]
         [Category("Smoke")]
         [Category("Pledges")]
@@ -61,7 +56,6 @@ namespace AFTests.BlueApi
         public async Task UpdatePledge()
         {
             await this.PrepareUpdateTestPledge();
-            AddCleanupAction(async () => await this.DeleteTestPledge("UpdatePledge"));
 
             var editPledge = new PledgeDTO()
             {
@@ -83,7 +77,6 @@ namespace AFTests.BlueApi
             editedPledgeEntity.ShouldBeEquivalentTo(editPledge, o => o.ExcludingMissingMembers().Excluding(p => p.ClientId));
         }
 
-        //[Ignore("test will fail")]
         [Test]
         [Category("Smoke")]
         [Category("Pledges")]
@@ -91,7 +84,6 @@ namespace AFTests.BlueApi
         public async Task DeletePledge()
         {
             await this.PrepareDeleteTestPledge();
-            AddCleanupAction(async () => await this.DeleteTestPledge("DeletePledge"));
 
             var url = ApiPaths.PLEDGES_BASE_PATH;
 

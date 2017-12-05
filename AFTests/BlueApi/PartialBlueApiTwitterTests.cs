@@ -1,5 +1,4 @@
 ﻿using BlueApiData.DTOs;
-using BlueApiData.Fixtures;
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -23,7 +22,6 @@ namespace AFTests.BlueApi
             this.PrepareTwitterData();
             string url = ApiPaths.TWITTER_BASE_PATH;
             int pageSize = Helpers.Random.Next(1, 101); // from 1 to 100 records on a page
-            var untilDate = DateTime.Now.AddMinutes(-10); // 10 mins before now
             var body = new TwitterSearchDTO()
             {                
                 SearchQuery = Constants.TWITTER_SEARCH_QUERY,
@@ -45,10 +43,7 @@ namespace AFTests.BlueApi
             tweets.ForEach(tweet =>
             {
                 //check if the tweet matches search query
-                Assert.True(tweet.Title.ToLower().Contains(Constants.TWITTER_SEARCH_QUERY));
-
-                //check if the tweets are published before the until date
-                Assert.True(tweet.Date <= untilDate);
+                Assert.True(tweet.full_text.ToLower().Contains(Constants.TWITTER_SEARCH_QUERY));
             });            
         }
 
@@ -84,10 +79,10 @@ namespace AFTests.BlueApi
             tweets.ForEach(tweet =>
             {
                 //checks if all tweets contain the search query in their title ( may fail for older tweets due to chars limitations )
-                Assert.True(tweet.Title.ToLower().Contains(Constants.TWITTER_SEARCH_QUERY));
+                Assert.True(tweet.full_text.ToLower().Contains(Constants.TWITTER_SEARCH_QUERY));
 
                 //check if the tweets are published before the until date
-                Assert.True(tweet.Date <= body.UntilDate);
+                Assert.True(tweet.created_at <= body.UntilDate);
             });
 
         }

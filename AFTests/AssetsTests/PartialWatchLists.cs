@@ -179,10 +179,13 @@ namespace AFTests.AssetsTests
 
                 Assert.False(parsedMatch.ReadOnly);
 
-                foreach (string assetId in entity.AssetIDsList)
+                if (entity.AssetIDsList != null)
                 {
-                    if (!string.IsNullOrEmpty(assetId))
-                        parsedMatch.AssetIds.Should().Contain(assetId);
+                    foreach (string assetId in entity.AssetIDsList)
+                    {
+                        if (!string.IsNullOrEmpty(assetId))
+                            parsedMatch.AssetIds.Should().Contain(assetId);
+                    }
                 }
             }
         }

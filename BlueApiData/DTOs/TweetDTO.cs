@@ -6,12 +6,7 @@ namespace BlueApiData.DTOs
 {
     public class TweetDTO
     {
-        public string TweetId { get; set; }
-        public string AccountId { get; set; }
-        public DateTime Date { get; set; }
-        public string Author { get; set; }
-        public string Title { get; set; }
-        public string UserImage { get; set; }
-        public string TweetImage { get; set; }
+        public string full_text { get; set; }
+        public DateTime created_at { get; set; }
     }
 }

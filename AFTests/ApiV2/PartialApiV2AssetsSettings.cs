@@ -6,6 +6,7 @@ using NUnit.Framework;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using System.Threading.Tasks;
+using XUnitTestCommon.Reports;
 
 namespace AFTests.ApiV2
 {
@@ -19,6 +20,8 @@ namespace AFTests.ApiV2
         [Category("SettingsGet")]
         public async Task GetBaseAsset()
         {
+            Logger.WriteLine("This test fails due to a Typo in POST /api/assets/baseAsset BaseAsssetId -> BaseAssetId");
+
             string url = ApiPaths.ASSETS_BASEASSET_PATH;
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
 
@@ -34,7 +37,8 @@ namespace AFTests.ApiV2
         [Category("SettingsPost")]
         public async Task SetBaseAsset()
         {
-           
+            Logger.WriteLine("This test fails due to a Typo in POST /api/assets/baseAsset BaseAsssetId -> BaseAssetId");
+
             string url = ApiPaths.ASSETS_BASEASSET_PATH;
             string testID = "LKK_TEST";
             BaseAssetDTO body = new BaseAssetDTO(testID);
