@@ -115,11 +115,6 @@ namespace AssetsData.DependencyInjection
             )
             .As<IDictionaryRepository<IWatchList>>();
 
-            builder.Register(c => new GenericRepository<Erc20TokenEntity, IErc20Token>(
-                    new AzureTableStorage<Erc20TokenEntity>(
-                        _configBuilder.Config["MainConnectionString"], "Erc20Tokens", null), "Erc20Token"))
-                .As<IDictionaryRepository<IErc20Token>>();
-
             base.Load(builder);
         }
     }

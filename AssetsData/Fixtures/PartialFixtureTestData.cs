@@ -150,6 +150,8 @@ namespace AssetsData.Fixtures
             this.TestWatchListCustom = EnumerableUtils.PickRandom(AllWatchListsFromDBCustom);
             this.TestWatchListCustomUpdate = await CreateTestWatchList(TestAccountId);
             this.TestWatchListCustomDelete = await CreateTestWatchList(TestAccountId);
+
+            this.TestErcToken = await CreateTestErcToken();
         }
     }
 }

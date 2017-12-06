@@ -1,4 +1,6 @@
-﻿namespace AssetsData.DTOs.Assets
+﻿using System.Collections.Generic;
+
+namespace AssetsData.DTOs.Assets
 {
     public class Erc20TokenDto : BaseDTO
     {
@@ -23,5 +25,10 @@
         public string TokenTotalSupply { get; set; }
 
         public string TransactionHash { get; set; }
+    }
+
+    public class Erc20TokenItemsDto : BaseDTO
+    {
+        public List<Erc20TokenDto> Items { get; set; }
     }
 }

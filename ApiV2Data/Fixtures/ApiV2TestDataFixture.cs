@@ -101,7 +101,7 @@ namespace ApiV2Data.Fixtures
             this.TestAssetId = Constants.TestAssetId;
             this.AssetPrecission = 2;
             this.AllWalletsFromDb = (await walletsFromDB).Cast<WalletEntity>().ToList();
-            this.TestWallet = await CreateTestWallet(); //AllWalletsFromDb.Where(w => w.Id == TestWalletWithBalance).FirstOrDefault(); //TODO hardcoded
+            this.TestWallet = await CreateTestWallet();
 
             //fill wallet with funds
             await MEConsumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), TestWallet.Id, Constants.TestAssetId, 50.0);

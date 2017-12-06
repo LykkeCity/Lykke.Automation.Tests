@@ -87,6 +87,8 @@ namespace AssetsData.Fixtures
         public WatchListDTO TestWatchListCustomUpdate;
         public WatchListDTO TestWatchListCustomDelete;
 
+        public Erc20TokenDto TestErcToken;
+
         public GenericRepository<AssetEntity, IAsset> AssetRepository;
         public GenericRepository<AssetExtendedInfosEntity, IAssetExtendedInfo> AssetExtendedInfosManager;
         public GenericRepository<AssetCategoryEntity, IAssetCategory> AssetCategoryManager;
@@ -98,7 +100,6 @@ namespace AssetsData.Fixtures
         public GenericRepository<MarginAssetPairsEntity, IMarginAssetPairs> MarginAssetPairManager;
         public GenericRepository<MarginAssetEntity, IMarginAsset> MarginAssetManager;
         public GenericRepository<MarginIssuerEntity, IMarginIssuer> MarginIssuerManager;
-        public GenericRepository<Erc20TokenEntity, IErc20Token> Erc20TokensRepository;
 
         public AssetAttributesRepository AssetAttributesRepository;
         public GenericRepository<AssetGroupEntity, IAssetGroup> AssetGroupsRepository;
