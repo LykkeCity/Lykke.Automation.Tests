@@ -76,11 +76,7 @@ namespace XUnitTestCommon.Reports
                 }
                 else
                 {
-                    string st = TestContext.CurrentContext.Result.Assertions.ToList().Count == 0 ?
-                        "" :
-                        TestContext.CurrentContext.Result.Assertions.ToList()?[0].StackTrace;
-
-                    _lifecycle.StopTestCase(x => { x.uuid = fixtureName; x.status = Status.passed; x.attachments = attaches; });
+                    _lifecycle.StopTestCase(x => { x.uuid = fixtureName; x.status = Status.passed; x.attachments = attaches; x.statusDetails = new StatusDetails() { message = $"Test case {fixtureName} passed successfully." }; });
                     _lifecycle.WriteTestCase(fixtureName);
                 }
             }

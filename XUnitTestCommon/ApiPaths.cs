@@ -32,14 +32,16 @@ namespace XUnitTestCommon
 
         public static readonly string TRANSACTION_HISTORY_BASE_PATH = "/api/transactionHistory";
 
+        // blue API
         public static readonly string PLEDGES_BASE_PATH = "/api/pledges";
 
-        public static readonly string TWITTER_BASE_PATH = "/api/twitter";
+        public static readonly string TWITTER_BASE_PATH = "/api/twitter/getTweetsJSON";
 
         public static readonly string REFERRAL_LINKS_BASE_PATH = "/api/refLinks";
-        public static readonly string REFERRAL_LINKS_INVITATION_LINK_PATH = "/api/refLinks/request/invitationLink";
-        public static readonly string REFERRAL_LINKS_GIFTCOINS_LINK_PATH = "/api/refLinks/request/giftCoinslLink";
-        public static readonly string REFERRAL_LINKS_CLAIM_LINK_PATH = "/api/refLinks/claim/invitationLink";
+        public static readonly string REFERRAL_LINKS_REQUEST_INVITATION_LINK_PATH = "/api/refLinks/request/invitationLink";
+        public static readonly string REFERRAL_LINKS_REQUEST_GIFTCOINS_LINK_PATH = "/api/refLinks/request/giftCoinslLink";
+        public static readonly string REFERRAL_LINKS_CLAIM_INVITATION_LINK_PATH = "/api/refLinks/claim/invitationLink";
+        public static readonly string REFERRAL_LINKS_CLAIM_GIFTCOINS_LINK_PATH = "/api/refLinks/claim/giftCoins";
 
         // API V2 prefix
         public static readonly string ASSETS_V2_BASE_PATH = "/api/v2/assets";

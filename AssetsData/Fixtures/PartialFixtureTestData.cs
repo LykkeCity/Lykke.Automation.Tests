@@ -7,6 +7,8 @@ using AutoMapper;
 using AssetsData.DTOs;
 using AssetsData.DTOs.Assets;
 using XUnitTestData.Entities.Assets;
+using XUnitTestCommon;
+using XUnitTestCommon.Consumers;
 
 namespace AssetsData.Fixtures
 {
@@ -45,7 +47,9 @@ namespace AssetsData.Fixtures
 
             this.mapper = config.CreateMapper();
 
-            var assetsFromDB = AssetManager.GetAllAsync();
+            var assetsFromDB = AssetRepository.GetAllAsync(
+                a => a.PartitionKey == AssetEntity.GeneratePartitionKey()
+                && a.Type != "Erc20Token");
             var AssetExtInfoFromDB = AssetExtendedInfosManager.GetAllAsync();
             var assetsAttrFromDB = AssetAttributesManager.GetAllAsync();
             var assetsCatsFromDB = AssetCategoryManager.GetAllAsync();
@@ -94,11 +98,20 @@ namespace AssetsData.Fixtures
             this.TestAssetForGroupRelationDelete = await CreateTestAsset();
             this.TestGroupForClientRelationAdd = await CreateTestAssetGroup();
             this.TestGroupForClientRelationDelete = await CreateTestAssetGroup();
-            this.TestAccountId = "AFTest_Client1";
+
+            ConfigBuilder apiv2Config = new ConfigBuilder("ApiV2");
+            ApiConsumer registerConsumer1 = new ApiConsumer(apiv2Config);
+            ApiConsumer registerConsumer2 = new ApiConsumer(apiv2Config);
+
+            var registeredAccount1 = registerConsumer1.RegisterNewUser();
+            var registeredAccount2 = registerConsumer2.RegisterNewUser();
+
+            this.TestAccountId = (await registeredAccount1)?.Account.Id;
+            this.TestAccountIdForClientEndpoint = (await registeredAccount2)?.Account.Id;
 
             this.TestGroupForClientEndpoint = await CreateTestAssetGroup();
             this.TestAssetForClientEndpoint = await CreateTestAsset();
-            this.TestAccountIdForClientEndpoint = "AFTest_Client2";
+
             await AddClientToGroup(TestAccountIdForClientEndpoint, TestGroupForClientEndpoint.Name);
             await AddAssetToGroup(TestAssetForClientEndpoint.Id, TestGroupForClientEndpoint.Name);
 

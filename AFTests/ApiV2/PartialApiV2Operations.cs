@@ -71,6 +71,7 @@ namespace AFTests.ApiV2
             Assert.True(entity.StatusString == "Canceled");
         }
 
+        [Ignore("Operation no longer exists")]
         [Test]
         [Category("Smoke")]
         [Category("OperationDetails")]
@@ -95,6 +96,7 @@ namespace AFTests.ApiV2
             Assert.True(entity.Comment == createDTO.Comment);
         }
 
+        [Ignore("Operation no longer exists")]
         [Test]
         [Category("Smoke")]
         [Category("OperationDetails")]

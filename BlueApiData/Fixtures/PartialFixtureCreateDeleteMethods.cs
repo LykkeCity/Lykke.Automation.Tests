@@ -12,7 +12,7 @@ namespace BlueApiData.Fixtures
 {
     public partial class BlueApiTestDataFixture
     {
-        public async Task<PledgeDTO> CreateTestPledge(string clientId, string consumerIndex = null)
+        public async Task<PledgeDTO> CreateTestPledge(string consumerIndex = null)
         {
             var consumer = String.IsNullOrEmpty(consumerIndex) ? Consumer : PledgeApiConsumers[consumerIndex];
 
@@ -30,13 +30,11 @@ namespace BlueApiData.Fixtures
                 return null;
             }
 
-            var pledge = await PledgeRepository.TryGetAsync(
-                p =>
-                {
-                    return p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == clientId;
-                });
+            var pledge = await PledgeRepository.TryGetAsync(p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == consumer.ClientInfo.Account.Id);
 
             var returnDto = Mapper.Map<PledgeDTO>(pledge);
+
+            this.AddCleanupAction(async () => await this.DeleteTestPledge(consumerIndex));
 
             return returnDto;
         }

@@ -15,15 +15,13 @@ namespace AFTests.BlueApi
     [Category("BlueApiService")]
     public partial class BlueApiTests: BlueApiTestDataFixture
     {
-        //[Ignore("test will fail")]
         [Test]
         [Category("Smoke")]
         [Category("Pledges")]
         [Category("PledgesGet")]
         public async Task GetPledge()
         {
-            this.PrepareDefaultTestPledge().Wait();
-            this.AddCleanupAction(async () => await this.DeleteTestPledge());
+            await this.PrepareDefaultTestPledge();
 
             var url = ApiPaths.PLEDGES_BASE_PATH;
             var response = await this.PledgeApiConsumers["GetPledge"].ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
@@ -35,33 +33,29 @@ namespace AFTests.BlueApi
             this.TestPledge.ShouldBeEquivalentTo(parsedResponse);
         }
 
-        //[Ignore("test will fail")]
         [Test]
         [Category("Smoke")]
         [Category("Pledges")]
         [Category("PledgesPost")]
         public async Task CreatePledge()
         {
-            this.PrepareCreateTestPledge();
-            var createdPledge = await this.CreateTestPledge(this.TestPledgeCreateClientId, "CreatePledge");
-            AddCleanupAction(async () => await this.DeleteTestPledge("CreatePledge"));
+            await this.PrepareCreateTestPledge();
+            var createdPledge = await this.CreateTestPledge("CreatePledge");
             Assert.NotNull(createdPledge);
 
             var createdPledgeEntity = (PledgeEntity)await this.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.TestPledgeClientIDs["CreatePledge"]);
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == PledgeApiConsumers["CreatePledge"].ClientInfo.Account.Id);
 
             createdPledgeEntity.ShouldBeEquivalentTo(createdPledge, o => o.ExcludingMissingMembers());
         }
 
-        //[Ignore("test will fail")]
         [Test]
         [Category("Smoke")]
         [Category("Pledges")]
         [Category("PledgesPut")]
         public async Task UpdatePledge()
         {
-            this.PrepareUpdateTestPledge().Wait();
-            AddCleanupAction(async () => await this.DeleteTestPledge("UpdatePledge"));
+            await this.PrepareUpdateTestPledge();
 
             var editPledge = new PledgeDTO()
             {
@@ -78,20 +72,18 @@ namespace AFTests.BlueApi
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
             var editedPledgeEntity = (PledgeEntity)await this.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.TestPledgeClientIDs["UpdatePledge"]);
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.PledgeApiConsumers["UpdatePledge"].ClientInfo.Account.Id);
 
             editedPledgeEntity.ShouldBeEquivalentTo(editPledge, o => o.ExcludingMissingMembers().Excluding(p => p.ClientId));
         }
 
-        //[Ignore("test will fail")]
         [Test]
         [Category("Smoke")]
         [Category("Pledges")]
         [Category("PledgesDelete")]
         public async Task DeletePledge()
         {
-            this.PrepareDeleteTestPledge().Wait();
-            AddCleanupAction(async () => await this.DeleteTestPledge("DeletePledge"));
+            await this.PrepareDeleteTestPledge();
 
             var url = ApiPaths.PLEDGES_BASE_PATH;
 
@@ -99,7 +91,7 @@ namespace AFTests.BlueApi
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
             var deletedPledgeEntity = (PledgeEntity)await this.PledgeRepository.TryGetAsync(
-                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.TestPledgeClientIDs["DeletePledge"]);
+                p => p.PartitionKey == PledgeEntity.GeneratePartitionKey() && p.ClientId == this.PledgeApiConsumers["DeletePledge"].ClientInfo.Account.Id);
             Assert.Null(deletedPledgeEntity);
         }
     }

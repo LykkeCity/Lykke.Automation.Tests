@@ -33,12 +33,12 @@ namespace ApiV2Data.Fixtures
 
         public GenericRepository<WalletEntity, IWallet> WalletRepository;
         public List<WalletEntity> AllWalletsFromDb;
-        public WalletEntity TestWallet;
+        public WalletDTO TestWallet;
         public WalletDTO TestWalletDelete;
         public AccountEntity TestWalletAccount;
         public string TestAssetId;
         public int AssetPrecission;
-        public string TestWalletWithBalance;
+        public string TestWalletWithBalanceId;
         public WalletDTO TestWalletOperations;
         public WalletDTO TestWalletRegenerateKey;
 
@@ -53,8 +53,6 @@ namespace ApiV2Data.Fixtures
         public GenericRepository<PersonalDataEntity, IPersonalData> PersonalDataRepository;
         public OperationCreateReturnDTO TestOperationCreateDetails;
         public OperationCreateReturnDTO TestOperationRegisterDetails;
-
-        public ClientRegisterDTO ClientInfoInstance;
 
         public GenericRepository<TradersEntity, ITrader> TradersRepository;
         public ApiConsumer Consumer;
@@ -93,16 +91,23 @@ namespace ApiV2Data.Fixtures
         }
 
         private async Task PrepareTestData()
-        {        
-            TestClientId = this._configBuilder.Config["AuthClientId"];
+        {
+            var TestClient = await Consumer.RegisterNewUser();
+
+            TestClientId = TestClient.Account.Id;
             var walletsFromDB = this.WalletRepository.GetAllAsync(w => w.ClientId == TestClientId && w.State != "deleted");
             var operationsFromDB = this.OperationsRepository.GetAllAsync(o => o.PartitionKey == OperationsEntity.GeneratePartitionKey() && o.ClientId.ToString() == TestClientId);
 
-            this.TestAssetId = "LKK";
+            this.TestAssetId = Constants.TestAssetId;
             this.AssetPrecission = 2;
-            this.TestWalletWithBalance = "fd0f7373-301e-42c0-83a2-1d7b691676c3";
             this.AllWalletsFromDb = (await walletsFromDB).Cast<WalletEntity>().ToList();
-            this.TestWallet = AllWalletsFromDb.Where(w => w.Id == TestWalletWithBalance).FirstOrDefault(); //TODO hardcoded
+            this.TestWallet = await CreateTestWallet(); //AllWalletsFromDb.Where(w => w.Id == TestWalletWithBalance).FirstOrDefault(); //TODO hardcoded
+
+            //fill wallet with funds
+            await MEConsumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), TestWallet.Id, Constants.TestAssetId, 50.0);
+            this.TestWalletWithBalanceId = TestWallet.Id;
+
+
             this.TestWalletDelete = await CreateTestWallet();
             this.TestWalletAccount = await AccountRepository.TryGetAsync(TestWallet.Id) as AccountEntity;
             this.TestWalletOperations = await CreateTestWallet();
@@ -121,7 +126,7 @@ namespace ApiV2Data.Fixtures
 
             // set the id to the default one in case it has been changed by any test
             BaseAssetDTO body = new BaseAssetDTO(this.TestAssetId);
-            await Consumer.ExecuteRequest(ApiPaths.ASSETS_BASEASSET_PATH, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
+            var response = await Consumer.ExecuteRequest(ApiPaths.ASSETS_BASEASSET_PATH, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
         }
 
         [OneTimeTearDown]

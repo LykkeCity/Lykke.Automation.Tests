@@ -87,7 +87,7 @@ namespace AssetsData.Fixtures
         public WatchListDTO TestWatchListCustomUpdate;
         public WatchListDTO TestWatchListCustomDelete;
 
-        public GenericRepository<AssetEntity, IAsset> AssetManager;
+        public GenericRepository<AssetEntity, IAsset> AssetRepository;
         public GenericRepository<AssetExtendedInfosEntity, IAssetExtendedInfo> AssetExtendedInfosManager;
         public GenericRepository<AssetCategoryEntity, IAssetCategory> AssetCategoryManager;
         public AssetAttributesRepository AssetAttributesManager;

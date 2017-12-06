@@ -4,10 +4,9 @@ using System.Text;
 
 namespace BlueApiData.DTOs.ReferralLinks
 {
-    public class InvitationLinkClaimDTO
+    public class ClaimGiftCoinLinkRequest
     {
         public string ReferalLinkId { get; set; }
         public string ReferalLinkUrl { get; set; }
-        public bool IsNewClient { get; set; }
     }
 }
