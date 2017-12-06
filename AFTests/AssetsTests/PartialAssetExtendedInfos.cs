@@ -97,24 +97,25 @@ namespace AFTests.AssetsTests
         public async Task UpdateAssetExtendedInfo()
         {
             string url = ApiPaths.ASSET_EXTENDED_INFO_PATH;
+            AssetExtendedInfoDTO TestAssetExtendedInfoUpdate = await CreateTestAssetExtendedInfo();
 
             AssetExtendedInfoDTO updateExtendedInfo = new AssetExtendedInfoDTO()
             {
-                Id = this.TestAssetExtendedInfoUpdate.Id,
-                AssetClass = this.TestAssetExtendedInfoUpdate.AssetClass,
-                AssetDescriptionUrl = this.TestAssetExtendedInfoUpdate.AssetDescriptionUrl,
-                Description = this.TestAssetExtendedInfoUpdate.Description,
-                FullName = this.TestAssetExtendedInfoUpdate.FullName + "_autotestt",
-                MarketCapitalization = this.TestAssetExtendedInfoUpdate.MarketCapitalization,
-                NumberOfCoins = this.TestAssetExtendedInfoUpdate.NumberOfCoins,
-                PopIndex = this.TestAssetExtendedInfoUpdate.PopIndex
+                Id = TestAssetExtendedInfoUpdate.Id,
+                AssetClass = TestAssetExtendedInfoUpdate.AssetClass,
+                AssetDescriptionUrl = TestAssetExtendedInfoUpdate.AssetDescriptionUrl,
+                Description = TestAssetExtendedInfoUpdate.Description,
+                FullName = TestAssetExtendedInfoUpdate.FullName + "_autotestt",
+                MarketCapitalization = TestAssetExtendedInfoUpdate.MarketCapitalization,
+                NumberOfCoins = TestAssetExtendedInfoUpdate.NumberOfCoins,
+                PopIndex = TestAssetExtendedInfoUpdate.PopIndex
             };
             string updateParam = JsonUtils.SerializeObject(updateExtendedInfo);
 
             var updateResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
-            AssetExtendedInfosEntity checkDbUpdated = (AssetExtendedInfosEntity)await this.AssetExtendedInfosManager.TryGetAsync(this.TestAssetExtendedInfoUpdate.Id);
+            AssetExtendedInfosEntity checkDbUpdated = (AssetExtendedInfosEntity)await this.AssetExtendedInfosManager.TryGetAsync(TestAssetExtendedInfoUpdate.Id);
             checkDbUpdated.ShouldBeEquivalentTo(updateParam, o => o
             .ExcludingMissingMembers());
         }
@@ -125,11 +126,13 @@ namespace AFTests.AssetsTests
         [Category("AssetExtendedInfoDelete")]
         public async Task DeleteAssetExtendedInfo()
         {
-            string deleteUrl = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/" + this.TestAssetExtendedInfoDelete.Id;
+            AssetExtendedInfoDTO TestAssetExtendedInfoDelete = await CreateTestAssetExtendedInfo();
+
+            string deleteUrl = ApiPaths.ASSET_EXTENDED_INFO_PATH + "/" + TestAssetExtendedInfoDelete.Id;
             var deleteResponse = await this.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            AssetExtendedInfosEntity checkDbDeleted = (AssetExtendedInfosEntity)await this.AssetExtendedInfosManager.TryGetAsync(this.TestAssetExtendedInfoDelete.Id);
+            AssetExtendedInfosEntity checkDbDeleted = (AssetExtendedInfosEntity)await this.AssetExtendedInfosManager.TryGetAsync(TestAssetExtendedInfoDelete.Id);
             Assert.Null(checkDbDeleted);
         }
 

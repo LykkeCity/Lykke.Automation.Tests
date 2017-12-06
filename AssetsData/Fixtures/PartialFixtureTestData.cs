@@ -63,40 +63,21 @@ namespace AssetsData.Fixtures
 
             this.AllAssetsFromDB = (await assetsFromDB).Cast<AssetEntity>().ToList();
             this.TestAsset = EnumerableUtils.PickRandom(AllAssetsFromDB);
-            this.TestAssetUpdate = await CreateTestAsset();
-            this.TestAssetDelete = await CreateTestAsset();
 
             this.AllAssetExtendedInfosFromDB = (await AssetExtInfoFromDB).Cast<AssetExtendedInfosEntity>().ToList();
             this.TestAssetExtendedInfo = EnumerableUtils.PickRandom(AllAssetExtendedInfosFromDB);
-            this.TestAssetExtendedInfoUpdate = await CreateTestAssetExtendedInfo();
-            this.TestAssetExtendedInfoDelete = await CreateTestAssetExtendedInfo();
 
             this.AllAssetAttributesFromDB = (await assetsAttrFromDB).Cast<AssetAttributesEntity>().ToList();
             this.TestAssetAttribute = EnumerableUtils.PickRandom(AllAssetAttributesFromDB);
-            this.TestAssetAttributeUpdate = await CreateTestAssetAttribute();
-            this.TestAssetAttributeDelete = await CreateTestAssetAttribute();
 
             this.AllAssetCategoriesFromDB = (await assetsCatsFromDB).Cast<AssetCategoryEntity>().ToList();
             this.TestAssetCategory = EnumerableUtils.PickRandom(AllAssetCategoriesFromDB);
-            this.TestAssetCategoryUpdate = await CreateTestAssetCategory();
-            this.TestAssetCategoryDelete = await CreateTestAssetCategory();
 
             this.AllAssetGroupsFromDB = (await assetsGroupsFromDB).Cast<AssetGroupEntity>().ToList();
             this.TestAssetGroup = EnumerableUtils.PickRandom(AllAssetGroupsFromDB);
-            this.TestAssetGroupUpdate = await CreateTestAssetGroup();
-            this.TestAssetGroupDelete = await CreateTestAssetGroup();
 
             this.AllAssetPairsFromDB = (await assetPairsFromDB).Cast<AssetPairEntity>().ToList();
             this.TestAssetPair = EnumerableUtils.PickRandom(AllAssetPairsFromDB);
-            this.TestAssetPairUpdate = await CreateTestAssetPair();
-            this.TestAssetPairDelete = await CreateTestAssetPair();
-
-            this.TestGroupForGroupRelationAdd = await CreateTestAssetGroup();
-            this.TestAssetForGroupRelationAdd = await CreateTestAsset();
-            this.TestGroupForGroupRelationDelete = await CreateTestAssetGroup();
-            this.TestAssetForGroupRelationDelete = await CreateTestAsset();
-            this.TestGroupForClientRelationAdd = await CreateTestAssetGroup();
-            this.TestGroupForClientRelationDelete = await CreateTestAssetGroup();
 
             ConfigBuilder apiv2Config = new ConfigBuilder("ApiV2");
             ApiConsumer registerConsumer1 = new ApiConsumer(apiv2Config);
@@ -116,39 +97,25 @@ namespace AssetsData.Fixtures
 
             this.AllAssetSettingsFromDB = (await assetSettingsFromDB).Cast<AssetSettingsEntity>().ToList();
             this.TestAssetSettings = EnumerableUtils.PickRandom(AllAssetSettingsFromDB);
-            this.TestAssetSettingsUpdate = await CreateTestAssetSettings();
-            this.TestAssetSettingsDelete = await CreateTestAssetSettings();
 
             this.AllAssetIssuersFromDB = (await assetIssuersFromDB).Cast<AssetIssuersEntity>().ToList();
             this.TestAssetIssuer = EnumerableUtils.PickRandom(AllAssetIssuersFromDB);
-            this.TestAssetIssuerUpdate = await CreateTestAssetIssuer();
-            this.TestAssetIssuerDelete = await CreateTestAssetIssuer();
 
             this.AllMarginAssetPairsFromDB = (await marginAssetPairsFromDB).Cast<MarginAssetPairsEntity>().ToList();
             this.TestMarginAssetPair = EnumerableUtils.PickRandom(AllMarginAssetPairsFromDB);
-            this.TestMarginAssetPairUpdate = await CreateTestMarginAssetPair();
-            this.TestMarginAssetPairDelete = await CreateTestMarginAssetPair();
 
             this.AllMarginAssetsFromDB = (await marginAssetsFromDB).Cast<MarginAssetEntity>().ToList();
             this.TestMarginAsset = EnumerableUtils.PickRandom(AllMarginAssetsFromDB);
-            this.TestMarginAssetUpdate = await CreateTestMarginAsset();
-            this.TestMarginAssetDelete = await CreateTestMarginAsset();
 
             this.AllMarginIssuersFromDB = (await marginIssuersFromDB).Cast<MarginIssuerEntity>().ToList();
             this.TestMarginIssuer = EnumerableUtils.PickRandom(AllMarginIssuersFromDB);
-            this.TestMarginIssuerUpdate = await CreateTestMarginIssuer();
-            this.TestMarginIssuerDelete = await CreateTestMarginIssuer();
 
             this.AllWatchListsFromDB = (await watchListsFromDB).Cast<WatchListEntity>().ToList();
             this.AllWatchListsFromDBPredefined = AllWatchListsFromDB.Where(e => e.PartitionKey == "PublicWatchList").ToList();
             this.TestWatchListPredefined = EnumerableUtils.PickRandom(AllWatchListsFromDBPredefined);
-            this.TestWatchListPredefinedUpdate = await CreateTestWatchList();
-            this.TestWatchListPredefinedDelete = await CreateTestWatchList();
 
             this.AllWatchListsFromDBCustom = AllWatchListsFromDB.Where(e => e.PartitionKey != "PublicWatchList").ToList();
             this.TestWatchListCustom = EnumerableUtils.PickRandom(AllWatchListsFromDBCustom);
-            this.TestWatchListCustomUpdate = await CreateTestWatchList(TestAccountId);
-            this.TestWatchListCustomDelete = await CreateTestWatchList(TestAccountId);
         }
     }
 }

@@ -13,35 +13,19 @@ namespace AssetsData.Fixtures
     {
         public List<AssetEntity> AllAssetsFromDB;
         public AssetEntity TestAsset;
-        public AssetDTO TestAssetUpdate;
-        public AssetDTO TestAssetDelete;
 
         public List<AssetExtendedInfosEntity> AllAssetExtendedInfosFromDB;
         public AssetExtendedInfosEntity TestAssetExtendedInfo;
-        public AssetExtendedInfoDTO TestAssetExtendedInfoUpdate;
-        public AssetExtendedInfoDTO TestAssetExtendedInfoDelete;
 
         public List<AssetAttributesEntity> AllAssetAttributesFromDB;
         public AssetAttributesEntity TestAssetAttribute;
-        public AssetAttributeIdentityDTO TestAssetAttributeUpdate;
-        public AssetAttributeIdentityDTO TestAssetAttributeDelete;
 
         public List<AssetCategoryEntity> AllAssetCategoriesFromDB;
         public AssetCategoryEntity TestAssetCategory;
-        public AssetCategoryDTO TestAssetCategoryUpdate;
-        public AssetCategoryDTO TestAssetCategoryDelete;
 
         public List<AssetGroupEntity> AllAssetGroupsFromDB;
         public AssetGroupEntity TestAssetGroup;
-        public AssetGroupDTO TestAssetGroupUpdate;
-        public AssetGroupDTO TestAssetGroupDelete;
 
-        public AssetGroupDTO TestGroupForGroupRelationAdd;
-        public AssetDTO TestAssetForGroupRelationAdd;
-        public AssetGroupDTO TestGroupForGroupRelationDelete;
-        public AssetDTO TestAssetForGroupRelationDelete;
-        public AssetGroupDTO TestGroupForClientRelationAdd;
-        public AssetGroupDTO TestGroupForClientRelationDelete;
         public string TestAccountId;
         public AssetGroupDTO TestGroupForClientEndpoint;
         public AssetDTO TestAssetForClientEndpoint;
@@ -49,43 +33,27 @@ namespace AssetsData.Fixtures
 
         public List<AssetPairEntity> AllAssetPairsFromDB;
         public AssetPairEntity TestAssetPair;
-        public AssetPairDTO TestAssetPairUpdate;
-        public AssetPairDTO TestAssetPairDelete;
 
         public List<AssetSettingsEntity> AllAssetSettingsFromDB;
         public AssetSettingsEntity TestAssetSettings;
-        public AssetSettingsDTO TestAssetSettingsUpdate;
-        public AssetSettingsDTO TestAssetSettingsDelete;
 
         public List<AssetIssuersEntity> AllAssetIssuersFromDB;
         public AssetIssuersEntity TestAssetIssuer;
-        public AssetIssuerDTO TestAssetIssuerUpdate;
-        public AssetIssuerDTO TestAssetIssuerDelete;
 
         public List<MarginAssetPairsEntity> AllMarginAssetPairsFromDB;
         public MarginAssetPairsEntity TestMarginAssetPair;
-        public MarginAssetPairDTO TestMarginAssetPairUpdate;
-        public MarginAssetPairDTO TestMarginAssetPairDelete;
 
         public List<MarginAssetEntity> AllMarginAssetsFromDB;
         public MarginAssetEntity TestMarginAsset;
-        public MarginAssetDTO TestMarginAssetUpdate;
-        public MarginAssetDTO TestMarginAssetDelete;
 
         public List<MarginIssuerEntity> AllMarginIssuersFromDB;
         public MarginIssuerEntity TestMarginIssuer;
-        public MarginIssuerDTO TestMarginIssuerUpdate;
-        public MarginIssuerDTO TestMarginIssuerDelete;
 
         public List<WatchListEntity> AllWatchListsFromDB;
         public List<WatchListEntity> AllWatchListsFromDBPredefined;
         public List<WatchListEntity> AllWatchListsFromDBCustom;
         public WatchListEntity TestWatchListPredefined;
-        public WatchListDTO TestWatchListPredefinedUpdate;
-        public WatchListDTO TestWatchListPredefinedDelete;
         public WatchListEntity TestWatchListCustom;
-        public WatchListDTO TestWatchListCustomUpdate;
-        public WatchListDTO TestWatchListCustomDelete;
 
         public GenericRepository<AssetEntity, IAsset> AssetRepository;
         public GenericRepository<AssetExtendedInfosEntity, IAssetExtendedInfo> AssetExtendedInfosManager;
@@ -102,5 +70,7 @@ namespace AssetsData.Fixtures
         public AssetAttributesRepository AssetAttributesRepository;
         public GenericRepository<AssetGroupEntity, IAssetGroup> AssetGroupsRepository;
         public WatchListRepository WatchListRepository;
+
+
     }
 }

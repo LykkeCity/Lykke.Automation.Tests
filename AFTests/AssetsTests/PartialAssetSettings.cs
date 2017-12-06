@@ -98,13 +98,16 @@ namespace AFTests.AssetsTests
         public async Task UpdateAssetSettings()
         {
             string url = ApiPaths.ASSET_SETTINGS_PATH;
+
+            AssetSettingsDTO TestAssetSettingsUpdate = await CreateTestAssetSettings();
+
             AssetSettingsCreateDTO updateDTO = new AssetSettingsCreateDTO()
             {
-                Asset = this.TestAssetSettingsUpdate.Asset,
+                Asset = TestAssetSettingsUpdate.Asset,
                 CashinCoef = Helpers.Random.Next(1,10),
-                ChangeWallet = this.TestAssetSettingsUpdate.ChangeWallet,
+                ChangeWallet = TestAssetSettingsUpdate.ChangeWallet,
                 Dust = Math.Round(Helpers.Random.NextDouble(), 10),
-                HotWallet = this.TestAssetSettingsUpdate.HotWallet,
+                HotWallet = TestAssetSettingsUpdate.HotWallet,
                 MaxBalance = Helpers.Random.Next(100,1000),
                 MaxOutputsCount = Helpers.Random.Next(1, 100),
                 MaxOutputsCountInTx = Helpers.Random.Next(1, 100),
@@ -120,7 +123,7 @@ namespace AFTests.AssetsTests
 
             AssetSettingsDTO parsedUpdateDTO = this.mapper.Map<AssetSettingsDTO>(updateDTO);
 
-            AssetSettingsEntity entity = await this.AssetSettingsManager.TryGetAsync(this.TestAssetSettingsUpdate.Asset) as AssetSettingsEntity;
+            AssetSettingsEntity entity = await this.AssetSettingsManager.TryGetAsync(TestAssetSettingsUpdate.Asset) as AssetSettingsEntity;
             AssetSettingsDTO parsedEntity = this.mapper.Map<AssetSettingsDTO>(entity);
             parsedUpdateDTO.NormalizeNumberStrings(parsedEntity);
 
@@ -133,11 +136,13 @@ namespace AFTests.AssetsTests
         [Category("AssetSettingsDelete")]
         public async Task DeleteAssetSettings()
         {
-            string url = ApiPaths.ASSET_SETTINGS_PATH + "/" + this.TestAssetSettingsDelete.Asset;
+            AssetSettingsDTO TestAssetSettingsDelete = await CreateTestAssetSettings();
+
+            string url = ApiPaths.ASSET_SETTINGS_PATH + "/" + TestAssetSettingsDelete.Asset;
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            AssetSettingsEntity entity = await this.AssetSettingsManager.TryGetAsync(this.TestAssetSettingsDelete.Asset) as AssetSettingsEntity;
+            AssetSettingsEntity entity = await this.AssetSettingsManager.TryGetAsync(TestAssetSettingsDelete.Asset) as AssetSettingsEntity;
             Assert.Null(entity);
         }
     }

@@ -91,17 +91,20 @@ namespace AFTests.AssetsTests
         public async Task UpdateAssetPair()
         {
             string url = ApiPaths.ASSET_PAIRS_PATH;
+
+            AssetPairDTO TestAssetPairUpdate = await CreateTestAssetPair();
+
             AssetPairDTO updateAssetPair = new AssetPairDTO()
             {
                 Accuracy = Helpers.Random.Next(2, 8),
-                BaseAssetId = this.TestAssetPairUpdate.BaseAssetId,
-                Id = this.TestAssetPairUpdate.Id,
-                InvertedAccuracy = this.TestAssetPairUpdate.InvertedAccuracy,
-                IsDisabled = this.TestAssetPairUpdate.IsDisabled,
-                Name = this.TestAssetPairUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
-                QuotingAssetId = this.TestAssetPairUpdate.QuotingAssetId,
-                Source = this.TestAssetPairUpdate.Source,
-                Source2 = this.TestAssetPairUpdate.Source2
+                BaseAssetId = TestAssetPairUpdate.BaseAssetId,
+                Id = TestAssetPairUpdate.Id,
+                InvertedAccuracy = TestAssetPairUpdate.InvertedAccuracy,
+                IsDisabled = TestAssetPairUpdate.IsDisabled,
+                Name = TestAssetPairUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                QuotingAssetId = TestAssetPairUpdate.QuotingAssetId,
+                Source = TestAssetPairUpdate.Source,
+                Source2 = TestAssetPairUpdate.Source2
             };
             string updateParam = JsonUtils.SerializeObject(updateAssetPair);
 
@@ -121,12 +124,14 @@ namespace AFTests.AssetsTests
         [Category("AsestPairsDelete")]
         public async Task DeleteAssetPair()
         {
-            string url = ApiPaths.ASSET_PAIRS_PATH + "/" + this.TestAssetPairDelete.Id;
+            AssetPairDTO TestAssetPairDelete = await CreateTestAssetPair();
+
+            string url = ApiPaths.ASSET_PAIRS_PATH + "/" + TestAssetPairDelete.Id;
             var result = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.NotNull(result);
             Assert.True(result.Status == HttpStatusCode.NoContent);
 
-            AssetPairEntity entity = await this.AssetPairManager.TryGetAsync(this.TestAssetPairDelete.Id) as AssetPairEntity;
+            AssetPairEntity entity = await this.AssetPairManager.TryGetAsync(TestAssetPairDelete.Id) as AssetPairEntity;
             Assert.Null(entity);
         }
 
