@@ -34,6 +34,8 @@ namespace BlueApiData.Fixtures
 
             var returnDto = Mapper.Map<PledgeDTO>(pledge);
 
+            this.AddCleanupAction(async () => await this.DeleteTestPledge(consumerIndex));
+
             return returnDto;
         }
 

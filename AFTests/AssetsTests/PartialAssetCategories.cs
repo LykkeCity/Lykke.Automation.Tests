@@ -81,20 +81,22 @@ namespace AFTests.AssetsTests
         {
             string url = ApiPaths.ASSET_CATEGORIES_PATH;
 
+            AssetCategoryDTO TestAssetCategoryUpdate = await CreateTestAssetCategory();
+
             AssetCategoryDTO updateCategory = new AssetCategoryDTO()
             {
-                Id = this.TestAssetCategoryUpdate.Id,
-                Name = this.TestAssetCategoryUpdate.Name,
-                AndroidIconUrl = this.TestAssetCategoryUpdate.AndroidIconUrl + "_autotest",
-                IosIconUrl = this.TestAssetCategoryUpdate.IosIconUrl,
-                SortOrder = this.TestAssetCategoryUpdate.SortOrder
+                Id = TestAssetCategoryUpdate.Id,
+                Name = TestAssetCategoryUpdate.Name,
+                AndroidIconUrl = TestAssetCategoryUpdate.AndroidIconUrl + "_autotest",
+                IosIconUrl = TestAssetCategoryUpdate.IosIconUrl,
+                SortOrder = TestAssetCategoryUpdate.SortOrder
             };
             string updateParam = JsonUtils.SerializeObject(updateCategory);
 
             var updateResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
-            AssetCategoryEntity checkDbUpdated = (AssetCategoryEntity)await this.AssetCategoryManager.TryGetAsync(this.TestAssetCategoryUpdate.Id);
+            AssetCategoryEntity checkDbUpdated = (AssetCategoryEntity)await this.AssetCategoryManager.TryGetAsync(TestAssetCategoryUpdate.Id);
             checkDbUpdated.ShouldBeEquivalentTo(updateCategory, o => o
             .ExcludingMissingMembers());
         }
@@ -105,11 +107,13 @@ namespace AFTests.AssetsTests
         [Category("AssetCategoriesDelete")]
         public async Task DeleteAssetCategory()
         {
-            string url = ApiPaths.ASSET_CATEGORIES_PATH + "/" + this.TestAssetCategoryDelete.Id;
+            AssetCategoryDTO TestAssetCategoryDelete = await CreateTestAssetCategory();
+
+            string url = ApiPaths.ASSET_CATEGORIES_PATH + "/" + TestAssetCategoryDelete.Id;
             var deleteResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            AssetCategoryEntity checkDbDeleted = (AssetCategoryEntity)await this.AssetCategoryManager.TryGetAsync(this.TestAssetCategoryDelete.Id);
+            AssetCategoryEntity checkDbDeleted = (AssetCategoryEntity)await this.AssetCategoryManager.TryGetAsync(TestAssetCategoryDelete.Id);
             Assert.Null(checkDbDeleted);
         }
     }

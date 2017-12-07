@@ -10,6 +10,7 @@ using XUnitTestCommon.Utils;
 using XUnitTestCommon;
 using System.Threading.Tasks;
 using XUnitTestData.Entities.Assets;
+using AssetsData.DTOs;
 
 namespace AFTests.AssetsTests
 {
@@ -128,12 +129,14 @@ namespace AFTests.AssetsTests
         {
             string url = ApiPaths.ASSET_GROUPS_PATH;
 
+            AssetGroupDTO TestAssetGroupUpdate = await CreateTestAssetGroup();
+
             AssetGroupDTO editGroup = new AssetGroupDTO()
             {
-                Name = this.TestAssetGroupUpdate.Name,
-                IsIosDevice = !this.TestAssetGroupUpdate.IsIosDevice,
-                ClientsCanCashInViaBankCards = this.TestAssetGroupUpdate.ClientsCanCashInViaBankCards,
-                SwiftDepositEnabled = this.TestAssetGroupUpdate.SwiftDepositEnabled
+                Name = TestAssetGroupUpdate.Name,
+                IsIosDevice = !TestAssetGroupUpdate.IsIosDevice,
+                ClientsCanCashInViaBankCards = TestAssetGroupUpdate.ClientsCanCashInViaBankCards,
+                SwiftDepositEnabled = TestAssetGroupUpdate.SwiftDepositEnabled
             };
             string editParam = JsonUtils.SerializeObject(editGroup);
 
@@ -152,11 +155,13 @@ namespace AFTests.AssetsTests
         [Category("AssetGroupsDelete")]
         public async Task DeleteAssetGroup()
         {
-            string deleteUrl = ApiPaths.ASSET_GROUPS_PATH + "/" + this.TestAssetGroupDelete.Name;
+            AssetGroupDTO TestAssetGroupDelete = await CreateTestAssetGroup();
+
+            string deleteUrl = ApiPaths.ASSET_GROUPS_PATH + "/" + TestAssetGroupDelete.Name;
             var response = await this.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            AssetGroupEntity entity = await this.AssetGroupsManager.TryGetAsync(this.TestAssetGroupDelete.Name) as AssetGroupEntity;
+            AssetGroupEntity entity = await this.AssetGroupsManager.TryGetAsync(TestAssetGroupDelete.Name) as AssetGroupEntity;
             Assert.Null(entity);
         }
 
@@ -166,15 +171,18 @@ namespace AFTests.AssetsTests
         [Category("AssetGroupsPost")]
         public async Task AddAssetToAssetGroup()
         {
-            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + this.TestGroupForGroupRelationAdd.Name + "/assets/" + this.TestAssetForGroupRelationAdd.Id;
+            AssetGroupDTO TestGroupForGroupRelationAdd = await CreateTestAssetGroup();
+            AssetDTO TestAssetForGroupRelationAdd = await CreateTestAsset();
+
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + TestGroupForGroupRelationAdd.Name + "/assets/" + TestAssetForGroupRelationAdd.Id;
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            var entities = await this.AssetGroupsRepository.GetAllAsync($"AssetLink_{this.TestGroupForGroupRelationAdd.Name}");
+            var entities = await this.AssetGroupsRepository.GetAllAsync($"AssetLink_{TestGroupForGroupRelationAdd.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 1);
-            Assert.True(assetIds[0] == this.TestAssetForGroupRelationAdd.Id);
+            Assert.True(assetIds[0] == TestAssetForGroupRelationAdd.Id);
         }
 
         [Test]
@@ -183,14 +191,17 @@ namespace AFTests.AssetsTests
         [Category("AssetGroupsPost")]
         public async Task RemoveAssetFromAssetGroup()
         {
-            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + this.TestGroupForGroupRelationDelete.Name + "/assets/" + this.TestAssetForGroupRelationDelete.Id;
+            AssetGroupDTO TestGroupForGroupRelationDelete = await CreateTestAssetGroup();
+            AssetDTO TestAssetForGroupRelationDelete = await CreateTestAsset();
+
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + TestGroupForGroupRelationDelete.Name + "/assets/" + TestAssetForGroupRelationDelete.Id;
             var createResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(createResponse.Status == HttpStatusCode.NoContent);
 
             var deleteResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            var entities = await this.AssetGroupsRepository.GetAllAsync($"AssetLink_{this.TestGroupForGroupRelationDelete.Name}");
+            var entities = await this.AssetGroupsRepository.GetAllAsync($"AssetLink_{TestGroupForGroupRelationDelete.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 0);
@@ -202,11 +213,13 @@ namespace AFTests.AssetsTests
         [Category("AssetGroupsPost")]
         public async Task AddClientToAssetGroup()
         {
-            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + this.TestGroupForClientRelationAdd.Name + "/clients/" + this.TestAccountId;
+            AssetGroupDTO TestGroupForClientRelationAdd = await CreateTestAssetGroup();
+
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + TestGroupForClientRelationAdd.Name + "/clients/" + this.TestAccountId;
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            var entities = await this.AssetGroupsRepository.GetAllAsync($"ClientGroupLink_{this.TestGroupForClientRelationAdd.Name}");
+            var entities = await this.AssetGroupsRepository.GetAllAsync($"ClientGroupLink_{TestGroupForClientRelationAdd.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 1);
@@ -219,14 +232,16 @@ namespace AFTests.AssetsTests
         [Category("AssetGroupsPost")]
         public async Task RemoveClientFromAssetGroup()
         {
-            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + this.TestGroupForClientRelationDelete.Name + "/clients/" + this.TestAccountId;
+            AssetGroupDTO TestGroupForClientRelationDelete = await CreateTestAssetGroup();
+
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + TestGroupForClientRelationDelete.Name + "/clients/" + this.TestAccountId;
             var createResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
             Assert.True(createResponse.Status == HttpStatusCode.NoContent);
 
             var deleteResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            var entities = await this.AssetGroupsRepository.GetAllAsync($"ClientGroupLink_{this.TestGroupForClientRelationDelete.Name}");
+            var entities = await this.AssetGroupsRepository.GetAllAsync($"ClientGroupLink_{TestGroupForClientRelationDelete.Name}");
             List<string> assetIds = entities.Select(e => e.Id).ToList();
 
             Assert.True(assetIds.Count == 0);

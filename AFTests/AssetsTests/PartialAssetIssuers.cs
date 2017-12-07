@@ -88,18 +88,21 @@ namespace AFTests.AssetsTests
         public async Task UpdateAssetIssuer()
         {
             string url = ApiPaths.ISSUERS_BASE_PATH;
+
+            AssetIssuerDTO TestAssetIssuerUpdate = await CreateTestAssetIssuer();
+
             AssetIssuerDTO editIssuer = new AssetIssuerDTO()
             {
-                Id = this.TestAssetIssuerUpdate.Id,
-                IconUrl = this.TestAssetIssuerUpdate.IconUrl + Helpers.Random.Next(1000,9999).ToString() + GlobalConstants.AutoTest,
-                Name = this.TestAssetIssuerUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Id = TestAssetIssuerUpdate.Id,
+                IconUrl = TestAssetIssuerUpdate.IconUrl + Helpers.Random.Next(1000,9999).ToString() + GlobalConstants.AutoTest,
+                Name = TestAssetIssuerUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
             };
             string editParam = JsonUtils.SerializeObject(editIssuer);
 
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            AssetIssuersEntity entity = await this.AssetIssuersManager.TryGetAsync(this.TestAssetIssuerUpdate.Id) as AssetIssuersEntity;
+            AssetIssuersEntity entity = await this.AssetIssuersManager.TryGetAsync(TestAssetIssuerUpdate.Id) as AssetIssuersEntity;
             entity.ShouldBeEquivalentTo(editIssuer, o => o
             .ExcludingMissingMembers());
 
@@ -111,11 +114,13 @@ namespace AFTests.AssetsTests
         [Category("IssuersDelete")]
         public async Task DeleteAssetIssuer()
         {
-            string url = ApiPaths.ISSUERS_BASE_PATH + "/" + this.TestAssetIssuerDelete.Id;
+            AssetIssuerDTO TestAssetIssuerDelete = await CreateTestAssetIssuer();
+
+            string url = ApiPaths.ISSUERS_BASE_PATH + "/" + TestAssetIssuerDelete.Id;
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            AssetIssuersEntity entity = await this.AssetIssuersManager.TryGetAsync(this.TestAssetIssuerDelete.Id) as AssetIssuersEntity;
+            AssetIssuersEntity entity = await this.AssetIssuersManager.TryGetAsync(TestAssetIssuerDelete.Id) as AssetIssuersEntity;
             Assert.Null(entity);
         }
     }

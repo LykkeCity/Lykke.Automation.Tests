@@ -75,7 +75,7 @@ namespace ApiV2Data.Fixtures
             {
                 Amount = Helpers.Random.Next(1, 10),
                 AssetId = TestAssetId,
-                SourceWalletId = TestWalletWithBalance,
+                SourceWalletId = TestWalletWithBalanceId,
                 WalletId = TestWalletOperations.Id
             };
             string createParam = JsonUtils.SerializeObject(createDTO);

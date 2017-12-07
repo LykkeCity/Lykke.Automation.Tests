@@ -173,7 +173,7 @@ namespace AFTests.AssetsTests
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, parameter, Method.POST);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            AssetEntity entity = await this.AssetReposiutory.TryGetAsync(this.TestAsset.Id) as AssetEntity;
+            AssetEntity entity = await this.AssetRepository.TryGetAsync(this.TestAsset.Id) as AssetEntity;
             Assert.True(entity.IsDisabled != this.TestAsset.IsDisabled);
 
             if (entity.IsDisabled)
@@ -184,7 +184,7 @@ namespace AFTests.AssetsTests
             var responseAfter = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, parameter, Method.POST);
             Assert.True(responseAfter.Status == HttpStatusCode.NoContent);
 
-            AssetEntity entityAfter = await this.AssetReposiutory.TryGetAsync(this.TestAsset.Id) as AssetEntity;
+            AssetEntity entityAfter = await this.AssetRepository.TryGetAsync(this.TestAsset.Id) as AssetEntity;
             Assert.True(entityAfter.IsDisabled == this.TestAsset.IsDisabled);
 
         }
@@ -198,7 +198,7 @@ namespace AFTests.AssetsTests
             AssetDTO createdAsset = await this.CreateTestAsset();
             Assert.NotNull(createdAsset);
 
-            AssetEntity entity = await this.AssetReposiutory.TryGetAsync(createdAsset.Id) as AssetEntity;
+            AssetEntity entity = await this.AssetRepository.TryGetAsync(createdAsset.Id) as AssetEntity;
             entity.ShouldBeEquivalentTo(createdAsset, o => o
             .ExcludingMissingMembers());
 
@@ -211,7 +211,8 @@ namespace AFTests.AssetsTests
         public async Task UpdateAsset()
         {
             string url = ApiPaths.ASSETS_V2_BASE_PATH;
-            AssetDTO updateParamAsset = this.TestAssetUpdate;
+            AssetDTO updateParamAsset = await CreateTestAsset();
+
             updateParamAsset.Name += Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTestEdit;
             updateParamAsset.DefinitionUrl += Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest ;
 
@@ -220,7 +221,7 @@ namespace AFTests.AssetsTests
             var updateResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParam, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
-            AssetEntity entityUpdateed = await this.AssetReposiutory.TryGetAsync(updateParamAsset.Id) as AssetEntity;
+            AssetEntity entityUpdateed = await this.AssetRepository.TryGetAsync(updateParamAsset.Id) as AssetEntity;
             entityUpdateed.ShouldBeEquivalentTo(updateParamAsset, o => o
             .ExcludingMissingMembers());
 
@@ -233,13 +234,15 @@ namespace AFTests.AssetsTests
         [Category("AssetsDelete")]
         public async Task DeleteAsset()
         {
-            string url = ApiPaths.ASSETS_V2_BASE_PATH + "/" + this.TestAssetDelete.Id;
-            string deleteParam = JsonUtils.SerializeObject(new { id = this.TestAssetDelete.Id });
+            AssetDTO TestAssetDelete = await CreateTestAsset();
+
+            string url = ApiPaths.ASSETS_V2_BASE_PATH + "/" + TestAssetDelete.Id;
+            string deleteParam = JsonUtils.SerializeObject(new { id = TestAssetDelete.Id });
 
             var deleteResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, deleteParam, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            AssetEntity entityDeleted = await this.AssetReposiutory.TryGetAsync(this.TestAssetDelete.Id) as AssetEntity;
+            AssetEntity entityDeleted = await this.AssetRepository.TryGetAsync(TestAssetDelete.Id) as AssetEntity;
             Assert.Null(entityDeleted);
         }
     }

@@ -72,11 +72,11 @@ namespace XUnitTestCommon.Consumers
             return new Response(response.StatusCode, response.Content);
         }
 
-        public async Task<ClientRegisterResponseDTO> RegisterNewUser(ClientRegisterDTO registerIngo = null)
+        public async Task<ClientRegisterResponseDTO> RegisterNewUser(ClientRegisterDTO registerInfo = null)
         {
             if (this._oAuthConsumer != null)
             {
-                return await this._oAuthConsumer.RegisterNewUser(registerIngo);
+                return await this._oAuthConsumer.RegisterNewUser(registerInfo);
             }
             return null;
         }

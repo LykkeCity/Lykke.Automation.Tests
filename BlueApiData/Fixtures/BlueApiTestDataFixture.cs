@@ -18,6 +18,7 @@ using NUnit.Framework;
 using XUnitTestCommon.Tests;
 using XUnitTestCommon.DTOs;
 using XUnitTestCommon.GlobalActions;
+using Lykke.Service.Balances.Client;
 
 namespace BlueApiData.Fixtures
 {
@@ -36,22 +37,33 @@ namespace BlueApiData.Fixtures
         public GenericRepository<PledgeEntity, IPledgeEntity> PledgeRepository;
         public GenericRepository<PersonalDataEntity, IPersonalData> PersonalDataRepository;
         public GenericRepository<ReferralLinkEntity, IReferralLink> ReferralLinkRepository;
+
         public string TestPledgeCreateClientId;
         public PledgeDTO TestPledge;
         public string TestPledgeUpdateClientId;
         public PledgeDTO TestPledgeUpdate;
         public string TestPledgeDeleteClientId;
         public PledgeDTO TestPledgeDelete;
+        
         public ApiConsumer Consumer;
         public MatchingEngineConsumer MEConsumer;
+        public BalancesClient BalancesClient;
+        
         public ClientRegisterDTO ClientInfoInstance;
         public ApiConsumer ClientInfoConsumer;
         public ApiConsumer ClientAccountConsumer;
 
         public Dictionary<string, ApiConsumer> PledgeApiConsumers;
 
+        public ApiConsumer GlobalConsumer;
         public ApiConsumer InvitationLinkRequestConsumer;
         public List<ApiConsumer> InvitationLinkClaimersConsumers;
+        public RequestInvitationLinkResponseDto TestInvitationLink;
+        public ClientRegisterResponseDTO TestInvitationLinkUserData;
+
+        public ApiConsumer GiftCoinLinkRequestConsumer;
+        public List<ApiConsumer> GiftCoinLinkClaimConsumers;
+        public RequestGiftCoinsLinkResponseDto TestGiftCoinLink;
 
         [OneTimeSetUp]
         public void Initialize()
@@ -62,6 +74,7 @@ namespace BlueApiData.Fixtures
             PrepareDependencyContainer();
             PrepareApiConsumers().Wait();
             PrepareMapper();
+            PrepareGlobalTestData().Wait();
         }
 
         private async Task PrepareApiConsumers()
@@ -75,6 +88,7 @@ namespace BlueApiData.Fixtures
             }
 
             PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
+            this.BalancesClient = new BalancesClient(_configBuilder.Config["BalancesServiceUrl"], null);
             ClientAccountConsumer = new ApiConsumer(_clientAccountConfigBuilder);
             
         }
@@ -107,10 +121,10 @@ namespace BlueApiData.Fixtures
             var builder = new ContainerBuilder();
             builder.RegisterModule(new BlueApiTestModule(_configBuilder));
             _container = builder.Build();
-
-            PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(_container);
-            PersonalDataRepository = RepositoryUtils.ResolveGenericRepository<PersonalDataEntity, IPersonalData>(_container);
-            ReferralLinkRepository = RepositoryUtils.ResolveGenericRepository<ReferralLinkEntity, IReferralLink>(_container);
+            
+            PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(this._container);
+            PersonalDataRepository = RepositoryUtils.ResolveGenericRepository<PersonalDataEntity, IPersonalData>(this._container);
+            ReferralLinkRepository = RepositoryUtils.ResolveGenericRepository<ReferralLinkEntity, IReferralLink>(this._container);
         }
 
         [OneTimeTearDown]

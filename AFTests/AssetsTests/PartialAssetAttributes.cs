@@ -93,14 +93,16 @@ namespace AFTests.AssetsTests
         [Category("AssetsAttributesPut")]
         public async Task UpdateAssetAttribute()
         {
-            string url = ApiPaths.ASSET_ATTRIBUTES_PATH + "/" + this.TestAssetAttributeUpdate.AssetId;
-            string updateValue = this.TestAssetAttributeUpdate.Value + "_AutoTestEdit";
+            AssetAttributeIdentityDTO TestAssetAttributeUpdate = await CreateTestAssetAttribute();
+
+            string url = ApiPaths.ASSET_ATTRIBUTES_PATH + "/" + TestAssetAttributeUpdate.AssetId;
+            string updateValue = TestAssetAttributeUpdate.Value + "_AutoTestEdit";
             string updateParameter = JsonUtils.SerializeObject(
-                new AssetAttributeDTO() { Key = this.TestAssetAttributeUpdate.Key, Value = updateValue });
+                new AssetAttributeDTO() { Key = TestAssetAttributeUpdate.Key, Value = updateValue });
             var updateResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, updateParameter, Method.PUT);
             Assert.True(updateResponse.Status == HttpStatusCode.NoContent);
 
-            var checkDbUpdated = await this.AssetAttributesRepository.TryGetAsync(this.TestAssetAttributeUpdate.AssetId, this.TestAssetAttributeUpdate.Key);
+            var checkDbUpdated = await this.AssetAttributesRepository.TryGetAsync(TestAssetAttributeUpdate.AssetId, TestAssetAttributeUpdate.Key);
             Assert.True(checkDbUpdated.Value == updateValue);
         }
 
@@ -110,11 +112,13 @@ namespace AFTests.AssetsTests
         [Category("AssetsAttributesDelete")]
         public async Task DeleteAssetAttribute()
         {
-            string deleteUrl = ApiPaths.ASSET_ATTRIBUTES_PATH + "/" + this.TestAssetAttributeDelete.AssetId + "/" + this.TestAssetAttributeDelete.Key;
+            AssetAttributeIdentityDTO TestAssetAttributeDelete = await CreateTestAssetAttribute();
+
+            string deleteUrl = ApiPaths.ASSET_ATTRIBUTES_PATH + "/" + TestAssetAttributeDelete.AssetId + "/" + TestAssetAttributeDelete.Key;
             var deleteResponse = await this.Consumer.ExecuteRequest(deleteUrl, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(deleteResponse.Status == HttpStatusCode.NoContent);
 
-            var checkDbDeleted = await this.AssetAttributesRepository.TryGetAsync(this.TestAssetAttributeDelete.AssetId, this.TestAssetAttributeDelete.Key);
+            var checkDbDeleted = await this.AssetAttributesRepository.TryGetAsync(TestAssetAttributeDelete.AssetId, TestAssetAttributeDelete.Key);
             Assert.Null(checkDbDeleted);
         }
     }
