@@ -492,5 +492,33 @@ namespace AssetsData.Fixtures
 
             return true;
         }
+
+        public async Task<Erc20TokenDto> CreateTestErcToken()
+        {
+            var url = ApiPaths.ERC20TOKENS_BASE_PATH;
+            var rndValue = Helpers.Random.Next(1000000);
+            var body = new Erc20TokenDto
+            {
+                AssetId = Constants.ERC_TOKEN_ASSET_IDS[0],
+                Address = $"0x+fake_{rndValue}",
+                BlockHash = "fake",
+                BlockTimestamp = rndValue,
+                DeployerAddress = "fake",
+                TokenDecimals = 1,
+                TokenName = String.Empty,
+                TokenSymbol = "fake",
+                TokenTotalSupply = "1",
+                TransactionHash = "fake"
+            };
+
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(body), Method.POST);
+
+            if (response.Status != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            return body;
+        }
     }
 }

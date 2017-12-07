@@ -42,6 +42,7 @@ namespace AssetsData.Fixtures
                 cfg.CreateMap<AssetSettingsEntity, AssetSettingsDTO>();
                 cfg.CreateMap<AssetSettingsDTO, AssetSettingsCreateDTO>();
                 cfg.CreateMap<AssetSettingsCreateDTO, AssetSettingsDTO>();
+                cfg.CreateMap<Erc20TokenEntity, Erc20TokenDto>().ReverseMap();
             });
 
             this.mapper = config.CreateMapper();
@@ -116,6 +117,8 @@ namespace AssetsData.Fixtures
 
             this.AllWatchListsFromDBCustom = AllWatchListsFromDB.Where(e => e.PartitionKey != "PublicWatchList").ToList();
             this.TestWatchListCustom = EnumerableUtils.PickRandom(AllWatchListsFromDBCustom);
+          
+            this.TestErcToken = await CreateTestErcToken();
         }
     }
 }

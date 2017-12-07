@@ -7,8 +7,7 @@ namespace XUnitTestCommon.Utils
     {
         public static T PickRandom<T>(IList<T> model)
         {
-            Random rnd = new Random();
-            int randomInt = rnd.Next(model.Count);
+            int randomInt = Helpers.Random.Next(model.Count);
             return model[randomInt];
         }
     }

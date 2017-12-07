@@ -55,6 +55,8 @@ namespace AssetsData.Fixtures
         public WatchListEntity TestWatchListPredefined;
         public WatchListEntity TestWatchListCustom;
 
+        public Erc20TokenDto TestErcToken;
+
         public GenericRepository<AssetEntity, IAsset> AssetRepository;
         public GenericRepository<AssetExtendedInfosEntity, IAssetExtendedInfo> AssetExtendedInfosManager;
         public GenericRepository<AssetCategoryEntity, IAssetCategory> AssetCategoryManager;
