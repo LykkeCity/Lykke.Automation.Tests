@@ -106,13 +106,16 @@ namespace AFTests.AssetsTests
         public async Task UpdatePredefinedWatchList()
         {
             string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH;
+
+            WatchListDTO TestWatchListPredefinedUpdate = await CreateTestWatchList();
+
             WatchListDTO updateWatchList = new WatchListDTO()
             {
-                Id = this.TestWatchListPredefinedUpdate.Id,
-                Name = this.TestWatchListPredefinedUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Id = TestWatchListPredefinedUpdate.Id,
+                Name = TestWatchListPredefinedUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
                 Order = Helpers.Random.Next(1, 100),
-                ReadOnly = this.TestWatchListPredefinedUpdate.ReadOnly,
-                AssetIds = this.TestWatchListPredefinedUpdate.AssetIds
+                ReadOnly = TestWatchListPredefinedUpdate.ReadOnly,
+                AssetIds = TestWatchListPredefinedUpdate.AssetIds
             };
             updateWatchList.AssetIds.Add("AutoTest");
             string updateParam = JsonUtils.SerializeObject(updateWatchList);
@@ -141,11 +144,13 @@ namespace AFTests.AssetsTests
         [Category("WatchListDelete")]
         public async Task DeletePredefinedWatchList()
         {
-            string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH + "/" + this.TestWatchListPredefinedDelete.Id;
+            WatchListDTO TestWatchListPredefinedDelete = await CreateTestWatchList();
+
+            string url = ApiPaths.WATCH_LIST_PREDEFINED_PATH + "/" + TestWatchListPredefinedDelete.Id;
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            WatchListEntity entity = await this.WatchListRepository.TryGetAsync("PublicWatchList", this.TestWatchListPredefinedDelete.Id) as WatchListEntity;
+            WatchListEntity entity = await this.WatchListRepository.TryGetAsync("PublicWatchList", TestWatchListPredefinedDelete.Id) as WatchListEntity;
             Assert.Null(entity);
         }
         #endregion
@@ -250,17 +255,20 @@ namespace AFTests.AssetsTests
         public async Task UpdateCustomWatchList()
         {
             string url = ApiPaths.WATCH_LIST_CUSTOM_PATH;
+
+            WatchListDTO TestWatchListCustomUpdate = await CreateTestWatchList(TestAccountId);
+
             Dictionary<string, string> queryParams = new Dictionary<string, string>
             {
                 { "userId", this.TestAccountId }
             };
             WatchListDTO updateWatchList = new WatchListDTO()
             {
-                Id = this.TestWatchListCustomUpdate.Id,
-                Name = this.TestWatchListCustomUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Id = TestWatchListCustomUpdate.Id,
+                Name = TestWatchListCustomUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
                 Order = Helpers.Random.Next(1, 100),
-                ReadOnly = this.TestWatchListCustomUpdate.ReadOnly,
-                AssetIds = this.TestWatchListCustomUpdate.AssetIds
+                ReadOnly = TestWatchListCustomUpdate.ReadOnly,
+                AssetIds = TestWatchListCustomUpdate.AssetIds
             };
             updateWatchList.AssetIds.Add("AutoTest");
             string updateParam = JsonUtils.SerializeObject(updateWatchList);
@@ -289,7 +297,9 @@ namespace AFTests.AssetsTests
         [Category("WatchListDelete")]
         public async Task DeleteCustomWatchList()
         {
-            string url = ApiPaths.WATCH_LIST_CUSTOM_PATH + "/" + this.TestWatchListCustomDelete.Id;
+            WatchListDTO TestWatchListCustomDelete = await CreateTestWatchList(TestAccountId);
+
+            string url = ApiPaths.WATCH_LIST_CUSTOM_PATH + "/" + TestWatchListCustomDelete.Id;
             Dictionary<string, string> queryParams = new Dictionary<string, string>
             {
                 { "userId", this.TestAccountId }
@@ -298,7 +308,7 @@ namespace AFTests.AssetsTests
             var response = await this.Consumer.ExecuteRequest(url, queryParams, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            WatchListEntity entity = await this.WatchListRepository.TryGetAsync(this.TestAccountId, this.TestWatchListCustomDelete.Id) as WatchListEntity;
+            WatchListEntity entity = await this.WatchListRepository.TryGetAsync(this.TestAccountId, TestWatchListCustomDelete.Id) as WatchListEntity;
             Assert.Null(entity);
         }
         #endregion

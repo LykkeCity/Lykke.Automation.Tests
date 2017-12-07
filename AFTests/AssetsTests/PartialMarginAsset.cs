@@ -87,12 +87,15 @@ namespace AFTests.AssetsTests
         public async Task UpdateMarginAsset()
         {
             string url = ApiPaths.MARGIN_ASSET_BASE_PATH;
+
+            MarginAssetDTO TestMarginAssetUpdate = await CreateTestMarginAsset();
+
             MarginAssetDTO updateDTO = new MarginAssetDTO()
             {
-                Id = this.TestMarginAssetUpdate.Id,
-                Name = this.TestMarginAssetUpdate.Name,
-                IdIssuer = this.TestMarginAssetUpdate.IdIssuer,
-                Symbol = this.TestMarginAssetUpdate.Symbol,
+                Id = TestMarginAssetUpdate.Id,
+                Name = TestMarginAssetUpdate.Name,
+                IdIssuer = TestMarginAssetUpdate.IdIssuer,
+                Symbol = TestMarginAssetUpdate.Symbol,
                 Accuracy = Helpers.Random.Next(2,8),
                 DustLimit = Helpers.Random.NextDouble(),
                 Multiplier = Helpers.Random.NextDouble()
@@ -114,11 +117,13 @@ namespace AFTests.AssetsTests
         [Category("MarginAssetsDelete")]
         public async Task DeleteMarginAsset()
         {
-            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + this.TestMarginAssetDelete.Id;
+            MarginAssetDTO TestMarginAssetDelete = await CreateTestMarginAsset();
+
+            string url = ApiPaths.MARGIN_ASSET_BASE_PATH + "/" + TestMarginAssetDelete.Id;
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            MarginAssetEntity entity = await this.MarginAssetManager.TryGetAsync(this.TestMarginAssetDelete.Id) as MarginAssetEntity;
+            MarginAssetEntity entity = await this.MarginAssetManager.TryGetAsync(TestMarginAssetDelete.Id) as MarginAssetEntity;
             Assert.Null(entity);
         }
     }

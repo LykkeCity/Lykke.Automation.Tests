@@ -88,14 +88,17 @@ namespace AFTests.AssetsTests
         public async Task UpdateMarginAssetPair()
         {
             string url = ApiPaths.MARGIN_ASSET_PAIRS_PATH;
+
+            MarginAssetPairDTO TestMarginAssetPairUpdate = await CreateTestMarginAssetPair();
+
             MarginAssetPairDTO updateDTO = new MarginAssetPairDTO()
             {
-                Id = this.TestMarginAssetPairUpdate.Id,
-                Accuracy = this.TestMarginAssetPairUpdate.Accuracy + Helpers.Random.Next(1,4),
-                InvertedAccuracy = this.TestMarginAssetPairUpdate.InvertedAccuracy,
-                Name = this.TestMarginAssetPairUpdate.Name + "_AutoTest",
-                BaseAssetId = this.TestMarginAssetPairUpdate.BaseAssetId,
-                QuotingAssetId = this.TestMarginAssetPairUpdate.QuotingAssetId
+                Id = TestMarginAssetPairUpdate.Id,
+                Accuracy = TestMarginAssetPairUpdate.Accuracy + Helpers.Random.Next(1,4),
+                InvertedAccuracy = TestMarginAssetPairUpdate.InvertedAccuracy,
+                Name = TestMarginAssetPairUpdate.Name + "_AutoTest",
+                BaseAssetId = TestMarginAssetPairUpdate.BaseAssetId,
+                QuotingAssetId = TestMarginAssetPairUpdate.QuotingAssetId
             };
 
             string editParam = JsonUtils.SerializeObject(updateDTO);
@@ -113,11 +116,13 @@ namespace AFTests.AssetsTests
         [Category("MarginAssetPairsDelete")]
         public async Task DeleteMarginAssetPair()
         {
-            string url = ApiPaths.MARGIN_ASSET_PAIRS_PATH + "/" + this.TestMarginAssetPairDelete.Id;
+            MarginAssetPairDTO TestMarginAssetPairDelete = await CreateTestMarginAssetPair();
+
+            string url = ApiPaths.MARGIN_ASSET_PAIRS_PATH + "/" + TestMarginAssetPairDelete.Id;
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            MarginAssetPairsEntity entity = await this.MarginAssetPairManager.TryGetAsync(this.TestMarginAssetPairDelete.Id) as MarginAssetPairsEntity;
+            MarginAssetPairsEntity entity = await this.MarginAssetPairManager.TryGetAsync(TestMarginAssetPairDelete.Id) as MarginAssetPairsEntity;
             Assert.Null(entity);
 
         }

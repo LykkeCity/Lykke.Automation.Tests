@@ -87,18 +87,21 @@ namespace AFTests.AssetsTests
         public async Task UpdateMarginIssuer()
         {
             string url = ApiPaths.MARGIN_ISSUERS_PATH;
+
+            MarginIssuerDTO TestMarginIssuerUpdate = await CreateTestMarginIssuer();
+
             MarginIssuerDTO editIssuer = new MarginIssuerDTO()
             {
-                Id = this.TestMarginIssuerUpdate.Id,
-                IconUrl = this.TestMarginIssuerUpdate.IconUrl + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
-                Name = this.TestMarginIssuerUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Id = TestMarginIssuerUpdate.Id,
+                IconUrl = TestMarginIssuerUpdate.IconUrl + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Name = TestMarginIssuerUpdate.Name + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
             };
             string editParam = JsonUtils.SerializeObject(editIssuer);
 
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, editParam, Method.PUT);
             Assert.True(response.Status == HttpStatusCode.OK); //HttpStatusCode.NoContent
 
-            MarginIssuerEntity entity = await this.MarginIssuerManager.TryGetAsync(this.TestMarginIssuerUpdate.Id) as MarginIssuerEntity;
+            MarginIssuerEntity entity = await this.MarginIssuerManager.TryGetAsync(TestMarginIssuerUpdate.Id) as MarginIssuerEntity;
             entity.ShouldBeEquivalentTo(editIssuer, o => o
             .ExcludingMissingMembers());
 
@@ -110,11 +113,13 @@ namespace AFTests.AssetsTests
         [Category("IssuersDelete")]
         public async Task DeleteMarginIssuer()
         {
-            string url = ApiPaths.MARGIN_ISSUERS_PATH + "/" + this.TestMarginIssuerDelete.Id;
+            MarginIssuerDTO TestMarginIssuerDelete = await CreateTestMarginIssuer();
+
+            string url = ApiPaths.MARGIN_ISSUERS_PATH + "/" + TestMarginIssuerDelete.Id;
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.DELETE);
             Assert.True(response.Status == HttpStatusCode.NoContent);
 
-            MarginIssuerEntity entity = await this.MarginIssuerManager.TryGetAsync(this.TestMarginIssuerDelete.Id) as MarginIssuerEntity;
+            MarginIssuerEntity entity = await this.MarginIssuerManager.TryGetAsync(TestMarginIssuerDelete.Id) as MarginIssuerEntity;
             Assert.Null(entity);
         }
     }
