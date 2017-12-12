@@ -71,5 +71,12 @@ namespace XUnitTestCommon
         public static readonly string CLIENT_ACCOUNT_SERVICE_PREFIX = "client-account";
         public static readonly string CLIENT_ACCOUNT_SERVICE_BASEURL = "lykke-service.svc.cluster.local";
         public static readonly string CLIENT_ACCOUNT_PATH = "/api/ClientAccount";
+
+
+        //balances service
+        public static readonly string BALANCES_IS_ALIVE = "/api/IsAlive";
+        public static readonly string BALANCES_WALLET_CREDENTIAL = "/api/WalletCredential";
+        public static readonly string BALANCES_WALLET_CREDENTIALS_HISTORY = "/api/WalletCredentialsHistory";
+        public static readonly string BALANCES_WALLET_BALANCES = "/api/WalletsClientBalances";
     }    
 }

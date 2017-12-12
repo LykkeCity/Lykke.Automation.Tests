@@ -13,6 +13,7 @@ using RestSharp;
 using System.Net;
 using XUnitTestCommon.Utils;
 using BlueApiData.DTOs.ReferralLinks;
+using XUnitTestCommon.GlobalActions;
 
 namespace BlueApiData.Fixtures
 {
@@ -93,7 +94,7 @@ namespace BlueApiData.Fixtures
             this.GiftCoinLinkRequestConsumer = (await RegisterNUsers(1)).FirstOrDefault();
 
             //give money to client requesting gift coin links
-            await this.MEConsumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), GiftCoinLinkRequestConsumer?.ClientInfo.Account.Id, Constants.GIFT_COIN_ASSET_ID, Constants.GIFT_COIN_REQUEST_INITIAL_BALANCE);
+            await ClientAccounts.FillWalletWithAsset(GiftCoinLinkRequestConsumer?.ClientInfo.Account.Id, Constants.GIFT_COIN_ASSET_ID, Constants.GIFT_COIN_REQUEST_INITIAL_BALANCE);
         }
 
         public async Task PrepareClaimGiftCoinLink()
@@ -101,7 +102,7 @@ namespace BlueApiData.Fixtures
             this.GiftCoinLinkClaimConsumers = await RegisterNUsers(3);
 
             //give sender money and create gift link
-            await this.MEConsumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), this.GiftCoinLinkClaimConsumers[0].ClientInfo.Account.Id, Constants.GIFT_COIN_ASSET_ID, Constants.GIFT_COIN_REQUEST_INITIAL_BALANCE);
+            await ClientAccounts.FillWalletWithAsset(this.GiftCoinLinkClaimConsumers[0].ClientInfo.Account.Id, Constants.GIFT_COIN_ASSET_ID, Constants.GIFT_COIN_REQUEST_INITIAL_BALANCE);
             var requestParam = new RequestGiftCoinsLinkRequestDto()
             {
                 Asset = Constants.GIFT_COIN_ASSET_NAME,

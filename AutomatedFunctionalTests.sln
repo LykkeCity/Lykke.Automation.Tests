@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2008
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetsData", "AssetsData\AssetsData.csproj", "{35B1F900-A39F-48EA-9ACA-F6A67A5CB1FC}"
 EndProject
@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AFTests", "AFTests\AFTests.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiV2Data", "ApiV2Data\ApiV2Data.csproj", "{46C1E30B-9723-4309-8254-1849EFC67F9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlueApiData", "BlueApiData\BlueApiData.csproj", "{80DF4887-040A-4311-A7D5-57856C9A0A0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlueApiData", "BlueApiData\BlueApiData.csproj", "{80DF4887-040A-4311-A7D5-57856C9A0A0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BalancesData", "BalancesData\BalancesData.csproj", "{9DE5E3FC-5D75-4E8B-A498-424462959163}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{80DF4887-040A-4311-A7D5-57856C9A0A0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80DF4887-040A-4311-A7D5-57856C9A0A0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80DF4887-040A-4311-A7D5-57856C9A0A0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DE5E3FC-5D75-4E8B-A498-424462959163}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DE5E3FC-5D75-4E8B-A498-424462959163}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DE5E3FC-5D75-4E8B-A498-424462959163}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DE5E3FC-5D75-4E8B-A498-424462959163}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
