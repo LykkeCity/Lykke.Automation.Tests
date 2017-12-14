@@ -46,7 +46,6 @@ namespace BlueApiData.Fixtures
         public PledgeDTO TestPledgeDelete;
         
         public ApiConsumer Consumer;
-        public MatchingEngineConsumer MEConsumer;
         public BalancesClient BalancesClient;
         
         public ClientRegisterDTO ClientInfoInstance;
@@ -80,12 +79,6 @@ namespace BlueApiData.Fixtures
         private async Task PrepareApiConsumers()
         {
             Consumer = new ApiConsumer(_configBuilder);
-
-            ConfigBuilder MeConfig = new ConfigBuilder("MatchingEngine");
-            if (Int32.TryParse(MeConfig.Config["Port"], out int port))
-            {
-                MEConsumer = new MatchingEngineConsumer(MeConfig.Config["BaseUrl"], port);
-            }
 
             PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
             this.BalancesClient = new BalancesClient(_configBuilder.Config["BalancesServiceUrl"], null);

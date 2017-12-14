@@ -37,11 +37,8 @@ namespace XUnitTestCommon
 
         public static readonly string TWITTER_BASE_PATH = "/api/twitter/getTweetsJSON";
 
-        public static readonly string REFERRAL_LINKS_BASE_PATH = "/api/refLinks";
-        public static readonly string REFERRAL_LINKS_REQUEST_INVITATION_LINK_PATH = "/api/refLinks/request/invitationLink";
-        public static readonly string REFERRAL_LINKS_REQUEST_GIFTCOINS_LINK_PATH = "/api/refLinks/request/giftCoinslLink";
-        public static readonly string REFERRAL_LINKS_CLAIM_INVITATION_LINK_PATH = "/api/refLinks/claim/invitationLink";
-        public static readonly string REFERRAL_LINKS_CLAIM_GIFTCOINS_LINK_PATH = "/api/refLinks/claim/giftCoins";
+        public static readonly string REFERRAL_LINKS_PATH = "/api/referralLinks";
+        public static readonly string REFERRAL_LINKS_INVITATION_PATH = "/api/referralLinks/invitation";
 
         // API V2 prefix
         public static readonly string ASSETS_V2_BASE_PATH = "/api/v2/assets";
@@ -71,5 +68,12 @@ namespace XUnitTestCommon
         public static readonly string CLIENT_ACCOUNT_SERVICE_PREFIX = "client-account";
         public static readonly string CLIENT_ACCOUNT_SERVICE_BASEURL = "lykke-service.svc.cluster.local";
         public static readonly string CLIENT_ACCOUNT_PATH = "/api/ClientAccount";
+
+
+        //balances service
+        public static readonly string BALANCES_IS_ALIVE = "/api/IsAlive";
+        public static readonly string BALANCES_WALLET_CREDENTIAL = "/api/WalletCredential";
+        public static readonly string BALANCES_WALLET_CREDENTIALS_HISTORY = "/api/WalletCredentialsHistory";
+        public static readonly string BALANCES_WALLET_BALANCES = "/api/WalletsClientBalances";
     }    
 }

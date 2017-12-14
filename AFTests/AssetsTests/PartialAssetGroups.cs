@@ -230,6 +230,25 @@ namespace AFTests.AssetsTests
         [Category("Smoke")]
         [Category("AssetGroups")]
         [Category("AssetGroupsPost")]
+        public async Task AddOrReplaceClientToAssetGroup()
+        {
+            AssetGroupDTO TestGroupForClientRelationAddOrReplace = await CreateTestAssetGroup();
+
+            string url = ApiPaths.ASSET_GROUPS_PATH + "/" + TestGroupForClientRelationAddOrReplace.Name + "/clients/" + this.TestAccountId + "/add-or-replace";
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.POST);
+            Assert.True(response.Status == HttpStatusCode.NoContent);
+
+            var entities = await this.AssetGroupsRepository.GetAllAsync($"ClientGroupLink_{TestGroupForClientRelationAddOrReplace.Name}");
+            List<string> assetIds = entities.Select(e => e.Id).ToList();
+
+            Assert.True(assetIds.Count == 1);
+            Assert.True(assetIds[0] == this.TestAccountId);
+        }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("AssetGroups")]
+        [Category("AssetGroupsPost")]
         public async Task RemoveClientFromAssetGroup()
         {
             AssetGroupDTO TestGroupForClientRelationDelete = await CreateTestAssetGroup();
