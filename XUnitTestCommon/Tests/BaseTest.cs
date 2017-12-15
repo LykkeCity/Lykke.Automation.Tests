@@ -77,7 +77,7 @@ namespace XUnitTestCommon.Tests
             Console.WriteLine("TearDown");
 
             AllureReport.GetInstance().CaseFinished(TestContext.CurrentContext.Test.FullName,
-                TestContext.CurrentContext.Result.Outcome.Status, null);
+                TestContext.CurrentContext.Result.Outcome.Status);
         }
 
         [TearDown]

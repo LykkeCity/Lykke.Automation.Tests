@@ -31,8 +31,7 @@ namespace BlueApiData.Fixtures
         public IMapper Mapper;
 
         public string AccountEmail;
-        public string TwitterSearchQuery;
-        public DateTime TwitterSearchUntilDate;
+        public bool TwitterAggressiveCheck;
 
         public GenericRepository<PledgeEntity, IPledgeEntity> PledgeRepository;
         public GenericRepository<PersonalDataEntity, IPersonalData> PersonalDataRepository;

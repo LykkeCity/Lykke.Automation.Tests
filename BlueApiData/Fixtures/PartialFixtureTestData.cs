@@ -92,7 +92,8 @@ namespace BlueApiData.Fixtures
         public void PrepareTwitterData()
         {
             AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
-
+            if (!Boolean.TryParse(_configBuilder.Config["TwitterAggessiveCheck"], out TwitterAggressiveCheck))
+                TwitterAggressiveCheck = false;
         }
     }
 }

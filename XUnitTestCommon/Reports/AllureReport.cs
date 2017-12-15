@@ -49,36 +49,61 @@ namespace XUnitTestCommon.Reports
             }
         }
 
-        public void CaseFinished(string fullName, TestStatus result, Exception exception)
+        public void CaseFinished(string fullName, TestStatus result)
         {
             lock (_caseStorage)
             {
                 string fixtureName = GetFixtureName(fullName);
-
+                var TestResult = TestContext.CurrentContext.Result;
+                List<AssertionResult> assertions = TestResult.Assertions.ToList();
                 List<Attachment> attaches = new List<Attachment>();
-                var testLogPath = TestContext.CurrentContext.WorkDirectory + $"/allure-results/Test_{Helpers.GenerateTimeStamp()}.log";
-                var log = Logger.GetLog();
-                File.WriteAllText(testLogPath, log);
-                attaches.Add(new Attachment() { name = "TestLog", source = testLogPath, type = "application/json" });
+                string log = Logger.GetLog();
 
+                Status testStatus = Status.none;
+                string testCaseMessage = "";
+
+                if (!String.IsNullOrEmpty(log))
+                {
+                    string testLogPath = TestContext.CurrentContext.WorkDirectory + $"/allure-results/log_{fixtureName}_{Helpers.GenerateTimeStamp()}.log";
+                    File.WriteAllText(testLogPath, log);
+                    attaches.Add(new Attachment() { name = "TestLog", source = testLogPath, type = "application/json" });
+                }
 
                 if (result == TestStatus.Failed)
                 {
+                    testStatus = Status.failed;
 
-                    AssertionException ex = new AssertionException(TestContext.CurrentContext.Result.Message);
-                    string st = TestContext.CurrentContext.Result.Assertions.ToList().Count == 0 ?
-                        "" :
-                        TestContext.CurrentContext.Result.Assertions.ToList()?[0].StackTrace;
+                    AssertionResult failedAssertion = assertions.Where(a => a.Status == AssertionStatus.Failed).FirstOrDefault();
 
-                    _lifecycle.StopTestCase(x => { x.uuid = fixtureName; x.status = Status.failed; x.attachments = attaches; x.statusDetails = new StatusDetails() { message = ex.Message, trace = st }; });
-                    _lifecycle.WriteTestCase(fixtureName);
+                    if (failedAssertion != null)
+                    {
+                        testCaseMessage += $"Test case failed:\n{failedAssertion.Message}";
+                    }
+                    else
+                    {
+                        testCaseMessage += $"An unhandled exception has occured:\n{TestResult.Message}";
+                    }
 
                 }
-                else
+                else if (result == TestStatus.Passed)
                 {
-                    _lifecycle.StopTestCase(x => { x.uuid = fixtureName; x.status = Status.passed; x.attachments = attaches; x.statusDetails = new StatusDetails() { message = $"Test case {fixtureName} passed successfully." }; });
-                    _lifecycle.WriteTestCase(fixtureName);
+                    testStatus = Status.passed;
+                    testCaseMessage = $"Test case was successful with {TestContext.CurrentContext.AssertCount} assertions passed.";
                 }
+
+                _lifecycle.StopTestCase(x => 
+                {
+                    x.uuid = fixtureName;
+                    x.status = testStatus;
+                    x.stage = Stage.finished;
+                    x.attachments = attaches;
+                    x.statusDetails = new StatusDetails()
+                    {
+                        message = testCaseMessage,
+                        trace = TestResult.StackTrace
+                    };
+                });
+                _lifecycle.WriteTestCase(fixtureName);
             }
         }
 

@@ -19,7 +19,7 @@ namespace XUnitTestCommon
         public static string GenerateTimeStamp()
         {
             var now = DateTime.Now;
-            return string.Format("{0}-{1}-{2}_{3}-{4}-{5}-{6}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, now.Millisecond);
+            return string.Format("{0}-{1}-{2}_{3}-{4}", now.Year, now.Month, now.Day, now.Hour, now.Minute);
         }
     }
 }
