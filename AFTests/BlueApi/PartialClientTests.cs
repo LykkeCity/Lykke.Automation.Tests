@@ -57,17 +57,18 @@ namespace AFTests.BlueApi
             };
 
             var response = await ClientAccountConsumer.ExecuteRequest(url, queryParams, null, Method.GET);
-
             Assert.True(response.Status == HttpStatusCode.OK);
 
-            var originalCount = int.Parse(response.ResponseJson);
+            var parsedResponse = JsonUtils.DeserializeJson<GetUsersCountByPartnerDto>(response.ResponseJson);
+            var originalCount = parsedResponse.Count;
+
             await CreateTestPartnerClient();
 
             response = await ClientAccountConsumer.ExecuteRequest(url, queryParams, null, Method.GET);
-
             Assert.True(response.Status == HttpStatusCode.OK);
 
-            var newCount = int.Parse(response.ResponseJson);
+            parsedResponse = JsonUtils.DeserializeJson<GetUsersCountByPartnerDto>(response.ResponseJson);
+            var newCount = parsedResponse.Count;
 
             Assert.True(newCount > originalCount);
         }

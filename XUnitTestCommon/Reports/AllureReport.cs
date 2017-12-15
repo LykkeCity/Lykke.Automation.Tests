@@ -75,13 +75,6 @@ namespace XUnitTestCommon.Reports
 
                     AssertionResult failedAssertion = assertions.Where(a => a.Status == AssertionStatus.Failed).FirstOrDefault();
 
-                    //if (!String.IsNullOrEmpty(TestResult.Message) || !String.IsNullOrEmpty(TestResult.StackTrace))
-                    //{
-                    //    string testStacktracePath = TestContext.CurrentContext.WorkDirectory + $"/allure-results/stacktrace_{fixtureName}_{Helpers.GenerateTimeStamp()}.log";
-                    //    File.WriteAllText(testStacktracePath, TestResult.StackTrace);
-                    //    attaches.Add(new Attachment() { name = "StackTrace", source = testStacktracePath, type = "application/json" });
-                    //}
-
                     if (failedAssertion != null)
                     {
                         testCaseMessage += $"Test case failed:\n{failedAssertion.Message}";

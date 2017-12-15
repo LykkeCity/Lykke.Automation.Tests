@@ -6,6 +6,7 @@ using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using System.Threading.Tasks;
 using BlueApiData;
+using XUnitTestCommon.Reports;
 
 namespace AFTests.BlueApi
 {
@@ -19,6 +20,8 @@ namespace AFTests.BlueApi
         [Category("TwitterPost")]
         public async Task GetTweets()
         {
+            Logger.WriteLine("This endpoint returns cached tweets more ofthen than not, due to Twitter api limitations. Cached tweets don't always match the search query, or are old enough to have the 140 character limitation. By default the test doesn't check the tweet 'fulltext' for the search query, but if you want to enable that, toggle AutomatedFunctionalTests.BlueApi.TwitterAggessiveCheck to True in settings service");
+
             this.PrepareTwitterData();
             string url = ApiPaths.TWITTER_BASE_PATH;
             int pageSize = Helpers.Random.Next(1, 101); // from 1 to 100 records on a page
@@ -40,11 +43,14 @@ namespace AFTests.BlueApi
             // checks if the right amout of tweets is returned on a single page
             Assert.True(tweets.Count <= pageSize);
 
-            tweets.ForEach(tweet =>
+            if (TwitterAggressiveCheck)
             {
-                //check if the tweet matches search query
-                Assert.True(tweet.full_text.ToLower().Contains(Constants.TWITTER_SEARCH_QUERY));
-            });            
+                tweets.ForEach(tweet =>
+                {
+                    //check if the tweet matches search query
+                    Assert.True(tweet.full_text.ToLower().Contains(Constants.TWITTER_SEARCH_QUERY));
+                });
+            }
         }
 
         [Test]
@@ -53,6 +59,8 @@ namespace AFTests.BlueApi
         [Category("TwitterPost")]
         public async Task GetTweetsExtendedSearch()
         {
+            Logger.WriteLine("This endpoint returns cached tweets more ofthen than not, due to Twitter api limitations. Cached tweets don't always match the search query, or are old enough to have the 140 character limitation. By default the test doesn't check the tweet 'fulltext' for the search query, but if you want to enable that, toggle AutomatedFunctionalTests.BlueApi.TwitterAggessiveCheck to True in settings service");
+
             this.PrepareTwitterData();
             string url = ApiPaths.TWITTER_BASE_PATH;
             int pageSize = Helpers.Random.Next(1, 101); // from 1 to 100 records on a page
@@ -78,8 +86,11 @@ namespace AFTests.BlueApi
 
             tweets.ForEach(tweet =>
             {
-                //checks if all tweets contain the search query in their title ( may fail for older tweets due to chars limitations )
-                Assert.True(tweet.full_text.ToLower().Contains(Constants.TWITTER_SEARCH_QUERY));
+                if (TwitterAggressiveCheck)
+                {
+                    //checks if all tweets contain the search query in their title ( may fail for older tweets due to chars limitations )
+                    Assert.True(tweet.full_text.ToLower().Contains(Constants.TWITTER_SEARCH_QUERY));
+                }
 
                 //check if the tweets are published before the until date
                 Assert.True(tweet.created_at <= body.UntilDate);
