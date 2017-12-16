@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetsData", "AssetsData\AssetsData.csproj", "{35B1F900-A39F-48EA-9ACA-F6A67A5CB1FC}"
 EndProject
@@ -12,12 +12,29 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatchingEngineData", "MatchingEngineData\MatchingEngineData.csproj", "{B18D9715-22BF-45D0-AC42-806F50B68142}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AFTests", "AFTests\AFTests.csproj", "{83FAE21C-A467-4DDA-839D-14473525C103}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9974DE61-1929-4535-A9A4-BF55A0DA71FA} = {9974DE61-1929-4535-A9A4-BF55A0DA71FA}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiV2Data", "ApiV2Data\ApiV2Data.csproj", "{46C1E30B-9723-4309-8254-1849EFC67F9B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlueApiData", "BlueApiData\BlueApiData.csproj", "{80DF4887-040A-4311-A7D5-57856C9A0A0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BalancesData", "BalancesData\BalancesData.csproj", "{9DE5E3FC-5D75-4E8B-A498-424462959163}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BalancesData", "BalancesData\BalancesData.csproj", "{9DE5E3FC-5D75-4E8B-A498-424462959163}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalApi", "PayApi\ExternalApi.csproj", "{9974DE61-1929-4535-A9A4-BF55A0DA71FA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCore", "TestCore\TestCore.csproj", "{210E5B10-EF49-4524-BC8C-16C2F3337E58}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrivateServices", "PrivateServices\PrivateServices.csproj", "{6BC7A4A2-2BCA-4748-B161-046BA52725B0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{210E5B10-EF49-4524-BC8C-16C2F3337E58} = {210E5B10-EF49-4524-BC8C-16C2F3337E58}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LykkePay", "LykkePay\LykkePay.csproj", "{AC07F691-0353-4092-85E8-E8B192E1AE72}"
+	ProjectSection(ProjectDependencies) = postProject
+		{210E5B10-EF49-4524-BC8C-16C2F3337E58} = {210E5B10-EF49-4524-BC8C-16C2F3337E58}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +74,22 @@ Global
 		{9DE5E3FC-5D75-4E8B-A498-424462959163}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DE5E3FC-5D75-4E8B-A498-424462959163}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DE5E3FC-5D75-4E8B-A498-424462959163}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9974DE61-1929-4535-A9A4-BF55A0DA71FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9974DE61-1929-4535-A9A4-BF55A0DA71FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9974DE61-1929-4535-A9A4-BF55A0DA71FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9974DE61-1929-4535-A9A4-BF55A0DA71FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{210E5B10-EF49-4524-BC8C-16C2F3337E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{210E5B10-EF49-4524-BC8C-16C2F3337E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{210E5B10-EF49-4524-BC8C-16C2F3337E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{210E5B10-EF49-4524-BC8C-16C2F3337E58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BC7A4A2-2BCA-4748-B161-046BA52725B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BC7A4A2-2BCA-4748-B161-046BA52725B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BC7A4A2-2BCA-4748-B161-046BA52725B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC7A4A2-2BCA-4748-B161-046BA52725B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC07F691-0353-4092-85E8-E8B192E1AE72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC07F691-0353-4092-85E8-E8B192E1AE72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC07F691-0353-4092-85E8-E8B192E1AE72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC07F691-0353-4092-85E8-E8B192E1AE72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

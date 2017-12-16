@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using AssetsData.DTOs.Assets;
 using NUnit.Framework;
 using RestSharp;
-using RestSharp.Extensions.MonoHttp;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using AssetsData;
 using System.Linq;
 using FluentAssertions;
+using System.Web;
 
 namespace AFTests.AssetsTests
 {
