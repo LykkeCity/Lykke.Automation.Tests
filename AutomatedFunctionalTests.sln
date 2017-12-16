@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlueApiData", "BlueApiData\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BalancesData", "BalancesData\BalancesData.csproj", "{9DE5E3FC-5D75-4E8B-A498-424462959163}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalApi", "PayApi\ExternalApi.csproj", "{9974DE61-1929-4535-A9A4-BF55A0DA71FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalApi", "ExternalApi\ExternalApi.csproj", "{9974DE61-1929-4535-A9A4-BF55A0DA71FA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCore", "TestCore\TestCore.csproj", "{210E5B10-EF49-4524-BC8C-16C2F3337E58}"
 EndProject

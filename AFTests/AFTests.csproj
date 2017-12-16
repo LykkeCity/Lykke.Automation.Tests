@@ -20,9 +20,9 @@
     <ProjectReference Include="..\AssetsData\AssetsData.csproj" />
     <ProjectReference Include="..\BalancesData\BalancesData.csproj" />
     <ProjectReference Include="..\BlueApiData\BlueApiData.csproj" />
+    <ProjectReference Include="..\ExternalApi\ExternalApi.csproj" />
     <ProjectReference Include="..\LykkePay\LykkePay.csproj" />
     <ProjectReference Include="..\MatchingEngineData\MatchingEngineData.csproj" />
-    <ProjectReference Include="..\PayApi\ExternalApi.csproj" />
     <ProjectReference Include="..\PrivateServices\PrivateServices.csproj" />
     <ProjectReference Include="..\TestCore\TestCore.csproj" />
     <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
