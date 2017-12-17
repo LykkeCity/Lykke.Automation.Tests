@@ -2,12 +2,14 @@
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
 using LykkeAutomationPrivate.Models.Registration.Models;
 using LykkeAutomationPrivate.Validators;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using TestsCore.TestsData;
 
 namespace LykkeAutomationPrivate.Tests.ClientAccount
 {
@@ -224,13 +226,111 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
                 .PostChangeClientPassword(passwordHash);
             Assert.That(postChangeClientPassword.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-            Assert.That(lykkeApi.ClientAccount.ClientAccountInformation
+            //Is all ok?
+            var newAuth = lykkeApi.ClientAccount.ClientAccountInformation
                 .PostAuthenticate(new ClientAuthenticationModel()
                 {
                     Email = registration.Email,
                     Password = newPassword
-                }).StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            //TODO: Add more asserts
+                });
+            Assert.That(newAuth.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(newAuth.GetResponseObject().Id, Is.EqualTo(account.Id));
+
+            //Check old password
+            var oldPassAuth = lykkeApi.ClientAccount.ClientAccountInformation
+                .PostAuthenticate(new ClientAuthenticationModel()
+                {
+                    Email = registration.Email,
+                    Password = registration.Password
+                });
+            Assert.That(oldPassAuth.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+    }
+
+    class ChangePhoneNumber : BaseTest
+    {
+        [Test]
+        [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
+        [Description("Change client phone number.")]
+        public void ChangePhoneNumberTest()
+        {
+            string newPhoneNumber = TestData.GeneratePhone();
+            var registration = new AccountRegistrationModel().GetTestModel();
+            var account = lykkeApi.Registration.PostRegistration(registration).Account;
+
+            var postChangeClientPhoneNumber = lykkeApi.ClientAccount.ClientAccountInformation
+                .PostChangeClientPhoneNumber(account.Id, newPhoneNumber);
+            Assert.That(postChangeClientPhoneNumber.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+            var changedAccount = lykkeApi.ClientAccount.ClientAccountInformation
+                .GetClientAccountInformation(account.Id);
+            Assert.That(changedAccount.GetResponseObject().Phone, Is.EqualTo(newPhoneNumber));
+        }
+    }
+
+    class InsertIndexedByPhoneAsync : BaseTest
+    {
+        [Test]
+        [Ignore("Could not test this method")]
+        [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
+        [Description("Insert indexed by phone.")]
+        public void InsertIndexedByPhoneAsynTest()
+        {
+            
+        }
+    }
+
+    class PartnerIds : BaseTest
+    {
+        [Test]
+        [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PartnerIdsTest()
+        {
+            AccountRegistrationModel registration;
+            ClientAccountInformationModel account;
+            string partnerId = "NewTestPartner";
+
+            registration = new AccountRegistrationModel().GetTestModel();
+            registration.PartnerId = partnerId;
+            account = lykkeApi.Registration.PostRegistration(registration).Account;
+
+            var partnerIds = lykkeApi.ClientAccount.ClientAccountInformation
+                .PostPartnerIds(new EmailsModel()
+                {
+                    Values = new List<string> { account.Email }
+                });
+
+            Assert.That(partnerIds.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var response = partnerIds.JObject;
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response[account.Id], Is.Not.Null);
+            List<string> ids = ((JArray)response[account.Id]).Select(i => (string)i).ToList();
+            Assert.That(ids, Does.Contain(partnerId));
+        }
+    }
+
+    class ClientsByPhone : BaseTest
+    {
+        [Test]
+        [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostClientsByPhoneTest()
+        {
+            AccountRegistrationModel registration;
+            ClientAccountInformationModel account;
+
+            registration = new AccountRegistrationModel().GetTestModel();
+            account = lykkeApi.Registration.PostRegistration(registration).Account;
+
+            var clientsByPhone = lykkeApi.ClientAccount.ClientAccountInformation
+                .PostClientsByPhone(new PhoneNumbersModel()
+                {
+                    Values = new List<string> { account.Phone }
+                });
+
+            Assert.That(clientsByPhone.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var response = clientsByPhone.JObject;
+            Assert.That(response, Is.Not.Null);
+            Assert.That((string)response[account.Id], Is.EqualTo(account.Phone));
         }
     }
 }
