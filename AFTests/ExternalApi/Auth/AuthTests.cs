@@ -1,4 +1,5 @@
-﻿using LykkeAutomation.Api.ApiModels.AuthModels;
+﻿using LykkeAutomation.Api;
+using LykkeAutomation.Api.ApiModels.AuthModels;
 using LykkeAutomation.ApiModels.RegistrationModels;
 using LykkeAutomation.TestsCore;
 using Newtonsoft.Json.Linq;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using XUnitTestCommon.Tests;
 using static LykkeAutomation.Api.ApiModels.AuthModels.AuthModels;
 
 namespace LykkeAutomation.Tests.Auth
@@ -24,6 +26,9 @@ namespace LykkeAutomation.Tests.Auth
             [Category("Auth"), Category("All")]
             public void SuccessAuthAfterRegistrationTest()
             {
+                LykkeExternalApi lykkeExternalApi = new LykkeExternalApi();
+                ApiSchemes apiSchemes = new ApiSchemes();
+
                 AccountRegistrationModel newUser = new AccountRegistrationModel();
                 var response = lykkeExternalApi.Registration.PostRegistrationResponse(newUser);
                 Assert.That(response.Error, Is.Null, $"Error message not empty {response.Error?.Message}");

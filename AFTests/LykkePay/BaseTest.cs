@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using LykkePay.Api;
+using XUnitTestCommon.Reports;
 
 namespace LykkePay.Tests
 {
@@ -41,7 +42,7 @@ namespace LykkePay.Tests
         [SetUp]
         public void SetUp()
         {
-            AllureReport.GetInstance().CaseStarted(TestContext.CurrentContext.Test.FullName,
+            XUnitTestCommon.Reports.AllureReport.GetInstance().CaseStarted(TestContext.CurrentContext.Test.FullName,
                 TestContext.CurrentContext.Test.Name, "");
 
             lykkePayApi = new LykkePayApi();
@@ -54,22 +55,22 @@ namespace LykkePay.Tests
         public void TearDown()
         {
             Console.WriteLine("TearDown");
-          
-            AllureReport.GetInstance().CaseFinished(TestContext.CurrentContext.Test.FullName,
-                TestContext.CurrentContext.Result.Outcome.Status,null);
+
+            XUnitTestCommon.Reports.AllureReport.GetInstance().CaseFinished(TestContext.CurrentContext.Test.FullName,
+                TestContext.CurrentContext.Result.Outcome.Status);
         }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            AllureReport.GetInstance().RunStarted();
+            XUnitTestCommon.Reports.AllureReport.GetInstance().RunStarted();
         }
 
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            AllureReport.GetInstance().RunFinished();
+            //XUnitTestCommon.Reports.AllureReport.GetInstance().RunFinished();
         }
 
     #endregion
@@ -81,16 +82,16 @@ namespace LykkePay.Tests
             Exception ex = null;
             try
             {
-                AllureReport.GetInstance().StepStarted(TestContext.CurrentContext.Test.FullName,
+                XUnitTestCommon.Reports.AllureReport.GetInstance().StepStarted(TestContext.CurrentContext.Test.FullName,
                     name);
-                TestLog.WriteLine($"Step: {name}");
+                Logger.WriteLine($"Step: {name}");
                 action();
             }catch(Exception e) {
                 ex = e;
             }
             finally
             {
-                AllureReport.GetInstance().StepFinished(TestContext.CurrentContext.Test.FullName,
+                XUnitTestCommon.Reports.AllureReport.GetInstance().StepFinished(TestContext.CurrentContext.Test.FullName,
              TestContext.CurrentContext.Result.Outcome.Status, ex);
             }
         }

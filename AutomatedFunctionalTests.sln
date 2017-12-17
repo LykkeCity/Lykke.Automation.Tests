@@ -24,17 +24,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BalancesData", "BalancesDat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalApi", "ExternalApi\ExternalApi.csproj", "{9974DE61-1929-4535-A9A4-BF55A0DA71FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCore", "TestCore\TestCore.csproj", "{210E5B10-EF49-4524-BC8C-16C2F3337E58}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrivateServices", "PrivateServices\PrivateServices.csproj", "{6BC7A4A2-2BCA-4748-B161-046BA52725B0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{210E5B10-EF49-4524-BC8C-16C2F3337E58} = {210E5B10-EF49-4524-BC8C-16C2F3337E58}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LykkePay", "LykkePay\LykkePay.csproj", "{AC07F691-0353-4092-85E8-E8B192E1AE72}"
-	ProjectSection(ProjectDependencies) = postProject
-		{210E5B10-EF49-4524-BC8C-16C2F3337E58} = {210E5B10-EF49-4524-BC8C-16C2F3337E58}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,10 +70,6 @@ Global
 		{9974DE61-1929-4535-A9A4-BF55A0DA71FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9974DE61-1929-4535-A9A4-BF55A0DA71FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9974DE61-1929-4535-A9A4-BF55A0DA71FA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{210E5B10-EF49-4524-BC8C-16C2F3337E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{210E5B10-EF49-4524-BC8C-16C2F3337E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{210E5B10-EF49-4524-BC8C-16C2F3337E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{210E5B10-EF49-4524-BC8C-16C2F3337E58}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6BC7A4A2-2BCA-4748-B161-046BA52725B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6BC7A4A2-2BCA-4748-B161-046BA52725B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BC7A4A2-2BCA-4748-B161-046BA52725B0}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,4 +1,5 @@
-﻿using LykkeAutomation.ApiModels;
+﻿using LykkeAutomation.Api;
+using LykkeAutomation.ApiModels;
 using LykkeAutomation.ApiModels.RegistrationModels;
 using LykkeAutomation.TestsCore;
 using NUnit.Framework;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XUnitTestCommon.Tests;
 
 namespace LykkeAutomation.Tests.Registration
 {
@@ -15,6 +17,9 @@ namespace LykkeAutomation.Tests.Registration
 
         public class PostRegistrationPositive : BaseTest
         {
+            LykkeExternalApi lykkeExternalApi = new LykkeExternalApi();
+            ApiSchemes apiSchemes = new ApiSchemes();
+
             [Test]
             [Parallelizable]
             [Category("Registration"), Category("All")]

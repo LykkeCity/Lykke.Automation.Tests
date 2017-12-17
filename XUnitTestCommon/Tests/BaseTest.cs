@@ -12,7 +12,7 @@ namespace XUnitTestCommon.Tests
 {
     [TestFixture]
     public class BaseTest
-    {        
+    {
         public IList<string> schemesError;
 
         public static Dictionary<string, List<Response>> responses;
@@ -92,8 +92,7 @@ namespace XUnitTestCommon.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            var path = TestContext.CurrentContext.WorkDirectory + Path.DirectorySeparatorChar.ToString() + "TestReportHelpers";
-            AllureReport.GetInstance().RunStarted(path);
+            AllureReport.GetInstance().RunStarted();
         }
 
         [OneTimeTearDown]

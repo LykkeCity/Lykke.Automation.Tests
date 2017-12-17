@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using TestsCore.TestsCore;
+using XUnitTestCommon.Reports;
 
 namespace LykkeAutomationPrivate.Tests
 {
@@ -41,28 +42,5 @@ namespace LykkeAutomationPrivate.Tests
         {
             allure.AllureAfterAllTestsInClass();
         }
-
-
-    #region allure helpers
-
-        public static void Step(string name, Action action)
-        {
-            Exception ex = null;
-            try
-            {
-                AllureReport.GetInstance().StepStarted(TestContext.CurrentContext.Test.FullName, name);
-                TestLog.WriteLine($"Step: {name}");
-                action();
-            }catch(Exception e) {
-                ex = e;
-            }
-            finally
-            {
-                AllureReport.GetInstance().StepFinished(TestContext.CurrentContext.Test.FullName,
-                TestContext.CurrentContext.Result.Outcome.Status, ex);
-            }
-        }
-        #endregion
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using LykkeAutomation.ApiModels;
+﻿using LykkeAutomation.Api;
+using LykkeAutomation.ApiModels;
 using LykkeAutomation.ApiModels.RegistrationModels;
 using LykkeAutomation.TestsCore;
 using Newtonsoft.Json.Linq;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using XUnitTestCommon.Tests;
 
 namespace LykkeAutomation.Tests.PersonalData
 {
@@ -19,6 +21,9 @@ namespace LykkeAutomation.Tests.PersonalData
 
         public class PersonalDataInvalidToken : BaseTest
         {
+            LykkeExternalApi lykkeExternalApi = new LykkeExternalApi();
+            ApiSchemes apiSchemes = new ApiSchemes();
+
             [Test]
             [Parallelizable]
             [Category("PersonalData"), Category("All")]
@@ -34,6 +39,9 @@ namespace LykkeAutomation.Tests.PersonalData
 
         public class PersonalDataEmptyToken : BaseTest
         {
+            LykkeExternalApi lykkeExternalApi = new LykkeExternalApi();
+            ApiSchemes apiSchemes = new ApiSchemes();
+
             [Test]
             [Parallelizable]
             [Category("PersonalData"), Category("All")]
@@ -49,6 +57,9 @@ namespace LykkeAutomation.Tests.PersonalData
 
         public class PersonalDataValidToken : BaseTest
         {
+            LykkeExternalApi lykkeExternalApi = new LykkeExternalApi();
+            ApiSchemes apiSchemes = new ApiSchemes();
+
             [Test]
             [Parallelizable]
             [Category("PersonalData"), Category("All")]

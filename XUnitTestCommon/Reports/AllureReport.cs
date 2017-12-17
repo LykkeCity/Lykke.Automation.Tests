@@ -35,7 +35,7 @@ namespace XUnitTestCommon.Reports
             return allureReport;
         }
 
-        public void RunStarted(string workDirectory)
+        public void RunStarted()
         {
             _lifecycle = AllureLifecycle.Instance;
         }

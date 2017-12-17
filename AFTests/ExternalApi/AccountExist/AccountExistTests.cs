@@ -11,6 +11,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using RestSharp;
+using XUnitTestCommon.Tests;
+using LykkeAutomation.Api;
 
 namespace LykkeAutomation.Tests
 {
@@ -23,17 +25,17 @@ namespace LykkeAutomation.Tests
             [Category("AccountExist"), Category("All")]
             public void AccountExistInvalidEmailTest()
             {
+                LykkeExternalApi lykkeExternalApi = new LykkeExternalApi();
+                ApiSchemes apiSchemes = new ApiSchemes();
+
                 string invalidEmail = TestData.GenerateEmail();
 
-                TestLog.WriteStep("GetAccountExistResponse");
                 var response = lykkeExternalApi.AccountExist.GetAccountExistResponse(invalidEmail);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Invalid status code");
 
-                TestLog.WriteStep("ValidateScheme");
                 var obj = JObject.Parse(response.Content);
                 ValidateScheme(obj.IsValid(apiSchemes.AccountExistSchemes.AuthResponseScheme, out schemesError), schemesError);
 
-                TestLog.WriteStep("ValidateModel");
                 var model = AccountExistModel.ConvertToAccountExistModel(response.Content);
                 Assert.That(model.Result.IsEmailRegistered, Is.False, "Email is registered");
                 Assert.That(model.Error, Is.Null, "Error is not null");

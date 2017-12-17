@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TestCore\TestCore.csproj" />
+    <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
   </ItemGroup>
   
 </Project>

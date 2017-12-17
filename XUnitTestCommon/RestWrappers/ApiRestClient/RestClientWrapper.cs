@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XUnitTestCommon.Reports;
 
 namespace LykkeAutomation.TestsCore
 {
@@ -14,7 +15,7 @@ namespace LykkeAutomation.TestsCore
 
         public IRestResponse Execute(IRestRequest request, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
         {
-            TestLog.WriteStep($"Execute request name: {memberName}");
+            Logger.WriteStep($"Execute request name: {memberName}");
             var response = base.Execute(request);
 
             AddToLog(response);
@@ -23,8 +24,8 @@ namespace LykkeAutomation.TestsCore
 
         private void AddToLog(IRestResponse response)
         {
-            TestLog.WriteLine(ResponseInfo(response.ResponseUri.AbsoluteUri, response.Request));
-            TestLog.WriteLine(ResponseInfo(response));
+            Logger.WriteLine(ResponseInfo(response.ResponseUri.AbsoluteUri, response.Request));
+            Logger.WriteLine(ResponseInfo(response));
         }
 
         private string ResponseInfo(string URL, IRestRequest request)
