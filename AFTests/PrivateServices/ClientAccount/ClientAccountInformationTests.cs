@@ -165,7 +165,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
                 .PostAuthenticate(clientAuthentication);
 
             Assert.That(authenticate.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            AccountServiceValidator.Validate(registration, authenticate.GetResponseObject());
+            ClientAccountValidator.Validate(registration, authenticate.GetResponseObject());
         }
 
         [Test]

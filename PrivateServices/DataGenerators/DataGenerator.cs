@@ -45,5 +45,15 @@ namespace LykkeAutomationPrivate.DataGenerators
                 Name = "Brand new test name",
                 Description = "Brand new test description"
             };
+
+        public static ClientRegistrationModel GetTestModel(
+            this ClientRegistrationModel clientRegistration, string partnerId = null) =>
+            new ClientRegistrationModel
+            {
+                Email = TestData.GenerateEmail(),
+                Phone = TestData.GeneratePhone(),
+                Password = "1234567",
+                PartnerId = partnerId
+            };
     }
 }

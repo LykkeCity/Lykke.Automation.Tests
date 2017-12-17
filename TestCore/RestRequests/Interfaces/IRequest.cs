@@ -20,6 +20,6 @@ namespace TestsCore.RestRequests.Interfaces
         void AddJsonBody(object json);
 
         IResponse Execute();
-        IResponse<T> Execute<T>() where T : new();
+        IResponse<T> Execute<T>();
     }
 }
