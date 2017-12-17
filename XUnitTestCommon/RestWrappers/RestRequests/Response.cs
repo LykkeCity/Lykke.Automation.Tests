@@ -13,6 +13,14 @@ namespace TestsCore.RestRequests
         public HttpStatusCode StatusCode { get; set; }
 
         public string Content { get; set; }
+
+        public JObject JObject
+        {
+            get
+            {
+                return JObject.Parse(Content);
+            }
+        }
     }
 
 

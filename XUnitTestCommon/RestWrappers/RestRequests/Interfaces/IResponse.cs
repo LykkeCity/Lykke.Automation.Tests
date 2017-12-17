@@ -8,8 +8,9 @@ namespace TestsCore.RestRequests.Interfaces
 {
     public interface IResponse
     {
-        HttpStatusCode StatusCode { get; set; }
-        string Content { get; set; }
+        HttpStatusCode StatusCode { get; }
+        string Content { get; }
+        JObject JObject { get; }
     }
 
     public interface IResponse<T> : IResponse

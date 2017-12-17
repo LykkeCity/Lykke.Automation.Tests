@@ -47,7 +47,7 @@ namespace TestsCore.RestRequests.RestSharpRequest
             return new Response() { StatusCode = response.StatusCode, Content = response.Content };
         }
 
-        public IResponse<T> Execute<T>() where T : new()
+        public IResponse<T> Execute<T>()
         {
             var response = client.Execute(request);
             Log(response);

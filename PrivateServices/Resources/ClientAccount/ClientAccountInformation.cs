@@ -67,5 +67,29 @@ namespace LykkeAutomationPrivate.Resources.ClientAccountResource
             return Request.Post("/api/ClientAccountInformation/changeClientPassword")
                 .AddJsonBody(passwordHashModel).Build().Execute();
         }
+
+        public IResponse PostChangeClientPhoneNumber(string clientId, string phone)
+        {
+            return Request.Post($"/api/ClientAccountInformation/changeClientPhoneNumber/{clientId}/{phone}")
+                .Build().Execute();
+        }
+
+        public IResponse InsertIndexedByPhoneAsync(IndexByPhoneModel indexByPhoneModel)
+        {
+            return Request.Post("/api/ClientAccountInformation/insertIndexedByPhoneAsync")
+                .AddJsonBody(indexByPhoneModel).Build().Execute();
+        }
+
+        public IResponse<object> PostPartnerIds(EmailsModel emailsModel)
+        {
+            return Request.Post("/api/ClientAccountInformation/partnerIds")
+                .AddJsonBody(emailsModel).Build().Execute<object>();
+        }
+
+        public IResponse<object> PostClientsByPhone(PhoneNumbersModel phoneNumbersModel)
+        {
+            return Request.Post("/api/ClientAccountInformation/clientsByPhones")
+                .AddJsonBody(phoneNumbersModel).Build().Execute<object>();
+        }
     }
 }
