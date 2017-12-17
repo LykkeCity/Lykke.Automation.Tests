@@ -22,5 +22,7 @@ namespace LykkeAutomationPrivate.Resources.ClientAccountResource
         public ClientAccount ClientAccount => new ClientAccount();
         public ClientAccountInformationResource ClientAccountInformation => new ClientAccountInformationResource();
         public Clients Clients => new Clients();
+        public IsAlive IsAlive => new IsAlive();
+        public IsAliveService IsAliveService => new IsAliveService();
     }
 }
