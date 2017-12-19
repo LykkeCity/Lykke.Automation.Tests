@@ -47,6 +47,25 @@ namespace LykkeAutomationPrivate.Resources.ClientAccountResource
         }
         #endregion
         #region LastBaseAssetsIos
+        public IResponse<LastBaseAssetsIos> GetLastBaseAssetsIos(string clientId)
+        {
+            return Request.Get("/api/ClientSettings/LastBaseAssetsIos").AddQueryParameter("clientId", clientId)
+                .Build().Execute<LastBaseAssetsIos>();
+        }
+
+        public IResponse PostLastBaseAssetsIos(LastBaseAssetsIosModel lastBaseAssetsIos)
+        {
+            return Request.Post("/api/ClientSettings/LastBaseAssetsIos").AddJsonBody(lastBaseAssetsIos)
+                .Build().Execute();
+        }
+
+        public IResponse DeleteLastBaseAssetsIos(string clientId)
+        {
+            return Request.Delete("/api/ClientSettings/LastBaseAssetsIos").AddQueryParameter("clientId", clientId)
+                .Build().Execute();
+        }
+        #endregion
+        #region LastBaseAssetsOther
         public IResponse<LastBaseAssetsOther> GetLastBaseAssetsOther(string clientId)
         {
             return Request.Get("/api/ClientSettings/LastBaseAssetsOther").AddQueryParameter("clientId", clientId)
@@ -65,6 +84,7 @@ namespace LykkeAutomationPrivate.Resources.ClientAccountResource
                 .Build().Execute();
         }
         #endregion
+
         #region RefundAddress
         public IResponse<RefundAddressSettings> GetRefundAddress(string clientId)
         {
