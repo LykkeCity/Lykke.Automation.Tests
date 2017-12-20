@@ -19,7 +19,7 @@ namespace LykkePay.Tests
 
                 var purchaseStatus = lykkePayApi.purchaseStatus.GetPurchaseStatusResponse(transactionId);
 
-                Assert.That(purchaseStatus.Response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(purchaseStatus.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                 //TODO: Check purchase status
             }
         }

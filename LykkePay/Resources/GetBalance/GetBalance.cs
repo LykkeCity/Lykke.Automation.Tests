@@ -1,91 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TestsCore.ApiRestClient;
 using TestsCore.TestsCore;
 using RestSharp;
 using LykkePay.Models;
 using Newtonsoft.Json;
+using LykkePay.Api;
+using TestsCore.RestRequests.Interfaces;
 
 namespace LykkePay.Resources.GetBalance
 {
-    public class GetBalance : RestApi
+    public class GetBalance : LykkePayApi
     {
         private string resource = "/getBalance";
 
-        public override void SetAllureProperties()
+        public IResponse<List<GetGetBalanceResponseModel>> GetGetBalance(string assetId)
         {
-            AllurePropertiesBuilder.Instance.AddPropertyPair("Service", client.BaseUrl.AbsoluteUri + resource);
-        }
-
-        private void SetMerchantHeadersForGetRequest(ref IRestRequest request)
-        {
-            string urlToSign = client.BaseUrl + request.Resource;
+            string urlToSign = BaseURL + resource;
             var merchant = new MerchantModel(urlToSign.Replace("https:", "http:"));
-            request.AddHeader("Lykke-Merchant-Id", merchant.LykkeMerchantId);
-            request.AddHeader("Lykke-Merchant-Sign", merchant.LykkeMerchantSign);
+
+            return Request.Get($"{resource}/{assetId}").
+                WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).
+                WithHeaders("Lykke-Merchant-Sign", merchant.LykkeMerchantSign).Build().Execute<List<GetGetBalanceResponseModel>>();          
         }
 
-        private void SetMerchantHeadersForGetRequest(ref IRestRequest request, AbstractMerchant merchant)
+        public IResponse<List<GetGetBalanceResponseModel>> GetGetBalanceNonEmpty(string assetId)
         {
-            string urlToSign = client.BaseUrl + request.Resource;
+            string urlToSign = BaseURL + resource;
+            var merchant = new MerchantModel(urlToSign.Replace("https:", "http:"));
+
+            return Request.Get($"{resource}/{assetId}/nonempty").
+                WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).
+                WithHeaders("Lykke-Merchant-Sign", merchant.LykkeMerchantSign).Build().Execute<List<GetGetBalanceResponseModel>>();
+        }
+
+        public IResponse<List<GetGetBalanceResponseModel>> GetGetBalance(string assetId, AbstractMerchant merchant)
+        {
+            string urlToSign = BaseURL + resource;
             merchant.Sign(urlToSign.Replace("https:", "http:"));
-            request.AddHeader("Lykke-Merchant-Id", merchant.LykkeMerchantId);
-            request.AddHeader("Lykke-Merchant-Sign", merchant.LykkeMerchantSign);
+
+            return Request.Get($"{resource}/{assetId}").
+                WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).
+                WithHeaders("Lykke-Merchant-Sign", merchant.LykkeMerchantSign).Build().Execute<List<GetGetBalanceResponseModel>>();
         }
 
-        public (IRestResponse Response, List<GetGetBalanceResponseModel> Data) GetGetBalance(string assetId)
+        public IResponse<List<GetGetBalanceResponseModel>> GetGetBalanceNonEmpty(string assetId, AbstractMerchant merchant)
         {
-            IRestRequest request = new RestRequest($"{resource}/{assetId}", Method.GET);
-            SetMerchantHeadersForGetRequest(ref request);
+            string urlToSign = BaseURL + resource;
+            merchant.Sign(urlToSign.Replace("https:", "http:"));
 
-            var response = client.Execute(request);
-            try
-            {
-                var data = JsonConvert.DeserializeObject<List<GetGetBalanceResponseModel>>(response.Content);
-                return (response, data);
-            }
-            catch (JsonReaderException)
-            {
-                return (response, null);
-            }
-        }
-
-        public (IRestResponse Response, List<GetGetBalanceResponseModel> Data) GetGetBalanceNonEmpty(string assetId)
-        {
-            IRestRequest request = new RestRequest($"{resource}/{assetId}/nonempty", Method.GET);
-            SetMerchantHeadersForGetRequest(ref request);
-
-            var response = client.Execute(request);
-            try
-            {
-                var data = JsonConvert.DeserializeObject<List<GetGetBalanceResponseModel>>(response.Content);
-                return (response, data);
-            }
-            catch (JsonReaderException)
-            {
-                return (response, null);
-            }            
-        }
-
-        public (IRestResponse Response, List<GetGetBalanceResponseModel> Data) GetGetBalance(string assetId, AbstractMerchant merchant)
-        {
-            IRestRequest request = new RestRequest($"{resource}/{assetId}", Method.GET);
-            SetMerchantHeadersForGetRequest(ref request, merchant);
-
-            var response = client.Execute(request);
-            var data = JsonConvert.DeserializeObject<List<GetGetBalanceResponseModel>>(response.Content);
-            return (response, data);
-        }
-
-        public (IRestResponse Response, List<GetGetBalanceResponseModel> Data) GetGetBalanceNonEmpty(string assetId, AbstractMerchant merchant)
-        {
-            IRestRequest request = new RestRequest($"{resource}/{assetId}/nonempty", Method.GET);
-            SetMerchantHeadersForGetRequest(ref request, merchant);
-
-            var response = client.Execute(request);
-            var data = JsonConvert.DeserializeObject<List<GetGetBalanceResponseModel>>(response.Content);
-            return (response, data);
+            return Request.Get($"{resource}/{assetId}/nonempty").
+                WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).
+                WithHeaders("Lykke-Merchant-Sign", merchant.LykkeMerchantSign).Build().Execute<List<GetGetBalanceResponseModel>>();
         }
     }
 }

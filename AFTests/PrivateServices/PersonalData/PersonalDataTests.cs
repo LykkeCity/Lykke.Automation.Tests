@@ -21,7 +21,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
             public void BeforeTest()
             {
                 var expectedVersion = Environment.GetEnvironmentVariable("ApiVersion");
-                
+                /*
                 if (expectedVersion != null)
                 {
                     var actual = lykkeApi.PersonalData.GetIsAlive();
@@ -31,7 +31,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                         var oo = TestContext.CurrentContext;
                     }
                         
-                }
+                }*/
             }
         }
 
@@ -48,7 +48,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 var response = lykkeApi.PersonalData.PostPersonalData(client);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "UnExpected status code");
 
-                var test = lykkeApi.PersonalData.GetPersonalDataModel(client.Email);
+                var test = lykkeApi.PersonalData.GetPersonalDataResponseByEmail(client.Email).GetResponseObject();
                 Assert.That(test.Email, Is.EqualTo(client.Email), "Email is not as expected");
             }
         }
@@ -60,7 +60,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
             [Parallelizable]
             public void GetPersonalDataListTest()
             {
-                var list = lykkeApi.PersonalData.GetPersonalDataListModel();
+                var list = lykkeApi.PersonalData.GetPersonalDataListResponse().GetResponseObject();
                 Assert.That(list.Count, Is.GreaterThan(0), "List count is not as expected");
             }
         }
@@ -76,7 +76,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 var response = lykkeApi.PersonalData.PostPersonalData(client);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "UnExpected status code");
 
-                var finded = lykkeApi.PersonalData.GetPersonalDataModelById(client.Id);
+                var finded = lykkeApi.PersonalData.GetPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(client.Email, Is.EqualTo(finded.Email), "Finded email for personal data is  not equal");
                 Assert.That(client.Id, Is.EqualTo(finded.Id), "Finded ID for personal data is  not equal");
                 Assert.That(client.FirstName, Is.EqualTo(finded.FirstName), "Finded First Name for personal data is  not equal");
@@ -93,8 +93,8 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
             [Parallelizable]
             public void GetFullPersonalDataByIdTest()
             {
-                var first = lykkeApi.PersonalData.GetPersonalDataListModel()[0];
-                var finded = lykkeApi.PersonalData.GetFullPersonalDataModelById(first.Id);
+                var first = lykkeApi.PersonalData.GetPersonalDataListResponse().GetResponseObject()[0];
+                var finded = lykkeApi.PersonalData.GetFullPersonalDataById(first.Id).GetResponseObject();
                 Assert.That(first.Email, Is.EqualTo(finded.Email), "Finded email for personal data is  not equal");
                 Assert.That(first.Id, Is.EqualTo(finded.Id), "Finded ID for personal data is  not equal");
                 Assert.That(first.FirstName, Is.EqualTo(finded.FirstName), "Finded First Name for personal data is  not equal");
@@ -115,7 +115,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 var response = lykkeApi.PersonalData.PostPersonalData(client);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "UnExpected status code");
 
-                var finded = lykkeApi.PersonalData.GetProfilePersonalDataModelById(client.Id);
+                var finded = lykkeApi.PersonalData.GetProfilePersonalDataById(client.Id).GetResponseObject();
                 Assert.That(client.Email, Is.EqualTo(finded.Email), "Finded email for personal data is  not equal");
                 Assert.That(client.Address, Is.EqualTo(finded.Address), "Finded ID for personal data is  not equal");
                 Assert.That(client.FirstName, Is.EqualTo(finded.FirstName), "Finded First Name for personal data is  not equal");
@@ -134,10 +134,10 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 var response = lykkeApi.PersonalData.PostPersonalData(client);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "UnExpected status code");
 
-                var findedByEmail = lykkeApi.PersonalData.GetSearchPersonalDataModel(client.Email.Substring(0, client.Email.Length-2));
+                var findedByEmail = lykkeApi.PersonalData.GetSearchPersonalData(client.Email.Substring(0, client.Email.Length-2)).GetResponseObject();
                 Assert.That(client.Id, Is.EqualTo(findedByEmail.Id), "Id are not equals");
 
-                var findedByContactPhone = lykkeApi.PersonalData.GetSearchPersonalDataModel(client.ContactPhone.Substring(0, client.ContactPhone.Length - 2));
+                var findedByContactPhone = lykkeApi.PersonalData.GetSearchPersonalData(client.ContactPhone.Substring(0, client.ContactPhone.Length - 2)).GetResponseObject();
                 Assert.That(client.Id, Is.EqualTo(findedByContactPhone.Id), "ContactPhone are not equals");
             }
         }
@@ -154,14 +154,14 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
             public void PostPersonalDataListTest()
             {
                 
-                var list = lykkeApi.PersonalData.GetPersonalDataListModel();
+                var list = lykkeApi.PersonalData.GetPersonalDataListResponse().GetResponseObject();
                 Random r = new Random();
                 int size = r.Next(1, 15);
                 string[] array = new string[size];
                 for (int i = 0; i < size; i++)
                     array[i] = list[i].Id;
                 
-                var postList = lykkeApi.PersonalData.PostPersonalDataListByIdModel(array);
+                var postList = lykkeApi.PersonalData.PostPersonalDataListById(array).GetResponseObject();
                 Assert.That(postList.Count, Is.EqualTo(size), "Personal Data list size is not as expected");
             }
         }
@@ -175,14 +175,14 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
             public void FullPostPersonalDataListTest()
             {
 
-                var list = lykkeApi.PersonalData.GetPersonalDataListModel();
+                var list = lykkeApi.PersonalData.GetPersonalDataListResponse().GetResponseObject();
                 Random r = new Random();
                 int size = r.Next(1, 15);
                 string[] array = new string[size];
                 for (int i = 0; i < size; i++)
                     array[i] = list[i].Id;
 
-                var postList = lykkeApi.PersonalData.PostFullPersonalDataListByIdModel(array);
+                var postList = lykkeApi.PersonalData.PostFullPersonalDataListById(array).GetResponseObject();
                 Assert.That(postList.Count, Is.EqualTo(size), "Personal Data list size is not as expected");
             }
         }
@@ -200,10 +200,10 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "UnExpected status code");
 
                 var page = new PagingInfoModel(pagesNumber);
-                var pageModel = lykkeApi.PersonalData.PostPageModel(page);
+                var pageModel = lykkeApi.PersonalData.PostPage(page).GetResponseObject();
 
                 var pagedRequestModel = new PagedRequestModel(new List<string>() { pageModel.PagingInfo.NextPage }, pagesNumber);
-                var excludedPageModel = lykkeApi.PersonalData.PostPageExcludeModel(pagedRequestModel);
+                var excludedPageModel = lykkeApi.PersonalData.PostPageExclude(pagedRequestModel).GetResponseObject();
                 Assert.That(excludedPageModel.Result.Count, Is.EqualTo(pagesNumber), "Unexpected result count");
             }
         }
@@ -221,7 +221,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "UnExpected status code");
 
                 var page = new PagingInfoModel(pagesNumber);
-                var pageModel = lykkeApi.PersonalData.PostPageModel(page);
+                var pageModel = lykkeApi.PersonalData.PostPage(page).GetResponseObject();
                 Assert.That(pageModel.Result.Count, Is.EqualTo(pagesNumber), "Unexpected result count");
             }
         }
@@ -239,10 +239,10 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "UnExpected status code");
 
                 var page = new PagingInfoModel(pagesNumber);
-                var pageModel = lykkeApi.PersonalData.PostPageModel(page);
+                var pageModel = lykkeApi.PersonalData.PostPage(page).GetResponseObject();
 
                 var pagedRequestModel = new PagedRequestModel(new List<string>() { client.Id }, pagesNumber);
-                var includedPageModel = lykkeApi.PersonalData.PostPagedIncludedOnlyModel(pagedRequestModel);
+                var includedPageModel = lykkeApi.PersonalData.PostPagedIncludedOnly(pagedRequestModel).GetResponseObject();
                 Assert.That(includedPageModel.Result.Count, Is.EqualTo(1), "Unexpected result count");
                 AreEqualByJson(client.PersonalDataModel(), includedPageModel.Result[0]);
             }
@@ -259,7 +259,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 registrationDates.DateFrom = DateTime.Now.AddMonths(-5).ToUniversalTime().Date;
                 registrationDates.DateTo = DateTime.Now.ToUniversalTime().Date;
 
-                var list = lykkeApi.PersonalData.PostListbyRegistrationDateModel(registrationDates);
+                var list = lykkeApi.PersonalData.PostListbyRegistrationDate(registrationDates).GetResponseObject();
 
                 list.ForEach(l => Assert.That(l.Regitered.Value.Date, Is.LessThanOrEqualTo(registrationDates.DateTo).And.GreaterThanOrEqualTo(registrationDates.DateFrom), "Unexpected registered date"));
             }
@@ -302,11 +302,11 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 client.Email = TestData.GenerateEmail();
                 var cfr = new ChangeFieldRequest(client.Email, client.Id);
-                var actualResponse = lykkeApi.PersonalData.PostPersonalDataChangeEmailModel(cfr);
+                var actualResponse = lykkeApi.PersonalData.PostPersonalDataChangeEmail(cfr).GetResponseObject();
                 
                 Assert.That(actualResponse.ErrorMessage, Is.Null, "Unexpected Error message");
 
-                var actual = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var actual = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(client.Email, Is.EqualTo(actual.Email), "Email has not been changed");
             }
         }
@@ -322,13 +322,13 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 var response = lykkeApi.PersonalData.PostPersonalData(client);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "UnExpected status code");
 
-                var actual = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var actual = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(actual.Avatar, Is.Null, "Avatar is not null");
 
                 var avatarUpload = lykkeApi.PersonalData.PostAddAvatar(client.Id, TestData.AVATAR);
                 Assert.That(avatarUpload.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected Status Code");
 
-                var actualAfterUpload = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var actualAfterUpload = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(actualAfterUpload.Avatar, Is.Not.Null, "Avatar is null"); //fail. bug?
             }
         }
@@ -344,7 +344,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 var response = lykkeApi.PersonalData.PostPersonalData(client);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "UnExpected status code");
 
-                var actual = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var actual = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
 
                 AreEqualByJson(client, actual);
             }
@@ -370,7 +370,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 personalData.Email = TestData.GenerateEmail();
                 var putResponse = lykkeApi.PersonalData.PutPersonalData(personalData);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 AreEqualByJson(personalData, updatedClient);
             }
         }
@@ -392,7 +392,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 var changeRequest = new ChangeFieldRequest(fullName, personalData.Id);
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataFullName(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(fullName, Is.EqualTo(updatedClient.FullName), "Unexpected Full name");
             }
         }
@@ -414,7 +414,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 var changeRequest = new ChangeFieldRequest(firstName, personalData.Id);
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataFirstName(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(firstName, Is.EqualTo(updatedClient.FirstName), "Unexpected First name");
             }
         }
@@ -436,7 +436,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 var changeRequest = new ChangeFieldRequest(lastName, personalData.Id);
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataLastName(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(lastName, Is.EqualTo(updatedClient.LastName), "Unexpected Last name");
             }
         }
@@ -460,7 +460,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataDateOfBirth(changeRequest);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(newDoB, Is.EqualTo(updatedClient.DateOfBirth.Value.ToString("MM/dd/yyyy")), "Unexpected DateOfBirth");
             }
         }
@@ -482,7 +482,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataDateOfExpiryOfId(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(newTime, Is.EqualTo(updatedClient.DateOfExpiryOfID.Value.Date.ToString("MM/dd/yyyy")), "Unexpected DateOfBirth");
             }
         }
@@ -504,7 +504,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataCountry(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(personalData.Country, Is.EqualTo(updatedClient.Country), "Unexpected Country");
             }
         }
@@ -526,7 +526,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataCountryFromId(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(personalData.CountryFromID, Is.EqualTo(updatedClient.CountryFromID), "Unexpected CountryFromID");
             }
         }
@@ -548,7 +548,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataCountryFromPOA(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(personalData.CountryFromPOA, Is.EqualTo(updatedClient.CountryFromPOA), "Unexpected CountryFromPOA");
             }
         }
@@ -570,7 +570,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataCity(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(personalData.City, Is.EqualTo(updatedClient.City), "Unexpected CountryFromPOA");
             }
         }
@@ -592,7 +592,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataZip(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(personalData.Zip, Is.EqualTo(updatedClient.Zip), "Unexpected Zip");
             }
         }
@@ -614,7 +614,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataAddress(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(personalData.Address, Is.EqualTo(updatedClient.Address), "Unexpected Address");
             }
         }
@@ -636,7 +636,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataPhoneNumber(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetPersonalDataModelById(personalData.Id);
+                var updatedClient = lykkeApi.PersonalData.GetPersonalDataById(personalData.Id).GetResponseObject();
                 Assert.That(personalData.ContactPhone, Is.EqualTo(updatedClient.ContactPhone), "Unexpected ContactPhone");
             }
         }
@@ -660,7 +660,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataGeolocation(client.Id, changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(city, Is.EqualTo(updatedClient.City), "Unexpected City");
                 Assert.That(countryCode, Is.EqualTo(updatedClient.Country), "Unexpected Country");
             }
@@ -682,7 +682,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataPasswordHint(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(client.PasswordHint, Is.EqualTo(updatedClient.PasswordHint), "Unexpected PasswordHint");
             }
         }
@@ -703,7 +703,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataRefCode(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(client.ReferralCode, Is.EqualTo(updatedClient.ReferralCode), "Unexpected ReferralCode");
             }
         }
@@ -724,7 +724,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataSpotRegulator(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(client.SpotRegulator, Is.EqualTo(updatedClient.SpotRegulator), "Unexpected SpotRegulator");
             }
         }
@@ -745,7 +745,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataMarginRegulator(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(client.MarginRegulator, Is.EqualTo(updatedClient.MarginRegulator), "Unexpected MarginRegulator");
             }
         }
@@ -766,7 +766,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataPaymentSystem(changeRequest);
 
-                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(client.PaymentSystem, Is.EqualTo(updatedClient.PaymentSystem), "Unexpected PaymentSystem");
             }
         }
@@ -786,7 +786,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
 
                 var putResponse = lykkeApi.PersonalData.PutPersonalDataProfile(updatedProfile);
 
-                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var updatedClient = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
 
                 Assert.That(updatedProfile.Address, Is.EqualTo(updatedClient.Address), "Unexpected Address");
                 Assert.That(updatedProfile.Email, Is.EqualTo(updatedClient.Email), "Unexpected Email");
@@ -830,18 +830,18 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
                 var response = lykkeApi.PersonalData.PostPersonalData(client);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "UnExpected status code");
 
-                var actual = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var actual = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(actual.Avatar, Is.Null, "Avatar is not null");
 
                 var avatarUpload = lykkeApi.PersonalData.PostAddAvatar(client.Id, TestData.AVATAR);
                 Assert.That(avatarUpload.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected Status Code");
 
-                var actualAfterUpload = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var actualAfterUpload = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(actualAfterUpload.Avatar, Is.Not.Null, "Avatar is null"); //fail. bug?
 
                 var deleteAvatar = lykkeApi.PersonalData.DELETEPersonalDataAvatar(client.Id);
 
-                var actualAfterDelete = lykkeApi.PersonalData.GetFullPersonalDataModelById(client.Id);
+                var actualAfterDelete = lykkeApi.PersonalData.GetFullPersonalDataById(client.Id).GetResponseObject();
                 Assert.That(actualAfterDelete.Avatar, Is.Null, "Avatar is not null");
             }
         }

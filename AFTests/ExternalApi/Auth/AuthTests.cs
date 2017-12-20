@@ -30,7 +30,7 @@ namespace LykkeAutomation.Tests.Auth
                 ApiSchemes apiSchemes = new ApiSchemes();
 
                 AccountRegistrationModel newUser = new AccountRegistrationModel();
-                var response = lykkeExternalApi.Registration.PostRegistrationResponse(newUser);
+                var response = lykkeExternalApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
                 Assert.That(response.Error, Is.Null, $"Error message not empty {response.Error?.Message}");
 
                 AuthenticateModel auth = new AuthenticateModel(newUser);

@@ -10,42 +10,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Lykke.Client.AutorestClient.Models;
 using TestsCore.TestsCore;
+using TestsCore.RestRequests.Interfaces;
 
 namespace LykkeAutomation.Api.ApiResources.AccountExist
 {
-    public class AccountExist : ExternalRestApi
+    public class AccountExist : LykkeExternalApi
     {
         private string resource = "/AccountExist";
 
-        public IRestResponse GetAccountExistResponse(string email)
+        public IResponse<AccountExistModel> GetAccountExistResponse(string email)
         {
-            var request = new RestRequest(resource, Method.GET);
-            request.AddQueryParameter("email", email);
-            var response = client.Execute(request);
-            return response;
-        }
-
-        public AccountExistModel GetAccountExistResponseModel(string email) => 
-            JsonConvert.DeserializeObject<AccountExistModel>(GetAccountExistResponse(email)?.Content);         
-
-        public override void SetAllureProperties()
-        {
-            try
-            {
-                var isAlive = GetIsAlive();
-                AllurePropertiesBuilder.Instance.AddPropertyPair("Service", client.BaseUrl.AbsoluteUri + "/api" + resource);
-                AllurePropertiesBuilder.Instance.AddPropertyPair("Environment", isAlive.Env);
-                AllurePropertiesBuilder.Instance.AddPropertyPair("Version", isAlive.Version);
-            }
-            catch (Exception) { }
-        }
-
-        public IsAliveResponse GetIsAlive()
-        {
-            var request = new RestRequest("/IsAlive", Method.GET);
-            var response = client.Execute(request);
-            var isAlive = JsonConvert.DeserializeObject<IsAliveResponse>(response.Content);
-            return isAlive;
+            return Request.Get(resource).AddQueryParameter("email", email).Build().Execute<AccountExistModel>();
         }
     }
 }

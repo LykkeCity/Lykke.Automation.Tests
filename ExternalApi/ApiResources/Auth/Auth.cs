@@ -10,52 +10,26 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using TestsCore.ApiRestClient;
+using TestsCore.RestRequests.Interfaces;
 using TestsCore.TestsCore;
 using static LykkeAutomation.Api.ApiModels.AuthModels.AuthModels;
 
 namespace LykkeAutomation.Api.AuthResource
 {
-    public class Auth : ExternalRestApi
+    public class Auth : LykkeExternalApi
     {
         private const string resource = "/Auth";
         private const string resourceLogOut = "/Auth/LogOut";
 
-        public IRestResponse PostAuthResponse(AuthenticateModel auth)
+        public IResponse<AuthModelResponse> PostAuthResponse(AuthenticateModel auth)
         {
-            var request = new RestRequest(resource, Method.POST);
-            request.AddJsonBody(auth);
-            var response = client.Execute(request);
-            return response;
+            return Request.Post(resource).AddJsonBody(auth).Build().Execute<AuthModelResponse>();
         }
 
-        public AuthModelResponse PostAuthResponseModel(AuthenticateModel auth)
+        public IResponse PostAuthLogOutResponse(AuthenticateModel auth)
         {
-            return JsonConvert.DeserializeObject<AuthModelResponse>(PostAuthResponse(auth)?.Content);
-        }
+            return Request.Post(resourceLogOut).AddJsonBody(auth).Build().Execute();
 
-        public IRestResponse PostAuthLogOutResponse(AuthenticateModel auth)
-        {
-            var request = new RestRequest(resourceLogOut, Method.POST);
-            request.AddJsonBody(auth);
-            var response = client.Execute(request);
-            return response;
-        }
-
-        public override void SetAllureProperties()
-        {
-            var isAlive = GetIsAlive();
-            AllurePropertiesBuilder.Instance.AddPropertyPair("Service", client.BaseUrl.AbsoluteUri + "/api" + resource);
-            AllurePropertiesBuilder.Instance.AddPropertyPair("Environment", isAlive.Env);
-            AllurePropertiesBuilder.Instance.AddPropertyPair("Version", isAlive.Version);
-        }
-
-        public IsAliveResponse GetIsAlive()
-        {
-            var request = new RestRequest("/IsAlive", Method.GET);
-            var response = client.Execute(request);
-            var isAlive = JsonConvert.DeserializeObject<IsAliveResponse>(response.Content);
-            return isAlive;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace LykkePay.Tests
                 MarkupModel markUp = new MarkupModel(50, 30);
 
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRates(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
@@ -40,7 +40,7 @@ namespace LykkePay.Tests
                 var orderRequestJson = JsonConvert.SerializeObject(orderRequest);
                 merchant = new MerchantModel(orderRequestJson);
 
-                var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId);
+                var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId).GetResponseObject();
                 Assert.That(orderResponse.currency, Is.EqualTo(orderRequest.exchangeCurrency), "Unexpected currency in order response");
                 Assert.That(orderResponse.exchangeRate * orderResponse.amount, Is.EqualTo(orderRequest.amount), "Exchange rate * amount in order response not equals to request amount");
             }
@@ -58,7 +58,7 @@ namespace LykkePay.Tests
                 MarkupModel markUp = new MarkupModel(50, 30);
 
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRates(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
@@ -70,11 +70,11 @@ namespace LykkePay.Tests
                 var orderRequestJson = JsonConvert.SerializeObject(orderRequest);
                 merchant = new MerchantModel(orderRequestJson);
 
-                var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId);
+                var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId).GetResponseObject();
                 Assert.That(orderResponse.currency, Is.EqualTo(orderRequest.exchangeCurrency), "Unexpected currency in order response");
                 Assert.That(orderResponse.exchangeRate * orderResponse.amount, Is.EqualTo(orderRequest.amount).Within("0.00000000001"), "Exchange rate * amount in order response not equals to request amount");
 
-                var transfer = new TransferRequestModel() {amount = orderResponse.amount, destinationAddress=orderResponse.address, assetId="BTC", sourceAddress = "n1gDxgVtJmTxaXupcFNd8AeKmdJaihTacx" };
+                var transfer = new TransferRequestModel() {amount = orderResponse.amount + 0.0005m, destinationAddress=orderResponse.address, assetId="BTC", sourceAddress = "n1gDxgVtJmTxaXupcFNd8AeKmdJaihTacx" };
                 var transferJson = JsonConvert.SerializeObject(transfer);
                 var merch = new OrderMerchantModel(transferJson);
                 var convertTransfer = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
@@ -98,7 +98,7 @@ namespace LykkePay.Tests
                 MarkupModel markUp = new MarkupModel(50, 30);
 
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRates(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
@@ -110,7 +110,7 @@ namespace LykkePay.Tests
                 var orderRequestJson = JsonConvert.SerializeObject(orderRequest);
                 merchant = new MerchantModel(orderRequestJson);
 
-                var orderResponse = lykkePayApi.order.PostOrder(merchant, orderRequestJson, postModel.LykkeMerchantSessionId);
+                var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId);
                 Assert.That(orderResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound), "Unexpected status code in case currency not valid");            
             }
         }
@@ -130,7 +130,7 @@ namespace LykkePay.Tests
                 MarkupModel markUp = new MarkupModel(50, 30);
 
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRates(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
@@ -142,7 +142,7 @@ namespace LykkePay.Tests
                 var orderRequestJson = JsonConvert.SerializeObject(orderRequest);
                 merchant = new MerchantModel(orderRequestJson);
 
-                var orderResponse = lykkePayApi.order.PostOrder(merchant, orderRequestJson, postModel.LykkeMerchantSessionId);
+                var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId);
                 Assert.That(orderResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code in case currency is valid");
             }
         }
@@ -159,17 +159,17 @@ namespace LykkePay.Tests
                 MarkupModel markUp = new MarkupModel(50, 30);
 
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRates(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
-                var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
-                Assert.That(postModel.LykkeMerchantSessionId, Is.Not.Null, "LykkeMerchantSessionId not present in response");
+
+                Assert.That(response.GetResponseObject().LykkeMerchantSessionId, Is.Not.Null, "LykkeMerchantSessionId not present in response");
 
                 // order request below
                 var orderRequestJson = "{\"currency\":\"USD\",\"amount\":10.0}";
                 merchant = new MerchantModel(orderRequestJson);
 
-                var orderResponse = lykkePayApi.order.PostOrder(merchant, orderRequestJson, postModel.LykkeMerchantSessionId);
+                var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, response.GetResponseObject().LykkeMerchantSessionId);
                 Assert.That(orderResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
             }
         }
@@ -186,7 +186,7 @@ namespace LykkePay.Tests
                 MarkupModel markUp = new MarkupModel(50, 30);
 
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRates(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
@@ -198,7 +198,7 @@ namespace LykkePay.Tests
                 var orderRequestJson = JsonConvert.SerializeObject(orderRequest);
                 merchant = new MerchantModel(orderRequestJson);
 
-                var orderResponse = lykkePayApi.order.PostOrder(merchant, orderRequestJson, postModel.LykkeMerchantSessionId);
+                var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId);
                 Assert.That(orderResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code in case currency not valid");
             }
         }
@@ -215,7 +215,7 @@ namespace LykkePay.Tests
                 MarkupModel markUp = new MarkupModel(50, 30);
 
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRates(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
@@ -227,7 +227,7 @@ namespace LykkePay.Tests
                 var orderRequestJson = JsonConvert.SerializeObject(orderRequest);
                 merchant = new MerchantModel(orderRequestJson);
 
-                var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId);
+                var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId).GetResponseObject();
                 Assert.That(orderResponse.currency, Is.EqualTo(orderRequest.exchangeCurrency), "Unexpected currency in order response");
                 Assert.That(orderResponse.exchangeRate * orderResponse.amount, Is.EqualTo(orderRequest.amount).Within("0.00000000001"), "Exchange rate * amount in order response not equals to request amount");
 

@@ -66,6 +66,11 @@ namespace TestsCore.RestRequests.RestSharpRequest
             request.AddParameter(name, value, ParameterType.QueryString);
         }
 
+        public void AddObject(object body)
+        {
+            request.AddObject(body);
+        }
+
         public void AddJsonBody(object json)
         {
             JsonBody = json;
@@ -76,6 +81,17 @@ namespace TestsCore.RestRequests.RestSharpRequest
                 string jsonStr = JsonConvert.SerializeObject(JsonBody, settings);
                 request.RequestFormat = DataFormat.Json;
                 request.AddParameter("application/json", jsonStr, "application/json", ParameterType.RequestBody);
+            }
+        }
+
+        public void AddJsonBody(string json)
+        {
+            JsonBody = json;
+
+            if (JsonBody != null)
+            {
+                request.RequestFormat = DataFormat.Json;
+                request.AddParameter("application/json", json, "application/json", ParameterType.RequestBody);
             }
         }
 

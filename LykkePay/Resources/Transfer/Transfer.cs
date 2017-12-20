@@ -1,17 +1,18 @@
-﻿using LykkePay.Models;
+﻿using LykkePay.Api;
+using LykkePay.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TestsCore.ApiRestClient;
+using TestsCore.RestRequests.Interfaces;
 
 namespace LykkePay.Resources.Transfer
 {
-    public class Transfer : RestApi
+    public class Transfer : LykkePayApi
     {
         private string resource = "/transfer";
-
+        /*
         public override void SetAllureProperties()
         {
         }
@@ -43,5 +44,22 @@ namespace LykkePay.Resources.Transfer
 
         public TransferResponseModel PostTransferModel(AbstractMerchant merchant, string requestModel) =>
             JsonConvert.DeserializeObject<TransferResponseModel>(PostTransfer(merchant, requestModel).Content);
+            */
+
+        public IResponse<TransferResponseModel> PostTransferModel(AbstractMerchant merchant, TransferRequestModel requestModel)
+        {
+           return Request.Post(resource).
+                WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).
+                WithHeaders("Lykke-Merchant-Sign", merchant.LykkeMerchantSign).
+                AddJsonBody(requestModel).Build().Execute<TransferResponseModel>();
+        }
+
+        public IResponse<TransferResponseModel> PostTransferModel(AbstractMerchant merchant, string requestModel)
+        {
+            return Request.Post(resource).
+                 WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).
+                 WithHeaders("Lykke-Merchant-Sign", merchant.LykkeMerchantSign).
+                 AddJsonBody(requestModel).Build().Execute<TransferResponseModel>();
+        }
     }
 }

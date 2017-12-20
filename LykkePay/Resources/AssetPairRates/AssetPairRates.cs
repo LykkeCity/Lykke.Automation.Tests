@@ -1,19 +1,20 @@
 ﻿using Lykke.Client.AutorestClient.Models;
+using LykkePay.Api;
 using LykkePay.Models;
 using Newtonsoft.Json;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TestsCore.ApiRestClient;
+using TestsCore.RestRequests.Interfaces;
+using TestsCore.RestRequests.RestSharpRequest;
 using TestsCore.TestsCore;
 
 namespace LykkePay.Resources.AssetPairRates
 {
-    public class AssetPairRates : RestApi
+    public class AssetPairRates : LykkePayApi
     {
         private string resource = "/assetPairRates";
-
+        /*
         public IsAliveResponse GetIsAlive()
         {
             var request = new RestRequest("/IsAlive", Method.GET);
@@ -23,7 +24,7 @@ namespace LykkePay.Resources.AssetPairRates
                 return new IsAliveResponse();
             return isAlive;
         }
-
+        
         public override void SetAllureProperties()
         {
             var isAlive = GetIsAlive();
@@ -31,47 +32,43 @@ namespace LykkePay.Resources.AssetPairRates
             AllurePropertiesBuilder.Instance.AddPropertyPair("Environment", isAlive.Env);
             AllurePropertiesBuilder.Instance.AddPropertyPair("Version", isAlive.Version);
         }
-
-        public IRestResponse GetAssetPairRates(string assetPair)
+        
+        public IResponse<ErrorResponse> DeleteClientAccount(string id)
         {
-            IRestRequest request = new RestRequest($"{resource}/{assetPair}", Method.GET);
-            var respose = client.Execute(request);
-            return respose;
+            return Request.Delete($"/api/ClientAccount/{id}").Build().Execute<ErrorResponse>();
+        }
+        */
+
+        public IResponse<AssetsPaiRatesResponseModel> GetAssetPairRates(string assetPair)
+        {
+            return Request.Get($"{resource}/{assetPair}").Build().Execute<AssetsPaiRatesResponseModel>();
         }
 
-        public AssetsPaiRatesResponseModel GetAssetPairRatesModel(string assetPair) => 
-            JsonConvert.DeserializeObject<AssetsPaiRatesResponseModel>(GetAssetPairRates(assetPair).Content);
-
         #region POST
-        public IRestResponse PostAssetPairRates(string assetPair, MerchantModel merchant, MarkupModel markup)
+        public IResponse<PostAssetsPairRatesModel> PostAssetsPairRates(string assetPair, MerchantModel merchant, MarkupModel markup)
         {
-            IRestRequest request = new RestRequest($"{resource}/{assetPair}", Method.POST);
-            request.AddHeader("Lykke-Merchant-Id", merchant.LykkeMerchantId);
-            request.AddHeader("Lykke-Merchant-Sign", merchant.LykkeMerchantSign);
+            var request = Request.Post($"{resource}/{assetPair}").
+                WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).
+                WithHeaders("Lykke-Merchant-Sign", merchant.LykkeMerchantSign);
             if (markup != null)
             {
                 var body = JsonConvert.SerializeObject(markup, Formatting.Indented);
-                request.AddParameter("application/json", body, ParameterType.RequestBody);
+                request.AddJsonBody(body);
             }
-   
-            var respose = client.Execute(request);
-            return respose;
+
+            return request.Build().Execute<PostAssetsPairRatesModel>();
         }
 
-        public IRestResponse PostAssetPairRatesWithJsonBody(string assetPair, MerchantModel merchant, string body)
+        public IResponse<PostAssetsPairRatesModel> PostAssetsPairRates(string assetPair, MerchantModel merchant, string markup)
         {
-            IRestRequest request = new RestRequest($"{resource}/{assetPair}", Method.POST);
-            request.AddHeader("Lykke-Merchant-Id", merchant.LykkeMerchantId);
-            request.AddHeader("Lykke-Merchant-Sign", merchant.LykkeMerchantSign);
-            if (body != null)
-                request.AddParameter("application/json", body, ParameterType.RequestBody);
+            var request = Request.Post($"{resource}/{assetPair}").
+                WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).
+                WithHeaders("Lykke-Merchant-Sign", merchant.LykkeMerchantSign);
+            if (markup != null)    
+                request.AddJsonBody(markup);
 
-            var respose = client.Execute(request);
-            return respose;
+            return request.Build().Execute<PostAssetsPairRatesModel>();
         }
-
-        public PostAssetsPairRatesModel PostAssetsPairRatesModel(string assetPair, MerchantModel merchant, MarkupModel markup) =>
-            JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(PostAssetPairRates(assetPair, merchant, markup).Content);
         #endregion
     }
 }

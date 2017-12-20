@@ -32,7 +32,7 @@ namespace LykkePay.Tests
 
                 var purchase = lykkePayApi.convertTransfer.PostPurchaseResponse(merchant, convertTransfer);
 
-                Assert.That(purchase.Response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(purchase.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                 //TODO: Check purchase
             }
         }

@@ -27,7 +27,7 @@ namespace LykkePay.Tests
                 var merchant = new MerchantModel(purchaceJson);
                 var purchase = lykkePayApi.purchase.PostPurchaseResponse(merchant, purchaceJson);
 
-                Assert.That(purchase.Response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(purchase.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                 //TODO: Check purchase
             }
         }
@@ -57,7 +57,7 @@ namespace LykkePay.Tests
 
                 var purchase = lykkePayApi.purchase.PostPurchaseResponse(merchant, purchaseModel);
 
-                Assert.That(purchase.Response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(purchase.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                 //TODO: Check purchase
             }
         }
@@ -73,7 +73,7 @@ namespace LykkePay.Tests
                 var assetPair = "BTCUSD";
                 var baseAsset = "USD";
                 decimal amount = 100;
-                var postAssetsPairRates = lykkePayApi.assetPairRates.PostAssetsPairRatesModel(assetPair, merchant, markUp);
+                var postAssetsPairRates = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp).GetResponseObject();
 
                 var purchaseModel = new PostPurchaseModel(address, assetPair, baseAsset, amount)
                 {

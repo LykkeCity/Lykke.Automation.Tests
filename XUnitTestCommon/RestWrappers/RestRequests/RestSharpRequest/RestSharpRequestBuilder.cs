@@ -53,9 +53,10 @@ namespace TestsCore.RestRequests.RestSharpRequest
         #endregion
 
         #region Request
-        public IRequestBuilder WithHeaders()
+        public IRequestBuilder WithHeaders(string name, string value)
         {
-            throw new NotImplementedException();
+            request.AddHeader(name, value);
+            return this;
         }
 
         public IRequestBuilder WithBearerToken(string token)
@@ -65,6 +66,18 @@ namespace TestsCore.RestRequests.RestSharpRequest
         }
 
         public IRequestBuilder AddJsonBody(object json)
+        {
+            request.AddJsonBody(json);
+            return this;
+        }
+
+        public IRequestBuilder AddObject(object body)
+        {
+            request.AddObject(body);
+            return this;
+        }
+
+        public IRequestBuilder AddJsonBody(string json)
         {
             request.AddJsonBody(json);
             return this;

@@ -15,15 +15,23 @@ using System.Net.Http;
 using LykkeAutomationPrivate.Models;
 using System.IO;
 using TestsCore.TestsCore;
-using TestsCore.ApiRestClient;
+using TestsCore.RestRequests.Interfaces;
+using TestsCore.RestRequests;
 
 namespace LykkeAutomationPrivate.Api.PersonalDataResource
 {
-    public class PersonalData : RestApi
+    public class PersonalData
     {
         private const string resource = "/PersonalData";
         private static PersonalDataSettings _settings;
-        
+
+        private static string apiKey { get { return Settings().ApiKey; } set { } }
+        private static string ServiceUri { get { return Settings().ServiceUri; } set { } }
+        private static string ExternalServiceUri { get { return Settings().ServiceExternalUri; } set { } }
+
+        protected IRequestBuilder Request => Requests.For(ExternalServiceUri + "/api");
+
+
         private static PersonalDataSettings Settings()       
         {
             if(_settings == null)
@@ -34,469 +42,262 @@ namespace LykkeAutomationPrivate.Api.PersonalDataResource
             return _settings;
         }
 
-        private static string apiKey { get { return Settings().ApiKey; } set { } }
-        private static string ServiceUri { get { return Settings().ServiceUri; } set { } }
-        private static string ExternalServiceUri { get { return Settings().ServiceExternalUri; } set { } }
-
-        public PersonalData() : base(ExternalServiceUri + "/api")
-        {
-        }
-
-        public override void SetAllureProperties()
-        {
-            var isAlive = GetIsAlive();
-            AllurePropertiesBuilder.Instance.AddPropertyPair("Service", ExternalServiceUri + "/api" + resource);
-            AllurePropertiesBuilder.Instance.AddPropertyPair("Environment", isAlive.Env);
-            AllurePropertiesBuilder.Instance.AddPropertyPair("Version", isAlive.Version);
-        }
-
-        public IsAliveResponse GetIsAlive()
-        {
-            var request = new RestRequest("/IsAlive", Method.GET);
-            var response = client.Execute(request);
-            var isAlive = JsonConvert.DeserializeObject<IsAliveResponse>(response.Content);
-            return isAlive;
-        }
-
         #region GET requests
-        public IRestResponse GetPersonalDataResponseByEmail(string email)
+        public IResponse<PersonalDataModel> GetPersonalDataResponseByEmail(string email)
         {
-            var request = new RestRequest(resource + $"?email={WebUtility.UrlEncode(email)}", Method.GET);
-            request.AddHeader("api-key", apiKey);
-            var response = client.Execute(request);
-            return response;
+            return Request.Get(resource + $"?email={WebUtility.UrlEncode(email)}").WithHeaders("api-key", apiKey).Build().Execute<PersonalDataModel>();
         }
-
-        public PersonalDataModel GetPersonalDataModel(string email) => JsonConvert.DeserializeObject<PersonalDataModel>(GetPersonalDataResponseByEmail(email)?.Content);
-
 
         //list
-        public IRestResponse GetPersonalDataListResponse()
+        public IResponse<List<PersonalDataModel>> GetPersonalDataListResponse()
         {
-            var request = new RestRequest(resource + "/public/list", Method.GET);
-            request.AddHeader("api-key", apiKey);
-
-            var response = client.Execute(request);
-            return response;
+            return Request.Get(resource + "/public/list").WithHeaders("api-key", apiKey).Build().Execute<List<PersonalDataModel>>();
         }
-
-        public List<PersonalDataModel> GetPersonalDataListModel() => JsonConvert.DeserializeObject<List<PersonalDataModel>>(GetPersonalDataListResponse()?.Content);
 
         //personal data by id
-        public IRestResponse GetPersonalDataById(string id)
+        public IResponse<PersonalDataModel> GetPersonalDataById(string id)
         {
-            var request = new RestRequest(resource + $"/{id}", Method.GET);
-            request.AddHeader("api-key", apiKey);
-            var response = client.Execute(request);
-            return response;
+            return Request.Get(resource + $"/{id}").WithHeaders("api-key", apiKey).Build().Execute<PersonalDataModel>();
         }
-
-        public PersonalDataModel GetPersonalDataModelById(string id) => JsonConvert.DeserializeObject<PersonalDataModel>(GetPersonalDataById(id)?.Content);
 
         //full personal
-        public IRestResponse GetFullPersonalDataById(string id)
+        public IResponse<FullPersonalDataModel> GetFullPersonalDataById(string id)
         {
-            var request = new RestRequest(resource + $"/full/{id}", Method.GET);//////////////////////////////////
-            request.AddHeader("api-key", apiKey);
-            var response = client.Execute(request);
-            return response;
+            return Request.Get(resource + $"/full/{id}").WithHeaders("api-key", apiKey).Build().Execute<FullPersonalDataModel>();
         }
-
-        public FullPersonalDataModel GetFullPersonalDataModelById(string id) => JsonConvert.DeserializeObject<FullPersonalDataModel>(GetFullPersonalDataById(id)?.Content);
 
         //profile data
-        public IRestResponse GetProfilePersonalDataById(string id)
+        public IResponse<ProfilePersonalData> GetProfilePersonalDataById(string id)
         {
-            var request = new RestRequest(resource + $"/profile/{id}", Method.GET);
-            request.AddHeader("api-key", apiKey);
-            var response = client.Execute(request);
-            return response;
+            return Request.Get(resource + $"/profile/{id}").WithHeaders("api-key", apiKey).Build().Execute<ProfilePersonalData>();
         }
-
-        public ProfilePersonalData GetProfilePersonalDataModelById(string id) => JsonConvert.DeserializeObject<ProfilePersonalData>(GetProfilePersonalDataById(id)?.Content);
 
         //search
-        public IRestResponse GetSearchPersonalData(string querry)
+        public IResponse<SearchPersonalDataModel> GetSearchPersonalData(string querry)
         {
-            var request = new RestRequest(resource + $"/search?phrase={querry}", Method.GET);
-            request.AddHeader("api-key", apiKey);
-            var response = client.Execute(request);
-            return response;
+            return Request.Get(resource + $"/search?phrase={querry}").WithHeaders("api-key", apiKey).Build().Execute<SearchPersonalDataModel>();
         }
 
-        public SearchPersonalDataModel GetSearchPersonalDataModel(string id) => JsonConvert.DeserializeObject<SearchPersonalDataModel>(GetSearchPersonalData(id)?.Content);
-
         //get document by id
-        public IRestResponse GetDocumentScanById(string id)
+        public IResponse GetDocumentScanById(string id)
         {
-            var request = new RestRequest(resource + $"/documentscan/{id}", Method.GET);
-            request.AddHeader("api-key", apiKey);
-            var response = client.Execute(request);
-            return response;
+            return Request.Get(resource + $"/documentscan/{id}").WithHeaders("api-key", apiKey).Build().Execute();
         }
 
         public string GetDocumentScanByIdModel(string id) => GetDocumentScanById(id)?.Content;
         #endregion
 
         #region Post Requests
-        public IRestResponse PostPersonalDataListById(params string[] id)
+        public IResponse<List<PersonalDataModel>> PostPersonalDataListById(params string[] id)
         {
-            var request = new RestRequest(resource + $"/list", Method.POST);
-            request.AddJsonBody(id);
-            request.AddHeader("api-key", apiKey);
-            var response = client.Execute(request);
-            return response;
+            return Request.Post(resource + $"/list").WithHeaders("api-key", apiKey).AddJsonBody(id).Build().Execute<List<PersonalDataModel>>();
         }
-
-        public List<PersonalDataModel> PostPersonalDataListByIdModel(params string[] id) => JArray.Parse(PostPersonalDataListById(id)?.Content).ToObject<List<PersonalDataModel>>();
 
         //post full list
-        public IRestResponse PostFullPersonalDataListById(params string[] id)
+        public IResponse<List<FullPersonalDataModel>> PostFullPersonalDataListById(params string[] id)
         {
-            var request = new RestRequest(resource + $"/list", Method.POST);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(id);
-            StringContent content = new StringContent(JsonConvert.SerializeObject(id));
-            var response = client.Execute(request);
-            return response;
+            return Request.Post(resource + $"/list").WithHeaders("api-key", apiKey).AddJsonBody(id).Build().Execute<List<FullPersonalDataModel>>();
         }
-
-        public List<FullPersonalDataModel> PostFullPersonalDataListByIdModel(params string[] id) => JArray.Parse(PostFullPersonalDataListById(id)?.Content).ToObject<List<FullPersonalDataModel>>();
 
         //post paged Exclude
-        public IRestResponse PostPageExclude(PagedRequestModel pagedRequest)
+        public IResponse<PagedResultModelPersonalDataModel> PostPageExclude(PagedRequestModel pagedRequest)
         {
-            var request = new RestRequest(resource + $"/list/pagedExclude", Method.POST);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(pagedRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Post(resource + $"/list/pagedExclude").WithHeaders("api-key", apiKey).AddJsonBody(pagedRequest).Build().Execute<PagedResultModelPersonalDataModel>();
         }
-
-        public PagedResultModelPersonalDataModel PostPageExcludeModel(PagedRequestModel pagedRequest) => JsonConvert.DeserializeObject<PagedResultModelPersonalDataModel>(PostPageExclude(pagedRequest)?.Content);
 
         //POST /api/PersonalData/list/paged
-        public IRestResponse PostPage(PagingInfoModel pageInfo)
+        public IResponse<PagedResultModelPersonalDataModel> PostPage(PagingInfoModel pageInfo)
         {
-            var request = new RestRequest(resource + $"/list/paged", Method.POST);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(pageInfo);
-            var response = client.Execute(request);
-            return response;
+            return Request.Post(resource + $"/list/paged").WithHeaders("api-key", apiKey).AddJsonBody(pageInfo).Build().Execute<PagedResultModelPersonalDataModel>();
         }
-
-        public PagedResultModelPersonalDataModel PostPageModel(PagingInfoModel pageInfo) => JsonConvert.DeserializeObject<PagedResultModelPersonalDataModel>(PostPage(pageInfo)?.Content);
 
         //POST /api/PersonalData/list/pagedIncludeOnly
-        public IRestResponse PostPagedIncludedOnly(PagedRequestModel pagedRequest)
+        public IResponse<PagedResultModelPersonalDataModel> PostPagedIncludedOnly(PagedRequestModel pagedRequest)
         {
-            var request = new RestRequest(resource + $"/list/pagedIncludeOnly", Method.POST);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(pagedRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Post(resource + $"/list/pagedIncludeOnly").WithHeaders("api-key", apiKey).AddJsonBody(pagedRequest).Build().Execute<PagedResultModelPersonalDataModel>();
         }
-
-        public PagedResultModelPersonalDataModel PostPagedIncludedOnlyModel(PagedRequestModel pagedRequest) => JsonConvert.DeserializeObject<PagedResultModelPersonalDataModel>(PostPagedIncludedOnly(pagedRequest)?.Content);
 
         //POST /api/PersonalData/list/byRegistrationDate
-        public IRestResponse PostListbyRegistrationDate(RegistrationDatesModel registrationDates)
+        public IResponse<List<FullPersonalDataModel>> PostListbyRegistrationDate(RegistrationDatesModel registrationDates)
         {
-            var request = new RestRequest(resource + $"/list/byRegistrationDate", Method.POST);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(registrationDates);
-            var response = client.Execute(request);
-            return response;
+            return Request.Post(resource + $"/list/pagedIncludeOnly").WithHeaders("api-key", apiKey).AddJsonBody(registrationDates).Build().Execute<List<FullPersonalDataModel>>();        
         }
-
-        public List<FullPersonalDataModel> PostListbyRegistrationDateModel(RegistrationDatesModel registrationDates) => JArray.Parse(PostListbyRegistrationDate(registrationDates)?.Content).ToObject<List<FullPersonalDataModel>>();
-
+        
         //POST /api/PersonalData  Save personal info
         //no result model
-        public IRestResponse PostPersonalData(FullPersonalDataModel fullPersonalDataModel)
+        public IResponse PostPersonalData(FullPersonalDataModel fullPersonalDataModel)
         {
-            var request = new RestRequest(resource, Method.POST);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(fullPersonalDataModel);
-            var response = client.Execute(request);
-            return response;
+            return Request.Post(resource).WithHeaders("api-key", apiKey).AddJsonBody(fullPersonalDataModel).Build().Execute();
         }
 
         //POST /api/PersonalData/{id}/archive Delete item with id provided
         //no result model
-        public IRestResponse PostPersonalDataArchive(ArchiveRequest archiveRequest)
+        public IResponse PostPersonalDataArchive(ArchiveRequest archiveRequest)
         {
-            var request = new RestRequest(resource + $"/{archiveRequest.ClientId}/archive", Method.POST);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(archiveRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Post(resource + $"/{archiveRequest.ClientId}/archive").WithHeaders("api-key", apiKey).AddJsonBody(archiveRequest).Build().Execute();
         }
 
         //POST /api/PersonalData/{id}/email  Changing email
-        public IRestResponse PostPersonalDataChangeEmail(ChangeFieldRequest changeFieldRequest)
+        public IResponse<ChangeFieldResponseModel> PostPersonalDataChangeEmail(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/email", Method.POST);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Post(resource + $"/{changeFieldRequest.ClientId}/email").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute<ChangeFieldResponseModel>();
         }
-
-        public ChangeFieldResponseModel PostPersonalDataChangeEmailModel(ChangeFieldRequest changeFieldRequest) => JsonConvert.DeserializeObject<ChangeFieldResponseModel>(PostPersonalDataChangeEmail(changeFieldRequest)?.Content);
-
+        
         //POST /api/PersonalData/avatar/{id}  Add avatar
-        public IRestResponse PostAddAvatar(string id, string filePath)
+        public IResponse PostAddAvatar(string id, string filePath)
         {
-            var request = new RestRequest(resource + $"/avatar/{id}", Method.POST);
-            request.AddHeader("api-key", apiKey);
+            var request = Request.Post(resource + $"/avatar/{id}").WithHeaders("api-key", apiKey);
             byte[] x = File.ReadAllBytesAsync(filePath).Result;
             var content = new ByteArrayContent(x);
             request.AddObject(content);
-
-            var response = client.Execute(request);
-            return response;
+            return request.Build().Execute();
         }
         #endregion
 
         #region PUT
         //PUT /api/PersonalData Update personal info
-        public IRestResponse PutPersonalData(PersonalDataModel personalDataModel)
+        public IResponse PutPersonalData(PersonalDataModel personalDataModel)
         {
-            var request = new RestRequest(resource, Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(personalDataModel);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource).WithHeaders("api-key", apiKey).AddJsonBody(personalDataModel).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/fullname
-        public IRestResponse PutPersonalDataFullName(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataFullName(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/fullname", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/fullname").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/firstName
-        public IRestResponse PutPersonalDataFirstName(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataFirstName(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/firstName", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            //StringContent content = new StringContent(JsonConvert.SerializeObject(changeFieldRequest));
-            //var response = client.PutAsync(resource + $"/{changeFieldRequest.ClientId}/firstName", content);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/firstName").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/lastName
-        public IRestResponse PutPersonalDataLastName(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataLastName(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/lastName", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/lastName").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/dateOfBirth  Change date of birth (MM/DD/YYYY)
-        public IRestResponse PutPersonalDataDateOfBirth(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataDateOfBirth(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/dateOfBirth", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/dateOfBirth").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/DateOfExpiryOfID  Change date of expiry of ID birth (MM/DD/YYYY)
-        public IRestResponse PutPersonalDataDateOfExpiryOfId(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataDateOfExpiryOfId(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/DateOfExpiryOfID", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/DateOfExpiryOfID").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/country  Change country
-        public IRestResponse PutPersonalDataCountry(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataCountry(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/country", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/country").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/countryFromID  Change country from ID
-        public IRestResponse PutPersonalDataCountryFromId(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataCountryFromId(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/countryFromID", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/countryFromID").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/countryFromPOA  Change country from IP
-        public IRestResponse PutPersonalDataCountryFromPOA(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataCountryFromPOA(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/countryFromPOA", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/countryFromPOA").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/city  Change city
-        public IRestResponse PutPersonalDataCity(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataCity(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/city", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/city").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/zip  Change zip
-        public IRestResponse PutPersonalDataZip(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataZip(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/zip", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/zip").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/address  Change address
-        public IRestResponse PutPersonalDataAddress(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataAddress(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/address", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/address").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/phoneNumber  Change contact phone number
-        public IRestResponse PutPersonalDataPhoneNumber(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataPhoneNumber(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/phoneNumber", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/phoneNumber").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/geolocation  Change geolocation data
-        public IRestResponse PutPersonalDataGeolocation(string id, ChangeGeolocationRequest changeFieldRequest)
+        public IResponse PutPersonalDataGeolocation(string id, ChangeGeolocationRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{id}/geolocation", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{id}/geolocation").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/passwordHint  Change password hint
-        public IRestResponse PutPersonalDataPasswordHint(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataPasswordHint(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/passwordHint", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/passwordHint").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/refCode  Set referral code
-        public IRestResponse PutPersonalDataRefCode(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataRefCode(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/refCode", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/refCode").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/spotRegulator  Change spot regulator
-        public IRestResponse PutPersonalDataSpotRegulator(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataSpotRegulator(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/spotRegulator", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/spotRegulator").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/marginRegulator  Change margin regulator
-        public IRestResponse PutPersonalDataMarginRegulator(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataMarginRegulator(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/marginRegulator", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/marginRegulator").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/{id}/paymentSystem  Change payment system
-        public IRestResponse PutPersonalDataPaymentSystem(ChangeFieldRequest changeFieldRequest)
+        public IResponse PutPersonalDataPaymentSystem(ChangeFieldRequest changeFieldRequest)
         {
-            var request = new RestRequest(resource + $"/{changeFieldRequest.ClientId}/paymentSystem", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(changeFieldRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/{changeFieldRequest.ClientId}/paymentSystem").WithHeaders("api-key", apiKey).AddJsonBody(changeFieldRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/profile  Update profile info
-        public IRestResponse PutPersonalDataProfile(UpdateProfileInfoRequest updateProfileInfoRequest)
+        public IResponse PutPersonalDataProfile(UpdateProfileInfoRequest updateProfileInfoRequest)
         {
-            var request = new RestRequest(resource + $"/profile", Method.PUT);
-            request.AddHeader("api-key", apiKey);
-            request.AddJsonBody(updateProfileInfoRequest);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/profile").WithHeaders("api-key", apiKey).AddJsonBody(updateProfileInfoRequest).Build().Execute();
         }
 
         //PUT /api/PersonalData/documentscan/{id}  Add document scan
-        public IRestResponse PutPersonalDataDocumentScan(string id, string filePath)
+        public IResponse PutPersonalDataDocumentScan(string id, string filePath)
         {
-            var request = new RestRequest(resource + $"/documentscan/{id}", Method.PUT);
-            request.AddHeader("api-key", apiKey);
             byte[] x = File.ReadAllBytesAsync(filePath).Result;
             var content = new ByteArrayContent(x);
 
-            request.AddJsonBody(content);
-            var response = client.Execute(request);
-            return response;
+            return Request.Put(resource + $"/documentscan/{id}").WithHeaders("api-key", apiKey).AddObject(content).Build().Execute();
         }
         #endregion
 
         #region DELETE
 
         //DELETE /api/PersonalData/avatar/{id}  Delete avatar
-        public IRestResponse DELETEPersonalDataAvatar(string id)
+        public IResponse DELETEPersonalDataAvatar(string id)
         {
-            var request = new RestRequest(resource + $"/avatar/{id}", Method.DELETE);
-            request.AddHeader("api-key", apiKey);
-            var response = client.Execute(request);
-            return response;
+            return Request.Delete(resource + $"/avatar/{id}").WithHeaders("api-key", apiKey).Build().Execute();
         }
 
         //DELETE /api/PersonalData/cache  Clears cache
-        public IRestResponse DELETEPersonalDataCache(string id)
+        public IResponse DELETEPersonalDataCache(string id)
         {
-            var request = new RestRequest(resource + $"/cache", Method.DELETE);
-            request.AddHeader("api-key", apiKey);
-            var response = client.Execute(request);
-            return response;
-        }
-
-        
+            return Request.Delete(resource + $"/cache").WithHeaders("api-key", apiKey).Build().Execute();
+        }        
         #endregion
     }
 }

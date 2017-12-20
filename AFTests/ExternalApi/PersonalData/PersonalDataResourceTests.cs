@@ -66,7 +66,7 @@ namespace LykkeAutomation.Tests.PersonalData
             public void PersonalDataValidTokenTest()
             {
                 AccountRegistrationModel user = new AccountRegistrationModel();
-                var registationResponse = lykkeExternalApi.Registration.PostRegistrationResponse(user);
+                var registationResponse = lykkeExternalApi.Registration.PostRegistrationResponse(user).GetResponseObject();
                 Assert.That(registationResponse.Error, Is.Null, "Error is not null");
 
                 var response = lykkeExternalApi.PersonalData.GetPersonalDataResponse(registationResponse.Result.Token);
@@ -77,7 +77,7 @@ namespace LykkeAutomation.Tests.PersonalData
                 bool valid = responseObject.IsValid(apiSchemes.PersonalDataSheme.PersonalDataResponseSchema, out schemesError);
                 ValidateScheme(valid, schemesError);
 
-                var responseModel = lykkeExternalApi.PersonalData.GetPersonalDataModel(registationResponse.Result.Token);
+                var responseModel = lykkeExternalApi.PersonalData.GetPersonalDataResponse(registationResponse.Result.Token).GetResponseObject();
                 Assert.That(responseModel.PersonalData.FullName, Is.EqualTo(user.FullName), "Full Name is not the same");
                 Assert.That(responseModel.PersonalData.Email, Is.EqualTo(user.Email), "Email is not the same");
                 Assert.That(responseModel.PersonalData.Phone, Is.EqualTo(user.ContactPhone), "Phone is not the same");

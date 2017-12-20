@@ -18,7 +18,7 @@ namespace LykkePay.Tests
             public void GetBalanceTest(string asset)
             {
                 var getBalance = lykkePayApi.getBalance.GetGetBalance(asset);
-                Assert.That(getBalance.Response.StatusCode, Is.EqualTo(HttpStatusCode.OK), 
+                Assert.That(getBalance.StatusCode, Is.EqualTo(HttpStatusCode.OK), 
                     "Not 200 code on valid getbalance request");
             }
         }
@@ -31,7 +31,7 @@ namespace LykkePay.Tests
             public void GetBalanceNegativeTest(string asset)
             {
                 var getBalance = lykkePayApi.getBalance.GetGetBalance(asset);
-                Assert.That(getBalance.Response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound),
+                Assert.That(getBalance.StatusCode, Is.EqualTo(HttpStatusCode.NotFound),
                     "Unexpected code on invalid getbalance request");
             }
         }
@@ -45,9 +45,9 @@ namespace LykkePay.Tests
             public void GetBalanceNonEmptyTest(string asset)
             {
                 var getBalanceNE = lykkePayApi.getBalance.GetGetBalanceNonEmpty(asset);
-                Assert.That(getBalanceNE.Response.StatusCode, Is.EqualTo(HttpStatusCode.OK), 
+                Assert.That(getBalanceNE.StatusCode, Is.EqualTo(HttpStatusCode.OK), 
                     "Not 200 code on valid getbalance/nonempty request");
-                Assert.That(getBalanceNE.Data?.Where(w => w.Amount == 0).Count(), Is.EqualTo(0), 
+                Assert.That(getBalanceNE.GetResponseObject()?.Where(w => w.Amount == 0).Count(), Is.EqualTo(0), 
                     "Empty wallets has been returned");
             }
         }
@@ -60,7 +60,7 @@ namespace LykkePay.Tests
             public void GetBalanceNonEmptyNegativeTest(string asset)
             {
                 var getBalanceNE = lykkePayApi.getBalance.GetGetBalanceNonEmpty(asset);
-                Assert.That(getBalanceNE.Response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound),
+                Assert.That(getBalanceNE.StatusCode, Is.EqualTo(HttpStatusCode.NotFound),
                     "Not 404 code on valid getbalance/nonempty request");
             }
         }

@@ -12,12 +12,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TestsCore.RestRequests;
+using TestsCore.RestRequests.Interfaces;
 using TestsCore.ServiceSettings;
 
 namespace LykkePay.Api
 {
     public class LykkePayApi
     {
+        protected static string BaseURL = "https://payapi-test.lykkex.net/api/v1";
+        protected IRequestBuilder Request => Requests.For(BaseURL);
+
         public ServiceSettingsApi settings => new ServiceSettingsApi();
         public AssetPairRates assetPairRates => new AssetPairRates();
         public Purchase purchase => new Purchase();

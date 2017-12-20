@@ -23,18 +23,19 @@ namespace LykkePay.Tests
             public void BeforeTest()
             {
                 var expectedVersion = Environment.GetEnvironmentVariable("ApiVersion");
-
+                /*
                 if (expectedVersion != null)
                 {
                     var actual = lykkePayApi.assetPairRates.GetIsAlive();
                     if (actual.Version != expectedVersion)
                         Assert.Ignore($"actual service version:{actual.Version}  is not as expected: {expectedVersion}");
-                }
+                        
+                }*/
             }
 
             public double ExpectedAsk(double percent, int pips, string assetPair = "BTCUSD")
             {
-                var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRatesModel(assetPair);
+                var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRates(assetPair).GetResponseObject();
 
                 var ask = assetPairRates.ask;
                 var deltaSpread = new Decimal(new AzureUtils(Environment.GetEnvironmentVariable("AzureDeltaSpread"))
@@ -57,7 +58,7 @@ namespace LykkePay.Tests
 
             public double ExpectedBid(double percent, int pips, string assetPair = "BTCUSD")
             {
-                var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRatesModel(assetPair);
+                var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRates(assetPair).GetResponseObject();
 
                 var bid = assetPairRates.bid;
                 var deltaSpread = new Decimal(new AzureUtils(Environment.GetEnvironmentVariable("AzureDeltaSpread"))
@@ -105,7 +106,7 @@ namespace LykkePay.Tests
             public void GetAssetPairValidIdPairTest()
             {
                 string assetPair = "BTCUSD";
-                var response = lykkePayApi.assetPairRates.GetAssetPairRatesModel(assetPair);
+                var response = lykkePayApi.assetPairRates.GetAssetPairRates(assetPair).GetResponseObject();
                 Assert.That(response, Is.Not.Null, "Unexpected response model for valid assetPair");
                 Assert.That(assetPair, Is.EqualTo(response.assetPair), "Unexpected asset Pair");
             }
@@ -153,7 +154,7 @@ namespace LykkePay.Tests
                 string markUp = "{\"markup\": { \"percent\":, \"pips\":}}";
                 var merchant = new MerchantModel(markUp);
 
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest), "Unexpected status code");
                 Assert.That(string.IsNullOrEmpty(response.Content), Is.True);
             }
@@ -169,7 +170,7 @@ namespace LykkePay.Tests
                 
                 string markUp = "{\"markup\": { \"percent\": , \"pips\": }}";
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest), "Unexpected status code");
                 Assert.That(string.IsNullOrEmpty(response.Content), Is.True, "Unexpected response content");
             }
@@ -185,7 +186,7 @@ namespace LykkePay.Tests
                 
                 MarkupModel markUp = null;
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRates(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.UnsupportedMediaType), "Unexpected status code");
                 Assert.That(string.IsNullOrEmpty(response.Content), Is.True, "Unexpected response content");
             }
@@ -206,7 +207,7 @@ namespace LykkePay.Tests
                 var expectedAsk = ExpectedAsk(0f, pips);
                 var expectedBid = ExpectedBid(0f, pips);
 
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest), "Unexpected status code");
                 Assert.That(string.IsNullOrEmpty(response.Content), Is.True);
             }
@@ -225,7 +226,7 @@ namespace LykkePay.Tests
                 var expectedBid = ExpectedBid(0, pips, testAsset);
 
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(testAsset, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(testAsset, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
 
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
@@ -257,7 +258,7 @@ namespace LykkePay.Tests
                 string markUp = $"{{\"markup\": {{\"percent\":{perc} , \"pips\":}}}}";
 
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest), "Unexpected status code");
                 Assert.That(string.IsNullOrEmpty(response.Content), Is.True);
             }
@@ -277,7 +278,7 @@ namespace LykkePay.Tests
                 var expectedAsk = ExpectedAsk(percent, 0, testAsset);
                 var expectedBid = ExpectedBid(percent, 0, testAsset);
 
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(testAsset, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(testAsset, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
 
@@ -314,7 +315,7 @@ namespace LykkePay.Tests
 
                 var merchant = new MerchantModel(markUp);
 
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(testAsset, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(testAsset, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
 
@@ -342,7 +343,7 @@ namespace LykkePay.Tests
 
                 var merchant = new MerchantModel(markUp);
 
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest), "Unexpected status code");              
             }
         }
@@ -364,7 +365,7 @@ namespace LykkePay.Tests
 
                 string markUp = $"{{\"markup\": {{\"percent\":0.0,\"pips\":{p}}}}}";
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(testAsset, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(testAsset, merchant, markUp);
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
@@ -391,7 +392,7 @@ namespace LykkePay.Tests
 
                 string markUp = $"{{\"markup\": {{\"percent\":0.0,\"pips\":{p}}}}}";
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest), "Unexpected status code");
             }
         }
@@ -413,7 +414,7 @@ namespace LykkePay.Tests
 
                 string markUp = $"{{\"markup\": {{\"percent\":{pc}.0,\"pips\":{pips}}}}}";
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(assetPair, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest), "Unexpected status code");
             }
         }
@@ -430,7 +431,7 @@ namespace LykkePay.Tests
                 var expectedBid = ExpectedBid(50.0, 30, testAsset);
 
                 var merchant = new MerchantModel(markUp);
-                var response = lykkePayApi.assetPairRates.PostAssetPairRates(testAsset, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(testAsset, merchant, markUp);
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
@@ -452,7 +453,7 @@ namespace LykkePay.Tests
             [Category("LykkePay")]
             public void PostAssetPairPipsDiffValuesAskRoundingTest(object expectedAsk, object roundedAsk)
             { 
-                var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRatesModel(testAsset);
+                var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRates(testAsset).GetResponseObject();
 
                 var ask = assetPairRates.ask;
                 var deltaSpread = new Decimal(new AzureUtils(Environment.GetEnvironmentVariable("AzureDeltaSpread"))
@@ -468,7 +469,7 @@ namespace LykkePay.Tests
 
                 var merchant = new MerchantModel(markUp);
 
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(testAsset, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(testAsset, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
 
@@ -487,7 +488,7 @@ namespace LykkePay.Tests
             [Category("LykkePay")]
             public void PostAssetPairPipsDiffValuesBidRoundingTest(object expectedBid, object roundedBid)
             {
-                var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRatesModel(testAsset);
+                var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRates(testAsset).GetResponseObject();
 
                 var bid = assetPairRates.bid;
                 var deltaSpread = new Decimal(new AzureUtils(Environment.GetEnvironmentVariable("AzureDeltaSpread"))
@@ -503,7 +504,7 @@ namespace LykkePay.Tests
 
                 var merchant = new MerchantModel(markUp);
 
-                var response = lykkePayApi.assetPairRates.PostAssetPairRatesWithJsonBody(testAsset, merchant, markUp);
+                var response = lykkePayApi.assetPairRates.PostAssetsPairRates(testAsset, merchant, markUp);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
                 var postModel = JsonConvert.DeserializeObject<PostAssetsPairRatesModel>(response.Content);
 

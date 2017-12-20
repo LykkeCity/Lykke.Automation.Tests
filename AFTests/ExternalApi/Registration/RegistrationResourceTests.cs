@@ -26,7 +26,7 @@ namespace LykkeAutomation.Tests.Registration
             public void PostRegistrationPositiveTest()
             {
                 AccountRegistrationModel newUser = new AccountRegistrationModel();
-                var response = lykkeExternalApi.Registration.PostRegistrationResponse(newUser);
+                var response = lykkeExternalApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
                 Assert.That(response.Error, Is.Null, $"Error message not empty {response.Error?.Message}");
                 Assert.That(response.Result.PersonalData.FullName, Is.EqualTo(newUser.FullName), "FullName is not the same");
             }

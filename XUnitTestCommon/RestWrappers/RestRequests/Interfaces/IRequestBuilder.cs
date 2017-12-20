@@ -11,8 +11,10 @@ namespace TestsCore.RestRequests.Interfaces
         IRequestBuilder Delete(string resourse);
         IRequestBuilder Put(string resourse);
 
-        IRequestBuilder WithHeaders();
+        IRequestBuilder WithHeaders(string name, string value);
+        IRequestBuilder AddObject(object body);
         IRequestBuilder AddJsonBody(object json);
+        IRequestBuilder AddJsonBody(string json);
         IRequestBuilder AddQueryParameter(string name, object value);
         IRequestBuilder WithBearerToken(string token);
         //IRequestBuilder WithProxy { get; }
