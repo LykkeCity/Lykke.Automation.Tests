@@ -13,31 +13,7 @@ namespace LykkePay.Resources.AssetPairRates
 {
     public class AssetPairRates : LykkePayApi
     {
-        private string resource = "/assetPairRates";
-        /*
-        public IsAliveResponse GetIsAlive()
-        {
-            var request = new RestRequest("/IsAlive", Method.GET);
-            var response = client.Execute(request);
-            var isAlive = JsonConvert.DeserializeObject<IsAliveResponse>(response.Content);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                return new IsAliveResponse();
-            return isAlive;
-        }
-        
-        public override void SetAllureProperties()
-        {
-            var isAlive = GetIsAlive();
-            AllurePropertiesBuilder.Instance.AddPropertyPair("Service", client.BaseUrl.AbsoluteUri + resource);
-            AllurePropertiesBuilder.Instance.AddPropertyPair("Environment", isAlive.Env);
-            AllurePropertiesBuilder.Instance.AddPropertyPair("Version", isAlive.Version);
-        }
-        
-        public IResponse<ErrorResponse> DeleteClientAccount(string id)
-        {
-            return Request.Delete($"/api/ClientAccount/{id}").Build().Execute<ErrorResponse>();
-        }
-        */
+        private string resource = "/assetPairRates";       
 
         public IResponse<AssetsPaiRatesResponseModel> GetAssetPairRates(string assetPair)
         {

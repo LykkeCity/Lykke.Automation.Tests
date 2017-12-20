@@ -14,13 +14,6 @@ namespace LykkePay.Resources.GenerateAddress
     {
         private string resource = "/generateAddress";
 
-        /*
-        public override void SetAllureProperties()
-        {
-            AllurePropertiesBuilder.Instance.AddPropertyPair("Service", client.BaseUrl.AbsoluteUri + resource);
-        }
-    */
-
         public IResponse<GetGenerateAddressResponseModel> GetGenerateAddress(string id)
         {
             string urlToSign = (BaseURL + $"{resource}/{id}").Replace("https:", "http:");
