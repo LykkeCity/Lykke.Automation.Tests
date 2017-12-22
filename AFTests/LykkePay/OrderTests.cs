@@ -231,7 +231,7 @@ namespace LykkePay.Tests
                 Assert.That(orderResponse.currency, Is.EqualTo(orderRequest.exchangeCurrency), "Unexpected currency in order response");
                 Assert.That(orderResponse.exchangeRate * orderResponse.amount, Is.EqualTo(orderRequest.amount).Within("0.00000000001"), "Exchange rate * amount in order response not equals to request amount");
 
-                var transfer = new TransferRequestModel() { amount = orderResponse.amount/2, destinationAddress = orderResponse.address, assetId = "BTC", sourceAddress = "n1gDxgVtJmTxaXupcFNd8AeKmdJaihTacx" };
+                var transfer = new TransferRequestModel() { amount = orderResponse.amount + 0.000476m/* 0.00051m*/, destinationAddress = orderResponse.address, assetId = "BTC", sourceAddress = "n1gDxgVtJmTxaXupcFNd8AeKmdJaihTacx" };
                 var transferJson = JsonConvert.SerializeObject(transfer);
                 var merch = new OrderMerchantModel(transferJson);
                 var convertTransfer = lykkePayApi.transfer.PostTransferModel(merch, transferJson);

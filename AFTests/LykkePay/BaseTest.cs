@@ -9,15 +9,17 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using LykkePay.Api;
 using XUnitTestCommon.Reports;
+using TestsCore.TestsCore;
 
 namespace LykkePay.Tests
 {
     public class BaseTest
     {
-        public LykkePayApi lykkePayApi;
+        public LykkePayApi lykkePayApi = new LykkePayApi();
+        private Allure2Report allure = new Allure2Report();
 
         #region response info
-       
+
 
         public static void ValidateScheme(bool valid, IList<string> errors)
         {
@@ -42,11 +44,7 @@ namespace LykkePay.Tests
         [SetUp]
         public void SetUp()
         {
-            XUnitTestCommon.Reports.AllureReport.GetInstance().CaseStarted(TestContext.CurrentContext.Test.FullName,
-                TestContext.CurrentContext.Test.Name, "");
-
-            lykkePayApi = new LykkePayApi();
-
+            allure.AllureBeforeTest();
             TestContext.WriteLine("SetUp");
         }
 
@@ -55,47 +53,22 @@ namespace LykkePay.Tests
         public void TearDown()
         {
             Console.WriteLine("TearDown");
-
-            XUnitTestCommon.Reports.AllureReport.GetInstance().CaseFinished(TestContext.CurrentContext.Test.FullName,
-                TestContext.CurrentContext.Result.Outcome.Status);
+            allure.AllureAfterTest();
         }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            XUnitTestCommon.Reports.AllureReport.GetInstance().RunStarted();
+            allure.AllureBeforeAllTestsInClass();
         }
 
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            //XUnitTestCommon.Reports.AllureReport.GetInstance().RunFinished();
+            allure.AllureAfterAllTestsInClass();
         }
 
     #endregion
-
-    #region allure helpers
-
-        public static void Step(string name, Action action)
-        {
-            Exception ex = null;
-            try
-            {
-                XUnitTestCommon.Reports.AllureReport.GetInstance().StepStarted(TestContext.CurrentContext.Test.FullName,
-                    name);
-                Logger.WriteLine($"Step: {name}");
-                action();
-            }catch(Exception e) {
-                ex = e;
-            }
-            finally
-            {
-                XUnitTestCommon.Reports.AllureReport.GetInstance().StepFinished(TestContext.CurrentContext.Test.FullName,
-             TestContext.CurrentContext.Result.Outcome.Status, ex);
-            }
-        }
-        #endregion
-
     }
 }

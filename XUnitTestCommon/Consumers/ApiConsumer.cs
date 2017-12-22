@@ -1,7 +1,10 @@
 ﻿using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using TestsCore.TestsCore;
 using XUnitTestCommon.DTOs;
 
 namespace XUnitTestCommon.Consumers
@@ -69,6 +72,8 @@ namespace XUnitTestCommon.Consumers
 
             var response = await _client.ExecuteAsync(_request);
 
+            Log(response);
+
             return new Response(response.StatusCode, response.Content);
         }
 
@@ -102,6 +107,29 @@ namespace XUnitTestCommon.Consumers
             }
 
             return uriBuilder.Uri;
+        }
+
+        private void Log(IRestResponse response)
+        {
+            var requestBody = response.Request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
+
+            string attachName = $"{response.Request.Method} {response.Request.Resource}";
+            var attachContext = new StringBuilder();
+            attachContext.AppendLine($"Executing {response.Request.Method} {response.ResponseUri}");
+            if (requestBody != null)
+            {
+                attachContext.AppendLine($"Content-Type: {requestBody.ContentType}").AppendLine();
+                attachContext.AppendLine(requestBody.Value.ToString());
+            }
+            attachContext.AppendLine().AppendLine();
+            attachContext.AppendLine($"Response: {response.StatusCode}");
+            if (response.ErrorMessage != null)
+                attachContext.AppendLine(response.ErrorMessage);
+            attachContext.AppendLine(response.Content);
+            //TestLog.WriteLine(attachContext.ToString());
+            Allure2Helper.AttachJson(attachName, attachContext.ToString());
+            //AllureReport.GetInstance().AddAttachment(TestContext.CurrentContext.Test.FullName,
+            // Encoding.UTF8.GetBytes(attachContext.ToString()), attachName, "application/json");
         }
     }
 }

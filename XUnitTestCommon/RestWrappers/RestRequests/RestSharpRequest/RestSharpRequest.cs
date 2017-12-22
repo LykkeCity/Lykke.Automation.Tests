@@ -9,6 +9,7 @@ using LykkeAutomation.TestsCore;
 using System.Linq;
 using NUnit.Framework;
 using TestsCore.TestsCore;
+using XUnitTestCommon.Reports;
 
 namespace TestsCore.RestRequests.RestSharpRequest
 {
@@ -114,8 +115,8 @@ namespace TestsCore.RestRequests.RestSharpRequest
             attachContext.AppendLine(response.Content);
             //TestLog.WriteLine(attachContext.ToString());
             Allure2Helper.AttachJson(attachName, attachContext.ToString());
-           // AllureReport.GetInstance().AddAttachment(TestContext.CurrentContext.Test.FullName,
-           //  Encoding.UTF8.GetBytes(attachContext.ToString()), attachName, "application/json");
+            //AllureReport.GetInstance().AddAttachment(TestContext.CurrentContext.Test.FullName,
+            // Encoding.UTF8.GetBytes(attachContext.ToString()), attachName, "application/json");
         }
     }
 }
