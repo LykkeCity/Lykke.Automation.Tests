@@ -5,18 +5,22 @@ using System.Net;
 using NUnit.Framework;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
 using LykkeAutomationPrivate.DataGenerators;
+using LykkeAutomationPrivate.Resources.ClientAccountResource;
 
 namespace LykkeAutomationPrivate.Tests.ClientAccount
 {
     class WithNewUser : BaseTest
     {
         protected ClientAccountInformation ClientAccount;
+        protected ClientSettings clientSettings;
 
         [OneTimeSetUp]
-        public void CreateClient()
+        public void CreateClientAndApi()
         {
             ClientRegistrationModel clientRegistration = new ClientRegistrationModel().GetTestModel();
             ClientAccount = lykkeApi.ClientAccount.Clients.PostRegister(clientRegistration).GetResponseObject();
+
+            clientSettings = lykkeApi.ClientAccount.ClientSettings;
         }
 
         [OneTimeTearDown]
@@ -37,7 +41,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostAppUsageTest()
         {
-            var postAppUsage = lykkeApi.ClientAccount.ClientSettings.PostAppUsage(new AppUsageModel
+            var postAppUsage = clientSettings.PostAppUsage(new AppUsageModel
             {
                 LastUsedGraphPeriod = graphPeriod,
                 ClientId = ClientAccount.Id
@@ -50,7 +54,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetAppUsageTest()
         {
-            var getAppUsage = lykkeApi.ClientAccount.ClientSettings.GetAppUsage(ClientAccount.Id);
+            var getAppUsage = clientSettings.GetAppUsage(ClientAccount.Id);
             Assert.That(getAppUsage.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getAppUsage.GetResponseObject().LastUsedGraphPeriod,
                 Is.EqualTo(graphPeriod));
@@ -61,26 +65,26 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteAppUsageTest()
         {
-            var deleteGraphPeriod = lykkeApi.ClientAccount.ClientSettings.DeleteAppUsage(ClientAccount.Id);
+            var deleteGraphPeriod = clientSettings.DeleteAppUsage(ClientAccount.Id);
             Assert.That(deleteGraphPeriod.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(lykkeApi.ClientAccount.ClientSettings.GetAppUsage(ClientAccount.Id)
+            Assert.That(clientSettings.GetAppUsage(ClientAccount.Id)
                 .GetResponseObject().LastUsedGraphPeriod, Is.EqualTo(defaultGraphPeriod));
         }
     }
 
     class AssetPairsInvertedTests : WithNewUser
     {
-        string assetPair1 = "BTCUSD", assetPair2 = "BTCEUR";
+        string asset1 = "BTC", asset2 = "USD";
 
         [Test]
         [Order(1)]
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostAssetPairsInvertedTest()
         {
-            var postAssetPairsInverted = lykkeApi.ClientAccount.ClientSettings.PostAssetPairsInverted(
+            var postAssetPairsInverted = clientSettings.PostAssetPairsInverted(
                 new AssetPairsInvertedModel
                 {
-                    InvertedAssetIds = new List<string>() { assetPair1, assetPair2 },
+                    InvertedAssetIds = new List<string>() { asset1, asset2 },
                     ClientId = ClientAccount.Id
                 });
             Assert.That(postAssetPairsInverted.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -91,10 +95,10 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetAssetPairsInvertedTest()
         {
-            var getAssetPairsInverted = lykkeApi.ClientAccount.ClientSettings.GetAssetPairsInverted(ClientAccount.Id);
+            var getAssetPairsInverted = clientSettings.GetAssetPairsInverted(ClientAccount.Id);
             Assert.That(getAssetPairsInverted.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getAssetPairsInverted.GetResponseObject().InvertedAssetIds,
-                Has.Count.EqualTo(2).And.Contain(assetPair1).And.Contain(assetPair2));
+                Has.Count.EqualTo(2).And.Contain(asset1).And.Contain(asset2));
         }
 
         [Test]
@@ -102,26 +106,26 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteAssetPairsInvertedTest()
         {
-            var deleteAssetPairsInverted = lykkeApi.ClientAccount.ClientSettings.DeleteAssetPairsInverted(ClientAccount.Id);
+            var deleteAssetPairsInverted = clientSettings.DeleteAssetPairsInverted(ClientAccount.Id);
             Assert.That(deleteAssetPairsInverted.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(lykkeApi.ClientAccount.ClientSettings.GetAssetPairsInverted(ClientAccount.Id)
+            Assert.That(clientSettings.GetAssetPairsInverted(ClientAccount.Id)
                 .GetResponseObject().InvertedAssetIds, Is.Empty);
         }
     }
 
     class LastBaseAssetsIosTests : WithNewUser
     {
-        string assetPair1 = "BTCUSD", assetPair2 = "BTCEUR";
+        string asset1 = "BTC", asset2 = "USD";
 
         [Test]
         [Order(1)]
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostLastBaseAssetsIosTest()
         {
-            var postLastBaseAssetsIos = lykkeApi.ClientAccount.ClientSettings.PostLastBaseAssetsIos(
+            var postLastBaseAssetsIos = clientSettings.PostLastBaseAssetsIos(
                 new LastBaseAssetsIosModel()
                 {
-                    BaseAssets = new List<string>() { assetPair1, assetPair2},
+                    BaseAssets = new List<string>() { asset1, asset2},
                     ClientId = ClientAccount.Id
                 });
             Assert.That(postLastBaseAssetsIos.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -132,10 +136,10 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetLastBaseAssetsIosTest()
         {
-            var getLastBaseAssetsIos = lykkeApi.ClientAccount.ClientSettings.GetLastBaseAssetsIos(ClientAccount.Id);
+            var getLastBaseAssetsIos = clientSettings.GetLastBaseAssetsIos(ClientAccount.Id);
             Assert.That(getLastBaseAssetsIos.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getLastBaseAssetsIos.GetResponseObject().BaseAssets,
-                Has.Count.EqualTo(2).And.Contain(assetPair1).And.Contain(assetPair2));
+                Has.Count.EqualTo(2).And.Contain(asset1).And.Contain(asset2));
         }
 
         [Test]
@@ -143,26 +147,26 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteLastBaseAssetsIosTest()
         {
-            var deleteLastBaseAssetsIos = lykkeApi.ClientAccount.ClientSettings.DeleteLastBaseAssetsIos(ClientAccount.Id);
+            var deleteLastBaseAssetsIos = clientSettings.DeleteLastBaseAssetsIos(ClientAccount.Id);
             Assert.That(deleteLastBaseAssetsIos.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(lykkeApi.ClientAccount.ClientSettings.GetLastBaseAssetsIos(ClientAccount.Id)
+            Assert.That(clientSettings.GetLastBaseAssetsIos(ClientAccount.Id)
                 .GetResponseObject().BaseAssets, Is.Empty);
         }
     }
 
     class LastBaseAssetsOtherTests : WithNewUser
     {
-        string assetPair1 = "BTCUSD", assetPair2 = "BTCEUR";
+        string asset1 = "USD", asset2 = "BTC";
 
         [Test]
         [Order(1)]
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostLastBaseAssetsOtherTest()
         {
-            var postLastBaseAssetsOther = lykkeApi.ClientAccount.ClientSettings.PostLastBaseAssetsOther(
+            var postLastBaseAssetsOther = clientSettings.PostLastBaseAssetsOther(
                 new LastBaseAssetsOtherModel()
                 {
-                    BaseAssets = new List<string>() { assetPair1, assetPair2 },
+                    BaseAssets = new List<string>() { asset1, asset2 },
                     ClientId = ClientAccount.Id
                 });
             Assert.That(postLastBaseAssetsOther.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -173,10 +177,10 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetLastBaseAssetsOtherTest()
         {
-            var getLastBaseAssetsOther = lykkeApi.ClientAccount.ClientSettings.GetLastBaseAssetsOther(ClientAccount.Id);
+            var getLastBaseAssetsOther = clientSettings.GetLastBaseAssetsOther(ClientAccount.Id);
             Assert.That(getLastBaseAssetsOther.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getLastBaseAssetsOther.GetResponseObject().BaseAssets,
-                Has.Count.EqualTo(2).And.Contain(assetPair1).And.Contain(assetPair2));
+                Has.Count.EqualTo(2).And.Contain(asset1).And.Contain(asset2));
         }
 
         [Test]
@@ -184,9 +188,9 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteLastBaseAssetsOtherTest()
         {
-            var deleteLastBaseAssetsOther = lykkeApi.ClientAccount.ClientSettings.DeleteLastBaseAssetsOther(ClientAccount.Id);
+            var deleteLastBaseAssetsOther = clientSettings.DeleteLastBaseAssetsOther(ClientAccount.Id);
             Assert.That(deleteLastBaseAssetsOther.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(lykkeApi.ClientAccount.ClientSettings.GetLastBaseAssetsOther(ClientAccount.Id)
+            Assert.That(clientSettings.GetLastBaseAssetsOther(ClientAccount.Id)
                 .GetResponseObject().BaseAssets, Is.Empty);
         }
     }
@@ -202,7 +206,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostRefundAddressTest()
         {
-            var postRefundAddress = lykkeApi.ClientAccount.ClientSettings.PostRefundAddress(
+            var postRefundAddress = clientSettings.PostRefundAddress(
                 new RefundAddressModel()
                 {
                     Address = address,
@@ -218,7 +222,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetRefundAddressTest()
         {
-            var getRefundAddress = lykkeApi.ClientAccount.ClientSettings.GetRefundAddress(ClientAccount.Id);
+            var getRefundAddress = clientSettings.GetRefundAddress(ClientAccount.Id);
             Assert.That(getRefundAddress.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             var refundAddressSettings = getRefundAddress.GetResponseObject();
             Assert.Multiple(() =>
@@ -234,9 +238,9 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteRefundAddressTest()
         {
-            var deleteRefundAddress = lykkeApi.ClientAccount.ClientSettings.DeleteRefundAddress(ClientAccount.Id);
+            var deleteRefundAddress = clientSettings.DeleteRefundAddress(ClientAccount.Id);
             Assert.That(deleteRefundAddress.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(lykkeApi.ClientAccount.ClientSettings.GetRefundAddress(ClientAccount.Id)
+            Assert.That(clientSettings.GetRefundAddress(ClientAccount.Id)
                 .GetResponseObject().Address, Is.Empty);
         }
     }
@@ -251,7 +255,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostPushNotificationTest()
         {
-            var postPushNotification = lykkeApi.ClientAccount.ClientSettings.PostPushNotification(
+            var postPushNotification = clientSettings.PostPushNotification(
                 new PushNotificationModel()
                 {
                     Enabled = enabled,
@@ -265,7 +269,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetPushNotification()
         {
-            var getPushNotification = lykkeApi.ClientAccount.ClientSettings.GetPushNotification(ClientAccount.Id);
+            var getPushNotification = clientSettings.GetPushNotification(ClientAccount.Id);
             Assert.That(getPushNotification.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getPushNotification.GetResponseObject().Enabled, Is.EqualTo(enabled));
         }
@@ -275,9 +279,9 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeletePushNotification()
         {
-            var deletePushNotification = lykkeApi.ClientAccount.ClientSettings.DeletePushNotification(ClientAccount.Id);
+            var deletePushNotification = clientSettings.DeletePushNotification(ClientAccount.Id);
             Assert.That(deletePushNotification.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(lykkeApi.ClientAccount.ClientSettings.GetPushNotification(ClientAccount.Id)
+            Assert.That(clientSettings.GetPushNotification(ClientAccount.Id)
                 .GetResponseObject().Enabled, Is.EqualTo(defaultEnabled));
         }
     }
@@ -291,7 +295,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostMyLykkeTest()
         {
-            var postMyLykke = lykkeApi.ClientAccount.ClientSettings.PostMyLykke(new MyLykkeModel()
+            var postMyLykke = clientSettings.PostMyLykke(new MyLykkeModel()
             {
                 MyLykkeEnabled = myLykkeEnabled,
                 ClientId = ClientAccount.Id
@@ -304,7 +308,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetMyLykkeTest()
         {
-            var getMyLykke = lykkeApi.ClientAccount.ClientSettings.GetMyLykke(ClientAccount.Id);
+            var getMyLykke = clientSettings.GetMyLykke(ClientAccount.Id);
             Assert.That(getMyLykke.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getMyLykke.GetResponseObject().MyLykkeEnabled, Is.EqualTo(myLykkeEnabled));
         }
@@ -314,10 +318,266 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteMyLykkeTest()
         {
-            var deleteMyLykke = lykkeApi.ClientAccount.ClientSettings.DeleteMyLykke(ClientAccount.Id);
+            var deleteMyLykke = clientSettings.DeleteMyLykke(ClientAccount.Id);
             Assert.That(deleteMyLykke.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(lykkeApi.ClientAccount.ClientSettings.GetMyLykke(ClientAccount.Id)
+            Assert.That(clientSettings.GetMyLykke(ClientAccount.Id)
                 .GetResponseObject().MyLykkeEnabled, Is.Null);
+        }
+    }
+
+    class BackupTest: WithNewUser
+    {
+        bool backupDone = true;
+        bool defaultBackupDone = false;
+
+        [Test]
+        [Order(1)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostBackupTest()
+        {
+            var postBackup = clientSettings.PostBackup(new BackupModel()
+            {
+                BackupDone = backupDone,
+                ClientId = ClientAccount.Id
+            });
+            Assert.That(postBackup.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
+        [Order(2)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetBackupTest()
+        {
+            var getBackup = clientSettings.GetBackup(ClientAccount.Id);
+            Assert.That(getBackup.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getBackup.GetResponseObject().BackupDone, Is.EqualTo(backupDone));
+        }
+
+        [Test]
+        [Order(3)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeleteBackupTest()
+        {
+            var deleteBackup = clientSettings.DeleteBackup(ClientAccount.Id);
+            Assert.That(deleteBackup.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(clientSettings.GetBackup(ClientAccount.Id)
+                .GetResponseObject().BackupDone, Is.EqualTo(defaultBackupDone));
+        }
+    }
+
+    class SmsTest : WithNewUser
+    {
+        bool useAlternativeProvider = true;
+        bool defaultUeAlternativeProvider = false;
+
+        [Test]
+        [Order(1)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostSmsTest()
+        {
+            var postSms = clientSettings.PostSms(new SmsModel()
+            {
+                UseAlternativeProvider = useAlternativeProvider,
+                ClientId = ClientAccount.Id
+            });
+            Assert.That(postSms.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
+        [Order(2)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetSmsTest()
+        {
+            var getSms = clientSettings.GetSms(ClientAccount.Id);
+            Assert.That(getSms.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getSms.GetResponseObject().UseAlternativeProvider, Is.EqualTo(useAlternativeProvider));
+        }
+
+        [Test]
+        [Order(3)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeleteSmsTest()
+        {
+            var deleteSms = clientSettings.DeleteSms(ClientAccount.Id);
+            Assert.That(deleteSms.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(clientSettings.GetSms(ClientAccount.Id)
+                .GetResponseObject().UseAlternativeProvider, Is.EqualTo(defaultUeAlternativeProvider));
+        }
+    }
+
+    class HashedPwd : WithNewUser
+    {
+        bool isPwdHashed = true;
+        bool defaultIsPwdHashed = false;
+
+        [Test]
+        [Order(1)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostHashedPwdTest()
+        {
+            var postHashedPwd = clientSettings.PostHashedPwd(new HashedPwdModel()
+            {
+                IsPwdHashed = isPwdHashed,
+                ClientId = ClientAccount.Id
+            });
+            Assert.That(postHashedPwd.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
+        [Order(2)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetHashedPwdTest()
+        {
+            var getHashedPwd = clientSettings.GetHashedPwd(ClientAccount.Id);
+            Assert.That(getHashedPwd.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getHashedPwd.GetResponseObject().IsPwdHashed, Is.EqualTo(isPwdHashed));
+        }
+
+        [Test]
+        [Order(3)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeleteHashedPwdTest()
+        {
+            var deleteHashedPwd = clientSettings.DeleteHashedPwd(ClientAccount.Id);
+            Assert.That(deleteHashedPwd.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(clientSettings.GetHashedPwd(ClientAccount.Id)
+                .GetResponseObject().IsPwdHashed, Is.EqualTo(defaultIsPwdHashed));
+        }
+    }
+
+    class CashOutBlockTest : WithNewUser
+    {
+        bool cashOutBlocked = true;
+        bool defaultCashOutBlocked = false;
+        bool tradesBlocked = true;
+        bool defaultTradesBlocked = false;
+
+        [Test]
+        [Order(1)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostCashOutBlockTest()
+        {
+            var postCashOutBlock = clientSettings.PostCashOutBlock(new CashOutBlockModel()
+            {
+                CashOutBlocked = cashOutBlocked,
+                TradesBlocked = tradesBlocked,
+                ClientId = ClientAccount.Id
+            });
+            Assert.That(postCashOutBlock.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
+        [Order(2)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetCashOutBlockTest()
+        {
+            var getCashOutBlock = clientSettings.GetCashOutBlock(ClientAccount.Id);
+            Assert.That(getCashOutBlock.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getCashOutBlock.GetResponseObject().CashOutBlocked, Is.EqualTo(cashOutBlocked));
+            Assert.That(getCashOutBlock.GetResponseObject().TradesBlocked, Is.EqualTo(tradesBlocked));
+        }
+
+        [Test]
+        [Order(3)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeleteCashOutBlockTest()
+        {
+            var deleteCashOutBLock = clientSettings.DeleteCashOutBlock(ClientAccount.Id);
+            Assert.That(deleteCashOutBLock.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var getCashOutBlock = clientSettings.GetCashOutBlock(ClientAccount.Id);
+            Assert.That(getCashOutBlock.GetResponseObject().CashOutBlocked, Is.EqualTo(defaultCashOutBlocked));
+            Assert.That(getCashOutBlock.GetResponseObject().TradesBlocked, Is.EqualTo(defaultTradesBlocked));
+        }
+    }
+
+    class MarginEnabledTest : WithNewUser
+    {
+        bool enabled = false;
+        bool defaultEnabled = true;
+        bool enabledLive = true;
+        bool defaultEnadledLive = false;
+        bool termsOfUseAgreed = true;
+        bool defaultTermsOfUseAgreed = false;
+
+        [Test]
+        [Order(1)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostMarginEnabledTest()
+        {
+            var postMarginEnabled = clientSettings.PostMarginEnabled(new MarginEnabledModel()
+            {
+                Enabled = enabled,
+                EnabledLive = enabledLive,
+                TermsOfUseAgreed = termsOfUseAgreed,
+                ClientId = ClientAccount.Id
+            });
+            Assert.That(postMarginEnabled.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
+        [Order(2)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetMarginEnabledTest()
+        {
+            var getMarginEnabled = clientSettings.GetMarginEnabled(ClientAccount.Id);
+            Assert.That(getMarginEnabled.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var marginEnabled = getMarginEnabled.GetResponseObject();
+            Assert.That(marginEnabled.Enabled, Is.EqualTo(enabled));
+            Assert.That(marginEnabled.EnabledLive, Is.EqualTo(enabledLive));
+            Assert.That(marginEnabled.TermsOfUseAgreed, Is.EqualTo(termsOfUseAgreed));
+        }
+
+        [Test]
+        [Order(3)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeleteMarginEnabledTest()
+        {
+            var deleteMarginEnabled = clientSettings.DeleteMarginEnabled(ClientAccount.Id);
+            Assert.That(deleteMarginEnabled.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var marginEnabled = clientSettings.GetMarginEnabled(ClientAccount.Id).GetResponseObject();
+            Assert.That(marginEnabled.Enabled, Is.EqualTo(defaultEnabled));
+            Assert.That(marginEnabled.EnabledLive, Is.EqualTo(defaultEnadledLive));
+            Assert.That(marginEnabled.TermsOfUseAgreed, Is.EqualTo(defaultTermsOfUseAgreed));
+        }
+    }
+
+    class IsUsaUserTest : WithNewUser
+    {
+        bool isUsaUser = true;
+        bool defaultIsUsaUser = false;
+
+        [Test]
+        [Order(1)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostIsUsaUserTest()
+        {
+            var postIsUsaUser = clientSettings.PostIsUsaUser(new IsUsaUserModel()
+            {
+                IsUSA = isUsaUser,
+                ClientId = ClientAccount.Id
+            });
+            Assert.That(postIsUsaUser.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
+        [Order(2)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetIsUsaUserTest()
+        {
+            var getIsUsaUser = clientSettings.GetIsUsaUser(ClientAccount.Id);
+            Assert.That(getIsUsaUser.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getIsUsaUser.GetResponseObject().IsUSA, Is.EqualTo(isUsaUser));
+        }
+
+        [Test]
+        [Order(3)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeleteIsUsaUserTest()
+        {
+            var deleteIsUsaUser = clientSettings.DeleteIsUsaUser(ClientAccount.Id);
+            Assert.That(deleteIsUsaUser.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(clientSettings.GetIsUsaUser(ClientAccount.Id)
+                .GetResponseObject().IsUSA, Is.EqualTo(defaultIsUsaUser));
         }
     }
 }
