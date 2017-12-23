@@ -1,16 +1,15 @@
 ﻿using Lykke.Client.AutorestClient.Models;
 using LykkeAutomation.TestsCore;
 using LykkeAutomationPrivate.Models;
-using LykkeAutomationPrivate.Tests;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
-using TestsCore.TestsData;
-using static LykkeAutomationPrivate.Tests.Helpers;
+using XUnitTestCommon.TestsData;
+using static AFTests.PrivateApiTests.Helpers;
 
-namespace LykkeAutomationPrivate.Tests.PersonalData
+namespace AFTests.PrivateApiTests
 {
     public class PersonalDataTests
     {

@@ -11,8 +11,8 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using TestsCore.RestRequests.Interfaces;
-using TestsCore.TestsCore;
+using XUnitTestCommon.RestRequests.Interfaces;
+using XUnitTestCommon.TestsCore;
 
 namespace LykkeAutomation.Api.PersonalDataResource
 {

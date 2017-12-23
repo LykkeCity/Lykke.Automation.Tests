@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 
-namespace LykkeAutomationPrivate.Tests.ClientAccount
+namespace AFTests.PrivateApiTests
 {
     class IsAlive : PrivateApiBaseTest
     {

@@ -5,7 +5,7 @@ using System.Net;
 using NUnit.Framework;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
 
-namespace LykkeAutomationPrivate.Tests.ClientAccount
+namespace AFTests.PrivateApiTests
 {
     class IsAliveService : PrivateApiBaseTest
     {

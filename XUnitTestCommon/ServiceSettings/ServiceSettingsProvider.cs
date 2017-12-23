@@ -4,10 +4,9 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TestsCore.RestRequests;
-using TestsCore.TestsCore;
+using XUnitTestCommon.RestRequests;
 
-namespace TestsCore.ServiceSettings
+namespace XUnitTestCommon.ServiceSettings
 {
     public class ServiceSettingsProvider
     {

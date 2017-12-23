@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using LykkeAutomationPrivate.Models.Registration.Models;
-using TestsCore.RestRequests;
+using XUnitTestCommon.RestRequests;
 
 namespace LykkeAutomationPrivate.Resources.RegistrationResourse
 {

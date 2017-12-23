@@ -7,7 +7,7 @@ using System.Text;
 using System.Net;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
 
-namespace LykkeAutomationPrivate.Tests.ClientAccount
+namespace AFTests.PrivateApiTests
 {
     class AccountExistResourseTests : PrivateApiBaseTest
     {

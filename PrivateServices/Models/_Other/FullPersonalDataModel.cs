@@ -9,7 +9,7 @@ namespace Lykke.Client.AutorestClient.Models
     using Newtonsoft.Json;
     using System;
     using System.Linq;
-    using TestsCore.TestsData;
+    using XUnitTestCommon.TestsData;
 
     public partial class FullPersonalDataModel
     {

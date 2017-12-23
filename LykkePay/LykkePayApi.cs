@@ -12,9 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TestsCore.RestRequests;
-using TestsCore.RestRequests.Interfaces;
-using TestsCore.ServiceSettings;
+using XUnitTestCommon.RestRequests;
+using XUnitTestCommon.RestRequests.Interfaces;
+using XUnitTestCommon.ServiceSettings;
 
 namespace LykkePay.Api
 {

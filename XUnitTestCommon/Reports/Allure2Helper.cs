@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 
-namespace TestsCore.TestsCore
+namespace XUnitTestCommon.TestsCore
 {
     public static class Allure2Helper
     {

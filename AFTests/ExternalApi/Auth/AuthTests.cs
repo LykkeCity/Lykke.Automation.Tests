@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using XUnitTestCommon.Tests;
 using static LykkeAutomation.Api.ApiModels.AuthModels.AuthModels;
 
-namespace LykkeAutomation.Tests.Auth
+namespace AFTests.ExternalApiTests
 {
     class AuthTests
     {

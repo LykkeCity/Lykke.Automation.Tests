@@ -10,8 +10,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using TestsCore.RestRequests.Interfaces;
-using TestsCore.TestsCore;
+using XUnitTestCommon.RestRequests.Interfaces;
+using XUnitTestCommon.TestsCore;
 using static LykkeAutomation.Api.ApiModels.AuthModels.AuthModels;
 
 namespace LykkeAutomation.Api.AuthResource

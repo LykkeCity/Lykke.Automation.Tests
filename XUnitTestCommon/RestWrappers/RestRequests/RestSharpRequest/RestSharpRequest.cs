@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 using RestSharp;
-using TestsCore.RestRequests.Interfaces;
+using XUnitTestCommon.RestRequests.Interfaces;
 using System.Net;
 using Newtonsoft.Json;
 using LykkeAutomation.TestsCore;
 using System.Linq;
 using NUnit.Framework;
-using TestsCore.TestsCore;
+using XUnitTestCommon.TestsCore;
 using XUnitTestCommon.Reports;
 
-namespace TestsCore.RestRequests.RestSharpRequest
+namespace XUnitTestCommon.RestRequests.RestSharpRequest
 {
     public class RestSharpRequest : IRequest
     {

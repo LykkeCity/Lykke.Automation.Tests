@@ -1,7 +1,7 @@
 ﻿using LykkeAutomationPrivate.Api;
 using XUnitTestCommon.Tests;
 
-namespace LykkeAutomationPrivate.Tests
+namespace AFTests.PrivateApiTests
 {
     public class PrivateApiBaseTest : BaseTest
     {

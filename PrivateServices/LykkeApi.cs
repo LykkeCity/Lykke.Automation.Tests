@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TestsCore.ServiceSettings;
+using XUnitTestCommon.ServiceSettings;
 using LykkeAutomationPrivate.Resources.RegistrationResourse;
 using LykkeAutomationPrivate.Resources.ClientAccountResource;
 

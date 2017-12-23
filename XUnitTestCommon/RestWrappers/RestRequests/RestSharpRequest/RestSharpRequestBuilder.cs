@@ -3,13 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
-using TestsCore.RestRequests.Interfaces;
+using XUnitTestCommon.RestRequests.Interfaces;
 using Newtonsoft.Json;
 using System.Linq;
 using LykkeAutomation.TestsCore;
 using NUnit.Framework;
 
-namespace TestsCore.RestRequests.RestSharpRequest
+namespace XUnitTestCommon.RestRequests.RestSharpRequest
 {
     public class RestSharpRequestBuilder : IRequestBuilder
     {

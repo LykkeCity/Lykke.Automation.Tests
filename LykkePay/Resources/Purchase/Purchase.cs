@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TestsCore.RestRequests.Interfaces;
-using TestsCore.TestsCore;
+using XUnitTestCommon.RestRequests.Interfaces;
+using XUnitTestCommon.TestsCore;
 
 namespace LykkePay.Resources.Purchase
 {

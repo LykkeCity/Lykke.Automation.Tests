@@ -8,7 +8,7 @@ using System.Text;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
 using System.Linq;
 
-namespace LykkeAutomationPrivate.Tests.ClientAccount
+namespace AFTests.PrivateApiTests
 {
     class PutClientBan : PrivateApiBaseTest
     {

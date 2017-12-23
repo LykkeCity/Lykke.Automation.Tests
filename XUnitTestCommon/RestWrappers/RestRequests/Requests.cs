@@ -1,7 +1,7 @@
-﻿using TestsCore.RestRequests.Interfaces;
-using TestsCore.RestRequests.RestSharpRequest;
+﻿using XUnitTestCommon.RestRequests.Interfaces;
+using XUnitTestCommon.RestRequests.RestSharpRequest;
 
-namespace TestsCore.RestRequests
+namespace XUnitTestCommon.RestRequests
 {
     public static class Requests
     {

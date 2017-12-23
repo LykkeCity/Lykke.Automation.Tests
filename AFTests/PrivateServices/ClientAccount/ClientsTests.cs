@@ -7,7 +7,7 @@ using LykkeAutomationPrivate.Models.ClientAccount.Models;
 using LykkeAutomationPrivate.DataGenerators;
 using LykkeAutomationPrivate.Validators;
 
-namespace LykkeAutomationPrivate.Tests.ClientAccount
+namespace AFTests.PrivateApiTests
 {
     class Register : PrivateApiBaseTest
     {

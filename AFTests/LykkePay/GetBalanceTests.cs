@@ -5,7 +5,7 @@ using System.Text;
 using System;
 using System.Linq;
 
-namespace LykkePay.Tests
+namespace AFTests.LykkePayTests
 {
     public class GetBalanceTests
     {

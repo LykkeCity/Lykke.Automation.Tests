@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using XUnitTestCommon.Reports;
-using TestsCore.TestsCore;
+using XUnitTestCommon.TestsCore;
 
 namespace XUnitTestCommon.Tests
 {

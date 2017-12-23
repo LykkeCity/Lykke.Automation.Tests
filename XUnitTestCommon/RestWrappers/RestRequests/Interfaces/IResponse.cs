@@ -4,7 +4,7 @@ using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
-namespace TestsCore.RestRequests.Interfaces
+namespace XUnitTestCommon.RestRequests.Interfaces
 {
     public interface IResponse
     {

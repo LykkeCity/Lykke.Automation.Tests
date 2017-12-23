@@ -4,9 +4,9 @@ using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using TestsCore.RestRequests.Interfaces;
+using XUnitTestCommon.RestRequests.Interfaces;
 
-namespace TestsCore.RestRequests
+namespace XUnitTestCommon.RestRequests
 {
     public class Response : IResponse
     {

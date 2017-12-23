@@ -10,13 +10,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Lykke.Client.AutorestClient.Models;
 using System.Net;
-using TestsCore.ServiceSettings.SettingsModels;
+using XUnitTestCommon.ServiceSettings.SettingsModels;
 using System.Net.Http;
 using LykkeAutomationPrivate.Models;
 using System.IO;
-using TestsCore.TestsCore;
-using TestsCore.RestRequests.Interfaces;
-using TestsCore.RestRequests;
+using XUnitTestCommon.TestsCore;
+using XUnitTestCommon.RestRequests.Interfaces;
+using XUnitTestCommon.RestRequests;
 
 namespace LykkeAutomationPrivate.Api.PersonalDataResource
 {

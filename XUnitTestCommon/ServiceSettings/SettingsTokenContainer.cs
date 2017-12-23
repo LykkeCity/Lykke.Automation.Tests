@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TestsCore.ServiceSettings
+namespace XUnitTestCommon.ServiceSettings
 {
     public class SettingsTokenContainer
     {

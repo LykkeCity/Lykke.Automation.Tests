@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XUnitTestCommon.Tests;
 
-namespace LykkeAutomation.Tests.Registration
+namespace AFTests.ExternalApiTests
 {
     class RegistrationResourceTests
     {

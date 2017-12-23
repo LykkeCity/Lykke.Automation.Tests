@@ -9,8 +9,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Lykke.Client.AutorestClient.Models;
-using TestsCore.TestsCore;
-using TestsCore.RestRequests.Interfaces;
+using XUnitTestCommon.TestsCore;
+using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace LykkeAutomation.Api.ApiResources.AccountExist
 {

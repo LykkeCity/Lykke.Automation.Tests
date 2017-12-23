@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace TestsCore.TestsCore
+namespace XUnitTestCommon.TestsCore
 {
     public class Allure2Report
     {

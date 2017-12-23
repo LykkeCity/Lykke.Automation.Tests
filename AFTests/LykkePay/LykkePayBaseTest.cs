@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using LykkePay.Api;
 using XUnitTestCommon.Reports;
-using TestsCore.TestsCore;
+using XUnitTestCommon.TestsCore;
 using XUnitTestCommon.Tests;
 
-namespace LykkePay.Tests
+namespace AFTests.LykkePayTests
 {
     public class LykkepPayBaseTest : BaseTest
     {

@@ -1,6 +1,6 @@
 ﻿using LykkeAutomation.Api.ApiModels.ErrorModel;
 using LykkeAutomation.ApiModels.PersonalDataModels;
-using TestsCore.TestsData;
+using XUnitTestCommon.TestsData;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

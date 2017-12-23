@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TestsCore.RestRequests;
+using XUnitTestCommon.RestRequests;
 using NUnit.Framework;
-using LykkeAutomationPrivate.Tests;
 using LykkeAutomationPrivate.Models.Registration.Models;
 using System.Net;
 using LykkeAutomationPrivate.DataGenerators;
@@ -11,7 +10,7 @@ using LykkeAutomationPrivate.Models.ClientAccount.Models;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
-namespace LykkeAutomationPrivate.Tests.ClientAccount
+namespace AFTests.PrivateApiTests
 {
     class WalletResourceTests : PrivateApiBaseTest
     {

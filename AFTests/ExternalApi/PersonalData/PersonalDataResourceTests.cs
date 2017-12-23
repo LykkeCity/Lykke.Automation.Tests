@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XUnitTestCommon.Tests;
 
-namespace LykkeAutomation.Tests.PersonalData
+namespace AFTests.ExternalApiTests
 {
     class PersonalDataResourceTests
     {

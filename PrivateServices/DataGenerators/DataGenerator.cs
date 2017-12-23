@@ -3,7 +3,7 @@ using LykkeAutomationPrivate.Models.Registration.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TestsCore.TestsData;
+using XUnitTestCommon.TestsData;
 
 namespace LykkeAutomationPrivate.DataGenerators
 {

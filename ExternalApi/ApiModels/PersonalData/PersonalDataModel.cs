@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TestsCore.TestsData;
+using XUnitTestCommon.TestsData;
 using Newtonsoft.Json;
 using LykkeAutomation.Api.ApiModels.ErrorModel;
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TestsCore.ServiceSettings.SettingsModels;
+using XUnitTestCommon.ServiceSettings.SettingsModels;
 
-namespace TestsCore.ServiceSettings
+namespace XUnitTestCommon.ServiceSettings
 {
     public class ServiceSettingsApi
     {

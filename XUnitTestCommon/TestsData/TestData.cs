@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestsCore.TestsData
+namespace XUnitTestCommon.TestsData
 {
     public class TestData
     {

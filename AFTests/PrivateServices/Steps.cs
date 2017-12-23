@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace LykkeAutomationPrivate.Tests
+namespace AFTests.PrivateApiTests
 {
     public static class Steps
     {

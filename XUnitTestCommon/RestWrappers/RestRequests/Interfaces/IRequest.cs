@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TestsCore.RestRequests.Interfaces
+namespace XUnitTestCommon.RestRequests.Interfaces
 {
     public interface IRequest
     {

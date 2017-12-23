@@ -5,9 +5,9 @@ using System.Net;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TestsCore.TestsData;
+using XUnitTestCommon.TestsData;
 
-namespace LykkeAutomationPrivate.Tests.ClientAccount
+namespace AFTests.PrivateApiTests
 {
     class DeleteClientAccount : PrivateApiBaseTest
     {

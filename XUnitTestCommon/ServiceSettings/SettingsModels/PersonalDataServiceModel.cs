@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace TestsCore.ServiceSettings.SettingsModels
+namespace XUnitTestCommon.ServiceSettings.SettingsModels
 {
     public class PersonalDataServiceModel
     {

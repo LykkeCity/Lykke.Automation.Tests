@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
-using TestsCore.TestsData;
+using XUnitTestCommon.TestsData;
 
-namespace LykkePay.Tests
+namespace AFTests.LykkePayTests
 {
     public class OrderTests
     {

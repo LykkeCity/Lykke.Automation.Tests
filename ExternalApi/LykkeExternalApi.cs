@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using LykkeAutomation.Api.RegistrationResource;
 using LykkeAutomation.Api.ApiModels.AccountExistModels;
 using LykkeAutomation.Api.ApiResources.AccountExist;
-using TestsCore.RestRequests;
-using TestsCore.RestRequests.Interfaces;
+using XUnitTestCommon.RestRequests;
+using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace LykkeAutomation.Api
 {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TestsCore.RestRequests;
+using XUnitTestCommon.RestRequests;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
-using TestsCore.RestRequests.Interfaces;
+using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace LykkeAutomationPrivate.Resources.ClientAccountResource
 {

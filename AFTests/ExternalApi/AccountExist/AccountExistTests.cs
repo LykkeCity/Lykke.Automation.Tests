@@ -1,6 +1,6 @@
 ﻿using LykkeAutomation.Api.ApiModels.AccountExistModels;
 using LykkeAutomation.TestsCore;
-using TestsCore.TestsData;
+using XUnitTestCommon.TestsData;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using NUnit.Framework;
@@ -14,7 +14,7 @@ using RestSharp;
 using XUnitTestCommon.Tests;
 using LykkeAutomation.Api;
 
-namespace LykkeAutomation.Tests
+namespace AFTests.ExternalApiTests
 {
     class AccountExistTests
     {

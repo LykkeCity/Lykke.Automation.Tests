@@ -8,10 +8,10 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using TestsCore.AzureUtils;
-using TestsCore.TestsData;
+using XUnitTestCommon.AzureUtils;
+using XUnitTestCommon.TestsData;
 
-namespace LykkePay.Tests
+namespace AFTests.LykkePayTests
 {
     public class AssetPairRatesTests
     {

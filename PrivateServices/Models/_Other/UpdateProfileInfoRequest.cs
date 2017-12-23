@@ -8,7 +8,7 @@ namespace Lykke.Client.AutorestClient.Models
 {
     using Newtonsoft.Json;
     using System.Linq;
-    using TestsCore.TestsData;
+    using XUnitTestCommon.TestsData;
 
     public partial class UpdateProfileInfoRequest
     {

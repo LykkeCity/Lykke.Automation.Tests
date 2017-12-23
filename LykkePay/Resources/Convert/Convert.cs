@@ -5,7 +5,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TestsCore.RestRequests.Interfaces;
+using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace LykkePay.Resources.Convert
 {

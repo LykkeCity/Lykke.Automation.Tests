@@ -5,9 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TestsCore.RestRequests.Interfaces;
-using TestsCore.RestRequests.RestSharpRequest;
-using TestsCore.TestsCore;
+using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace LykkePay.Resources.AssetPairRates
 {
