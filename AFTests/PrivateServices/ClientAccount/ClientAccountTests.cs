@@ -9,7 +9,7 @@ using TestsCore.TestsData;
 
 namespace LykkeAutomationPrivate.Tests.ClientAccount
 {
-    class DeleteClientAccount : BaseTest
+    class DeleteClientAccount : PrivateApiBaseTest
     {
         string clientId;
         string clientEmail;
@@ -41,7 +41,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class PutClientAccountEmail : BaseTest
+    class PutClientAccountEmail : PrivateApiBaseTest
     {
         ClientAccountInformationModel account;
 
@@ -75,7 +75,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class GetClientAccountTrusted : BaseTest
+    class GetClientAccountTrusted : PrivateApiBaseTest
     {
         ClientAccountInformationModel account;
 
@@ -96,7 +96,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class GetUsersCountByPartnerId : BaseTest
+    class GetUsersCountByPartnerId : PrivateApiBaseTest
     {
         [Test]
         [Description("Get users count by partner id.")]

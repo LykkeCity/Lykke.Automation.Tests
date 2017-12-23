@@ -9,7 +9,7 @@ using LykkeAutomationPrivate.Resources.ClientAccountResource;
 
 namespace LykkeAutomationPrivate.Tests.ClientAccount
 {
-    class WithNewUser : BaseTest
+    class WithNewUser : PrivateApiBaseTest
     {
         protected ClientAccountInformation ClientAccount;
         protected ClientSettings clientSettings;

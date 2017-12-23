@@ -10,7 +10,7 @@ namespace LykkePay.Tests
 {
     public class PurchaseTests
     {
-        public class PostPurchaseRequiredParamsOnly : BaseTest
+        public class PostPurchaseRequiredParamsOnly : LykkepPayBaseTest
         {
             [Test]
             [Category("LykkePay")]
@@ -32,7 +32,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class PostPurchaseAllParams : BaseTest
+        public class PostPurchaseAllParams : LykkepPayBaseTest
         {
             [Test]
             [Category("LykkePay")]
@@ -62,7 +62,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class PostPurchaseSample : BaseTest
+        public class PostPurchaseSample : LykkepPayBaseTest
         {
             [Test]
             public void PostPurchaseSampleTest()

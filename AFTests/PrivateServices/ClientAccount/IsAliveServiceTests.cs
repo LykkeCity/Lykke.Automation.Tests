@@ -7,7 +7,7 @@ using LykkeAutomationPrivate.Models.ClientAccount.Models;
 
 namespace LykkeAutomationPrivate.Tests.ClientAccount
 {
-    class IsAliveService : BaseTest
+    class IsAliveService : PrivateApiBaseTest
     {
         [Test]
         [Category("IsAliveService"), Category("ClientAccount"), Category("ServiceAll")]

@@ -9,7 +9,7 @@ namespace LykkePay.Tests
 {
     public class GenerateAddressTests
     {
-        public class GetGenerateAddress : BaseTest
+        public class GetGenerateAddress : LykkepPayBaseTest
         {
             [TestCase("BTC")]
             [TestCase("btc")]
@@ -29,7 +29,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class GetGenerateAddressNegative : BaseTest
+        public class GetGenerateAddressNegative : LykkepPayBaseTest
         {
             [TestCase("XYZ")]
             [TestCase("321")]

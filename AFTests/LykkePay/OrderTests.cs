@@ -16,7 +16,7 @@ namespace LykkePay.Tests
         const string progressURL = "http://lykkePostBack.pythonanywhere.com/progressURL";
         const string errorURL = "http://lykkePostBack.pythonanywhere.com/errorURL";
 
-        public class OrderResponseValidate : BaseTest
+        public class OrderResponseValidate : LykkepPayBaseTest
         {
             [Test]
             [Category("LykkePay")]
@@ -46,7 +46,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class OrderPostBackSuccessResponse : BaseTest
+        public class OrderPostBackSuccessResponse : LykkepPayBaseTest
         {
             [Test]
             [Category("LykkePay")]
@@ -84,7 +84,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class OrderPostCurrencyNotValid : BaseTest
+        public class OrderPostCurrencyNotValid : LykkepPayBaseTest
         {
             [TestCase("XYZ")]
             [TestCase("BTC")]
@@ -115,7 +115,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class OrderPostCurrencyValid : BaseTest
+        public class OrderPostCurrencyValid : LykkepPayBaseTest
         {
             [TestCase("USD")]
             [TestCase("CHF")]
@@ -147,7 +147,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class OrderPostOnlyRequiredParams : BaseTest
+        public class OrderPostOnlyRequiredParams : LykkepPayBaseTest
         {
             [Test]
             [Category("LykkePay")]
@@ -174,7 +174,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class OrderPostExchangeCurrencyNotValid : BaseTest
+        public class OrderPostExchangeCurrencyNotValid : LykkepPayBaseTest
         {
             [Test]
             [Category("LykkePay")]
@@ -203,7 +203,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class OrderPostBackErrorResponse : BaseTest
+        public class OrderPostBackErrorResponse : LykkepPayBaseTest
         {
             [Test]
             [Category("LykkePay")]

@@ -9,7 +9,7 @@ using LykkeAutomationPrivate.Validators;
 
 namespace LykkeAutomationPrivate.Tests.ClientAccount
 {
-    class Register : BaseTest
+    class Register : PrivateApiBaseTest
     {
         [Test]
         [Category("Clients"), Category("ClientAccount"), Category("ServiceAll")]
@@ -53,7 +53,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class GenerateNotificationsId : BaseTest
+    class GenerateNotificationsId : PrivateApiBaseTest
     {
         [Test]
         [Category("Clients"), Category("ClientAccount"), Category("ServiceAll")]

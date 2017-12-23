@@ -9,7 +9,7 @@ namespace LykkePay.Tests
 {
     class PurchaseStatusTests
     {
-        public class GetPurchaseStatus : BaseTest
+        public class GetPurchaseStatus : LykkepPayBaseTest
         {
             [Test]
             [Category("LykkePay")]

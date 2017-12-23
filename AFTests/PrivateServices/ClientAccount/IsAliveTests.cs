@@ -6,7 +6,7 @@ using System.Net;
 
 namespace LykkeAutomationPrivate.Tests.ClientAccount
 {
-    class IsAlive : BaseTest
+    class IsAlive : PrivateApiBaseTest
     {
         [Test]
         [Category("IsAlive"), Category("ClientAccount"), Category("ServiceAll")]

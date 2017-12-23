@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace LykkeAutomationPrivate.Tests.ClientAccount
 {
-    class PutClientBan : BaseTest
+    class PutClientBan : PrivateApiBaseTest
     {
         string clientId;
 
@@ -39,7 +39,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class DeleteClientsBan : BaseTest
+    class DeleteClientsBan : PrivateApiBaseTest
     {
         string clientId;
 
@@ -70,7 +70,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class GetBannedClients : BaseTest
+    class GetBannedClients : PrivateApiBaseTest
     {
         string clientId;
 
@@ -103,7 +103,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    public class PostBannedCleintsFilterByIds : BaseTest
+    public class PostBannedCleintsFilterByIds : PrivateApiBaseTest
     {
         string clientId;
 
@@ -137,7 +137,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class GetClientIsBanned : BaseTest
+    class GetClientIsBanned : PrivateApiBaseTest
     {
         string clientId;
         string clientIdToBan;

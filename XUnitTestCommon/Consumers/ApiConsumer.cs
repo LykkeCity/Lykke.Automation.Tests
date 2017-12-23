@@ -126,10 +126,7 @@ namespace XUnitTestCommon.Consumers
             if (response.ErrorMessage != null)
                 attachContext.AppendLine(response.ErrorMessage);
             attachContext.AppendLine(response.Content);
-            //TestLog.WriteLine(attachContext.ToString());
             Allure2Helper.AttachJson(attachName, attachContext.ToString());
-            //AllureReport.GetInstance().AddAttachment(TestContext.CurrentContext.Test.FullName,
-            // Encoding.UTF8.GetBytes(attachContext.ToString()), attachName, "application/json");
         }
     }
 }

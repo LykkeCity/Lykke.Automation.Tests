@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LykkeAutomationPrivate.Tests.ClientAccount
 {
-    class WalletResourceTests : BaseTest
+    class WalletResourceTests : PrivateApiBaseTest
     {
         string userId;
 
@@ -161,7 +161,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class GetWalletsForClient : BaseTest
+    class GetWalletsForClient : PrivateApiBaseTest
     {
         [Test]
         [Description("Get all existing wallets for client.")]
@@ -193,7 +193,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class GetWalletsOfTypeForClient : BaseTest
+    class GetWalletsOfTypeForClient : PrivateApiBaseTest
     {
         [Test]
         [Description("Get client wallets of provided type.")]

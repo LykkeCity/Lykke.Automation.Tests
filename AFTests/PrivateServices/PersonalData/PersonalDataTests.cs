@@ -15,7 +15,7 @@ namespace LykkeAutomationPrivate.Tests.PersonalData
     public class PersonalDataTests
     {
 
-        public class PersonalDataBaseTest : BaseTest
+        public class PersonalDataBaseTest : PrivateApiBaseTest
         {
             [SetUp]
             public void BeforeTest()

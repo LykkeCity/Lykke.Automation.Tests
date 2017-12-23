@@ -9,7 +9,7 @@ using LykkeAutomationPrivate.Models.ClientAccount.Models;
 
 namespace LykkeAutomationPrivate.Tests.ClientAccount
 {
-    class AccountExistResourseTests : BaseTest
+    class AccountExistResourseTests : PrivateApiBaseTest
     {
         AccountRegistrationModel existedClient = new AccountRegistrationModel().GetTestModel();
         AccountRegistrationModel nonExistedClient = new AccountRegistrationModel().GetTestModel();

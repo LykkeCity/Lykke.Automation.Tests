@@ -15,7 +15,7 @@ namespace LykkePay.Tests
 {
     public class AssetPairRatesTests
     {
-        public class AssetPairRatesBaseTest : BaseTest
+        public class AssetPairRatesBaseTest : LykkepPayBaseTest
         {
             protected const string testAsset = "BTCTEST";
 

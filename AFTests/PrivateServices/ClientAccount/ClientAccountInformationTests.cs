@@ -13,7 +13,7 @@ using TestsCore.TestsData;
 
 namespace LykkeAutomationPrivate.Tests.ClientAccount
 {
-    class GetClientAccountInformation : BaseTest
+    class GetClientAccountInformation : PrivateApiBaseTest
     {
         AccountRegistrationModel registration;
         ClientAccountInformationModel account;
@@ -146,7 +146,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class Authenticate : BaseTest
+    class Authenticate : PrivateApiBaseTest
     {
         [Test]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
@@ -186,7 +186,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class SetPin : BaseTest
+    class SetPin : PrivateApiBaseTest
     {
         [Test]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
@@ -205,7 +205,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class ChangePassword : BaseTest
+    class ChangePassword : PrivateApiBaseTest
     {
         [Test]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
@@ -247,7 +247,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class ChangePhoneNumber : BaseTest
+    class ChangePhoneNumber : PrivateApiBaseTest
     {
         [Test]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
@@ -268,7 +268,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class InsertIndexedByPhoneAsync : BaseTest
+    class InsertIndexedByPhoneAsync : PrivateApiBaseTest
     {
         [Test]
         [Ignore("Could not test this method")]
@@ -280,7 +280,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class PartnerIds : BaseTest
+    class PartnerIds : PrivateApiBaseTest
     {
         [Test]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
@@ -309,7 +309,7 @@ namespace LykkeAutomationPrivate.Tests.ClientAccount
         }
     }
 
-    class ClientsByPhone : BaseTest
+    class ClientsByPhone : PrivateApiBaseTest
     {
         [Test]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]

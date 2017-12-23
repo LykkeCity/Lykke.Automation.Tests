@@ -9,7 +9,7 @@ namespace LykkePay.Tests
 {
     public class GetBalanceTests
     {
-        public class GetBalance : BaseTest
+        public class GetBalance : LykkepPayBaseTest
         {
             [TestCase("BTC")]
             [TestCase("btc")]
@@ -23,7 +23,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class GetBalanceNegative : BaseTest
+        public class GetBalanceNegative : LykkepPayBaseTest
         {
             [TestCase("xyz")]
             [TestCase("321")]
@@ -36,7 +36,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class GetBalanceNonEmpty : BaseTest
+        public class GetBalanceNonEmpty : LykkepPayBaseTest
         {
             [TestCase("BTC")]
             [TestCase("btc")]
@@ -52,7 +52,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class GetBalanceNonEmptyNegative : BaseTest
+        public class GetBalanceNonEmptyNegative : LykkepPayBaseTest
         {
             [TestCase("XYZ")]
             [TestCase("123")]
@@ -65,7 +65,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class GetBalanceUserHasNoWalletsAtAll : BaseTest
+        public class GetBalanceUserHasNoWalletsAtAll : LykkepPayBaseTest
         {
             [OneTimeSetUp]
             public void CreateUserWithNoWalletsAtAll()
@@ -88,7 +88,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class GetBalanceUserHasNoWalletForAsset : BaseTest
+        public class GetBalanceUserHasNoWalletForAsset : LykkepPayBaseTest
         {
             [OneTimeSetUp]
             public void CreateUserWithNoWalletsAtAll()
@@ -111,7 +111,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class GetBalanceUserHasEmptyAndNoEmptyWallets : BaseTest
+        public class GetBalanceUserHasEmptyAndNoEmptyWallets : LykkepPayBaseTest
         {
             [OneTimeSetUp]
             public void CreateUserWithNoWalletsAtAll()
@@ -134,7 +134,7 @@ namespace LykkePay.Tests
             }
         }
 
-        public class GetBalanceUserHasEmptyAndNoEmptyWalletsForSeveralCurrs : BaseTest
+        public class GetBalanceUserHasEmptyAndNoEmptyWalletsForSeveralCurrs : LykkepPayBaseTest
         {
             [OneTimeSetUp]
             public void CreateUserWithNoWalletsAtAll()

@@ -9,7 +9,7 @@ namespace LykkePay.Tests
 {
     class ConvertTransferTests
     {
-        public class PostConvertTransfer : BaseTest
+        public class PostConvertTransfer : LykkepPayBaseTest
         {
             [Test]
             [Category("LykkePay")]
