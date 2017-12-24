@@ -26,5 +26,6 @@ namespace LykkeAutomationPrivate.Resources.ClientAccountResource
         public IsAlive IsAlive => new IsAlive();
         public IsAliveService IsAliveService => new IsAliveService();
         public IsEmailVerified IsEmailVerified => new IsEmailVerified();
+        public PartnerAccountPolicy PartnerAccountPolicy => new PartnerAccountPolicy();
     }
 }
