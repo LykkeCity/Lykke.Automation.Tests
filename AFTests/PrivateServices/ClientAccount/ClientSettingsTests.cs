@@ -580,4 +580,163 @@ namespace AFTests.PrivateApiTests
                 .GetResponseObject().IsUSA, Is.EqualTo(defaultIsUsaUser));
         }
     }
+
+    class IsOffchainUserTest : WithNewUser
+    {
+        bool isOffchain = false;
+        bool defaultIsOffchain = true;
+
+        [Test]
+        [Order(1)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostIsOffchainUserTest()
+        {
+            var postIsOffchainUser = clientSettings.PostIsOffchainUser(new IsOffchainUserModel()
+            {
+                IsOffchain = isOffchain,
+                ClientId = ClientAccount.Id
+            });
+            Assert.That(postIsOffchainUser.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
+        [Order(2)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetIsOffchainUserTest()
+        {
+            var getIsOffchain = clientSettings.GetIsOffchainUser(ClientAccount.Id);
+            Assert.That(getIsOffchain.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getIsOffchain.GetResponseObject().IsOffchain, Is.EqualTo(isOffchain));
+        }
+
+        [Test]
+        [Order(3)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeleteIsOffchainUserTest()
+        {
+            var deleteIsOffchainUser = clientSettings.DeleteIsOffchainUser(ClientAccount.Id);
+            Assert.That(deleteIsOffchainUser.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(clientSettings.GetIsOffchainUser(ClientAccount.Id)
+                .GetResponseObject().IsOffchain, Is.EqualTo(defaultIsOffchain));
+        }
+    }
+
+    class NeedReinitTest : WithNewUser
+    {
+        bool needReinit = true;
+        bool defaultNeedReinit = false;
+
+        [Test]
+        [Order(1)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostNeedReinitTest()
+        {
+            var postNeedReinit = clientSettings.PostNeedReinit(new NeedReinitModel()
+            {
+                NeedReinit = needReinit,
+                ClientId = ClientAccount.Id
+            });
+            Assert.That(postNeedReinit.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
+        [Order(2)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetNeedReinitTest()
+        {
+            var getNeedReinit = clientSettings.GetNeedReinit(ClientAccount.Id);
+            Assert.That(getNeedReinit.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getNeedReinit.GetResponseObject().NeedReinit, Is.EqualTo(needReinit));
+        }
+
+        [Test]
+        [Order(3)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeleteNeedReinitTest()
+        {
+            var deleteNeedReinit = clientSettings.DeleteNeedReinit(ClientAccount.Id);
+            Assert.That(deleteNeedReinit.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(clientSettings.GetNeedReinit(ClientAccount.Id)
+                .GetResponseObject().NeedReinit, Is.EqualTo(defaultNeedReinit));
+        }
+    }
+
+    class IsLimitOrdersAvailableTest : WithNewUser
+    {
+        bool available = true;
+        bool defaultAvailable = false;
+
+        [Test]
+        [Order(1)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostIsLimitOrdersAvailableTest()
+        {
+            var postIsLimitOrderAvailable = clientSettings.PostIsLimitOrdersAvailable(new IsLimitOrdersAvailableModel()
+            {
+                Available = available,
+                ClientId = ClientAccount.Id
+            });
+            Assert.That(postIsLimitOrderAvailable.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
+        [Order(2)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetIsLimitOrderAvailableTest()
+        {
+            var getIsLimitOrderAvailable = clientSettings.GetIsLimitOrdersAvailable(ClientAccount.Id);
+            Assert.That(getIsLimitOrderAvailable.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getIsLimitOrderAvailable.GetResponseObject().Available, Is.EqualTo(available));
+        }
+
+        [Test]
+        [Order(3)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeleteIsLimitOrderAvailableTest()
+        {
+            var deleteIsLimitOrderAvailable = clientSettings.DeleteIsLimitOrdersAvailable(ClientAccount.Id);
+            Assert.That(deleteIsLimitOrderAvailable.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(clientSettings.GetIsLimitOrdersAvailable(ClientAccount.Id)
+                .GetResponseObject().Available, Is.EqualTo(defaultAvailable));
+        }
+    }
+
+    class BaseAsset : WithNewUser
+    {
+        string baseAsset = "BTC";
+
+        [Test]
+        [Order(1)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostBaseAssetTest()
+        {
+            var postBaseAsset = clientSettings.PostBaseAsset(new BaseAssetModel()
+            {
+                BaseAssetId = baseAsset,
+                ClientId = ClientAccount.Id
+            });
+            Assert.That(postBaseAsset.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
+        [Order(2)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetBaseAssetTest()
+        {
+            var getBaseAsset = clientSettings.GetBaseAsset(ClientAccount.Id);
+            Assert.That(getBaseAsset.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getBaseAsset.GetResponseObject().BaseAssetId, Is.EqualTo(baseAsset));
+        }
+
+        [Test]
+        [Order(3)]
+        [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeleteBaseAssetTest()
+        {
+            var deleteBaseAsset = clientSettings.DeleteBaseAsset(ClientAccount.Id);
+            Assert.That(deleteBaseAsset.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(clientSettings.GetBaseAsset(ClientAccount.Id)
+                .GetResponseObject().BaseAssetId, Is.Null);
+        }
+    }
 }
