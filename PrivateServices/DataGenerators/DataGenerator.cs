@@ -55,5 +55,15 @@ namespace LykkeAutomationPrivate.DataGenerators
                 Password = "1234567",
                 PartnerId = partnerId
             };
+
+        public static Partner GetTestModel(this Partner partner) =>
+            new Partner()
+            {
+                InternalId = Guid.NewGuid().ToString(),
+                PublicId = Guid.NewGuid().ToString("N"),
+                Name = TestData.GenerateLetterString(7),
+                AssetPrefix = TestData.GenerateLetterString(5) + "_",
+                RegisteredUsersCount = 0
+            };
     }
 }
