@@ -74,7 +74,7 @@ namespace AFTests.LykkePayTests
                 Assert.That(orderResponse.currency, Is.EqualTo(orderRequest.exchangeCurrency), "Unexpected currency in order response");
                 Assert.That(orderResponse.exchangeRate * orderResponse.amount, Is.EqualTo(orderRequest.amount).Within("0.00000000001"), "Exchange rate * amount in order response not equals to request amount");
 
-                var transfer = new TransferRequestModel() {amount = orderResponse.amount + 0.0005m, destinationAddress=orderResponse.address, assetId="BTC", sourceAddress = "n1gDxgVtJmTxaXupcFNd8AeKmdJaihTacx" };
+                var transfer = new TransferRequestModel() {amount = orderResponse.amount + 0.000476m/*temp value - with fee*/, destinationAddress=orderResponse.address, assetId="BTC", sourceAddress = "n1gDxgVtJmTxaXupcFNd8AeKmdJaihTacx" };
                 var transferJson = JsonConvert.SerializeObject(transfer);
                 var merch = new OrderMerchantModel(transferJson);
                 var convertTransfer = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
@@ -231,13 +231,15 @@ namespace AFTests.LykkePayTests
                 Assert.That(orderResponse.currency, Is.EqualTo(orderRequest.exchangeCurrency), "Unexpected currency in order response");
                 Assert.That(orderResponse.exchangeRate * orderResponse.amount, Is.EqualTo(orderRequest.amount).Within("0.00000000001"), "Exchange rate * amount in order response not equals to request amount");
 
-                var transfer = new TransferRequestModel() { amount = orderResponse.amount + 0.000476m/* 0.00051m*/, destinationAddress = orderResponse.address, assetId = "BTC", sourceAddress = "n1gDxgVtJmTxaXupcFNd8AeKmdJaihTacx" };
+                var transfer = new TransferRequestModel() { amount = orderResponse.amount + 0.00051m/* temp value > then need - will produce error*/, destinationAddress = orderResponse.address, assetId = "BTC", sourceAddress = "n1gDxgVtJmTxaXupcFNd8AeKmdJaihTacx" };
                 var transferJson = JsonConvert.SerializeObject(transfer);
                 var merch = new OrderMerchantModel(transferJson);
                 var convertTransfer = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
 
-                var getB = lykkePayApi.getBalance.GetGetBalance("BTC", merch);
-                Assert.Fail("No Postback Yet");
+
+                var pb = lykkePayApi.postBack.GetCallBackByTransactionID(convertTransfer.GetResponseObject().transferResponse.transactionId);
+                Assert.That(() => pb.Content, Is.Not.Null.After(3*60*1000, 3*1000), "Could not find postback");
+
             }
         }
     }
