@@ -79,8 +79,8 @@ namespace AFTests.LykkePayTests
                 var merch = new OrderMerchantModel(transferJson);
                 var convertTransfer = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
 
-                var getB = lykkePayApi.getBalance.GetGetBalance("BTC", merch);
-                Assert.Fail("No Postabck yet");
+                var pb = lykkePayApi.postBack.GetCallBackByOrderID(orderRequest.orderId);
+                Assert.That(() => lykkePayApi.postBack.GetCallBackByOrderID(orderRequest.orderId).Content, Does.Contain("paymentResponse").And.Contain("PAYMENT_CONFIRMED").After(5 * 60 * 1000, 3 * 1000), $"postback for order id {orderRequest.orderId} is not correct");
             }
         }
 
@@ -236,10 +236,10 @@ namespace AFTests.LykkePayTests
                 var merch = new OrderMerchantModel(transferJson);
                 var convertTransfer = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
 
+                var pb = lykkePayApi.postBack.GetCallBackByOrderID(orderRequest.orderId);
+                Assert.That(() => lykkePayApi.postBack.GetCallBackByOrderID(orderRequest.orderId).Content, Does.Contain("paymentResponse").And.Contain("PAYMENT_ERROR").After(5*60*1000, 3*1000), $"Postback for order id {orderRequest.orderId} is not correct");
 
-                var pb = lykkePayApi.postBack.GetCallBackByTransactionID(convertTransfer.GetResponseObject().transferResponse.transactionId);
-                Assert.That(() => pb.Content, Is.Not.Null.After(3*60*1000, 3*1000), "Could not find postback");
-
+                //todo: add transactionInProgress validation
             }
         }
     }
