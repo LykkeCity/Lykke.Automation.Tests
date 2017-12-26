@@ -13,7 +13,7 @@ namespace LykkePay.Resources.Order
     {
         private const string resource = "/order";
 
-        public IResponse<OrderResponse> PostOrderModel(MerchantModel merchant, OrderRequestModel orderRequest, string SessionID = null)
+        public IResponse<OrderResponse> PostOrderModel(AbstractMerchant merchant, OrderRequestModel orderRequest, string SessionID = null)
         {
             var request = Request.Post(resource).
                 WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).
@@ -26,7 +26,7 @@ namespace LykkePay.Resources.Order
             return request.Build().Execute<OrderResponse>();
         }
 
-        public IResponse<OrderResponse> PostOrderModel(MerchantModel merchant, string orderRequest, string SessionID = null)
+        public IResponse<OrderResponse> PostOrderModel(AbstractMerchant merchant, string orderRequest, string SessionID = null)
         {
             var request = Request.Post(resource).
                 WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).

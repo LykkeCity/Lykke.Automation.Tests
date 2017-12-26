@@ -19,7 +19,7 @@ namespace LykkePay.Resources.AssetPairRates
         }
 
         #region POST
-        public IResponse<PostAssetsPairRatesModel> PostAssetsPairRates(string assetPair, MerchantModel merchant, MarkupModel markup)
+        public IResponse<PostAssetsPairRatesModel> PostAssetsPairRates(string assetPair, AbstractMerchant merchant, MarkupModel markup)
         {
             var request = Request.Post($"{resource}/{assetPair}").
                 WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).
@@ -33,7 +33,7 @@ namespace LykkePay.Resources.AssetPairRates
             return request.Build().Execute<PostAssetsPairRatesModel>();
         }
 
-        public IResponse<PostAssetsPairRatesModel> PostAssetsPairRates(string assetPair, MerchantModel merchant, string markup)
+        public IResponse<PostAssetsPairRatesModel> PostAssetsPairRates(string assetPair, AbstractMerchant merchant, string markup)
         {
             var request = Request.Post($"{resource}/{assetPair}").
                 WithHeaders("Lykke-Merchant-Id", merchant.LykkeMerchantId).

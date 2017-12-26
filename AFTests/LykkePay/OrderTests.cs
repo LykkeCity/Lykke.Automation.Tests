@@ -65,8 +65,8 @@ namespace AFTests.LykkePayTests
                 Assert.That(postModel.LykkeMerchantSessionId, Is.Not.Null, "LykkeMerchantSessionId not present in response");
 
                 // order request below
-
-                var orderRequest = new OrderRequestModel() { currency = "USD", amount = 10, exchangeCurrency = "BTC", successURL = successURL, errorURL = errorURL, progressURL = progressURL, orderId = TestData.GenerateNumbers(5), markup = new PostMarkup(markUp, 0) };
+                var oId = TestData.GenerateNumbers(5);
+                var orderRequest = new OrderRequestModel() { currency = "USD", amount = 10, exchangeCurrency = "BTC", successURL = successURL + $"?orderId={oId}", errorURL = errorURL, progressURL = progressURL, orderId = TestData.GenerateNumbers(5), markup = new PostMarkup(markUp, 0) };
                 var orderRequestJson = JsonConvert.SerializeObject(orderRequest);
                 merchant = new MerchantModel(orderRequestJson);
 
@@ -79,8 +79,8 @@ namespace AFTests.LykkePayTests
                 var merch = new OrderMerchantModel(transferJson);
                 var convertTransfer = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
 
-                var pb = lykkePayApi.postBack.GetCallBackByOrderID(orderRequest.orderId);
-                Assert.That(() => lykkePayApi.postBack.GetCallBackByOrderID(orderRequest.orderId).Content, Does.Contain("paymentResponse").And.Contain("PAYMENT_CONFIRMED").After(5 * 60 * 1000, 3 * 1000), $"postback for order id {orderRequest.orderId} is not correct");
+                var tId = convertTransfer.GetResponseObject().transferResponse.transactionId;
+                Assert.That(() => lykkePayApi.postBack.GetCallBackByTransactionID(tId).Content, Does.Contain("paymentResponse").And.Contain("PAYMENT_CONFIRMED").And.Contain("PAYMENT_INPROGRESS").After(5 * 60 * 1000, 3 * 1000), $"postback for order id {orderRequest.orderId} is not correct");
             }
         }
 
@@ -111,7 +111,7 @@ namespace AFTests.LykkePayTests
                 merchant = new MerchantModel(orderRequestJson);
 
                 var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId);
-                Assert.That(orderResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound), "Unexpected status code in case currency not valid");            
+                Assert.That(orderResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest), "Unexpected status code in case currency not valid");            
             }
         }
 
@@ -214,7 +214,9 @@ namespace AFTests.LykkePayTests
 
                 MarkupModel markUp = new MarkupModel(50, 30);
 
-                var merchant = new MerchantModel(markUp);
+                var merchant = new OrderMerchantModel(markUp);
+
+                var balance = lykkePayApi.getBalance.GetGetBalance("n1gDxgVtJmTxaXupcFNd8AeKmdJaihTacx", merchant);
                 var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
@@ -225,7 +227,7 @@ namespace AFTests.LykkePayTests
                 var oId = TestData.GenerateNumbers(5);
                 var orderRequest = new OrderRequestModel() { currency = "USD", amount = 10, exchangeCurrency = "BTC", successURL = successURL, errorURL = errorURL + $"?orderId={oId}", progressURL = progressURL, orderId = oId, markup = new PostMarkup(markUp, 0) };
                 var orderRequestJson = JsonConvert.SerializeObject(orderRequest);
-                merchant = new MerchantModel(orderRequestJson);
+                merchant = new OrderMerchantModel(orderRequestJson);
 
                 var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId).GetResponseObject();
                 Assert.That(orderResponse.currency, Is.EqualTo(orderRequest.exchangeCurrency), "Unexpected currency in order response");
@@ -236,10 +238,7 @@ namespace AFTests.LykkePayTests
                 var merch = new OrderMerchantModel(transferJson);
                 var convertTransfer = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
 
-                var pb = lykkePayApi.postBack.GetCallBackByOrderID(orderRequest.orderId);
-                Assert.That(() => lykkePayApi.postBack.GetCallBackByOrderID(orderRequest.orderId).Content, Does.Contain("paymentResponse").And.Contain("PAYMENT_ERROR").After(5*60*1000, 3*1000), $"Postback for order id {orderRequest.orderId} is not correct");
-
-                //todo: add transactionInProgress validation
+                Assert.That(() => lykkePayApi.postBack.GetCallBackByOrderID(oId).Content, Does.Contain("paymentResponse").And.Contain("PAYMENT_ERROR").And.Contain("PAYMENT_INPROGRESS").After(5*60*1000, 3*1000), $"Postback for order id {orderRequest.orderId} is not correct");
             }
         }
     }
