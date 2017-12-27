@@ -45,8 +45,12 @@ namespace LykkeAutomationPrivate.Resources.ClientAccountResource
             return Request.Get($"/api/Partners/{internalId}").Build().Execute<Partner>();
         }
 
-        //TODO: Add model and resource
-        //public IResponse<ClientCountResponseModel> GetPartnerUserCount()
+        //TODO: internal?
+        public IResponse<ClientCountResponseModel> GetPartnerUserCount(string publicId)
+        {
+            return Request.Get("/api/Partners/getUsersCount")
+                .AddQueryParameter("partnerId", publicId).Build().Execute<ClientCountResponseModel>();
+        }
 
         public IResponse DeleteRemovePartner(string partnerInternalId)
         {
