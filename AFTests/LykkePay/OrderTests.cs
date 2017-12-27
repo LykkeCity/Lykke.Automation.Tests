@@ -42,7 +42,7 @@ namespace AFTests.LykkePayTests
 
                 var orderResponse = lykkePayApi.order.PostOrderModel(merchant, orderRequestJson, postModel.LykkeMerchantSessionId).GetResponseObject();
                 Assert.That(orderResponse.currency, Is.EqualTo(orderRequest.exchangeCurrency), "Unexpected currency in order response");
-                Assert.That(orderResponse.exchangeRate * orderResponse.amount, Is.EqualTo(orderRequest.amount), "Exchange rate * amount in order response not equals to request amount");
+                Assert.That(orderResponse.exchangeRate * orderResponse.amount, Is.EqualTo(orderRequest.amount).Within(Math.Pow(10,-8)), "Exchange rate * amount in order response not equals to request amount");
             }
         }
 
@@ -53,6 +53,8 @@ namespace AFTests.LykkePayTests
             [Description("Validate Order postback response")]
             public void OrderPostBackSuccessResponseTest()
             {
+                //add GetBalance and skip(Fail?) if not enough crypto
+
                 var assetPair = "BTCUSD";
 
                 MarkupModel markUp = new MarkupModel(50, 30);
@@ -210,13 +212,13 @@ namespace AFTests.LykkePayTests
             [Description("Validate Order postback response")]
             public void OrderPostBackErrorResponseTest()
             {
+                //add GetBalance and skip(Fail?) if not enough crypto
                 var assetPair = "BTCUSD";
 
                 MarkupModel markUp = new MarkupModel(50, 30);
 
                 var merchant = new OrderMerchantModel(markUp);
 
-                var balance = lykkePayApi.getBalance.GetGetBalance("n1gDxgVtJmTxaXupcFNd8AeKmdJaihTacx", merchant);
                 var response = lykkePayApi.assetPairRates.PostAssetsPairRates(assetPair, merchant, markUp);
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Unexpected status code");
@@ -238,7 +240,7 @@ namespace AFTests.LykkePayTests
                 var merch = new OrderMerchantModel(transferJson);
                 var convertTransfer = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
 
-                Assert.That(() => lykkePayApi.postBack.GetCallBackByOrderID(oId).Content, Does.Contain("paymentResponse").And.Contain("PAYMENT_ERROR").And.Contain("PAYMENT_INPROGRESS").After(5*60*1000, 3*1000), $"Postback for order id {orderRequest.orderId} is not correct");
+                Assert.That(() => lykkePayApi.postBack.GetCallBackByOrderID(oId).Content, Does.Contain("paymentResponse").And.Contain("PAYMENT_ERROR").After(5*60*1000, 3*1000), $"Postback for order id {orderRequest.orderId} is not correct");
             }
         }
     }
