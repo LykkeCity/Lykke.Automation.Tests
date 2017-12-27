@@ -12,6 +12,7 @@ using XUnitTestCommon.TestsCore;
 namespace XUnitTestCommon.Tests
 {
     [TestFixture]
+    [Parallelizable(ParallelScope.Fixtures)]
     public class BaseTest
     {
         public IList<string> schemesError;

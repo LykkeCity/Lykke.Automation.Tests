@@ -15,7 +15,6 @@
     <PackageReference Include="dotnet-test-nunit" Version="3.4.0-beta-3" />
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
-    <PackageReference Include="NUnit" Version="3.9.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
     <PackageReference Include="RestSharp" Version="106.1.0" />
   </ItemGroup>
@@ -30,6 +29,12 @@
     <ProjectReference Include="..\MatchingEngineData\MatchingEngineData.csproj" />
     <ProjectReference Include="..\PrivateServices\PrivateServices.csproj" />
     <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\XUnitTestCommon\Nunit\netstandard2.0\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

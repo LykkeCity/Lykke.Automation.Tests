@@ -7,12 +7,17 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.1.1" />
     <PackageReference Include="Lykke.Service.Balances.Client" Version="1.0.17" />
-    <PackageReference Include="NUnit" Version="3.9.0" />
     <PackageReference Include="RestSharp" Version="106.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\XUnitTestCommon\Nunit\netstandard2.0\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
