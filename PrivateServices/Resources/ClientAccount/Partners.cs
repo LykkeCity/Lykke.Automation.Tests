@@ -45,11 +45,16 @@ namespace LykkeAutomationPrivate.Resources.ClientAccountResource
             return Request.Get($"/api/Partners/{internalId}").Build().Execute<Partner>();
         }
 
-        //TODO: internal?
         public IResponse<ClientCountResponseModel> GetPartnerUserCount(string publicId)
         {
             return Request.Get("/api/Partners/getUsersCount")
                 .AddQueryParameter("partnerId", publicId).Build().Execute<ClientCountResponseModel>();
+        }
+
+        public IResponse<List<Partner>> PostPartnersByPublicIdsAsync(PartnersPublicIdsRequestModel partnersPublicIdsRequest)
+        {
+            return Request.Post("/api/Partners/findByPublicIdsAsync").AddJsonBody(partnersPublicIdsRequest)
+                .Build().Execute<List<Partner>>();
         }
 
         public IResponse DeleteRemovePartner(string partnerInternalId)

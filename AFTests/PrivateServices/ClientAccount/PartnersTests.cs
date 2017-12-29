@@ -6,6 +6,7 @@ using System.Net;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
 using LykkeAutomationPrivate.DataGenerators;
 using LykkeAutomationPrivate.Resources.ClientAccountResource;
+using XUnitTestCommon.TestsData;
 
 namespace AFTests.PrivateApiTests
 {
@@ -134,10 +135,10 @@ namespace AFTests.PrivateApiTests
         public void PostExistedPartnersBySinglePublicIdTest()
         {
             var ids = new List<string>() { partner.PublicId };
-            var getPartnersByPublicId = partnersApi.PostPartnersByPublicIds(ids);
-            Assert.That(getPartnersByPublicId.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(getPartnersByPublicId.GetResponseObject(), Has.Count.EqualTo(1));
-            Assert.That(getPartnersByPublicId.GetResponseObject(),
+            var postPartnersByPublicId = partnersApi.PostPartnersByPublicIds(ids);
+            Assert.That(postPartnersByPublicId.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(postPartnersByPublicId.GetResponseObject(), Has.Count.EqualTo(1));
+            Assert.That(postPartnersByPublicId.GetResponseObject(),
                 Does.Contain(partner).Using(partnerComparer));
         }
 
@@ -276,8 +277,6 @@ namespace AFTests.PrivateApiTests
         public void CreatePartnerAndClient()
         {
             partnersApi.PostPartners(partner);
-            var clientRegistration = new ClientRegistrationModel().GetTestModel(partner.PublicId);
-            clientAccount = lykkeApi.ClientAccount.Clients.PostRegister(clientRegistration).GetResponseObject();
         }
 
         [OneTimeTearDown]
@@ -291,7 +290,6 @@ namespace AFTests.PrivateApiTests
         [Category("Partners"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetNewPartnerUsersCountTest()
         {
-            
             var getUserCount = partnersApi.GetPartnerUserCount(partner.PublicId);
             Assert.That(getUserCount.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getUserCount.GetResponseObject().Count, Is.EqualTo(0));
@@ -302,10 +300,120 @@ namespace AFTests.PrivateApiTests
         [Category("Partners"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetPartnerWithUsersCountTest()
         {
+            var clientRegistration = new ClientRegistrationModel().GetTestModel(partner.PublicId);
+            clientAccount = lykkeApi.ClientAccount.Clients.PostRegister(clientRegistration).GetResponseObject();
 
             var getUserCount = partnersApi.GetPartnerUserCount(partner.PublicId);
             Assert.That(getUserCount.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getUserCount.GetResponseObject().Count, Is.EqualTo(1));
+        }
+    }
+
+    class GetPartnersFindByPublicIdsAsyncTests : WithPartnerBase
+    {
+        [Test]
+        [Category("Partners"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostExistedPartnersBySinglePublicIdAsyncTest()
+        {
+            partnersApi.PostPartners(partner);
+            var postParnersFilterByPublicIdsAsync = partnersApi
+                .PostPartnersByPublicIdsAsync(new PartnersPublicIdsRequestModel()
+                {
+                    PublicIds = new List<string> { partner.PublicId }
+                });
+            Assert.That(postParnersFilterByPublicIdsAsync.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(postParnersFilterByPublicIdsAsync.GetResponseObject(), Has.Count.EqualTo(1));
+            Assert.That(postParnersFilterByPublicIdsAsync.GetResponseObject(),
+                Does.Contain(partner).Using(partnerComparer));
+        }
+
+        [Test]
+        [Category("Partners"), Category("ClientAccount"), Category("ServiceAll")]
+        public void PostNotExistedPartnersBySinglePublicIdAsyncTest()
+        {
+            var notExistedPartner = new Partner().GetTestModel();
+            var postParnersFilterByPublicIdsAsync = partnersApi
+                .PostPartnersByPublicIdsAsync(new PartnersPublicIdsRequestModel()
+                {
+                    PublicIds = new List<string> { notExistedPartner.PublicId }
+                });
+            Assert.That(postParnersFilterByPublicIdsAsync.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(postParnersFilterByPublicIdsAsync.GetResponseObject(), Has.Count.EqualTo(0));
+        }
+    }
+
+    class DeleteRemovePartnerTest : WithPartnerBase
+    {
+        [Test]
+        [Category("Partners"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeletePartnerTest()
+        {
+            partnersApi.PostPartners(partner);
+            var deleteRemovePartner = partnersApi.DeleteRemovePartner(partner.InternalId);
+            Assert.That(deleteRemovePartner.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(partnersApi.PostPartnersByPublicIds(new List<string> { partner.PublicId })
+                .GetResponseObject(), Has.Count.EqualTo(0));
+        }
+    }
+
+    class PostUpdatePartnerTests : WithPartnerBase
+    {
+        [OneTimeSetUp]
+        public void CreatePartner()
+        {
+            partnersApi.PostPartners(partner);
+        }
+
+        [Test]
+        [Category("Partners"), Category("ClientAccount"), Category("ServiceAll")]
+        public void UpdatePartnerChangeNameTest()
+        {
+            var newName = TestData.GenerateLetterString(7);
+            partner.Name = newName;
+
+            var postUpdatePartner = partnersApi.PostUpdatePartner(partner);
+            Assert.That(postUpdatePartner.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(partnersApi.GetPartnerById(partner.InternalId).GetResponseObject(), 
+                Is.EqualTo(partner).Using(partnerComparer));
+        }
+
+        [Test]
+        [Category("Partners"), Category("ClientAccount"), Category("ServiceAll")]
+        public void UpdatePartnersChangeAssetPrefix()
+        {
+            var newAssetPrefix = TestData.GenerateLetterString(5) + "_";
+            partner.AssetPrefix = newAssetPrefix;
+
+            var postUpdatePartner = partnersApi.PostUpdatePartner(partner);
+            Assert.That(postUpdatePartner.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(partnersApi.GetPartnerById(partner.InternalId).GetResponseObject(),
+                Is.EqualTo(partner).Using(partnerComparer));
+        }
+
+        [Test]
+        [Category("Partners"), Category("ClientAccount"), Category("ServiceAll")]
+        public void UpdatePartnersChangeRegisteredUsersCount()
+        {
+            var newRegisteredUsersCount = 7;
+            partner.RegisteredUsersCount = newRegisteredUsersCount;
+
+            var postUpdatePartner = partnersApi.PostUpdatePartner(partner);
+            Assert.That(postUpdatePartner.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(partnersApi.GetPartnerById(partner.InternalId).GetResponseObject(),
+                Is.EqualTo(partner).Using(partnerComparer));
+        }
+
+        [Test]
+        [Category("Partners"), Category("ClientAccount"), Category("ServiceAll")]
+        public void UpdatePartnersChangePublicId()
+        {
+            var newPublicId = TestData.GenerateLetterString(10);
+            partner.PublicId = newPublicId;
+
+            var postUpdatePartner = partnersApi.PostUpdatePartner(partner);
+            Assert.That(postUpdatePartner.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(partnersApi.GetPartnerById(partner.InternalId).GetResponseObject(),
+                Is.EqualTo(partner).Using(partnerComparer));
         }
     }
 }
