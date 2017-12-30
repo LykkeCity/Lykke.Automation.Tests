@@ -32,7 +32,7 @@ namespace AFTests.PrivateApiTests
         public void GetIsEmailVerifiedTest()
         {
             var getIsEmailVerified = lykkeApi.ClientAccount.IsEmailVerified
-                .GetIsEmailVerified(new VerifiedEmailModel()
+                .PostIsEmailVerified(new VerifiedEmailModel()
                 {
                     Email = clientAccount.Email,
                     PartnerId = partnerId

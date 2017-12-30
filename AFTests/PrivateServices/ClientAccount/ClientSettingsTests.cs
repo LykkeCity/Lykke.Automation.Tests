@@ -9,10 +9,10 @@ using LykkeAutomationPrivate.Resources.ClientAccountResource;
 
 namespace AFTests.PrivateApiTests
 {
-    class WithNewUser : PrivateApiBaseTest
+    class ClientSettingsBaseTest : PrivateApiBaseTest
     {
         protected ClientAccountInformation ClientAccount;
-        protected ClientSettings clientSettings;
+        protected ClientSettings api;
 
         [OneTimeSetUp]
         public void CreateClientAndApi()
@@ -20,7 +20,7 @@ namespace AFTests.PrivateApiTests
             ClientRegistrationModel clientRegistration = new ClientRegistrationModel().GetTestModel();
             ClientAccount = lykkeApi.ClientAccount.Clients.PostRegister(clientRegistration).GetResponseObject();
 
-            clientSettings = lykkeApi.ClientAccount.ClientSettings;
+            api = lykkeApi.ClientAccount.ClientSettings;
         }
 
         [OneTimeTearDown]
@@ -31,7 +31,7 @@ namespace AFTests.PrivateApiTests
     }
 
 
-    class AppUsageTests : WithNewUser
+    class AppUsageTests : ClientSettingsBaseTest
     {
         private readonly string graphPeriod = "1D";
         private readonly string defaultGraphPeriod = "1H";
@@ -41,7 +41,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostAppUsageTest()
         {
-            var postAppUsage = clientSettings.PostAppUsage(new AppUsageModel
+            var postAppUsage = api.PostAppUsage(new AppUsageModel
             {
                 LastUsedGraphPeriod = graphPeriod,
                 ClientId = ClientAccount.Id
@@ -54,7 +54,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetAppUsageTest()
         {
-            var getAppUsage = clientSettings.GetAppUsage(ClientAccount.Id);
+            var getAppUsage = api.GetAppUsage(ClientAccount.Id);
             Assert.That(getAppUsage.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getAppUsage.GetResponseObject().LastUsedGraphPeriod,
                 Is.EqualTo(graphPeriod));
@@ -65,14 +65,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteAppUsageTest()
         {
-            var deleteGraphPeriod = clientSettings.DeleteAppUsage(ClientAccount.Id);
+            var deleteGraphPeriod = api.DeleteAppUsage(ClientAccount.Id);
             Assert.That(deleteGraphPeriod.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetAppUsage(ClientAccount.Id)
+            Assert.That(api.GetAppUsage(ClientAccount.Id)
                 .GetResponseObject().LastUsedGraphPeriod, Is.EqualTo(defaultGraphPeriod));
         }
     }
 
-    class AssetPairsInvertedTests : WithNewUser
+    class AssetPairsInvertedTests : ClientSettingsBaseTest
     {
         string asset1 = "BTC", asset2 = "USD";
 
@@ -81,7 +81,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostAssetPairsInvertedTest()
         {
-            var postAssetPairsInverted = clientSettings.PostAssetPairsInverted(
+            var postAssetPairsInverted = api.PostAssetPairsInverted(
                 new AssetPairsInvertedModel
                 {
                     InvertedAssetIds = new List<string>() { asset1, asset2 },
@@ -95,7 +95,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetAssetPairsInvertedTest()
         {
-            var getAssetPairsInverted = clientSettings.GetAssetPairsInverted(ClientAccount.Id);
+            var getAssetPairsInverted = api.GetAssetPairsInverted(ClientAccount.Id);
             Assert.That(getAssetPairsInverted.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getAssetPairsInverted.GetResponseObject().InvertedAssetIds,
                 Has.Count.EqualTo(2).And.Contain(asset1).And.Contain(asset2));
@@ -106,14 +106,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteAssetPairsInvertedTest()
         {
-            var deleteAssetPairsInverted = clientSettings.DeleteAssetPairsInverted(ClientAccount.Id);
+            var deleteAssetPairsInverted = api.DeleteAssetPairsInverted(ClientAccount.Id);
             Assert.That(deleteAssetPairsInverted.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetAssetPairsInverted(ClientAccount.Id)
+            Assert.That(api.GetAssetPairsInverted(ClientAccount.Id)
                 .GetResponseObject().InvertedAssetIds, Is.Empty);
         }
     }
 
-    class LastBaseAssetsIosTests : WithNewUser
+    class LastBaseAssetsIosTests : ClientSettingsBaseTest
     {
         string asset1 = "BTC", asset2 = "USD";
 
@@ -122,7 +122,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostLastBaseAssetsIosTest()
         {
-            var postLastBaseAssetsIos = clientSettings.PostLastBaseAssetsIos(
+            var postLastBaseAssetsIos = api.PostLastBaseAssetsIos(
                 new LastBaseAssetsIosModel()
                 {
                     BaseAssets = new List<string>() { asset1, asset2},
@@ -136,7 +136,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetLastBaseAssetsIosTest()
         {
-            var getLastBaseAssetsIos = clientSettings.GetLastBaseAssetsIos(ClientAccount.Id);
+            var getLastBaseAssetsIos = api.GetLastBaseAssetsIos(ClientAccount.Id);
             Assert.That(getLastBaseAssetsIos.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getLastBaseAssetsIos.GetResponseObject().BaseAssets,
                 Has.Count.EqualTo(2).And.Contain(asset1).And.Contain(asset2));
@@ -147,14 +147,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteLastBaseAssetsIosTest()
         {
-            var deleteLastBaseAssetsIos = clientSettings.DeleteLastBaseAssetsIos(ClientAccount.Id);
+            var deleteLastBaseAssetsIos = api.DeleteLastBaseAssetsIos(ClientAccount.Id);
             Assert.That(deleteLastBaseAssetsIos.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetLastBaseAssetsIos(ClientAccount.Id)
+            Assert.That(api.GetLastBaseAssetsIos(ClientAccount.Id)
                 .GetResponseObject().BaseAssets, Is.Empty);
         }
     }
 
-    class LastBaseAssetsOtherTests : WithNewUser
+    class LastBaseAssetsOtherTests : ClientSettingsBaseTest
     {
         string asset1 = "USD", asset2 = "BTC";
 
@@ -163,7 +163,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostLastBaseAssetsOtherTest()
         {
-            var postLastBaseAssetsOther = clientSettings.PostLastBaseAssetsOther(
+            var postLastBaseAssetsOther = api.PostLastBaseAssetsOther(
                 new LastBaseAssetsOtherModel()
                 {
                     BaseAssets = new List<string>() { asset1, asset2 },
@@ -177,7 +177,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetLastBaseAssetsOtherTest()
         {
-            var getLastBaseAssetsOther = clientSettings.GetLastBaseAssetsOther(ClientAccount.Id);
+            var getLastBaseAssetsOther = api.GetLastBaseAssetsOther(ClientAccount.Id);
             Assert.That(getLastBaseAssetsOther.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getLastBaseAssetsOther.GetResponseObject().BaseAssets,
                 Has.Count.EqualTo(2).And.Contain(asset1).And.Contain(asset2));
@@ -188,14 +188,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteLastBaseAssetsOtherTest()
         {
-            var deleteLastBaseAssetsOther = clientSettings.DeleteLastBaseAssetsOther(ClientAccount.Id);
+            var deleteLastBaseAssetsOther = api.DeleteLastBaseAssetsOther(ClientAccount.Id);
             Assert.That(deleteLastBaseAssetsOther.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetLastBaseAssetsOther(ClientAccount.Id)
+            Assert.That(api.GetLastBaseAssetsOther(ClientAccount.Id)
                 .GetResponseObject().BaseAssets, Is.Empty);
         }
     }
 
-    class RefundAddressTests : WithNewUser
+    class RefundAddressTests : ClientSettingsBaseTest
     {
         string address = Guid.NewGuid().ToString();
         int validDays = 15;
@@ -206,7 +206,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostRefundAddressTest()
         {
-            var postRefundAddress = clientSettings.PostRefundAddress(
+            var postRefundAddress = api.PostRefundAddress(
                 new RefundAddressModel()
                 {
                     Address = address,
@@ -222,7 +222,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetRefundAddressTest()
         {
-            var getRefundAddress = clientSettings.GetRefundAddress(ClientAccount.Id);
+            var getRefundAddress = api.GetRefundAddress(ClientAccount.Id);
             Assert.That(getRefundAddress.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             var refundAddressSettings = getRefundAddress.GetResponseObject();
             Assert.Multiple(() =>
@@ -238,14 +238,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteRefundAddressTest()
         {
-            var deleteRefundAddress = clientSettings.DeleteRefundAddress(ClientAccount.Id);
+            var deleteRefundAddress = api.DeleteRefundAddress(ClientAccount.Id);
             Assert.That(deleteRefundAddress.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetRefundAddress(ClientAccount.Id)
+            Assert.That(api.GetRefundAddress(ClientAccount.Id)
                 .GetResponseObject().Address, Is.Empty);
         }
     }
 
-    class PushNotificationTests : WithNewUser
+    class PushNotificationTests : ClientSettingsBaseTest
     {
         bool enabled = false;
         bool defaultEnabled = true;
@@ -255,7 +255,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostPushNotificationTest()
         {
-            var postPushNotification = clientSettings.PostPushNotification(
+            var postPushNotification = api.PostPushNotification(
                 new PushNotificationModel()
                 {
                     Enabled = enabled,
@@ -269,7 +269,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetPushNotification()
         {
-            var getPushNotification = clientSettings.GetPushNotification(ClientAccount.Id);
+            var getPushNotification = api.GetPushNotification(ClientAccount.Id);
             Assert.That(getPushNotification.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getPushNotification.GetResponseObject().Enabled, Is.EqualTo(enabled));
         }
@@ -279,14 +279,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeletePushNotification()
         {
-            var deletePushNotification = clientSettings.DeletePushNotification(ClientAccount.Id);
+            var deletePushNotification = api.DeletePushNotification(ClientAccount.Id);
             Assert.That(deletePushNotification.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetPushNotification(ClientAccount.Id)
+            Assert.That(api.GetPushNotification(ClientAccount.Id)
                 .GetResponseObject().Enabled, Is.EqualTo(defaultEnabled));
         }
     }
 
-    class MyLykkeTest : WithNewUser
+    class MyLykkeTest : ClientSettingsBaseTest
     {
         bool myLykkeEnabled = true;
 
@@ -295,7 +295,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostMyLykkeTest()
         {
-            var postMyLykke = clientSettings.PostMyLykke(new MyLykkeModel()
+            var postMyLykke = api.PostMyLykke(new MyLykkeModel()
             {
                 MyLykkeEnabled = myLykkeEnabled,
                 ClientId = ClientAccount.Id
@@ -308,7 +308,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetMyLykkeTest()
         {
-            var getMyLykke = clientSettings.GetMyLykke(ClientAccount.Id);
+            var getMyLykke = api.GetMyLykke(ClientAccount.Id);
             Assert.That(getMyLykke.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getMyLykke.GetResponseObject().MyLykkeEnabled, Is.EqualTo(myLykkeEnabled));
         }
@@ -318,14 +318,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteMyLykkeTest()
         {
-            var deleteMyLykke = clientSettings.DeleteMyLykke(ClientAccount.Id);
+            var deleteMyLykke = api.DeleteMyLykke(ClientAccount.Id);
             Assert.That(deleteMyLykke.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetMyLykke(ClientAccount.Id)
+            Assert.That(api.GetMyLykke(ClientAccount.Id)
                 .GetResponseObject().MyLykkeEnabled, Is.Null);
         }
     }
 
-    class BackupTest: WithNewUser
+    class BackupTest: ClientSettingsBaseTest
     {
         bool backupDone = true;
         bool defaultBackupDone = false;
@@ -335,7 +335,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostBackupTest()
         {
-            var postBackup = clientSettings.PostBackup(new BackupModel()
+            var postBackup = api.PostBackup(new BackupModel()
             {
                 BackupDone = backupDone,
                 ClientId = ClientAccount.Id
@@ -348,7 +348,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetBackupTest()
         {
-            var getBackup = clientSettings.GetBackup(ClientAccount.Id);
+            var getBackup = api.GetBackup(ClientAccount.Id);
             Assert.That(getBackup.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getBackup.GetResponseObject().BackupDone, Is.EqualTo(backupDone));
         }
@@ -358,14 +358,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteBackupTest()
         {
-            var deleteBackup = clientSettings.DeleteBackup(ClientAccount.Id);
+            var deleteBackup = api.DeleteBackup(ClientAccount.Id);
             Assert.That(deleteBackup.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetBackup(ClientAccount.Id)
+            Assert.That(api.GetBackup(ClientAccount.Id)
                 .GetResponseObject().BackupDone, Is.EqualTo(defaultBackupDone));
         }
     }
 
-    class SmsTest : WithNewUser
+    class SmsTest : ClientSettingsBaseTest
     {
         bool useAlternativeProvider = true;
         bool defaultUeAlternativeProvider = false;
@@ -375,7 +375,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostSmsTest()
         {
-            var postSms = clientSettings.PostSms(new SmsModel()
+            var postSms = api.PostSms(new SmsModel()
             {
                 UseAlternativeProvider = useAlternativeProvider,
                 ClientId = ClientAccount.Id
@@ -388,7 +388,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetSmsTest()
         {
-            var getSms = clientSettings.GetSms(ClientAccount.Id);
+            var getSms = api.GetSms(ClientAccount.Id);
             Assert.That(getSms.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getSms.GetResponseObject().UseAlternativeProvider, Is.EqualTo(useAlternativeProvider));
         }
@@ -398,14 +398,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteSmsTest()
         {
-            var deleteSms = clientSettings.DeleteSms(ClientAccount.Id);
+            var deleteSms = api.DeleteSms(ClientAccount.Id);
             Assert.That(deleteSms.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetSms(ClientAccount.Id)
+            Assert.That(api.GetSms(ClientAccount.Id)
                 .GetResponseObject().UseAlternativeProvider, Is.EqualTo(defaultUeAlternativeProvider));
         }
     }
 
-    class HashedPwd : WithNewUser
+    class HashedPwd : ClientSettingsBaseTest
     {
         bool isPwdHashed = true;
         bool defaultIsPwdHashed = false;
@@ -415,7 +415,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostHashedPwdTest()
         {
-            var postHashedPwd = clientSettings.PostHashedPwd(new HashedPwdModel()
+            var postHashedPwd = api.PostHashedPwd(new HashedPwdModel()
             {
                 IsPwdHashed = isPwdHashed,
                 ClientId = ClientAccount.Id
@@ -428,7 +428,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetHashedPwdTest()
         {
-            var getHashedPwd = clientSettings.GetHashedPwd(ClientAccount.Id);
+            var getHashedPwd = api.GetHashedPwd(ClientAccount.Id);
             Assert.That(getHashedPwd.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getHashedPwd.GetResponseObject().IsPwdHashed, Is.EqualTo(isPwdHashed));
         }
@@ -438,14 +438,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteHashedPwdTest()
         {
-            var deleteHashedPwd = clientSettings.DeleteHashedPwd(ClientAccount.Id);
+            var deleteHashedPwd = api.DeleteHashedPwd(ClientAccount.Id);
             Assert.That(deleteHashedPwd.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetHashedPwd(ClientAccount.Id)
+            Assert.That(api.GetHashedPwd(ClientAccount.Id)
                 .GetResponseObject().IsPwdHashed, Is.EqualTo(defaultIsPwdHashed));
         }
     }
 
-    class CashOutBlockTest : WithNewUser
+    class CashOutBlockTest : ClientSettingsBaseTest
     {
         bool cashOutBlocked = true;
         bool defaultCashOutBlocked = false;
@@ -457,7 +457,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostCashOutBlockTest()
         {
-            var postCashOutBlock = clientSettings.PostCashOutBlock(new CashOutBlockModel()
+            var postCashOutBlock = api.PostCashOutBlock(new CashOutBlockModel()
             {
                 CashOutBlocked = cashOutBlocked,
                 TradesBlocked = tradesBlocked,
@@ -471,7 +471,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetCashOutBlockTest()
         {
-            var getCashOutBlock = clientSettings.GetCashOutBlock(ClientAccount.Id);
+            var getCashOutBlock = api.GetCashOutBlock(ClientAccount.Id);
             Assert.That(getCashOutBlock.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getCashOutBlock.GetResponseObject().CashOutBlocked, Is.EqualTo(cashOutBlocked));
             Assert.That(getCashOutBlock.GetResponseObject().TradesBlocked, Is.EqualTo(tradesBlocked));
@@ -482,15 +482,15 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteCashOutBlockTest()
         {
-            var deleteCashOutBLock = clientSettings.DeleteCashOutBlock(ClientAccount.Id);
+            var deleteCashOutBLock = api.DeleteCashOutBlock(ClientAccount.Id);
             Assert.That(deleteCashOutBLock.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            var getCashOutBlock = clientSettings.GetCashOutBlock(ClientAccount.Id);
+            var getCashOutBlock = api.GetCashOutBlock(ClientAccount.Id);
             Assert.That(getCashOutBlock.GetResponseObject().CashOutBlocked, Is.EqualTo(defaultCashOutBlocked));
             Assert.That(getCashOutBlock.GetResponseObject().TradesBlocked, Is.EqualTo(defaultTradesBlocked));
         }
     }
 
-    class MarginEnabledTest : WithNewUser
+    class MarginEnabledTest : ClientSettingsBaseTest
     {
         bool enabled = false;
         bool defaultEnabled = true;
@@ -504,7 +504,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostMarginEnabledTest()
         {
-            var postMarginEnabled = clientSettings.PostMarginEnabled(new MarginEnabledModel()
+            var postMarginEnabled = api.PostMarginEnabled(new MarginEnabledModel()
             {
                 Enabled = enabled,
                 EnabledLive = enabledLive,
@@ -519,7 +519,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetMarginEnabledTest()
         {
-            var getMarginEnabled = clientSettings.GetMarginEnabled(ClientAccount.Id);
+            var getMarginEnabled = api.GetMarginEnabled(ClientAccount.Id);
             Assert.That(getMarginEnabled.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             var marginEnabled = getMarginEnabled.GetResponseObject();
             Assert.That(marginEnabled.Enabled, Is.EqualTo(enabled));
@@ -532,16 +532,16 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteMarginEnabledTest()
         {
-            var deleteMarginEnabled = clientSettings.DeleteMarginEnabled(ClientAccount.Id);
+            var deleteMarginEnabled = api.DeleteMarginEnabled(ClientAccount.Id);
             Assert.That(deleteMarginEnabled.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            var marginEnabled = clientSettings.GetMarginEnabled(ClientAccount.Id).GetResponseObject();
+            var marginEnabled = api.GetMarginEnabled(ClientAccount.Id).GetResponseObject();
             Assert.That(marginEnabled.Enabled, Is.EqualTo(defaultEnabled));
             Assert.That(marginEnabled.EnabledLive, Is.EqualTo(defaultEnadledLive));
             Assert.That(marginEnabled.TermsOfUseAgreed, Is.EqualTo(defaultTermsOfUseAgreed));
         }
     }
 
-    class IsUsaUserTest : WithNewUser
+    class IsUsaUserTest : ClientSettingsBaseTest
     {
         bool isUsaUser = true;
         bool defaultIsUsaUser = false;
@@ -551,7 +551,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostIsUsaUserTest()
         {
-            var postIsUsaUser = clientSettings.PostIsUsaUser(new IsUsaUserModel()
+            var postIsUsaUser = api.PostIsUsaUser(new IsUsaUserModel()
             {
                 IsUSA = isUsaUser,
                 ClientId = ClientAccount.Id
@@ -564,7 +564,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetIsUsaUserTest()
         {
-            var getIsUsaUser = clientSettings.GetIsUsaUser(ClientAccount.Id);
+            var getIsUsaUser = api.GetIsUsaUser(ClientAccount.Id);
             Assert.That(getIsUsaUser.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getIsUsaUser.GetResponseObject().IsUSA, Is.EqualTo(isUsaUser));
         }
@@ -574,14 +574,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteIsUsaUserTest()
         {
-            var deleteIsUsaUser = clientSettings.DeleteIsUsaUser(ClientAccount.Id);
+            var deleteIsUsaUser = api.DeleteIsUsaUser(ClientAccount.Id);
             Assert.That(deleteIsUsaUser.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetIsUsaUser(ClientAccount.Id)
+            Assert.That(api.GetIsUsaUser(ClientAccount.Id)
                 .GetResponseObject().IsUSA, Is.EqualTo(defaultIsUsaUser));
         }
     }
 
-    class IsOffchainUserTest : WithNewUser
+    class IsOffchainUserTest : ClientSettingsBaseTest
     {
         bool isOffchain = false;
         bool defaultIsOffchain = true;
@@ -591,7 +591,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostIsOffchainUserTest()
         {
-            var postIsOffchainUser = clientSettings.PostIsOffchainUser(new IsOffchainUserModel()
+            var postIsOffchainUser = api.PostIsOffchainUser(new IsOffchainUserModel()
             {
                 IsOffchain = isOffchain,
                 ClientId = ClientAccount.Id
@@ -604,7 +604,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetIsOffchainUserTest()
         {
-            var getIsOffchain = clientSettings.GetIsOffchainUser(ClientAccount.Id);
+            var getIsOffchain = api.GetIsOffchainUser(ClientAccount.Id);
             Assert.That(getIsOffchain.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getIsOffchain.GetResponseObject().IsOffchain, Is.EqualTo(isOffchain));
         }
@@ -614,14 +614,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteIsOffchainUserTest()
         {
-            var deleteIsOffchainUser = clientSettings.DeleteIsOffchainUser(ClientAccount.Id);
+            var deleteIsOffchainUser = api.DeleteIsOffchainUser(ClientAccount.Id);
             Assert.That(deleteIsOffchainUser.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetIsOffchainUser(ClientAccount.Id)
+            Assert.That(api.GetIsOffchainUser(ClientAccount.Id)
                 .GetResponseObject().IsOffchain, Is.EqualTo(defaultIsOffchain));
         }
     }
 
-    class NeedReinitTest : WithNewUser
+    class NeedReinitTest : ClientSettingsBaseTest
     {
         bool needReinit = true;
         bool defaultNeedReinit = false;
@@ -631,7 +631,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostNeedReinitTest()
         {
-            var postNeedReinit = clientSettings.PostNeedReinit(new NeedReinitModel()
+            var postNeedReinit = api.PostNeedReinit(new NeedReinitModel()
             {
                 NeedReinit = needReinit,
                 ClientId = ClientAccount.Id
@@ -644,7 +644,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetNeedReinitTest()
         {
-            var getNeedReinit = clientSettings.GetNeedReinit(ClientAccount.Id);
+            var getNeedReinit = api.GetNeedReinit(ClientAccount.Id);
             Assert.That(getNeedReinit.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getNeedReinit.GetResponseObject().NeedReinit, Is.EqualTo(needReinit));
         }
@@ -654,14 +654,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteNeedReinitTest()
         {
-            var deleteNeedReinit = clientSettings.DeleteNeedReinit(ClientAccount.Id);
+            var deleteNeedReinit = api.DeleteNeedReinit(ClientAccount.Id);
             Assert.That(deleteNeedReinit.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetNeedReinit(ClientAccount.Id)
+            Assert.That(api.GetNeedReinit(ClientAccount.Id)
                 .GetResponseObject().NeedReinit, Is.EqualTo(defaultNeedReinit));
         }
     }
 
-    class IsLimitOrdersAvailableTest : WithNewUser
+    class IsLimitOrdersAvailableTest : ClientSettingsBaseTest
     {
         bool available = true;
         bool defaultAvailable = false;
@@ -671,7 +671,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostIsLimitOrdersAvailableTest()
         {
-            var postIsLimitOrderAvailable = clientSettings.PostIsLimitOrdersAvailable(new IsLimitOrdersAvailableModel()
+            var postIsLimitOrderAvailable = api.PostIsLimitOrdersAvailable(new IsLimitOrdersAvailableModel()
             {
                 Available = available,
                 ClientId = ClientAccount.Id
@@ -684,7 +684,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetIsLimitOrderAvailableTest()
         {
-            var getIsLimitOrderAvailable = clientSettings.GetIsLimitOrdersAvailable(ClientAccount.Id);
+            var getIsLimitOrderAvailable = api.GetIsLimitOrdersAvailable(ClientAccount.Id);
             Assert.That(getIsLimitOrderAvailable.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getIsLimitOrderAvailable.GetResponseObject().Available, Is.EqualTo(available));
         }
@@ -694,14 +694,14 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteIsLimitOrderAvailableTest()
         {
-            var deleteIsLimitOrderAvailable = clientSettings.DeleteIsLimitOrdersAvailable(ClientAccount.Id);
+            var deleteIsLimitOrderAvailable = api.DeleteIsLimitOrdersAvailable(ClientAccount.Id);
             Assert.That(deleteIsLimitOrderAvailable.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetIsLimitOrdersAvailable(ClientAccount.Id)
+            Assert.That(api.GetIsLimitOrdersAvailable(ClientAccount.Id)
                 .GetResponseObject().Available, Is.EqualTo(defaultAvailable));
         }
     }
 
-    class BaseAsset : WithNewUser
+    class BaseAsset : ClientSettingsBaseTest
     {
         string baseAsset = "BTC";
 
@@ -710,7 +710,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostBaseAssetTest()
         {
-            var postBaseAsset = clientSettings.PostBaseAsset(new BaseAssetModel()
+            var postBaseAsset = api.PostBaseAsset(new BaseAssetModel()
             {
                 BaseAssetId = baseAsset,
                 ClientId = ClientAccount.Id
@@ -723,7 +723,7 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetBaseAssetTest()
         {
-            var getBaseAsset = clientSettings.GetBaseAsset(ClientAccount.Id);
+            var getBaseAsset = api.GetBaseAsset(ClientAccount.Id);
             Assert.That(getBaseAsset.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getBaseAsset.GetResponseObject().BaseAssetId, Is.EqualTo(baseAsset));
         }
@@ -733,9 +733,9 @@ namespace AFTests.PrivateApiTests
         [Category("ClientSettings"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteBaseAssetTest()
         {
-            var deleteBaseAsset = clientSettings.DeleteBaseAsset(ClientAccount.Id);
+            var deleteBaseAsset = api.DeleteBaseAsset(ClientAccount.Id);
             Assert.That(deleteBaseAsset.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(clientSettings.GetBaseAsset(ClientAccount.Id)
+            Assert.That(api.GetBaseAsset(ClientAccount.Id)
                 .GetResponseObject().BaseAssetId, Is.Null);
         }
     }

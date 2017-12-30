@@ -28,5 +28,6 @@ namespace LykkeAutomationPrivate.Resources.ClientAccountResource
         public IsEmailVerified IsEmailVerified => new IsEmailVerified();
         public PartnerAccountPolicy PartnerAccountPolicy => new PartnerAccountPolicy();
         public Partners Partners => new Partners();
+        public VerifiedEmails VerifiedEmails => new VerifiedEmails();
     }
 }

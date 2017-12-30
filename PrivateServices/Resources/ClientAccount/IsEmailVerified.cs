@@ -8,7 +8,7 @@ namespace LykkeAutomationPrivate.Resources.ClientAccountResource
 {
     public class IsEmailVerified : ClientAccountBase
     {
-        public IResponse<bool> GetIsEmailVerified(VerifiedEmailModel verifiedEmail)
+        public IResponse<bool> PostIsEmailVerified(VerifiedEmailModel verifiedEmail)
         {
             return Request.Post("/api/IsEmailVerified").AddJsonBody(verifiedEmail)
                 .Build().Execute<bool>();
