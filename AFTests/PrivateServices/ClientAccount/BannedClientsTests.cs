@@ -1,171 +1,158 @@
-﻿using LykkeAutomationPrivate.Models.Registration.Models;
-using LykkeAutomationPrivate.DataGenerators;
+﻿using LykkeAutomationPrivate.DataGenerators;
 using NUnit.Framework;
-using System.Net;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
-using System.Linq;
+using LykkeAutomationPrivate.Resources.ClientAccountResource;
 
 namespace AFTests.PrivateApiTests
 {
-    class PutClientBan : PrivateApiBaseTest
+    class BannedClientComparer : IComparer<BannedClient>
     {
-        string clientId;
+        public int Compare(BannedClient x, BannedClient y)
+        {
+            if (x.ClientId == y.ClientId)
+                return 0;
+            return -1;
+        }
+    }
 
-        [SetUp]
+    class BannedClientBaseTest : PrivateApiBaseTest
+    {
+        protected BannedClients api;
+        protected string clientId;
+        protected IComparer<BannedClient> bannedClientsComparer = new BannedClientComparer();
+
+        [OneTimeSetUp]
         public void CreateClient()
         {
-            clientId = lykkeApi.Registration.PostRegistration(new AccountRegistrationModel().GetTestModel()).Account.Id;
+            api = lykkeApi.ClientAccount.BannedClients;
+            clientId = lykkeApi.ClientAccount.Clients
+                .PostRegister(new ClientRegistrationModel().GetTestModel())
+                .GetResponseObject().Id;
         }
 
-        [TearDown]
-        public void UnBanClient()
+        [OneTimeTearDown]
+        public void UnBanAndDeleteClient()
         {
             if (clientId != null)
+            {
                 lykkeApi.ClientAccount.BannedClients.DeleteBannedClients(clientId);
+                lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(clientId);
+            }
         }
 
+    }
+
+    class PutClientBanTests : BannedClientBaseTest
+    {
         [Test]
         [Category("BannedClients"), Category("ClientAccount"), Category("ServiceAll")]
         public void PutClientBanTest()
         {
-            var putClientBan = lykkeApi.ClientAccount.BannedClients.PutBannedClients(clientId);
-            Assert.That(putClientBan.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-            var getIsClientBanned = lykkeApi.ClientAccount.BannedClients.GetBannedClientsIsBanned(clientId);
-            Assert.That(getIsClientBanned.GetResponseObject(), Is.True);
+            var putClientBan = api.PutBannedClients(clientId);
+            responseValidator.IsOK(putClientBan);
+            Assert.That(api.GetBannedClientsIsBanned(clientId)
+                .GetResponseObject(), Is.True);
         }
     }
 
-    class DeleteClientsBan : PrivateApiBaseTest
+    class DeleteClientsBanTests : BannedClientBaseTest
     {
-        string clientId;
-
-        [SetUp]
-        public void CreateClient()
-        {
-            clientId = lykkeApi.Registration.PostRegistration(new AccountRegistrationModel().GetTestModel()).Account.Id;
-        }
-
-        [TearDown]
-        public void UnBanClientAtTheEnd()
-        {
-            if (clientId != null)
-                lykkeApi.ClientAccount.BannedClients.DeleteBannedClients(clientId);
-        }
-
         [Test]
         [Category("BannedClients"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteClientsBanTest()
         {
-            var putClientBan = lykkeApi.ClientAccount.BannedClients.PutBannedClients(clientId);
-            var getIsClientBanned = lykkeApi.ClientAccount.BannedClients.GetBannedClientsIsBanned(clientId);
+            api.PutBannedClients(clientId);
+
+            var getIsClientBanned = api.GetBannedClientsIsBanned(clientId);
             Assert.That(getIsClientBanned.GetResponseObject(), Is.True);
 
-            var putUnBanClient = lykkeApi.ClientAccount.BannedClients.DeleteBannedClients(clientId);
-            getIsClientBanned = lykkeApi.ClientAccount.BannedClients.GetBannedClientsIsBanned(clientId);
-            Assert.That(getIsClientBanned.GetResponseObject(), Is.False);
+            var deleteUnBanClient = api.DeleteBannedClients(clientId);
+            responseValidator.IsOK(deleteUnBanClient);
+            Assert.That(api.GetBannedClientsIsBanned(clientId)
+                .GetResponseObject(), Is.False);
         }
     }
 
-    class GetBannedClients : PrivateApiBaseTest
+    class GetBannedClientsTests : BannedClientBaseTest
     {
-        string clientId;
-
-        [SetUp]
-        public void CreateClient()
-        {
-            clientId = lykkeApi.Registration.PostRegistration(new AccountRegistrationModel().GetTestModel()).Account.Id;
-        }
-
-        [TearDown]
-        public void UnBanClientAtTheEnd()
-        {
-            if (clientId != null)
-                lykkeApi.ClientAccount.BannedClients.DeleteBannedClients(clientId);
-        }
-
         [Test]
         [Category("BannedClients"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetBannedClientsTest()
         {
-            var postBannedClientsList = lykkeApi.ClientAccount.BannedClients.GetBannedClients();
-            Assert.That(postBannedClientsList.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(postBannedClientsList.GetResponseObject().Select(c => c.ClientId), 
-                Does.Not.Contain(clientId));
+            var bannedClient = new BannedClient { ClientId = clientId };
 
-            lykkeApi.ClientAccount.BannedClients.PutBannedClients(clientId);
-            postBannedClientsList = lykkeApi.ClientAccount.BannedClients.GetBannedClients();
-            Assert.That(postBannedClientsList.GetResponseObject().Select(c => c.ClientId), 
-                Does.Contain(clientId));
+            var postBannedClientsList = api.GetBannedClients();
+            responseValidator.IsOK(postBannedClientsList);
+            Assert.That(postBannedClientsList.GetResponseObject(), 
+                Does.Not.Contain(bannedClient).Using(bannedClientsComparer));
+
+            api.PutBannedClients(clientId);
+            postBannedClientsList = api.GetBannedClients();
+            Assert.That(postBannedClientsList.GetResponseObject(), 
+                Does.Contain(bannedClient).Using(bannedClientsComparer));
         }
     }
 
-    public class PostBannedCleintsFilterByIds : PrivateApiBaseTest
+    class PostBannedCleintsFilterByIdsTests : BannedClientBaseTest
     {
-        string clientId;
-
-        [SetUp]
-        public void CreateClient()
-        {
-            clientId = lykkeApi.Registration.PostRegistration(new AccountRegistrationModel().GetTestModel()).Account.Id;
-        }
-
-        [TearDown]
-        public void UnBanClientAtTheEnd()
-        {
-            if (clientId != null)
-                lykkeApi.ClientAccount.BannedClients.DeleteBannedClients(clientId);
-        }
-
         [Test]
         [Category("BannedClients"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostBannedCleintsFilterByIdsTest()
         {
-            var postBannedCleintsFilterByIds = lykkeApi.ClientAccount.BannedClients
+            var postBannedCleintsFilterByIds = api
                 .PostBannedCleintsFilterByIds(new List<string> { clientId });
-            Assert.That(postBannedCleintsFilterByIds.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            responseValidator.IsOK(postBannedCleintsFilterByIds);
             Assert.That(postBannedCleintsFilterByIds.GetResponseObject(), Is.Empty);
 
-            lykkeApi.ClientAccount.BannedClients.PutBannedClients(clientId);
-            postBannedCleintsFilterByIds = lykkeApi.ClientAccount.BannedClients
+            api.PutBannedClients(clientId);
+            postBannedCleintsFilterByIds = api
                 .PostBannedCleintsFilterByIds(new List<string> { clientId });
-            Assert.That(postBannedCleintsFilterByIds.GetResponseObject().Select(c => c.ClientId),
-                Does.Contain(clientId));
+            Assert.That(postBannedCleintsFilterByIds.GetResponseObject(),
+                Does.Contain(new BannedClient { ClientId = clientId }).Using(bannedClientsComparer));
         }
     }
 
-    class GetClientIsBanned : PrivateApiBaseTest
+    class GetClientIsBannedTests : BannedClientBaseTest
     {
-        string clientId;
-        string clientIdToBan;
+        string bannedClientId;
 
-        [SetUp]
-        public void CreateClient()
+        [OneTimeSetUp]
+        public void CreateBannedClient()
         {
-            clientId = lykkeApi.Registration.PostRegistration(new AccountRegistrationModel().GetTestModel()).Account.Id;
-            clientIdToBan = lykkeApi.Registration.PostRegistration(new AccountRegistrationModel().GetTestModel()).Account.Id;
+            bannedClientId = lykkeApi.ClientAccount.Clients
+                .PostRegister(new ClientRegistrationModel().GetTestModel())
+                .GetResponseObject().Id;
+            api.PutBannedClients(bannedClientId);
         }
 
-        [TearDown]
-        public void UnBanClientAtTheEnd()
+        [OneTimeTearDown]
+        public void UnBanAndDeleteBannedClient()
         {
-            if (clientIdToBan != null)
-                lykkeApi.ClientAccount.BannedClients.DeleteBannedClients(clientIdToBan);
+            if (bannedClientId != null)
+            {
+                lykkeApi.ClientAccount.BannedClients.DeleteBannedClients(bannedClientId);
+                lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(bannedClientId);
+            }
         }
 
         [Test]
         [Category("BannedClients"), Category("ClientAccount"), Category("ServiceAll")]
-        public void GetClientIsBannedTest()
+        public void GetBannedClientIsBannedTest()
         {
-            var putClientBan = lykkeApi.ClientAccount.BannedClients.PutBannedClients(clientIdToBan);
-
-            var getBannedClient = lykkeApi.ClientAccount.BannedClients.GetBannedClientsIsBanned(clientIdToBan);
+            var getBannedClient = api.GetBannedClientsIsBanned(bannedClientId);
+            responseValidator.IsOK(getBannedClient);
             Assert.That(getBannedClient.GetResponseObject(), Is.True);
+        }
 
-            var getNotBannedClient = lykkeApi.ClientAccount.BannedClients.GetBannedClientsIsBanned(clientId);
+        [Test]
+        [Category("BannedClients"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetNotBannedClientIsBannedTest()
+        {
+            var getNotBannedClient = api.GetBannedClientsIsBanned(clientId);
+            responseValidator.IsOK(getNotBannedClient);
             Assert.That(getNotBannedClient.GetResponseObject(), Is.False);
         }
     }

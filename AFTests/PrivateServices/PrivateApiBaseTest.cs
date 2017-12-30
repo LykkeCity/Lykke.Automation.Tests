@@ -5,6 +5,7 @@ namespace AFTests.PrivateApiTests
 {
     public class PrivateApiBaseTest : BaseTest
     {
-        public LykkeApi lykkeApi = new LykkeApi();
+        protected LykkeApi lykkeApi = new LykkeApi();
+        protected ResponseValidator responseValidator = new ResponseValidator();
     }
 }

@@ -12,4 +12,12 @@ namespace LykkeAutomationPrivate.Models.ClientAccount.Models
             return JsonConvert.SerializeObject(this);
         }
     }
+
+    public partial class BannedClient
+    {
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+    }
 }

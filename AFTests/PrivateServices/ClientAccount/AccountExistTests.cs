@@ -1,44 +1,52 @@
 ﻿using LykkeAutomationPrivate.DataGenerators;
-using LykkeAutomationPrivate.Models.Registration.Models;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Net;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
 
 namespace AFTests.PrivateApiTests
 {
     class AccountExistResourseTests : PrivateApiBaseTest
     {
-        AccountRegistrationModel existedClient = new AccountRegistrationModel().GetTestModel();
-        AccountRegistrationModel nonExistedClient = new AccountRegistrationModel().GetTestModel();
+        ClientRegistrationModel existedClient;
+        ClientRegistrationModel nonExistedClient;
+        ClientAccountInformation client;
 
         [OneTimeSetUp]
         public void CreateClient()
         {
-            //create new client
-            lykkeApi.Registration.PostRegistration(existedClient);
+            existedClient = new ClientRegistrationModel().GetTestModel();
+            nonExistedClient = new ClientRegistrationModel().GetTestModel();
+            client = lykkeApi.ClientAccount.Clients.PostRegister(existedClient).GetResponseObject();
+        }
+
+        [OneTimeTearDown]
+        public void RemoveClient()
+        {
+            lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(client.Id);
         }
 
         [Test]
         [Category("AccountExist"), Category("ClientAccount"), Category("ServiceAll")]
-        public void GetAccountForExistedClient()
+        public void GetAccountForExistedClientTest()
         {
-            var accountExistResponceModel = lykkeApi.ClientAccount.AccountExist
-                .GetAccountExist(existedClient.Email).GetResponseObject();
-
-            Assert.That(accountExistResponceModel.IsClientAccountExisting, Is.True);
+            var getAccountExist = lykkeApi.ClientAccount.AccountExist
+                .GetAccountExist(existedClient.Email);
+            responseValidator.IsOK(getAccountExist);
+            Assert.That(getAccountExist.GetResponseObject()
+                .IsClientAccountExisting, Is.True);
         }
 
         [Test]
         [Category("AccountExist"), Category("ClientAccount"), Category("ServiceAll")]
-        public void GetAccountForNonExistedClient()
+        public void GetAccountForNonExistedClientTest()
         {
-            var accountExistResponceModel = lykkeApi.ClientAccount.AccountExist
-                .GetAccountExist(nonExistedClient.Email).GetResponseObject();
-
-            Assert.That(accountExistResponceModel.IsClientAccountExisting, Is.False);
+            var getAccountExist = lykkeApi.ClientAccount.AccountExist
+                .GetAccountExist(nonExistedClient.Email);
+            responseValidator.IsOK(getAccountExist);
+            Assert.That(getAccountExist.GetResponseObject()
+                .IsClientAccountExisting, Is.False);
         }
     }
 }
