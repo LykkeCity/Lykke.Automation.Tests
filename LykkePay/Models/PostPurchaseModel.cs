@@ -9,7 +9,7 @@ namespace LykkePay.Models
         public string destinationAddress { get; set; }
         public string assetPair { get; set; }
         public string baseAsset { get; set; }
-        public decimal amount { get; set; }
+        public decimal paidAmount { get; set; }
         public string successUrl { get; set; }
         public string errorUrl { get; set; }
         public string progressUrl { get; set; }
@@ -17,12 +17,12 @@ namespace LykkePay.Models
         public PostMarkup markup { get; set; }
 
 
-        public PostPurchaseModel(string destinationAddress, string assetPair, string baseAsset, decimal amount)
+        public PostPurchaseModel(string destinationAddress, string assetPair, string baseAsset, decimal paidAmount)
         {
             this.destinationAddress = destinationAddress;
             this.assetPair = assetPair;
             this.baseAsset = baseAsset;
-            this.amount = amount;
+            this.paidAmount = paidAmount;
             //markup = new PostMarkup() { fixedFee = 0.001 };
         }
     }
