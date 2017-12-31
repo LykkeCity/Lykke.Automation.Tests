@@ -14,18 +14,15 @@ namespace XUnitTestCommon.RestRequests
 
         public string Content { get; set; }
 
-        public JObject JObject
-        {
-            get
-            {
-                return JObject.Parse(Content);
-            }
-        }
-    }
+        public JObject JObject => JObject.Parse(Content);
 
+        public IValidate Validate => new Validate(this);
+    }
 
     public class Response<T> : Response, IResponse<T>
     {
+        IValidate<T> IResponse<T>.Validate => new Validate<T>(this);
+
         public T GetResponseObject()
         {
             return JsonConvert.DeserializeObject<T>(Content);

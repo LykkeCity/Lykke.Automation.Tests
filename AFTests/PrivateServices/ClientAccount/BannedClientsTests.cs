@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
 using LykkeAutomationPrivate.Resources.ClientAccountResource;
+using System.Net;
 
 namespace AFTests.PrivateApiTests
 {
@@ -42,7 +43,6 @@ namespace AFTests.PrivateApiTests
                 lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(clientId);
             }
         }
-
     }
 
     class PutClientBanTests : BannedClientBaseTest
@@ -52,7 +52,7 @@ namespace AFTests.PrivateApiTests
         public void PutClientBanTest()
         {
             var putClientBan = api.PutBannedClients(clientId);
-            responseValidator.IsOK(putClientBan);
+            putClientBan.Validate.StatusCode(HttpStatusCode.OK);
             Assert.That(api.GetBannedClientsIsBanned(clientId)
                 .GetResponseObject(), Is.True);
         }
@@ -70,7 +70,7 @@ namespace AFTests.PrivateApiTests
             Assert.That(getIsClientBanned.GetResponseObject(), Is.True);
 
             var deleteUnBanClient = api.DeleteBannedClients(clientId);
-            responseValidator.IsOK(deleteUnBanClient);
+            deleteUnBanClient.Validate.StatusCode(HttpStatusCode.OK);
             Assert.That(api.GetBannedClientsIsBanned(clientId)
                 .GetResponseObject(), Is.False);
         }
@@ -85,7 +85,7 @@ namespace AFTests.PrivateApiTests
             var bannedClient = new BannedClient { ClientId = clientId };
 
             var postBannedClientsList = api.GetBannedClients();
-            responseValidator.IsOK(postBannedClientsList);
+            postBannedClientsList.Validate.StatusCode(HttpStatusCode.OK);
             Assert.That(postBannedClientsList.GetResponseObject(), 
                 Does.Not.Contain(bannedClient).Using(bannedClientsComparer));
 
@@ -104,7 +104,7 @@ namespace AFTests.PrivateApiTests
         {
             var postBannedCleintsFilterByIds = api
                 .PostBannedCleintsFilterByIds(new List<string> { clientId });
-            responseValidator.IsOK(postBannedCleintsFilterByIds);
+            postBannedCleintsFilterByIds.Validate.StatusCode(HttpStatusCode.OK);
             Assert.That(postBannedCleintsFilterByIds.GetResponseObject(), Is.Empty);
 
             api.PutBannedClients(clientId);
@@ -143,7 +143,7 @@ namespace AFTests.PrivateApiTests
         public void GetBannedClientIsBannedTest()
         {
             var getBannedClient = api.GetBannedClientsIsBanned(bannedClientId);
-            responseValidator.IsOK(getBannedClient);
+            getBannedClient.Validate.StatusCode(HttpStatusCode.OK);
             Assert.That(getBannedClient.GetResponseObject(), Is.True);
         }
 
@@ -152,7 +152,7 @@ namespace AFTests.PrivateApiTests
         public void GetNotBannedClientIsBannedTest()
         {
             var getNotBannedClient = api.GetBannedClientsIsBanned(clientId);
-            responseValidator.IsOK(getNotBannedClient);
+            getNotBannedClient.Validate.StatusCode(HttpStatusCode.OK);
             Assert.That(getNotBannedClient.GetResponseObject(), Is.False);
         }
     }

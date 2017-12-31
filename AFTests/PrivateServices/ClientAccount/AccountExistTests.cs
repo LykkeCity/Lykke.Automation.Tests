@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
+using System.Net;
 
 namespace AFTests.PrivateApiTests
 {
@@ -33,7 +34,7 @@ namespace AFTests.PrivateApiTests
         {
             var getAccountExist = lykkeApi.ClientAccount.AccountExist
                 .GetAccountExist(existedClient.Email);
-            responseValidator.IsOK(getAccountExist);
+            getAccountExist.Validate.StatusCode(HttpStatusCode.OK);
             Assert.That(getAccountExist.GetResponseObject()
                 .IsClientAccountExisting, Is.True);
         }
@@ -44,7 +45,7 @@ namespace AFTests.PrivateApiTests
         {
             var getAccountExist = lykkeApi.ClientAccount.AccountExist
                 .GetAccountExist(nonExistedClient.Email);
-            responseValidator.IsOK(getAccountExist);
+            getAccountExist.Validate.StatusCode(HttpStatusCode.OK);
             Assert.That(getAccountExist.GetResponseObject()
                 .IsClientAccountExisting, Is.False);
         }

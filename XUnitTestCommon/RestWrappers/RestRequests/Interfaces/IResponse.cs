@@ -11,10 +11,12 @@ namespace XUnitTestCommon.RestRequests.Interfaces
         HttpStatusCode StatusCode { get; }
         string Content { get; }
         JObject JObject { get; }
+        IValidate Validate { get; }
     }
 
     public interface IResponse<T> : IResponse
     {
         T GetResponseObject();
+        new IValidate<T> Validate { get; }
     }
 }
