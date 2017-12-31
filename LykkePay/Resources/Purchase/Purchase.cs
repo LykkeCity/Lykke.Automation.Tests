@@ -16,7 +16,7 @@ namespace LykkePay.Resources.Purchase
     {
         private const string resource = "/purchase";
 
-        public IResponse<PostPurchaseResponseModel> PostPurchaseResponse(MerchantModel merchantModel, PostPurchaseModel purchaseModel)
+        public IResponse<PostPurchaseResponseModel> PostPurchaseResponse(AbstractMerchant merchantModel, PostPurchaseModel purchaseModel)
         {
             var request = Request.Post(resource).
                 WithHeaders("Lykke-Merchant-Id", merchantModel.LykkeMerchantId).
@@ -28,7 +28,7 @@ namespace LykkePay.Resources.Purchase
             return request.AddJsonBody(purchaseModel).Build().Execute<PostPurchaseResponseModel>();
         }
 
-        public IResponse<PostPurchaseResponseModel> PostPurchaseResponse(MerchantModel merchantModel, string purchaseModel)
+        public IResponse<PostPurchaseResponseModel> PostPurchaseResponse(AbstractMerchant merchantModel, string purchaseModel)
         {
             var request = Request.Post(resource).
                 WithHeaders("Lykke-Merchant-Id", merchantModel.LykkeMerchantId).

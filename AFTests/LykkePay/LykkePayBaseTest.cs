@@ -16,7 +16,6 @@ namespace AFTests.LykkePayTests
 {
     public class LykkepPayBaseTest : BaseTest
     {
-        public LykkePayApi lykkePayApi = new LykkePayApi();
-     
+        public LykkePayApi lykkePayApi = new LykkePayApi(); 
     }
 }
