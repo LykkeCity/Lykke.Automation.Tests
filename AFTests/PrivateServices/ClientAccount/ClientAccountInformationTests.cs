@@ -1,7 +1,7 @@
 ﻿using LykkeAutomationPrivate.DataGenerators;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
 using LykkeAutomationPrivate.Models.Registration.Models;
-using LykkeAutomationPrivate.Validators;
+using LykkeAutomationPrivate.Resources.ClientAccountResource;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
@@ -13,40 +13,46 @@ using XUnitTestCommon.TestsData;
 
 namespace AFTests.PrivateApiTests
 {
-    class GetClientAccountInformation : PrivateApiBaseTest
+    class ClientAccountInformationBaseTest : PrivateApiBaseTest
     {
-        AccountRegistrationModel registration;
-        ClientAccountInformationModel account;
-        string pin = "1111";
-        string partnerId = "NewTestPartner";
+        protected ClientAccountInformationResource api;
+        protected ClientRegistrationModel clientRegistration;
+        protected ClientAccountInformation account;
+        protected Partner partner;
+        protected string pin = "1111";
 
         [OneTimeSetUp]
-        public void CreateClient()
+        public void CreatePartnerAndClientAndApi()
         {
-            registration = new AccountRegistrationModel().GetTestModel();
-            registration.PartnerId = partnerId;
-            account = lykkeApi.Registration.PostRegistration(registration).Account;
+            api = lykkeApi.ClientAccount.ClientAccountInformation;
+            partner = new Partner().GetTestModel();
+            lykkeApi.ClientAccount.Partners.PostPartners(partner);
+            
+            clientRegistration = new ClientRegistrationModel().GetTestModel(partner.PublicId);
+            account = lykkeApi.ClientAccount.Clients.PostRegister(clientRegistration)
+                .GetResponseObject();
             lykkeApi.ClientAccount.ClientAccountInformation.PostSetPIN(account.Id, pin);
+            account.Pin = pin;
         }
 
+        [OneTimeTearDown]
+        public void RemovePartnerAndClient()
+        {
+            lykkeApi.ClientAccount.Partners.DeleteRemovePartner(partner.InternalId);
+            lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(account.Id);
+        }
+    }
+
+    class GetClientAccountInformation : ClientAccountInformationBaseTest
+    {
         [Test]
         [Description("Get client by id.")]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetClientAccountInformationTest()
         {
-            var getAccountInformation = lykkeApi.ClientAccount.ClientAccountInformation.GetClientAccountInformation(account.Id);
+            var getAccountInformation = api.GetClientAccountInformation(account.Id);
             Assert.That(getAccountInformation.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-            var accountInformation = getAccountInformation.GetResponseObject();
-            Assert.That(accountInformation.Email, Is.EqualTo(registration.Email));
-            Assert.That(accountInformation.Id, Is.EqualTo(account.Id));
-            Assert.That(accountInformation.IsReviewAccount, Is.EqualTo(false));
-            Assert.That(accountInformation.IsTrusted, Is.EqualTo(false));
-            Assert.That(accountInformation.NotificationsId, Is.EqualTo(account.NotificationsId));
-            Assert.That(accountInformation.PartnerId, Is.EqualTo(partnerId));
-            Assert.That(accountInformation.Phone, Is.EqualTo(registration.ContactPhone));
-            Assert.That(accountInformation.Pin, Is.EqualTo(pin));
-            Assert.That(accountInformation.Registered, Is.EqualTo(DateTime.UtcNow).Within(TimeSpan.FromMinutes(10)));
+            Assert.That(getAccountInformation.GetResponseObject(), Is.EqualTo(account));
         }
 
         [Test]
@@ -63,10 +69,8 @@ namespace AFTests.PrivateApiTests
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetClientsByPhoneTest()
         {
-            var getClientsByPhone = lykkeApi.ClientAccount.ClientAccountInformation
-                .GetClientsByPhone(registration.ContactPhone);
+            var getClientsByPhone = api.GetClientsByPhone(account.Phone);
             Assert.That(getClientsByPhone.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
             Assert.That(getClientsByPhone.GetResponseObject(), Does.Contain(account.Id));
         }
 
@@ -75,10 +79,8 @@ namespace AFTests.PrivateApiTests
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetIsPasswordCorrectTest()
         {
-            var isPasswordCorrect = lykkeApi.ClientAccount.ClientAccountInformation
-                .GetIsPasswordCorrect(account.Id, registration.Password);
+            var isPasswordCorrect = api.GetIsPasswordCorrect(account.Id, clientRegistration.Password);
             Assert.That(isPasswordCorrect.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
             Assert.That(isPasswordCorrect.GetResponseObject(), Is.True);
         }
 
@@ -87,19 +89,9 @@ namespace AFTests.PrivateApiTests
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetClientByIdTest()
         {
-            var client = lykkeApi.ClientAccount.ClientAccountInformation
-                .GetClientById(account.Id);
-            Assert.That(client.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-            var clientModel = client.GetResponseObject();
-            Assert.That(clientModel.Id, Is.EqualTo(account.Id));
-            Assert.That(clientModel.Email, Is.EqualTo(account.Email));
-            Assert.That(clientModel.PartnerId, Is.EqualTo(partnerId));
-            Assert.That(clientModel.Phone, Is.EqualTo(account.Phone));
-            Assert.That(clientModel.Pin, Is.EqualTo(pin));
-            Assert.That(clientModel.NotificationsId, Is.EqualTo(account.NotificationsId));
-            Assert.That(clientModel.Registered, Is.EqualTo(account.Registered));
-            Assert.That(clientModel.IsReviewAccount, Is.EqualTo(account.IsReviewAccount));
+            var getClient = api.GetClientById(account.Id);
+            Assert.That(getClient.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getClient.GetResponseObject(), Is.EqualTo(account));
         }
 
         [Test]
@@ -107,21 +99,9 @@ namespace AFTests.PrivateApiTests
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetClientsByEmailTest()
         {
-            var client = lykkeApi.ClientAccount.ClientAccountInformation
-                .GetClientsByEmail(account.Email);
-            Assert.That(client.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(client.GetResponseObject().Count, Is.EqualTo(1));
-
-            var clientModel = client.GetResponseObject().First();
-
-            Assert.That(clientModel.Id, Is.EqualTo(account.Id));
-            Assert.That(clientModel.Email, Is.EqualTo(account.Email));
-            Assert.That(clientModel.PartnerId, Is.EqualTo(partnerId));
-            Assert.That(clientModel.Phone, Is.EqualTo(account.Phone));
-            Assert.That(clientModel.Pin, Is.EqualTo(pin));
-            Assert.That(clientModel.NotificationsId, Is.EqualTo(account.NotificationsId));
-            Assert.That(clientModel.Registered, Is.EqualTo(account.Registered));
-            Assert.That(clientModel.IsReviewAccount, Is.EqualTo(account.IsReviewAccount));
+            var getClient = api.GetClientsByEmail(account.Email);
+            Assert.That(getClient.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getClient.GetResponseObject(), Has.Count.EqualTo(1).And.Contain(account));
         }
 
         [Test]
@@ -129,43 +109,27 @@ namespace AFTests.PrivateApiTests
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetClientByEmailAndPartnerIdTest()
         {
-            var client = lykkeApi.ClientAccount.ClientAccountInformation
-                .GetClientByEmailAndPartnerId(account.Email, partnerId);
-            Assert.That(client.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-            var clientModel = client.GetResponseObject();
-
-            Assert.That(clientModel.Id, Is.EqualTo(account.Id));
-            Assert.That(clientModel.Email, Is.EqualTo(account.Email));
-            Assert.That(clientModel.PartnerId, Is.EqualTo(partnerId));
-            Assert.That(clientModel.Phone, Is.EqualTo(account.Phone));
-            Assert.That(clientModel.Pin, Is.EqualTo(pin));
-            Assert.That(clientModel.NotificationsId, Is.EqualTo(account.NotificationsId));
-            Assert.That(clientModel.Registered, Is.EqualTo(account.Registered));
-            Assert.That(clientModel.IsReviewAccount, Is.EqualTo(account.IsReviewAccount));
+            var getClient = api.GetClientByEmailAndPartnerId(account.Email, partner.PublicId);
+            Assert.That(getClient.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getClient.GetResponseObject(), Is.EqualTo(account));
         }
     }
 
-    class Authenticate : PrivateApiBaseTest
+    class Authenticate : ClientAccountInformationBaseTest
     {
         [Test]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void AuthenticateExistedClientTest()
         {
-            var registration = new AccountRegistrationModel().GetTestModel();
-            //registration.PartnerId = partnerId;
-            var  account = lykkeApi.Registration.PostRegistration(registration).Account;
-
             var clientAuthentication = new ClientAuthenticationModel()
             {
-                Email = registration.Email,
-                Password = registration.Password
+                Email = clientRegistration.Email,
+                Password = clientRegistration.Password,
+                ParantId = partner.PublicId
             };
-            var authenticate = lykkeApi.ClientAccount.ClientAccountInformation
-                .PostAuthenticate(clientAuthentication);
-
-            Assert.That(authenticate.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            ClientAccountValidator.Validate(registration, authenticate.GetResponseObject());
+            var postAuthenticate = api.PostAuthenticate(clientAuthentication);
+            Assert.That(postAuthenticate.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(postAuthenticate.GetResponseObject(), Is.EqualTo(account));
         }
 
         [Test]
@@ -179,75 +143,81 @@ namespace AFTests.PrivateApiTests
                 Email = registration.Email,
                 Password = registration.Password
             };
-            var authenticate = lykkeApi.ClientAccount.ClientAccountInformation
-                .PostAuthenticate(clientAuthentication);
+            var authenticate = api.PostAuthenticate(clientAuthentication);
 
             Assert.That(authenticate.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
     }
 
-    class SetPin : PrivateApiBaseTest
+    class SetPin : ClientAccountInformationBaseTest
     {
         [Test]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void SetPinTest()
         {
-            var pin = "1111";
+            var newPin = "1234";
 
-            var registration = new AccountRegistrationModel().GetTestModel();
-            var account = lykkeApi.Registration.PostRegistration(registration).Account;
+            var postSetPin = api.PostSetPIN(account.Id, newPin);
+            Assert.That(postSetPin.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-            var setPin = lykkeApi.ClientAccount.ClientAccountInformation.PostSetPIN(account.Id, pin);
-            Assert.That(setPin.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-            Assert.That(lykkeApi.ClientAccount.ClientAccountInformation.GetClientAccountInformation(account.Id)
-                .GetResponseObject().Pin, Is.EqualTo(pin), "Wrong PIN");
+            Assert.That(api.GetClientAccountInformation(account.Id)
+                .GetResponseObject().Pin, Is.EqualTo(newPin), "Wrong PIN");
         }
     }
 
-    class ChangePassword : PrivateApiBaseTest
+    class ChangePassword : ClientAccountInformationBaseTest
     {
+        string newPassword = "987654321";
+
         [Test]
+        [Order(1)]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         [Description("Change client password")]
         public void ChangePasswordTest()
         {
-            string newPassword = "987654321";
-            var registration = new AccountRegistrationModel().GetTestModel();
-            var account = lykkeApi.Registration.PostRegistration(registration).Account;
-
             var passwordHash = new PasswordHashModel()
             {
                 ClientId = account.Id,
                 PwdHash = Sha256.GenerateHash(newPassword)
             };
 
-            var postChangeClientPassword = lykkeApi.ClientAccount.ClientAccountInformation
-                .PostChangeClientPassword(passwordHash);
+            var postChangeClientPassword = api.PostChangeClientPassword(passwordHash);
             Assert.That(postChangeClientPassword.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
 
-            //Is all ok?
-            var newAuth = lykkeApi.ClientAccount.ClientAccountInformation
-                .PostAuthenticate(new ClientAuthenticationModel()
-                {
-                    Email = registration.Email,
-                    Password = newPassword
-                });
+        [Test]
+        [Order(2)]
+        [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
+        [Description("Client could login with new password")]
+        public void ChangePasswordCouldLoginTest()
+        {
+            var newAuth = api.PostAuthenticate(new ClientAuthenticationModel()
+            {
+                Email = clientRegistration.Email,
+                Password = newPassword,
+                ParantId = partner.PublicId
+            });
             Assert.That(newAuth.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(newAuth.GetResponseObject().Id, Is.EqualTo(account.Id));
+            Assert.That(newAuth.GetResponseObject(), Is.EqualTo(account));
+        }
 
-            //Check old password
-            var oldPassAuth = lykkeApi.ClientAccount.ClientAccountInformation
-                .PostAuthenticate(new ClientAuthenticationModel()
-                {
-                    Email = registration.Email,
-                    Password = registration.Password
-                });
+        [Test]
+        [Order(3)]
+        [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
+        [Description("Client could not login with old password")]
+        public void ChangePasswordCouldNotLoginWithOldPasswordTest()
+        {
+            var oldPassAuth = api.PostAuthenticate(new ClientAuthenticationModel()
+            {
+                Email = clientRegistration.Email,
+                Password = clientRegistration.Password,
+                ParantId = partner.PublicId
+            });
             Assert.That(oldPassAuth.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
     }
 
-    class ChangePhoneNumber : PrivateApiBaseTest
+    class ChangePhoneNumber : ClientAccountInformationBaseTest
     {
         [Test]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
@@ -255,20 +225,15 @@ namespace AFTests.PrivateApiTests
         public void ChangePhoneNumberTest()
         {
             string newPhoneNumber = TestData.GeneratePhone();
-            var registration = new AccountRegistrationModel().GetTestModel();
-            var account = lykkeApi.Registration.PostRegistration(registration).Account;
 
-            var postChangeClientPhoneNumber = lykkeApi.ClientAccount.ClientAccountInformation
-                .PostChangeClientPhoneNumber(account.Id, newPhoneNumber);
+            var postChangeClientPhoneNumber = api.PostChangeClientPhoneNumber(account.Id, newPhoneNumber);
             Assert.That(postChangeClientPhoneNumber.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-            var changedAccount = lykkeApi.ClientAccount.ClientAccountInformation
-                .GetClientAccountInformation(account.Id);
-            Assert.That(changedAccount.GetResponseObject().Phone, Is.EqualTo(newPhoneNumber));
+            Assert.That(api.GetClientAccountInformation(account.Id)
+                .GetResponseObject().Phone, Is.EqualTo(newPhoneNumber));
         }
     }
 
-    class InsertIndexedByPhoneAsync : PrivateApiBaseTest
+    class InsertIndexedByPhoneAsync : ClientAccountInformationBaseTest
     {
         [Test]
         [Ignore("Could not test this method")]
@@ -280,52 +245,36 @@ namespace AFTests.PrivateApiTests
         }
     }
 
-    class PartnerIds : PrivateApiBaseTest
+    class PartnerIds : ClientAccountInformationBaseTest
     {
         [Test]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void PartnerIdsTest()
         {
-            AccountRegistrationModel registration;
-            ClientAccountInformationModel account;
-            string partnerId = "NewTestPartner";
+            var postPartnerIds = api.PostPartnerIds(new EmailsModel()
+            {
+                Values = new List<string> { account.Email }
+            });
 
-            registration = new AccountRegistrationModel().GetTestModel();
-            registration.PartnerId = partnerId;
-            account = lykkeApi.Registration.PostRegistration(registration).Account;
-
-            var partnerIds = lykkeApi.ClientAccount.ClientAccountInformation
-                .PostPartnerIds(new EmailsModel()
-                {
-                    Values = new List<string> { account.Email }
-                });
-
-            Assert.That(partnerIds.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            var response = partnerIds.JObject;
+            Assert.That(postPartnerIds.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var response = postPartnerIds.JObject;
             Assert.That(response, Is.Not.Null);
             Assert.That(response[account.Id], Is.Not.Null);
             List<string> ids = ((JArray)response[account.Id]).Select(i => (string)i).ToList();
-            Assert.That(ids, Does.Contain(partnerId));
+            Assert.That(ids, Does.Contain(partner.PublicId));
         }
     }
 
-    class ClientsByPhone : PrivateApiBaseTest
+    class ClientsByPhone : ClientAccountInformationBaseTest
     {
         [Test]
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void PostClientsByPhoneTest()
         {
-            AccountRegistrationModel registration;
-            ClientAccountInformationModel account;
-
-            registration = new AccountRegistrationModel().GetTestModel();
-            account = lykkeApi.Registration.PostRegistration(registration).Account;
-
-            var clientsByPhone = lykkeApi.ClientAccount.ClientAccountInformation
-                .PostClientsByPhone(new PhoneNumbersModel()
-                {
-                    Values = new List<string> { account.Phone }
-                });
+            var clientsByPhone = api.PostClientsByPhone(new PhoneNumbersModel()
+            {
+                Values = new List<string> { account.Phone }
+            });
 
             Assert.That(clientsByPhone.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             var response = clientsByPhone.JObject;
