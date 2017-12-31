@@ -96,7 +96,7 @@ namespace AFTests.LykkePayTests
             [Test]
             public void PostTransferOnlyAmountNegativeTest()
             {
-                var transfer = new TransferRequestModel() { amount = 0.0018m };
+                var transfer = new TransferRequestModel() { amount = 0.00090202326503065414m };
                 var transferJson = JsonConvert.SerializeObject(transfer, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
                 var merch = new OrderMerchantModel(transferJson);
                 var transferResponse = lykkePayApi.transfer.PostTransferModel(merch, transferJson);

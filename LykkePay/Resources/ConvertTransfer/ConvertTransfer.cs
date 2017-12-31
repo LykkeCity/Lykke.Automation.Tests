@@ -14,7 +14,7 @@ namespace LykkePay.Resources.ConvertTransfer
     {
         private const string resource = "/convert/transfer";
        
-        public IResponse<PostConvertTransferResponseModel> PostPurchaseResponse(MerchantModel merchantModel, PostConvertTransferModel purchaseModel)
+        public IResponse<PostConvertTransferResponseModel> PostPurchaseResponse(AbstractMerchant merchantModel, PostConvertTransferModel purchaseModel)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.NullValueHandling = NullValueHandling.Ignore;
@@ -24,7 +24,22 @@ namespace LykkePay.Resources.ConvertTransfer
             var request = Request.Post(resource).
                 WithHeaders("Lykke-Merchant-Id", merchantModel.LykkeMerchantId).
                 WithHeaders("Lykke-Merchant-Sign", merchantModel.LykkeMerchantSign).
-                AddJsonBody(purchaseModel);
+                AddJsonBody(jsonBody);
+
+            if (merchantModel.LykkeMerchantSessionId != null)
+                request.WithHeaders("Lykke-Merchant-Session-Id", merchantModel.LykkeMerchantSessionId);
+
+            return request.Build().Execute<PostConvertTransferResponseModel>();
+        }
+
+        public IResponse<PostConvertTransferResponseModel> PostPurchaseResponse(AbstractMerchant merchantModel, string purchaseModelJson)
+        {
+            merchantModel.Sign(purchaseModelJson);
+
+            var request = Request.Post(resource).
+                WithHeaders("Lykke-Merchant-Id", merchantModel.LykkeMerchantId).
+                WithHeaders("Lykke-Merchant-Sign", merchantModel.LykkeMerchantSign).
+                AddJsonBody(purchaseModelJson);
 
             if (merchantModel.LykkeMerchantSessionId != null)
                 request.WithHeaders("Lykke-Merchant-Session-Id", merchantModel.LykkeMerchantSessionId);

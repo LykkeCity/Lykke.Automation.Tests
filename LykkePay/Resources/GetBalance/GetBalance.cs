@@ -16,7 +16,7 @@ namespace LykkePay.Resources.GetBalance
 
         public IResponse<List<GetGetBalanceResponseModel>> GetGetBalance(string assetId)
         {
-            string urlToSign = BaseURL + resource;
+            string urlToSign = BaseURL + resource + $"/{assetId}";
             var merchant = new MerchantModel(urlToSign.Replace("https:", "http:"));
 
             return Request.Get($"{resource}/{assetId}").
@@ -26,7 +26,7 @@ namespace LykkePay.Resources.GetBalance
 
         public IResponse<List<GetGetBalanceResponseModel>> GetGetBalanceNonEmpty(string assetId)
         {
-            string urlToSign = BaseURL + resource;
+            string urlToSign = BaseURL + resource + $"/{assetId}/nonempty";
             var merchant = new MerchantModel(urlToSign.Replace("https:", "http:"));
 
             return Request.Get($"{resource}/{assetId}/nonempty").
