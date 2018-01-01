@@ -23,5 +23,20 @@ namespace AFTests.LykkePayTests
                 //TODO: Check purchase status
             }
         }
+
+        public class GetPurchaseStatusNegative : LykkepPayBaseTest
+        {
+            [TestCase("")]
+            [TestCase("!@#$%")]
+            [TestCase("test")]
+            [TestCase("test test")]
+            [Category("LykkePay")]
+            public void GetPurchaseStatusNegativeTest(string transactionId)
+            {
+                var purchaseStatus = lykkePayApi.purchaseStatus.GetPurchaseStatusResponse(transactionId);
+
+                Assert.That(purchaseStatus.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            }
+        }
     }
 }
