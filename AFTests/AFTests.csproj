@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ExternalApi\BaseTestcs_back" />
+    <None Remove="WalletApiTests\BaseTestcs_back" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,10 +24,10 @@
     <ProjectReference Include="..\AssetsData\AssetsData.csproj" />
     <ProjectReference Include="..\BalancesData\BalancesData.csproj" />
     <ProjectReference Include="..\BlueApiData\BlueApiData.csproj" />
-    <ProjectReference Include="..\ExternalApi\ExternalApi.csproj" />
     <ProjectReference Include="..\LykkePay\LykkePay.csproj" />
     <ProjectReference Include="..\MatchingEngineData\MatchingEngineData.csproj" />
     <ProjectReference Include="..\PrivateServices\PrivateServices.csproj" />
+    <ProjectReference Include="..\WalletApi\WalletApi.csproj" />
     <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
   </ItemGroup>
 

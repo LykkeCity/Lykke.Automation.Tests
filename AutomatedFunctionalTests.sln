@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetsData", "AssetsData\AssetsData.csproj", "{35B1F900-A39F-48EA-9ACA-F6A67A5CB1FC}"
 EndProject
@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlueApiData", "BlueApiData\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BalancesData", "BalancesData\BalancesData.csproj", "{9DE5E3FC-5D75-4E8B-A498-424462959163}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalApi", "ExternalApi\ExternalApi.csproj", "{9974DE61-1929-4535-A9A4-BF55A0DA71FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WalletApi", "WalletApi\WalletApi.csproj", "{9974DE61-1929-4535-A9A4-BF55A0DA71FA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrivateServices", "PrivateServices\PrivateServices.csproj", "{6BC7A4A2-2BCA-4748-B161-046BA52725B0}"
 EndProject
