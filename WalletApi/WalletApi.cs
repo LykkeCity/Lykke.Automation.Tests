@@ -24,5 +24,7 @@ namespace WalletApi.Api
         public Auth Auth => new Auth();
         public AccountExist AccountExist => new AccountExist();
         public ApplicationInfo.ApplicationInfo ApplicationInfo => new ApplicationInfo.ApplicationInfo();
+        public AllAssetPairRates AllAssetPairRates => new AllAssetPairRates();
+        public AllAssets AllAssets => new AllAssets();
     }
 }
