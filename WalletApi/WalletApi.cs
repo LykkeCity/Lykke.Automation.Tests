@@ -26,5 +26,6 @@ namespace WalletApi.Api
         public ApplicationInfo.ApplicationInfo ApplicationInfo => new ApplicationInfo.ApplicationInfo();
         public AllAssetPairRates AllAssetPairRates => new AllAssetPairRates();
         public AllAssets AllAssets => new AllAssets();
+        public AppSettings AppSettings => new AppSettings();
     }
 }

@@ -11,12 +11,12 @@ namespace Lykke.Client.AutorestClient.Models
     using LykkeAutomationPrivate.Models.Registration.Models;
     using System;
 
-    public partial class AccountRegistrationModel
+    public partial class AccountRegistrationModel_back
     {
         /// <summary>
         /// Initializes a new instance of the AccountRegistrationModel class.
         /// </summary>
-        public AccountRegistrationModel()
+        public AccountRegistrationModel_back()
         {
             CustomInit();
         }
@@ -29,7 +29,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the AccountRegistrationModel class.
         /// </summary>
-        public AccountRegistrationModel(string email = default(string), string fullName = default(string), string contactPhone = default(string), string password = default(string), string hint = default(string), string clientInfo = default(string), string partnerId = default(string))
+        public AccountRegistrationModel_back(string email = default(string), string fullName = default(string), string contactPhone = default(string), string password = default(string), string hint = default(string), string clientInfo = default(string), string partnerId = default(string))
         {
             Email = email;
             FullName = fullName;
