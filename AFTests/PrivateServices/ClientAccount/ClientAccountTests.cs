@@ -1,5 +1,6 @@
 ﻿using LykkeAutomationPrivate.DataGenerators;
-using LykkeAutomationPrivate.Models.Registration.Models;
+using LykkeAutomationPrivate.Models.ClientAccount.Models;
+using LykkeAutomationPrivate.Resources.ClientAccountResource;
 using NUnit.Framework;
 using System.Net;
 using System;
@@ -9,48 +10,66 @@ using XUnitTestCommon.TestsData;
 
 namespace AFTests.PrivateApiTests
 {
-    class DeleteClientAccount : PrivateApiBaseTest
+    class ClientAccountBaseTest : PrivateApiBaseTest
     {
-        string clientId;
-        string clientEmail;
+        protected ClientAccount api;
+        protected ClientRegistrationModel clientRegistration;
+        protected ClientAccountInformation account;
+        protected Partner partner;
+        protected string pin = "1111";
 
-        [SetUp]
-        public void CreateClient()
+        [OneTimeSetUp]
+        public void CreatePartnerAndClientAndApi()
         {
-            var postRegistration = lykkeApi.Registration.PostRegistration(new AccountRegistrationModel().GetTestModel());
-            clientId = postRegistration.Account.Id;
-            clientEmail = postRegistration.Account.Email;
+            api = lykkeApi.ClientAccount.ClientAccount;
+            partner = new Partner().GetTestModel();
+            lykkeApi.ClientAccount.Partners.PostPartners(partner);
+
+            clientRegistration = new ClientRegistrationModel().GetTestModel(partner.PublicId);
+            account = lykkeApi.ClientAccount.Clients.PostRegister(clientRegistration)
+                .GetResponseObject();
+            lykkeApi.ClientAccount.ClientAccountInformation.PostSetPIN(account.Id, pin);
+            account.Pin = pin;
         }
 
+        [OneTimeTearDown]
+        public void RemovePartnerAndClient()
+        {
+            lykkeApi.ClientAccount.Partners.DeleteRemovePartner(partner.InternalId);
+            lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(account.Id);
+        }
+    }
+
+    class DeleteClientAccount : ClientAccountBaseTest
+    {
         [Test]
+        [Order(1)]
         [Description("Delete existing account.")]
         [Category("ClientAccountResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void DeleteClientAccountTest()
         {
-            var deleteClient = lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(clientId);
+            var deleteClient = api.DeleteClientAccount(account.Id);
             Assert.That(deleteClient.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(api.AccountExist.GetAccountExist(account.Email, partner.PublicId)
+                            .GetResponseObject().IsClientAccountExisting, Is.False);
+        }
 
-            //delete again
-            deleteClient = lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(clientId);
+        [Test]
+        [Order(2)]
+        [Description("Delete existing account again.")]
+        [Category("ClientAccountResource"), Category("ClientAccount"), Category("ServiceAll")]
+        public void DeleteClientAccountAgainTest()
+        {
+            var deleteClient = api.DeleteClientAccount(account.Id);
             Assert.That(deleteClient.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             Assert.That(deleteClient.GetResponseObject().ErrorMessage, Is.EqualTo("Client with id doesn't exist"));
-
-            //check exist
-            var getAccountExist = lykkeApi.ClientAccount.AccountExist.GetAccountExist(clientEmail);
-            Assert.That(getAccountExist.GetResponseObject().IsClientAccountExisting, Is.False);
+            Assert.That(api.AccountExist.GetAccountExist(account.Email, partner.PublicId)
+                            .GetResponseObject().IsClientAccountExisting, Is.False);
         }
     }
 
-    class PutClientAccountEmail : PrivateApiBaseTest
+    class PutClientAccountEmail : ClientAccountBaseTest
     {
-        ClientAccountInformationModel account;
-
-        [SetUp]
-        public void CreateClient()
-        {
-            account = lykkeApi.Registration.PostRegistration(new AccountRegistrationModel().GetTestModel()).Account;
-        }
-
         [Test]
         [Description("Change client email.")]
         [Category("ClientAccountResource"), Category("ClientAccount"), Category("ServiceAll")]
@@ -59,65 +78,60 @@ namespace AFTests.PrivateApiTests
             string oldEmail = account.Email;
             string newEmail = TestData.GenerateEmail();
             //Check that no account with new email exist
-            Assert.That(lykkeApi.ClientAccount.AccountExist.GetAccountExist(newEmail).GetResponseObject()
+            Assert.That(lykkeApi.ClientAccount.AccountExist.GetAccountExist(newEmail, partner.PublicId).GetResponseObject()
                 .IsClientAccountExisting, Is.False, "Should not happens. Bad random - account exist.");
             //Change email
-            var putClientEmail = lykkeApi.ClientAccount.ClientAccount.PutClientAccountEmail(account.Id, newEmail);
+            var putClientEmail = api.PutClientAccountEmail(account.Id, newEmail);
             Assert.That(putClientEmail.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Wrong responce code on email change");
-
             //Check that account with new email exist, with old - doesn't
-            Assert.That(lykkeApi.ClientAccount.AccountExist.GetAccountExist(newEmail).GetResponseObject()
+            Assert.That(lykkeApi.ClientAccount.AccountExist.GetAccountExist(newEmail, partner.PublicId).GetResponseObject()
                 .IsClientAccountExisting, Is.True, "Email has not been changed");
-            Assert.That(lykkeApi.ClientAccount.AccountExist.GetAccountExist(oldEmail).GetResponseObject()
+            Assert.That(lykkeApi.ClientAccount.AccountExist.GetAccountExist(oldEmail, partner.PublicId).GetResponseObject()
                 .IsClientAccountExisting, Is.False, "Email has not been changed");
-
-            //TODO: Check account by id
+            Assert.That(lykkeApi.ClientAccount.ClientAccountInformation.GetClientById(account.Id)
+                .GetResponseObject().Email, Is.EqualTo(newEmail));
         }
     }
 
-    class GetClientAccountTrusted : PrivateApiBaseTest
+    class GetClientAccountTrusted : ClientAccountBaseTest
     {
-        ClientAccountInformationModel account;
-
-        [SetUp]
-        public void CreateClient()
-        {
-            account = lykkeApi.Registration.PostRegistration(new AccountRegistrationModel().GetTestModel()).Account;
-        }
-
         [Test] //TODO: Add check on trusted account. How to create one?
         [Description("Check whether account is trusted.")]
         [Category("ClientAccountResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetClientAccountTrustedTest()
         {
-            var getClienyAccoutTrusted = lykkeApi.ClientAccount.ClientAccount.GetClientAccountTrusted(account.Id);
+            var getClienyAccoutTrusted = api.GetClientAccountTrusted(account.Id);
             Assert.That(getClienyAccoutTrusted.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getClienyAccoutTrusted.GetResponseObject(), Is.False, "Untrusted account is Trusted");
         }
     }
 
-    class GetUsersCountByPartnerId : PrivateApiBaseTest
+    class GetUsersCountByPartnerId : ClientAccountBaseTest
     {
+        ClientRegistrationModel newAccountReg;
+        ClientAccountInformation newAccount;
+
+        [SetUp]
+        public void CreateOneMoreClient() => 
+            newAccountReg = new ClientRegistrationModel().GetTestModel(partner.PublicId);
+
+        [TearDown]
+        public void RemoveClient() => 
+            lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(newAccount?.Id);
+
         [Test]
         [Description("Get users count by partner id.")]
         [Category("ClientAccountResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void GetUsersCountByPartnerIdTest()
         {
-            string partnerId = "NewTestPartner";
-            var getUsersCountForAccount = lykkeApi.ClientAccount.ClientAccount
-                .GetUsersCountByPartnerId(partnerId);
+            var getUsersCountForAccount = api.GetUsersCountByPartnerId(partner.PublicId);
             Assert.That(getUsersCountForAccount.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(getUsersCountForAccount.GetResponseObject(), Is.TypeOf<int>());
+            Assert.That(getUsersCountForAccount.GetResponseObject(), Is.EqualTo(1));
+                        
+            newAccount = lykkeApi.ClientAccount.Clients.PostRegister(newAccountReg).GetResponseObject();
 
-            int usersCount = getUsersCountForAccount.GetResponseObject();
-
-            var accountReg = new AccountRegistrationModel().GetTestModel();
-            accountReg.PartnerId = partnerId;
-            var account = lykkeApi.Registration.PostRegistration(accountReg).Account;
-
-            getUsersCountForAccount = lykkeApi.ClientAccount.ClientAccount
-                .GetUsersCountByPartnerId(partnerId);
-            Assert.That(getUsersCountForAccount.GetResponseObject(), Is.EqualTo(usersCount + 1));
+            getUsersCountForAccount = api.GetUsersCountByPartnerId(partner.PublicId);
+            Assert.That(getUsersCountForAccount.GetResponseObject(), Is.EqualTo(2));
         }
     }
 }
