@@ -8,10 +8,12 @@ namespace LykkeAutomationPrivate.Resources.ClientAccountResource
 {
     public class AccountExist : ClientAccountBase
     {
-        public IResponse<AccountExistResponceModel> GetAccountExist(string email)
+        public IResponse<AccountExistResponceModel> GetAccountExist(string email, string partnerId)
         {
-            return Request.Get("/api/AccountExist").AddQueryParameter("email", email).Build()
-                .Execute<AccountExistResponceModel>();
+            var requset = Request.Get("/api/AccountExist").AddQueryParameter("email", email);
+            if (partnerId != null)
+                requset.AddQueryParameter("partnerId", partnerId);
+            return requset.Build().Execute<AccountExistResponceModel>();
         }
     }
 }

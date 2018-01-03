@@ -1,6 +1,5 @@
 ﻿using LykkeAutomationPrivate.DataGenerators;
 using LykkeAutomationPrivate.Models.ClientAccount.Models;
-using LykkeAutomationPrivate.Models.Registration.Models;
 using LykkeAutomationPrivate.Resources.ClientAccountResource;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -136,12 +135,12 @@ namespace AFTests.PrivateApiTests
         [Category("ClientAccountInformationResource"), Category("ClientAccount"), Category("ServiceAll")]
         public void AuthenticateNonExistedClientTest()
         {
-            var registration = new AccountRegistrationModel().GetTestModel();
-
+            var registration = new ClientRegistrationModel().GetTestModel(partner.PublicId);
             var clientAuthentication = new ClientAuthenticationModel()
             {
                 Email = registration.Email,
-                Password = registration.Password
+                Password = registration.Password,
+                ParantId = partner.PublicId
             };
             var authenticate = api.PostAuthenticate(clientAuthentication);
 
