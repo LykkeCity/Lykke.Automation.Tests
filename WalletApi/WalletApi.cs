@@ -30,5 +30,7 @@ namespace WalletApi.Api
         public AssetsCategories AssetsCategories => new AssetsCategories();
         public AssetDescription AssetDescription => new AssetDescription();
         public AssetPair AssetPair => new AssetPair();
+        public AssetPairDetailedRates AssetPairDetailedRates => new AssetPairDetailedRates();
+        public AssetPairs AssetPairs => new AssetPairs();
     }
 }

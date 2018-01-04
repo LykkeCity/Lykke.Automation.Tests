@@ -50,4 +50,31 @@ namespace WalletApi.Api
             return Request.Get(resource + assetPairName).WithBearerToken(token).Build().Execute<ResponseModelGetAssetPairResponseModel>();
         }
     }
+
+    public class AssetPairDetailedRates : WalletApi
+    {
+        string resource = "/AssetPairDetailedRates";
+
+        public IResponse<ResponseModelGetAssetPairDetailedRateModel> GetAssetPairDetailedRates(string token, string period=null, string asseId = null, int points = -1, bool withBid = false)
+        {
+            var request = Request.Get(resource).WithBearerToken(token).AddQueryParameter("withBid", withBid);
+            if (period != null)
+                request.AddQueryParameter("period", period);
+            if (asseId != null)
+                request.AddQueryParameter("asseId", asseId);
+            if (points != -1)
+                request.AddQueryParameter("points", points);
+            return request.Build().Execute<ResponseModelGetAssetPairDetailedRateModel>();
+        }
+    }
+
+    public class AssetPairs : WalletApi
+    {
+        string resource = "/AssetPairs";
+
+        public IResponse<ResponseModelGetAssetPairsResponseModel> GetAssetPairs(string token)
+        {
+            return Request.Get(resource).WithBearerToken(token).Build().Execute<ResponseModelGetAssetPairsResponseModel>();
+        }
+    }
 }

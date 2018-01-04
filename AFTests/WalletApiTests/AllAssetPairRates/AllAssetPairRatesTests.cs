@@ -164,5 +164,50 @@ namespace AFTests.WalletApiTests.AllAssetPairRates
             }
         }
         #endregion
+
+        #region AssetPairDetailedRates
+        public class GetAssetPairDetailedRates : WalletApiBaseTest
+        {
+            [Test]
+            [Category("WalletApi")]
+            public void GetAssetPairDetailedRatesTest()
+            {
+                Assert.Ignore("Not implemented. need discussion about Get /AssetPairDetailedRates");
+            }
+        }
+        #endregion
+
+        #region AssetPairs
+        public class GetAssetPairs : WalletApiBaseTest
+        {
+            [Test]
+            [Category("WalletApi")]
+            public void GetAssetPairsTest()
+            {
+                var user = new AccountRegistrationModel();
+                var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
+                var assetPairs = walletApi.AssetPairs.GetAssetPairs(registeredClient.GetResponseObject().Result.Token);
+
+                assetPairs.Validate.StatusCode(HttpStatusCode.OK);
+                Assert.That(assetPairs.GetResponseObject().Result.AssetPairs.Count, Is.GreaterThanOrEqualTo(2), "Why here empty asset pairs array?? Asset pairs count is less then 2");
+            }
+        }
+
+        public class GetAssetPairsInvalidToken : WalletApiBaseTest
+        {
+            [TestCase("")]
+            [TestCase("test")]
+            [TestCase("1234")]
+            [TestCase("!@#$")]
+            [Category("WalletApi")]
+            public void GetAssetPairsInvalidTokenTest(string token)
+            {
+                var assetPairs = walletApi.AssetPairs.GetAssetPairs(token);
+
+                assetPairs.Validate.StatusCode(HttpStatusCode.OK);
+                Assert.That(assetPairs.GetResponseObject().Result.AssetPairs.Count, Is.GreaterThanOrEqualTo(2), "Asset pairs count is less then 2");
+            }
+        }
+        #endregion
     }
 }
