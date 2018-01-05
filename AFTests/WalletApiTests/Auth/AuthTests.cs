@@ -22,7 +22,7 @@ namespace AFTests.WalletApiTests
         {
             [Test]
             [Parallelizable]
-            [Category("Auth"), Category("All")]
+            [Category("Auth"), Category("WalletApi")]
             public void SuccessAuthAfterRegistrationTest()
             {
                 ApiSchemes apiSchemes = new ApiSchemes();
