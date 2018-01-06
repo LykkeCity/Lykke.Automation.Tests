@@ -18,7 +18,7 @@ namespace AFTests.WalletApiTests
         public class PostRegistrationPositive : WalletApiBaseTest
         {
             [Test]
-            [Category("Registration"), Category("All")]
+            [Category("Registration"), Category("WalletApi")]
             public void PostRegistrationPositiveTest()
             {
                 AccountRegistrationModel newUser = new AccountRegistrationModel();

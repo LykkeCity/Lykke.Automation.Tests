@@ -22,7 +22,7 @@ namespace AFTests.WalletApiTests
         {
             [Test]
             [Parallelizable]
-            [Category("AccountExist"), Category("All")]
+            [Category("AccountExist"), Category("WalletApi")]
             public void AccountExistInvalidEmailTest()
             {
                 ApiSchemes apiSchemes = new ApiSchemes();

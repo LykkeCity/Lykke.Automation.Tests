@@ -100,6 +100,7 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
         {
             var requestBody = response.Request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
 
+            var requestHeaders = response.Request.Parameters.FindAll(p => p.Type == ParameterType.HttpHeader);
             string attachName = $"{response.Request.Method} {response.Request.Resource}";
             var attachContext = new StringBuilder();
             attachContext.AppendLine($"Executing {response.Request.Method} {response.ResponseUri}");
@@ -108,6 +109,8 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
                 attachContext.AppendLine($"Content-Type: {requestBody.ContentType}").AppendLine();
                 attachContext.AppendLine(requestBody.Value.ToString());
             }
+            requestHeaders.ForEach(h => attachContext.AppendLine(h.Name + ": " + h.Value));
+
             attachContext.AppendLine().AppendLine();
             attachContext.AppendLine($"Response: {response.StatusCode}");
             if (response.ErrorMessage != null)

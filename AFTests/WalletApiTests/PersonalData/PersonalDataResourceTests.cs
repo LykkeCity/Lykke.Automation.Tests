@@ -25,7 +25,7 @@ namespace AFTests.WalletApiTests
 
             [Test]
             [Parallelizable]
-            [Category("PersonalData"), Category("All")]
+            [Category("PersonalData"), Category("WalletApi")]
             public void PersonalDataInvalidTokenTest()
             {
                 var invalidToken = "invalidToken";
@@ -42,7 +42,7 @@ namespace AFTests.WalletApiTests
 
             [Test]
             [Parallelizable]
-            [Category("PersonalData"), Category("All")]
+            [Category("PersonalData"), Category("WalletApi")]
             public void PersonalDataEmptyTokenTest()
             {
                 var emptyToken = "";
@@ -59,7 +59,7 @@ namespace AFTests.WalletApiTests
 
             [Test]
             [Parallelizable]
-            [Category("PersonalData"), Category("All")]
+            [Category("PersonalData"), Category("WalletApi")]
             public void PersonalDataValidTokenTest()
             {
                 AccountRegistrationModel user = new AccountRegistrationModel();
