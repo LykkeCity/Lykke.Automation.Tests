@@ -9,37 +9,106 @@ using LykkeAutomationPrivate.Resources.ClientAccountResource;
 
 namespace AFTests.PrivateApiTests
 {
-    class IsEmailVerifiedTest : PrivateApiBaseTest
+    class IsEmailVerifiedBaseTest : PrivateApiBaseTest
     {
-        string partnerId = "NewTestPartner";
-        ClientAccountInformation clientAccount;
+        private Partner partner;
+        protected ClientAccountInformation clientWithPartner;
+        protected ClientAccountInformation clientWithOutPartner;
 
-        [SetUp]
-        public void CreateClient()
+        [OneTimeSetUp]
+        public void RegisterClientAndPartner()
         {
-            ClientRegistrationModel clientRegistration = new ClientRegistrationModel().GetTestModel();
-            clientRegistration.PartnerId = partnerId;
-            clientAccount = lykkeApi.ClientAccount.Clients.PostRegister(clientRegistration).GetResponseObject();
+            partner = new Partner().GetTestModel();
+            lykkeApi.ClientAccount.Partners.PostPartners(partner);
+
+            clientWithPartner = lykkeApi.ClientAccount.Clients
+                .PostRegister(new ClientRegistrationModel().GetTestModel(partner.PublicId)).GetResponseObject();
+            clientWithOutPartner = lykkeApi.ClientAccount.Clients
+                .PostRegister(new ClientRegistrationModel().GetTestModel()).GetResponseObject();
         }
 
-        [TearDown]
-        public void DeleteClient() =>
-            lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(clientAccount.Id);
+        [OneTimeTearDown]
+        public void RemoveClientsAndPartner()
+        {
+            lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(clientWithPartner.Id);
+            lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(clientWithOutPartner.Id);
 
+            lykkeApi.ClientAccount.Partners.DeleteRemovePartner(partner.InternalId);
+        }
+    }
 
+    class IsNewEmailVerifiedTests : IsEmailVerifiedBaseTest
+    {
         [Test]
         [Category("IsEmailVerified"), Category("ClientAccount"), Category("ServiceAll")]
-        public void GetIsEmailVerifiedTest()
+        public void GetIsNewEmailVerifiedTest()
         {
             var getIsEmailVerified = lykkeApi.ClientAccount.IsEmailVerified
                 .PostIsEmailVerified(new VerifiedEmailModel()
                 {
-                    Email = clientAccount.Email,
-                    PartnerId = partnerId
+                    Email = clientWithPartner.Email,
+                    PartnerId = clientWithPartner.PartnerId
                 });
             Assert.That(getIsEmailVerified.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getIsEmailVerified.GetResponseObject(), Is.False, 
                 "New registered client email is verified");
+        }
+
+        [Test]
+        [Category("IsEmailVerified"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetIsNewEmailVerifiedWithOutPartnerTest()
+        {
+            var getIsEmailVerified = lykkeApi.ClientAccount.IsEmailVerified
+                .PostIsEmailVerified(new VerifiedEmailModel()
+                {
+                    Email = clientWithOutPartner.Email
+                });
+            Assert.That(getIsEmailVerified.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getIsEmailVerified.GetResponseObject(), Is.False,
+                "New registered client email is verified");
+        }
+    }
+
+    class IsEmailVerifiedTests : IsEmailVerifiedBaseTest
+    {
+        [Test]
+        [Category("IsEmailVerified"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetIsEmailVerifiedTest()
+        {
+            lykkeApi.ClientAccount.VerifiedEmails.PostVerifiedEmails(new VerifiedEmailModel
+            {
+                Email = clientWithPartner.Email,
+                PartnerId = clientWithPartner.PartnerId
+            });
+
+            var getIsEmailVerified = lykkeApi.ClientAccount.IsEmailVerified
+                .PostIsEmailVerified(new VerifiedEmailModel()
+                {
+                    Email = clientWithPartner.Email,
+                    PartnerId = clientWithPartner.PartnerId
+                });
+            Assert.That(getIsEmailVerified.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getIsEmailVerified.GetResponseObject(), Is.True,
+                "Client email has not been verified");
+        }
+
+        [Test]
+        [Category("IsEmailVerified"), Category("ClientAccount"), Category("ServiceAll")]
+        public void GetIsEmailVerifiedWithOutPartnerTest()
+        {
+            lykkeApi.ClientAccount.VerifiedEmails.PostVerifiedEmails(new VerifiedEmailModel
+            {
+                Email = clientWithOutPartner.Email
+            });
+
+            var getIsEmailVerified = lykkeApi.ClientAccount.IsEmailVerified
+                .PostIsEmailVerified(new VerifiedEmailModel()
+                {
+                    Email = clientWithOutPartner.Email
+                });
+            Assert.That(getIsEmailVerified.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(getIsEmailVerified.GetResponseObject(), Is.True,
+                "Client email has not been verified");
         }
     }
 }

@@ -10,23 +10,10 @@ using XUnitTestCommon.TestsData;
 
 namespace AFTests.PrivateApiTests
 {
-    class PartnerComparer : IComparer<Partner>
-    {
-        public int Compare(Partner x, Partner y)
-        {
-            if (x.PublicId == y.PublicId && x.InternalId == y.InternalId &&
-                x.Name == y.Name && x.AssetPrefix == y.AssetPrefix &&
-                x.RegisteredUsersCount == y.RegisteredUsersCount)
-                return 0;
-            return -1;
-        }
-    }
-
     class PartnerBaseTest : PrivateApiBaseTest
     {
         protected Partner partner;
         protected Partners api;
-        protected IComparer<Partner> partnerComparer = new PartnerComparer();
 
         [OneTimeSetUp]
         public void GenerateTestPartnerAndApi()
@@ -51,7 +38,7 @@ namespace AFTests.PrivateApiTests
             var postPartners = api.PostPartners(partner);
             Assert.That(postPartners.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(api.GetPartners().GetResponseObject(), 
-                Does.Contain(partner).Using(partnerComparer));
+                Does.Contain(partner));
         }
     }
 
@@ -66,7 +53,7 @@ namespace AFTests.PrivateApiTests
             var getPartners = api.GetPartners();
             Assert.That(getPartners.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getPartners.GetResponseObject(),
-                Does.Contain(partner).Using(partnerComparer));
+                Does.Contain(partner));
         }
     }
 
@@ -78,12 +65,12 @@ namespace AFTests.PrivateApiTests
         {
             api.PostPartners(partner);
             Assert.That(api.GetPartners().GetResponseObject(),
-                Does.Contain(partner).Using(partnerComparer));
+                Does.Contain(partner));
 
             var deletePartner = api.DeleteRemovePartner(partner.InternalId);
             Assert.That(deletePartner.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(api.GetPartners().GetResponseObject(),
-                Does.Not.Contain(partner).Using(partnerComparer));
+                Does.Not.Contain(partner));
         }
     }
 
@@ -96,7 +83,7 @@ namespace AFTests.PrivateApiTests
             var putPartners = api.PutPartners(partner);
             Assert.That(putPartners.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(api.GetPartners().GetResponseObject(),
-                Does.Contain(partner).Using(partnerComparer));
+                Does.Contain(partner));
         }
     }
 
@@ -111,7 +98,7 @@ namespace AFTests.PrivateApiTests
             var getPartnersAll = api.GetPartnersAll();
             Assert.That(getPartnersAll.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getPartnersAll.GetResponseObject(),
-                Does.Contain(partner).Using(partnerComparer));
+                Does.Contain(partner));
         }
     }
 
@@ -139,7 +126,7 @@ namespace AFTests.PrivateApiTests
             Assert.That(postPartnersByPublicId.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(postPartnersByPublicId.GetResponseObject(), Has.Count.EqualTo(1));
             Assert.That(postPartnersByPublicId.GetResponseObject(),
-                Does.Contain(partner).Using(partnerComparer));
+                Does.Contain(partner));
         }
 
         [Test]
@@ -151,8 +138,8 @@ namespace AFTests.PrivateApiTests
             Assert.That(getPartnersByPublicId.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getPartnersByPublicId.GetResponseObject(), Has.Count.EqualTo(2));
             Assert.That(getPartnersByPublicId.GetResponseObject(),
-                Does.Contain(partner).Using(partnerComparer)
-                .And.Contain(secondPartner).Using(partnerComparer));
+                Does.Contain(partner)
+                .And.Contain(secondPartner));
         }
 
         [Test]
@@ -165,7 +152,7 @@ namespace AFTests.PrivateApiTests
             Assert.That(getPartnersByPublicId.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getPartnersByPublicId.GetResponseObject(), Has.Count.EqualTo(1));
             Assert.That(getPartnersByPublicId.GetResponseObject(),
-                Does.Contain(partner).Using(partnerComparer));
+                Does.Contain(partner));
         }
 
         [Test]
@@ -204,7 +191,7 @@ namespace AFTests.PrivateApiTests
             Assert.That(getPartnersById.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getPartnersById.GetResponseObject(), Has.Count.EqualTo(1));
             Assert.That(getPartnersById.GetResponseObject(),
-                Does.Contain(partner).Using(partnerComparer));
+                Does.Contain(partner));
         }
 
         [Test]
@@ -216,8 +203,8 @@ namespace AFTests.PrivateApiTests
             Assert.That(getPartnersById.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getPartnersById.GetResponseObject(), Has.Count.EqualTo(2));
             Assert.That(getPartnersById.GetResponseObject(),
-                Does.Contain(partner).Using(partnerComparer)
-                .And.Contain(secondPartner).Using(partnerComparer));
+                Does.Contain(partner)
+                .And.Contain(secondPartner));
         }
 
         [Test]
@@ -230,7 +217,7 @@ namespace AFTests.PrivateApiTests
             Assert.That(getPartnersById.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getPartnersById.GetResponseObject(), Has.Count.EqualTo(1));
             Assert.That(getPartnersById.GetResponseObject(),
-                Does.Contain(partner).Using(partnerComparer));
+                Does.Contain(partner));
         }
 
         [Test]
@@ -255,7 +242,7 @@ namespace AFTests.PrivateApiTests
             var getPartnerById = api.GetPartnerById(partner.InternalId);
             Assert.That(getPartnerById.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(getPartnerById.GetResponseObject(),
-                Is.EqualTo(partner).Using(partnerComparer));
+                Is.EqualTo(partner));
         }
 
         [Test]
@@ -324,7 +311,7 @@ namespace AFTests.PrivateApiTests
             Assert.That(postParnersFilterByPublicIdsAsync.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(postParnersFilterByPublicIdsAsync.GetResponseObject(), Has.Count.EqualTo(1));
             Assert.That(postParnersFilterByPublicIdsAsync.GetResponseObject(),
-                Does.Contain(partner).Using(partnerComparer));
+                Does.Contain(partner));
         }
 
         [Test]
@@ -374,7 +361,7 @@ namespace AFTests.PrivateApiTests
             var postUpdatePartner = api.PostUpdatePartner(partner);
             Assert.That(postUpdatePartner.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(api.GetPartnerById(partner.InternalId).GetResponseObject(), 
-                Is.EqualTo(partner).Using(partnerComparer));
+                Is.EqualTo(partner));
         }
 
         [Test]
@@ -387,7 +374,7 @@ namespace AFTests.PrivateApiTests
             var postUpdatePartner = api.PostUpdatePartner(partner);
             Assert.That(postUpdatePartner.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(api.GetPartnerById(partner.InternalId).GetResponseObject(),
-                Is.EqualTo(partner).Using(partnerComparer));
+                Is.EqualTo(partner));
         }
 
         [Test]
@@ -400,7 +387,7 @@ namespace AFTests.PrivateApiTests
             var postUpdatePartner = api.PostUpdatePartner(partner);
             Assert.That(postUpdatePartner.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(api.GetPartnerById(partner.InternalId).GetResponseObject(),
-                Is.EqualTo(partner).Using(partnerComparer));
+                Is.EqualTo(partner));
         }
 
         [Test]
@@ -413,7 +400,7 @@ namespace AFTests.PrivateApiTests
             var postUpdatePartner = api.PostUpdatePartner(partner);
             Assert.That(postUpdatePartner.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(api.GetPartnerById(partner.InternalId).GetResponseObject(),
-                Is.EqualTo(partner).Using(partnerComparer));
+                Is.EqualTo(partner));
         }
     }
 }

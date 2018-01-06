@@ -5,8 +5,15 @@ using Newtonsoft.Json;
 
 namespace LykkeAutomationPrivate.Models.ClientAccount.Models
 {
-    public partial class Partner
+    public partial class Partner : IEquatable<Partner>
     {
+        public bool Equals(Partner other)
+        {
+            return this.PublicId == other.PublicId && this.InternalId == other.InternalId &&
+                this.Name == other.Name && this.AssetPrefix == other.AssetPrefix &&
+                this.RegisteredUsersCount == other.RegisteredUsersCount;
+        }
+
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
@@ -21,7 +28,8 @@ namespace LykkeAutomationPrivate.Models.ClientAccount.Models
         }
     }
 
-    public partial class ClientAccountInformation : IEquatable<ClientAccountInformation>
+    public partial class ClientAccountInformation : IEquatable<ClientAccountInformation>,
+                                                    IEquatable<ClientRegistrationModel>
     {
         public bool Equals(ClientAccountInformation other)
         {
@@ -34,6 +42,13 @@ namespace LykkeAutomationPrivate.Models.ClientAccount.Models
                    this.PartnerId == other.PartnerId &&
                    this.IsReviewAccount == other.IsReviewAccount &&
                    this.IsTrusted == other.IsTrusted;
+        }
+
+        public bool Equals(ClientRegistrationModel other)
+        {
+            return this.Email == other.Email &&
+                   this.Phone == other.Phone &&
+                   this.PartnerId == other.PartnerId;
         }
 
         public override string ToString()

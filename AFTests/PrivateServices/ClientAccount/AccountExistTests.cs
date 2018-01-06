@@ -13,7 +13,7 @@ namespace AFTests.PrivateApiTests
         ClientRegistrationModel nonExistedClient;
         ClientAccountInformation existedClient;
         ClientRegistrationModel nonExistedClientWithPartnerId;
-        ClientAccountInformation existedClientWithPatnerId;
+        ClientAccountInformation existedClientWithPartnerId;
         Partner partner;
 
         [OneTimeSetUp]
@@ -25,7 +25,7 @@ namespace AFTests.PrivateApiTests
 
             partner = new Partner().GetTestModel();
             nonExistedClientWithPartnerId = new ClientRegistrationModel().GetTestModel(partner.PublicId);
-            existedClientWithPatnerId = lykkeApi.ClientAccount.Clients
+            existedClientWithPartnerId = lykkeApi.ClientAccount.Clients
                 .PostRegister(new ClientRegistrationModel().GetTestModel(partner.PublicId)).GetResponseObject();
         }
 
@@ -34,7 +34,7 @@ namespace AFTests.PrivateApiTests
         {
             lykkeApi.ClientAccount.Partners.DeleteRemovePartner(partner.InternalId);
             lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(existedClient.Id);
-            lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(existedClientWithPatnerId.Id);
+            lykkeApi.ClientAccount.ClientAccount.DeleteClientAccount(existedClientWithPartnerId.Id);
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace AFTests.PrivateApiTests
         public void GetAccountForExistedWithPartnerClientTest()
         {
             var getAccountExist = lykkeApi.ClientAccount.AccountExist
-                .GetAccountExist(existedClientWithPatnerId.Email, partner.PublicId);
+                .GetAccountExist(existedClientWithPartnerId.Email, partner.PublicId);
             getAccountExist.Validate.StatusCode(HttpStatusCode.OK);
             Assert.That(getAccountExist.GetResponseObject()
                 .IsClientAccountExisting, Is.True);
