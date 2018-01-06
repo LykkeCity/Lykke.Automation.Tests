@@ -31,6 +31,7 @@ namespace XUnitTestCommon.TestsCore
                 uuid = nunitFixture.Id,
                 name = nunitFixture.ClassName
             };
+            
             Allure.StartTestContainer(fixture);
         }
 
@@ -94,6 +95,7 @@ namespace XUnitTestCommon.TestsCore
             var nunitTest = TestExecutionContext.CurrentContext.CurrentTest;
             var x = TestContext.CurrentContext.Test;
             string suitName = nunitTest.ClassName.Split('.')[2]; //LykkeAutomationPrivate.Tests.ClientAccount.DeleteClientAccount.DeleteClientAccountTest -> ClientAccount
+            var descr = nunitTest.Properties.Get("Description")?.ToString();
 
             var testResult = new Allure.Commons.TestResult
             {
@@ -101,6 +103,7 @@ namespace XUnitTestCommon.TestsCore
                 historyId = nunitTest.FullName,
                 name = nunitTest.MethodName,
                 fullName = nunitTest.FullName,
+                descriptionHtml = descr ?? "",
                 parameters = GetParameters(),
                 labels = new List<Label>
                     {

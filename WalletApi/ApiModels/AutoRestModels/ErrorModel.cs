@@ -76,5 +76,9 @@ namespace Lykke.Client.AutorestClient.Models
         [JsonProperty(PropertyName = "Message")]
         public string Message { get; set; }
 
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }

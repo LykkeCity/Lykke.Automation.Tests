@@ -32,5 +32,9 @@ namespace WalletApi.Api
         public AssetPair AssetPair => new AssetPair();
         public AssetPairDetailedRates AssetPairDetailedRates => new AssetPairDetailedRates();
         public AssetPairs AssetPairs => new AssetPairs();
+        public Assets Assets => new Assets();
+        public BackupCompleted BackupCompleted => new BackupCompleted();
+        public BankCardPaymentUrl BankCardPaymentUrl => new BankCardPaymentUrl();
+        public BankCardPaymentUrlFormValues BankCardPaymentUrlFormValues => new BankCardPaymentUrlFormValues();
     }
 }

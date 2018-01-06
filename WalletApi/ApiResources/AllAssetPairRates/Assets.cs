@@ -17,7 +17,7 @@ namespace WalletApi.Api
 
         public IResponse<ResponseModelGetClientBaseAssetRespModel> GetAssetId(string id)
         {
-            return Request.Get(resource + "/id").Build().Execute<ResponseModelGetClientBaseAssetRespModel>();
+            return Request.Get(resource + $"/{id}").Build().Execute<ResponseModelGetClientBaseAssetRespModel>();
         }
 
         public IResponse<ResponseModelAssetAttributesModel> GetAssetIdAttributes(string id, string token)
