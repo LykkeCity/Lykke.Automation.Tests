@@ -38,5 +38,7 @@ namespace WalletApi.Api
         public BankCardPaymentUrlFormValues BankCardPaymentUrlFormValues => new BankCardPaymentUrlFormValues();
         public BankTransferRequest BankTransferRequest => new BankTransferRequest();
         public BaseAsset BaseAsset => new BaseAsset();
+        public BaseAssets BaseAssets => new BaseAssets();
+        public BcnTransaction BcnTransaction => new BcnTransaction();
     }
 }

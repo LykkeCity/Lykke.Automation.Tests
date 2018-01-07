@@ -14,6 +14,7 @@ namespace AFTests.WalletApiTests.BaseAsset
         {
             [Test]
             [Category("WalletApi")]
+            [Description("This case contains Post and Get BaseAsset")]
             public void GetBaseAssetAfterPostWalletApiTest()
             {
                 var newUser = new AccountRegistrationModel();
