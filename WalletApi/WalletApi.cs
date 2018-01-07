@@ -36,5 +36,7 @@ namespace WalletApi.Api
         public BackupCompleted BackupCompleted => new BackupCompleted();
         public BankCardPaymentUrl BankCardPaymentUrl => new BankCardPaymentUrl();
         public BankCardPaymentUrlFormValues BankCardPaymentUrlFormValues => new BankCardPaymentUrlFormValues();
+        public BankTransferRequest BankTransferRequest => new BankTransferRequest();
+        public BaseAsset BaseAsset => new BaseAsset();
     }
 }
