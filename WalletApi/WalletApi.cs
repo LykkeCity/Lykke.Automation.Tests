@@ -37,5 +37,6 @@ namespace WalletApi.Api
         public BaseAssets BaseAssets => new BaseAssets();
         public BcnTransaction BcnTransaction => new BcnTransaction();
         public BcnTransactionByCashOperation BcnTransactionByCashOperation => new BcnTransactionByCashOperation();
+        public BcnTransactionByExchange BcnTransactionByExchange => new BcnTransactionByExchange();
     }
 }
