@@ -6,7 +6,7 @@ using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace WalletApi.Api.ApplicationInfo
 {
-    public class ApplicationInfo : WalletApi
+    public class ApplicationInfo : ApiBase
     {
         private const string resource = "/ApplicationInfo";
 

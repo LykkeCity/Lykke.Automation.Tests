@@ -6,7 +6,7 @@ using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace WalletApi.Api
 {
-    public class BankCardPaymentUrlFormValues : WalletApi
+    public class BankCardPaymentUrlFormValues : ApiBase
     {
         string resource = "BankCardPaymentUrlFormValues";
 

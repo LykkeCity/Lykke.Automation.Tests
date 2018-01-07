@@ -95,7 +95,7 @@ namespace XUnitTestCommon.TestsCore
             var nunitTest = TestExecutionContext.CurrentContext.CurrentTest;
             var x = TestContext.CurrentContext.Test;
             string suitName = nunitTest.ClassName.Split('.')[2]; //LykkeAutomationPrivate.Tests.ClientAccount.DeleteClientAccount.DeleteClientAccountTest -> ClientAccount
-            var descr = nunitTest.Properties.Get("Description")?.ToString();
+            var descr = nunitTest.Properties.Get("Description")?.ToString() ?? nunitTest.Parent.Properties.Get("Description")?.ToString();
 
             var testResult = new Allure.Commons.TestResult
             {

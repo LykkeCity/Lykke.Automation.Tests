@@ -15,10 +15,6 @@ namespace WalletApi.Api
 {
    public class WalletApi
     {
-        protected string URL = "https://api-test.lykkex.net/api";
-
-        protected IRequestBuilder Request => Requests.For(URL);
-
         public PersonalData PersonalData => new PersonalData();
         public Registration Registration => new Registration();
         public Auth Auth => new Auth();

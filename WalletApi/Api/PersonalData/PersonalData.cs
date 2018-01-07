@@ -16,7 +16,7 @@ using XUnitTestCommon.TestsCore;
 
 namespace WalletApi.Api.PersonalDataResource
 {
-   public class PersonalData : WalletApi
+   public class PersonalData : ApiBase
     {
         private const string resource = "/PersonalData";
 

@@ -6,7 +6,7 @@ using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace WalletApi.Api
 {
-   public class AllAssets : WalletApi
+   public class AllAssets : ApiBase
     {
         string resource = "/AllAssetPairs";
 
@@ -21,7 +21,7 @@ namespace WalletApi.Api
         }
     }
 
-    public class AssetsCategories : WalletApi
+    public class AssetsCategories : ApiBase
     {
         string resource = "/assetcategories";
 
@@ -31,7 +31,7 @@ namespace WalletApi.Api
         }
     }
 
-    public class AssetDescription : WalletApi
+    public class AssetDescription : ApiBase
     {
         string resource = "/AssetDescription/";
 
@@ -41,7 +41,7 @@ namespace WalletApi.Api
         }
     }
 
-    public class AssetPair : WalletApi
+    public class AssetPair : ApiBase
     {
         string resource = "/AssetPair/";
 
@@ -51,7 +51,7 @@ namespace WalletApi.Api
         }
     }
 
-    public class AssetPairDetailedRates : WalletApi
+    public class AssetPairDetailedRates : ApiBase
     {
         string resource = "/AssetPairDetailedRates";
 
@@ -68,7 +68,7 @@ namespace WalletApi.Api
         }
     }
 
-    public class AssetPairs : WalletApi
+    public class AssetPairs : ApiBase
     {
         string resource = "/AssetPairs";
 

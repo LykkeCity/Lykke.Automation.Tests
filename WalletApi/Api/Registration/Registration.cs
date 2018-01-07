@@ -16,7 +16,7 @@ using XUnitTestCommon.TestsCore;
 
 namespace WalletApi.Api.RegistrationResource
 {
-    public class Registration : WalletApi
+    public class Registration : ApiBase
     {
 
         private const string resource = "/Registration";

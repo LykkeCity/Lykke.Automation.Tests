@@ -16,7 +16,7 @@ using static LykkeAutomation.Api.ApiModels.AuthModels.AuthModels;
 
 namespace WalletApi.Api.AuthResource
 {
-    public class Auth : WalletApi
+    public class Auth : ApiBase
     {
         private const string resource = "/Auth";
         private const string resourceLogOut = "/Auth/LogOut";

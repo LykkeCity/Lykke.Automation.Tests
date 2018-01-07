@@ -14,7 +14,7 @@ using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace WalletApi.Api.ApiResources.AccountExist
 {
-    public class AccountExist : WalletApi
+    public class AccountExist : ApiBase
     {
         private string resource = "/AccountExist";
 

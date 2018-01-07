@@ -6,8 +6,8 @@ using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace WalletApi.Api
 {
-   public class BankTransferRequest : WalletApi
-   {
+   public class BankTransferRequest : ApiBase
+    {
         string resource = "/BankTransferRequest";
 
         public IResponse<ResponseModel> PostBankTransferRequest(TransferReqModel model, string token)

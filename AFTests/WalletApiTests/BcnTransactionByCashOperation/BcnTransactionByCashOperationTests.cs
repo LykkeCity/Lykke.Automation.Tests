@@ -32,7 +32,6 @@ namespace AFTests.WalletApiTests.BcnTransactionByCashOperation
         {
             [Test]
             [Category("WalletApi")]
-            [Description("Seems, authorization should have highest priority then cashOperationId. Thats why it fails. Check")]
             public void GetBcnTransactionByInvalidCashOperationTest()
             {
                 string bcnId = TestData.GenerateString(6);

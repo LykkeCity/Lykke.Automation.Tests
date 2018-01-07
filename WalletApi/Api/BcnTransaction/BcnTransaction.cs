@@ -6,7 +6,7 @@ using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace WalletApi.Api
 {
-    public class BcnTransaction: WalletApi
+    public class BcnTransaction: ApiBase
     {
         string resource = "/BcnTransaction";
 

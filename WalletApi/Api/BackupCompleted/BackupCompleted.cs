@@ -6,7 +6,7 @@ using XUnitTestCommon.RestRequests.Interfaces;
 
 namespace WalletApi.Api
 {
-    public class BackupCompleted : WalletApi
+    public class BackupCompleted : ApiBase
     {
         string resource = "/BackupCompleted";
 
