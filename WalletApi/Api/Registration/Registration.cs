@@ -21,14 +21,14 @@ namespace WalletApi.Api.RegistrationResource
 
         private const string resource = "/Registration";
 
-        public IResponse GetRegistrationResponse(string token)
+        public IResponse<ResponseModelAccountsRegistrationResponseModel> GetRegistrationResponse(string token)
         {
-            return Request.Get(resource).WithBearerToken(token).Build().Execute();
+            return Request.Get(resource).WithBearerToken(token).Build().Execute<ResponseModelAccountsRegistrationResponseModel>();
         }
 
-        public IResponse<ResultRegistrationResponseModel> PostRegistrationResponse(AccountRegistrationModel user)
+        public IResponse<ResponseModelAccountsRegistrationResponseModel> PostRegistrationResponse(AccountRegistrationModel user)
         {
-            return Request.Post(resource).AddJsonBody(user).Build().Execute<ResultRegistrationResponseModel>();
+            return Request.Post(resource).AddJsonBody(user).Build().Execute<ResponseModelAccountsRegistrationResponseModel>();
         }
     }
 }

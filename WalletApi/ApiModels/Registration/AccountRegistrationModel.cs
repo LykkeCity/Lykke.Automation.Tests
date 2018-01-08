@@ -31,20 +31,4 @@ namespace LykkeAutomation.ApiModels.RegistrationModels
             PartnerId = "None";
         }
     }
-
-    public class ResultRegistrationResponseModel
-    {
-        [JsonProperty("Result")]
-        public RegistrationResult Result { get; set; }        
-        public bool CanCashInViaBankCard { get; set; }
-        public bool SwiftDepositEnabled { get; set; }
-        public Error Error { get; set; }
-    }
-
-    public class RegistrationResult
-    {
-        public string Token { get; set; }
-        public string NotificationsId { get; set; }
-        public PersonalData PersonalData { get; set; }
-    }
 }
