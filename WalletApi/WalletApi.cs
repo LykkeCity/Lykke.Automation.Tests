@@ -38,5 +38,8 @@ namespace WalletApi.Api
         public BcnTransaction BcnTransaction => new BcnTransaction();
         public BcnTransactionByCashOperation BcnTransactionByCashOperation => new BcnTransactionByCashOperation();
         public BcnTransactionByExchange BcnTransactionByExchange => new BcnTransactionByExchange();
+        public BcnTransactionByTransfer BcnTransactionByTransfer => new BcnTransactionByTransfer();
+        public BitcoinCash BitcoinCash => new BitcoinCash();
+        public BlockchainTransaction BlockchainTransaction => new BlockchainTransaction();
     }
 }
