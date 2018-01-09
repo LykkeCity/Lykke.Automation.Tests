@@ -41,5 +41,8 @@ namespace WalletApi.Api
         public BcnTransactionByTransfer BcnTransactionByTransfer => new BcnTransactionByTransfer();
         public BitcoinCash BitcoinCash => new BitcoinCash();
         public BlockchainTransaction BlockchainTransaction => new BlockchainTransaction();
+        public BroadcastTransaction BroadcastTransaction => new BroadcastTransaction();
+        public CashOut CashOut => new CashOut();
+        public CashOutSwiftRequest CashOutSwiftRequest => new CashOutSwiftRequest();
     }
 }
