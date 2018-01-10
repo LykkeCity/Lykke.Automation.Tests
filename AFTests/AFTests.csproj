@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AlgoStoreData.cs\AlgoStoreData.csproj" />
     <ProjectReference Include="..\ApiV2Data\ApiV2Data.csproj" />
     <ProjectReference Include="..\AssetsData\AssetsData.csproj" />
     <ProjectReference Include="..\BalancesData\BalancesData.csproj" />
@@ -25,6 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="AlgoStore\TestData\myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Dockerfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
