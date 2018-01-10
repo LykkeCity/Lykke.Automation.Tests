@@ -9,6 +9,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using XUnitTestCommon.AzureUtils;
+using XUnitTestCommon.Config;
 using XUnitTestCommon.TestsData;
 
 namespace AFTests.LykkePayTests
@@ -38,7 +39,7 @@ namespace AFTests.LykkePayTests
                 var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRates(assetPair).GetResponseObject();
 
                 var ask = assetPairRates.ask;
-                var deltaSpread = new Decimal(new AzureUtils(Environment.GetEnvironmentVariable("AzureDeltaSpread"))
+                var deltaSpread = new Decimal(new AzureUtils(LocalConfig.GetLocalConfig().AzureDeltaSpread)
                     .GetCloudTable("Merchants")
                     .GetSearchResult("ApiKey", "BILETTERTESTKEY")
                     .GetCellByKnowRowKeyAndKnownCellValue("DeltaSpread", "bitteller.test.1").DoubleValue.Value);
@@ -61,7 +62,7 @@ namespace AFTests.LykkePayTests
                 var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRates(assetPair).GetResponseObject();
 
                 var bid = assetPairRates.bid;
-                var deltaSpread = new Decimal(new AzureUtils(Environment.GetEnvironmentVariable("AzureDeltaSpread"))
+                var deltaSpread = new Decimal(new AzureUtils(LocalConfig.GetLocalConfig().AzureDeltaSpread)
                     .GetCloudTable("Merchants")
                     .GetSearchResult("ApiKey", "BILETTERTESTKEY")
                     .GetCellByKnowRowKeyAndKnownCellValue("DeltaSpread", "bitteller.test.1").DoubleValue.Value);
@@ -456,7 +457,7 @@ namespace AFTests.LykkePayTests
                 var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRates(testAsset).GetResponseObject();
 
                 var ask = assetPairRates.ask;
-                var deltaSpread = new Decimal(new AzureUtils(Environment.GetEnvironmentVariable("AzureDeltaSpread"))
+                var deltaSpread = new Decimal(new AzureUtils(LocalConfig.GetLocalConfig().AzureDeltaSpread)
                     .GetCloudTable("Merchants")
                     .GetSearchResult("ApiKey", "BILETTERTESTKEY")
                     .GetCellByKnowRowKeyAndKnownCellValue("DeltaSpread", "bitteller.test.1").DoubleValue.Value);
@@ -491,7 +492,7 @@ namespace AFTests.LykkePayTests
                 var assetPairRates = lykkePayApi.assetPairRates.GetAssetPairRates(testAsset).GetResponseObject();
 
                 var bid = assetPairRates.bid;
-                var deltaSpread = new Decimal(new AzureUtils(Environment.GetEnvironmentVariable("AzureDeltaSpread"))
+                var deltaSpread = new Decimal(new AzureUtils(LocalConfig.GetLocalConfig().AzureDeltaSpread)
                     .GetCloudTable("Merchants")
                     .GetSearchResult("ApiKey", "BILETTERTESTKEY")
                     .GetCellByKnowRowKeyAndKnownCellValue("DeltaSpread", "bitteller.test.1").DoubleValue.Value);
