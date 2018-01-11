@@ -17,7 +17,6 @@ namespace AFTests.LykkePayTests
             [TestCase("aaa")]
             [TestCase("Test test")]
             [TestCase("!@#$%&")]
-            [TestCase("")]
             [Category("LykkePay")]
             public void PostTransferDestinationAddressNegativeTest(object address)
             {
@@ -28,7 +27,8 @@ namespace AFTests.LykkePayTests
                 var merch = new OrderMerchantModel(transferJson);
                 var transferResponse = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
 
-                Assert.That(transferResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(transferResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(transferResponse.Content, Does.Contain("INVALID_ADDRESS"));
             }
         }
 
@@ -40,15 +40,14 @@ namespace AFTests.LykkePayTests
             [TestCase("")]
             [TestCase("-50")]
             [Category("LykkePay")]
-            public void PostTransferAmountNegativeTest(object amount)
+            public void PostTransferAmountNegativeTest(string amount)
             {
-                string testAmount = amount.ToString();
-
-                var transferJson = $"{{\"destinationAddress\":\"{validAddress}\",\"amount\":{testAmount}}}";
+                var transferJson = $"{{\"destinationAddress\":\"{validAddress}\",\"amount\":{amount}}}";
                 var merch = new OrderMerchantModel(transferJson);
                 var transferResponse = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
 
-                Assert.That(transferResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(transferResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(transferResponse.Content, Does.Contain("INVALID_ADDRESS"));
             }
         }
 
@@ -60,16 +59,15 @@ namespace AFTests.LykkePayTests
             [TestCase("")]
             [TestCase("50")]
             [Category("LykkePay")]
-            public void PostTransferAssetIdNegativeTest(object assetId)
+            public void PostTransferAssetIdNegativeTest(string assetId)
             {
-                string testAsset = assetId.ToString();
-
-                var transfer = new TransferRequestModel() { amount = 0.005m, destinationAddress = validAddress, assetId = testAsset };
+                var transfer = new TransferRequestModel() { amount = 0.0018m, destinationAddress = validAddress, assetId = assetId };
                 var transferJson = JsonConvert.SerializeObject(transfer, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
                 var merch = new OrderMerchantModel(transferJson);
                 var transferResponse = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
 
-                Assert.That(transferResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(transferResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(transferResponse.Content, Does.Contain("INVALID_ADDRESS"));
             }
         }
 
@@ -77,11 +75,9 @@ namespace AFTests.LykkePayTests
         {        
             [TestCase("!@#$%&")]
             [Category("LykkePay")]
-            public void PostTransferOrderIdNegativeTest(object orderId)
+            public void PostTransferOrderIdNegativeTest(string orderId)
             {
-                string testOrderId = orderId.ToString();
-
-                var transfer = new TransferRequestModel() { amount = 0.005m, destinationAddress = validAddress, orderId = testOrderId };
+                var transfer = new TransferRequestModel() { amount = 0.005m, destinationAddress = validAddress, orderId = orderId };
                 var transferJson = JsonConvert.SerializeObject(transfer, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
                 var merch = new OrderMerchantModel(transferJson);
                 var transferResponse = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
