@@ -16,6 +16,7 @@ namespace XUnitTestCommon.RestRequests.Interfaces
         IRequestBuilder AddJsonBody(object json);
         IRequestBuilder AddJsonBody(string json);
         IRequestBuilder AddQueryParameter(string name, object value);
+        IRequestBuilder AddQueryParameterIfNotNull(string name, object value);
         IRequestBuilder WithBearerToken(string token);
         //IRequestBuilder WithProxy { get; }
         IRequestBuilder Accept(string mediaType);

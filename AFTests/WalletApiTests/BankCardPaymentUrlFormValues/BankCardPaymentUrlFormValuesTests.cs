@@ -1,4 +1,4 @@
-﻿using LykkeAutomation.ApiModels.RegistrationModels;
+﻿using Lykke.Client.AutorestClient.Models;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace AFTests.WalletApiTests.BankCardPaymentUrlFormValues
             [Category("")]
             public void GetBankCardPaymentUrlFormValuesTest()
             {
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var response = walletApi.BankCardPaymentUrlFormValues.GetBankCardPaymentUrlFormValues(registeredClient.Result.Token);

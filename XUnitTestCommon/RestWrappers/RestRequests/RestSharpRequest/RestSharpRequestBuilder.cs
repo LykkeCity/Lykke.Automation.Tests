@@ -89,6 +89,14 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
             return this;
         }
 
+        public IRequestBuilder AddQueryParameterIfNotNull(string name, object value)
+        {
+            if (value != null)
+                request.AddQueryParameter(name, value);
+
+            return this;
+        }
+
         public IRequestBuilder ContentType(string contentType)
         {
             request.AddHeader("Content-Type", contentType);

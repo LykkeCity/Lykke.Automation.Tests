@@ -1,5 +1,4 @@
 ﻿using Lykke.Client.AutorestClient.Models;
-using LykkeAutomation.ApiModels.RegistrationModels;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -18,7 +17,7 @@ namespace AFTests.WalletApiTests.BitcoinCash
             [Category("WalletApi")]
             public void GetBitcoinCashMultisigBalanceTest()
             {
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var response = walletApi.BitcoinCash.GetBitcoinCashMultiSigBalance(registeredClient.Result.Token);
@@ -47,7 +46,7 @@ namespace AFTests.WalletApiTests.BitcoinCash
             [Category("WalletApi")]
             public void GetBitcoinCashMultiSigTransactionTest()
             {
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var response = walletApi.BitcoinCash.GetBitcoinCashMultiSigTransaction(registeredClient.Result.Token);
@@ -79,7 +78,7 @@ namespace AFTests.WalletApiTests.BitcoinCash
                 Assert.Ignore("Get valid address");
                 var address = TestData.GenerateString(8);
 
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var response = walletApi.BitcoinCash.GetBitcoinCashPrivateBalance(address, registeredClient.Result.Token);
@@ -111,7 +110,7 @@ namespace AFTests.WalletApiTests.BitcoinCash
             public void GetBitcoinCashPrivateTransactionTest()
             {
                 Assert.Ignore("Get valid source, dest, fee");
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var source = TestData.GenerateString(6);
@@ -149,7 +148,7 @@ namespace AFTests.WalletApiTests.BitcoinCash
             public void PostBitcoinCashBroadcastTest()
             {
                 Assert.Ignore("Get Valid transaction");
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var model = new BccBroadcastRequest() {Transaction = TestData.GenerateLetterString(6) };
@@ -166,7 +165,7 @@ namespace AFTests.WalletApiTests.BitcoinCash
             [Category("WalletApi")]
             public void PostBitcoinCashBroadcastInvalidAddressTest()
             {
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var model = new BccBroadcastRequest() { Transaction = TestData.GenerateLetterString(6) };

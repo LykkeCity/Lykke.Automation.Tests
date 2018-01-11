@@ -1,5 +1,4 @@
-﻿using WalletApi.Api.AuthResource;
-using WalletApi.Api.PersonalDataResource;
+﻿using WalletApi.Api.PersonalDataResource;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,5 +43,6 @@ namespace WalletApi.Api
         public BroadcastTransaction BroadcastTransaction => new BroadcastTransaction();
         public CashOut CashOut => new CashOut();
         public CashOutSwiftRequest CashOutSwiftRequest => new CashOutSwiftRequest();
+        public ClientState ClientState => new ClientState();
     }
 }

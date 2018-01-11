@@ -1,5 +1,4 @@
 ﻿using Lykke.Client.AutorestClient.Models;
-using LykkeAutomation.ApiModels.RegistrationModels;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace AFTests.WalletApiTests
             [Category("WalletApi")]
             public void GetAppSettingsTest()
             {
-                var user = new AccountRegistrationModel();
+                var user = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
 
                 var settings = walletApi.AppSettings.GetAppSettings(registeredClient.GetResponseObject().Result.Token);

@@ -1,4 +1,4 @@
-﻿using LykkeAutomation.ApiModels.RegistrationModels;
+﻿using Lykke.Client.AutorestClient.Models;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -55,7 +55,7 @@ namespace AFTests.WalletApiTests.AllAssetPairRates
             [Category("WalletApi")]
             public void GetAssetCategoriesTest()
             {
-                var user = new AccountRegistrationModel();
+                var user = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
 
                 var assetCategories = walletApi.AssetsCategories.GetAssetsCategories(registeredClient.GetResponseObject().Result.Token);
@@ -87,7 +87,7 @@ namespace AFTests.WalletApiTests.AllAssetPairRates
             public void GetAssetDescriptionTest()
             {
                 var assetId = "dd99af06-d1c9-4e6a-821c-10cb16a5cc5d"; //bitcoin
-                var user = new AccountRegistrationModel();
+                var user = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
 
                 var assetDescription = walletApi.AssetDescription.GetAssetDescription(assetId, registeredClient.GetResponseObject().Result.Token);
@@ -124,7 +124,7 @@ namespace AFTests.WalletApiTests.AllAssetPairRates
             public void GetAssetPairTest()
             {
                 var pair = "BTCUSD";
-                var user = new AccountRegistrationModel();
+                var user = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
 
                 var assetPair = walletApi.AssetPair.GetAssetPair(pair, registeredClient.GetResponseObject().Result.Token);
@@ -156,7 +156,7 @@ namespace AFTests.WalletApiTests.AllAssetPairRates
             public void GetAssetPairInvalidPairTest()
             {
                 var pair = "invalidPair";
-                var user = new AccountRegistrationModel();
+                var user = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
 
                 var assetPair = walletApi.AssetPair.GetAssetPair(pair, registeredClient.GetResponseObject().Result.Token);
@@ -184,7 +184,7 @@ namespace AFTests.WalletApiTests.AllAssetPairRates
             [Category("WalletApi")]
             public void GetAssetPairsTest()
             {
-                var user = new AccountRegistrationModel();
+                var user = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
                 var assetPairs = walletApi.AssetPairs.GetAssetPairs(registeredClient.GetResponseObject().Result.Token);
 

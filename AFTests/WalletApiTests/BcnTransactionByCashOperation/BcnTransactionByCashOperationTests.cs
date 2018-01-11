@@ -1,4 +1,4 @@
-﻿using LykkeAutomation.ApiModels.RegistrationModels;
+﻿using Lykke.Client.AutorestClient.Models;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace AFTests.WalletApiTests.BcnTransactionByCashOperation
             public void GetBcnTransactionByCashOperationTest()
             {
                 Assert.Ignore("Get Valid id");
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
                 string bcnId = "testId"; //get valid transaction ID
 
@@ -35,7 +35,7 @@ namespace AFTests.WalletApiTests.BcnTransactionByCashOperation
             public void GetBcnTransactionByInvalidCashOperationTest()
             {
                 string bcnId = TestData.GenerateString(6);
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
                 
                 var response = walletApi.BcnTransactionByCashOperation.GetBcnTransactionByCashOperation(bcnId, registeredClient.Result.Token);

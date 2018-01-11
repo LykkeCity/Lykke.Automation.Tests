@@ -1,4 +1,4 @@
-﻿using LykkeAutomation.ApiModels.RegistrationModels;
+﻿using Lykke.Client.AutorestClient.Models;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace AFTests.WalletApiTests.BackupCompleted
             [Category("WalletApi")]
             public void BackupCompletedTest()
             {
-                var user = new AccountRegistrationModel();
+                var user = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
 
                 var response = walletApi.BackupCompleted.PostBackupCompleted(registeredClient.GetResponseObject().Result.Token);

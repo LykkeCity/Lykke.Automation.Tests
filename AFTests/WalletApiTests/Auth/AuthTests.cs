@@ -1,6 +1,5 @@
-﻿using LykkeAutomation.Api;
-using LykkeAutomation.Api.ApiModels.AuthModels;
-using LykkeAutomation.ApiModels.RegistrationModels;
+﻿using Lykke.Client.AutorestClient.Models;
+using LykkeAutomation.Api;
 using LykkeAutomation.TestsCore;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -12,7 +11,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using XUnitTestCommon.Tests;
-using static LykkeAutomation.Api.ApiModels.AuthModels.AuthModels;
 
 namespace AFTests.WalletApiTests
 {
@@ -27,7 +25,7 @@ namespace AFTests.WalletApiTests
             {
                 ApiSchemes apiSchemes = new ApiSchemes();
 
-                AccountRegistrationModel newUser = new AccountRegistrationModel();
+                AccountRegistrationModel newUser = new AccountRegistrationModel().GetTestModel();
                 var response = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
                 Assert.That(response.Error, Is.Null, $"Error message not empty {response.Error?.Message}");
 
@@ -38,8 +36,7 @@ namespace AFTests.WalletApiTests
                 var obj = JObject.Parse(authResponse.Content);
                 Assert.That(obj.IsValid(apiSchemes.AuthScheme.AuthResponseScheme), Is.True, "Responce JSON is not valid scheme");
 
-                var authModel = AuthModels.ConvertToAuthModelResponse(authResponse.Content);
-                Assert.That(authModel.Result.PersonalData.FullName, Is.EqualTo(newUser.FullName), "Invalid Full Name");
+                Assert.That(authResponse.GetResponseObject().Result.PersonalData.FullName, Is.EqualTo(newUser.FullName), "Invalid Full Name");
             }
         }
     }

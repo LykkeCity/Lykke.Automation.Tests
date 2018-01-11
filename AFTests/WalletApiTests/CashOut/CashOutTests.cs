@@ -1,5 +1,4 @@
 ﻿using Lykke.Client.AutorestClient.Models;
-using LykkeAutomation.ApiModels.RegistrationModels;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ namespace AFTests.WalletApiTests.CashOut
             public void PostCashOutTest()
             {
                 Assert.Ignore("Get valid cashOutPostModel");
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var cashOutModel = new CashOutPostModel() {Amount = 10, AssetId = "BTC", MultiSig = TestData.GenerateString(6) };

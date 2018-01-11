@@ -1,5 +1,4 @@
 ﻿using Lykke.Client.AutorestClient.Models;
-using LykkeAutomation.ApiModels.RegistrationModels;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ namespace AFTests.WalletApiTests.BroadcastTransaction
             public void PostBroadcastTransactionTest()
             {
                 Assert.Ignore("Get Valid ApiTransaction model");
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
                 var model = new ApiTransaction() { Hex = TestData.GenerateString(8), Id = TestData.GenerateString(12) };
                 var response = walletApi.BroadcastTransaction.PostBroadcastTransaction(model, registeredClient.Result.Token);
@@ -35,7 +34,7 @@ namespace AFTests.WalletApiTests.BroadcastTransaction
             [Category("WalletApi")]
             public void PostBroadcastTransactionInvalidTransactionTest()
             {
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
                 var model = new ApiTransaction() { Hex = TestData.GenerateString(8), Id = TestData.GenerateString(12) };
                 var response = walletApi.BroadcastTransaction.PostBroadcastTransaction(model, registeredClient.Result.Token);

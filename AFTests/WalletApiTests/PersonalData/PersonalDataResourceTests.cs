@@ -1,6 +1,5 @@
-﻿using LykkeAutomation.Api;
-using LykkeAutomation.ApiModels;
-using LykkeAutomation.ApiModels.RegistrationModels;
+﻿using Lykke.Client.AutorestClient.Models;
+using LykkeAutomation.Api;
 using LykkeAutomation.TestsCore;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -62,7 +61,7 @@ namespace AFTests.WalletApiTests
             [Category("PersonalData"), Category("WalletApi")]
             public void PersonalDataValidTokenTest()
             {
-                AccountRegistrationModel user = new AccountRegistrationModel();
+                AccountRegistrationModel user = new AccountRegistrationModel().GetTestModel();
                 var registationResponse = walletApi.Registration.PostRegistrationResponse(user).GetResponseObject();
                 Assert.That(registationResponse.Error, Is.Null, "Error is not null");
 

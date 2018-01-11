@@ -1,5 +1,4 @@
 ﻿using Lykke.Client.AutorestClient.Models;
-using LykkeAutomation.ApiModels.RegistrationModels;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -18,7 +17,7 @@ namespace AFTests.WalletApiTests.BankCardPaymentUrl
             [Category("WalletApi")]
             public void BankCardPaymentUrlTest()
             {
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var cardPaymentUrl = new BankCardPaymentUrlInputModel()

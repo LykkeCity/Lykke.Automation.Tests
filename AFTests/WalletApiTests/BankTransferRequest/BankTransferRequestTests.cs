@@ -1,5 +1,4 @@
 ﻿using Lykke.Client.AutorestClient.Models;
-using LykkeAutomation.ApiModels.RegistrationModels;
 using LykkePay.Models;
 using NUnit.Framework;
 using System;
@@ -19,7 +18,7 @@ namespace AFTests.WalletApiTests.BankTransferRequest
             [Description("Need to check cases if AssetID is not correct and/or balanceChange not correct")]
             public void PostBankTransferRequestTest()
             {
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var trModel = new TransferReqModel()

@@ -1,5 +1,4 @@
 ﻿using Lykke.Client.AutorestClient.Models;
-using LykkeAutomation.ApiModels.RegistrationModels;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -59,7 +58,7 @@ namespace AFTests.WalletApiTests.AllAssetPairRates
             [Category("WalletApi")]
             public void GetAssetIdAttributesTest()
             {
-                var user = new AccountRegistrationModel();
+                var user = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
 
                 var asset = walletApi.Assets.GetAssets().GetResponseObject().Result.Assets[0];
@@ -76,7 +75,7 @@ namespace AFTests.WalletApiTests.AllAssetPairRates
             [Category("WalletApi")]
             public void GetAssetIdAttributeTest()
             {
-                var user = new AccountRegistrationModel();
+                var user = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
 
                 var asset = walletApi.Assets.GetAssets().GetResponseObject().Result.Assets[0];

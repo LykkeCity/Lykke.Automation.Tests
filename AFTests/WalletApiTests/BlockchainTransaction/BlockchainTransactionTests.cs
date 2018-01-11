@@ -1,4 +1,4 @@
-﻿using LykkeAutomation.ApiModels.RegistrationModels;
+﻿using Lykke.Client.AutorestClient.Models;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace AFTests.WalletApiTests.BlockchainTransaction
                 Assert.Ignore("Get Valid blockChainHash");
                 var blockChainHash = TestData.GenerateString(12);
 
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var response = walletApi.BlockchainTransaction.GetBlockchainTransaction(blockChainHash, registeredClient.Result.Token);
@@ -37,7 +37,7 @@ namespace AFTests.WalletApiTests.BlockchainTransaction
             {
                 var blockChainHash = TestData.GenerateString(12);
 
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var response = walletApi.BlockchainTransaction.GetBlockchainTransaction(blockChainHash, registeredClient.Result.Token);

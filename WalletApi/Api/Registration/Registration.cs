@@ -1,10 +1,4 @@
-﻿using Lykke.Client.AutorestClient.Models;
-using LykkeAutomation.ApiModels;
-using LykkeAutomation.ApiModels.RegistrationModels;
-using LykkeAutomation.TestsCore;
-using Newtonsoft.Json;
-using RestSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -12,7 +6,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using XUnitTestCommon.RestRequests.Interfaces;
-using XUnitTestCommon.TestsCore;
+using Lykke.Client.AutorestClient.Models;
 
 namespace WalletApi.Api.RegistrationResource
 {

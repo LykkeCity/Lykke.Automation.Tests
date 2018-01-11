@@ -1,5 +1,4 @@
 ﻿using Lykke.Client.AutorestClient.Models;
-using LykkeAutomation.ApiModels.RegistrationModels;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ namespace AFTests.WalletApiTests.BaseAssets
             [Category("WalletApi")]
             public void BaseAssetsNullTest()
             {
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var response = walletApi.BaseAssets.GetBaseAssets(registeredClient.Result.Token);
@@ -48,7 +47,7 @@ namespace AFTests.WalletApiTests.BaseAssets
             [Description("Investigate this resource. Test fails")]
             public void BaseAssetsNotEmptyAfterAddedAssetTest()
             {
-                var newUser = new AccountRegistrationModel();
+                var newUser = new AccountRegistrationModel().GetTestModel();
                 var registeredClient = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var model = new PostClientBaseCurrencyModel() { Id = "BTC" };
