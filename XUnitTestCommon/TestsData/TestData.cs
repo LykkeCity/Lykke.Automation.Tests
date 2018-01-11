@@ -32,7 +32,7 @@ namespace XUnitTestCommon.TestsData
             return $"{Names().ElementAt(random).Key} {Names().ElementAt(random).Value}";
         }
 
-        public static string GenerateString(int length) => Guid.NewGuid().ToString("n").Substring(0, length);
+        public static string GenerateString(int length=6) => Guid.NewGuid().ToString("n").Substring(0, length);
 
         public static string GenerateLetterString(int length)
         {

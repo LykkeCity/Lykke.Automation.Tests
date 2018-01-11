@@ -44,5 +44,7 @@ namespace WalletApi.Api
         public CashOut CashOut => new CashOut();
         public CashOutSwiftRequest CashOutSwiftRequest => new CashOutSwiftRequest();
         public ClientState ClientState => new ClientState();
+        public ChangePinAndPassword ChangePinAndPassword => new ChangePinAndPassword();
+        public CheckDocumentsToUpload CheckDocumentsToUpload => new CheckDocumentsToUpload();
     }
 }
