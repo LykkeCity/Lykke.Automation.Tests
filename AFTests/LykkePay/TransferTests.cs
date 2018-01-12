@@ -46,8 +46,7 @@ namespace AFTests.LykkePayTests
                 var merch = new OrderMerchantModel(transferJson);
                 var transferResponse = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
 
-                Assert.That(transferResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                Assert.That(transferResponse.Content, Does.Contain("INVALID_ADDRESS"));
+                Assert.That(transferResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             }
         }
 
@@ -61,7 +60,7 @@ namespace AFTests.LykkePayTests
             [Category("LykkePay")]
             public void PostTransferAssetIdNegativeTest(string assetId)
             {
-                var transfer = new TransferRequestModel() { amount = 0.0018m, destinationAddress = validAddress, assetId = assetId };
+                var transfer = new TransferRequestModel() { amount = 0.0018m, destinationAddress = "mxtrQzcgAa9FV3FFFy9WRQqD3W5vaAD1ov", assetId = assetId };
                 var transferJson = JsonConvert.SerializeObject(transfer, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
                 var merch = new OrderMerchantModel(transferJson);
                 var transferResponse = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
@@ -72,12 +71,12 @@ namespace AFTests.LykkePayTests
         }
 
         public class PostTransferOrderIdNegative : LykkepPayBaseTest
-        {        
+        {
             [TestCase("!@#$%&")]
             [Category("LykkePay")]
             public void PostTransferOrderIdNegativeTest(string orderId)
             {
-                var transfer = new TransferRequestModel() { amount = 0.005m, destinationAddress = validAddress, orderId = orderId };
+                var transfer = new TransferRequestModel() { amount = 0.002m, destinationAddress = validAddress, orderId = orderId};
                 var transferJson = JsonConvert.SerializeObject(transfer, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
                 var merch = new OrderMerchantModel(transferJson);
                 var transferResponse = lykkePayApi.transfer.PostTransferModel(merch, transferJson);
