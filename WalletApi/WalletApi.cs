@@ -47,5 +47,6 @@ namespace WalletApi.Api
         public ChangePinAndPassword ChangePinAndPassword => new ChangePinAndPassword();
         public CheckDocumentsToUpload CheckDocumentsToUpload => new CheckDocumentsToUpload();
         public CheckMobilePhone CheckMobilePhone => new CheckMobilePhone();
+        public Client Client => new Client();
     }
 }
