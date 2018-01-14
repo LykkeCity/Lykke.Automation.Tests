@@ -48,5 +48,8 @@ namespace WalletApi.Api
         public CheckDocumentsToUpload CheckDocumentsToUpload => new CheckDocumentsToUpload();
         public CheckMobilePhone CheckMobilePhone => new CheckMobilePhone();
         public Client Client => new Client();
+        public ClientFirstNameLastName ClientFirstNameLastName => new ClientFirstNameLastName();
+        public ClientFullName ClientFullName => new ClientFullName();
+        public ClientKeys ClientKeys => new ClientKeys();
     }
 }
