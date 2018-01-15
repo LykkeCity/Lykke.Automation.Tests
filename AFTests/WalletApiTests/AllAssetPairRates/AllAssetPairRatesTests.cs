@@ -92,6 +92,7 @@ namespace AFTests.WalletApiTests.AllAssetPairRates
 
                 var assetDescription = walletApi.AssetDescription.GetAssetDescription(assetId, registeredClient.GetResponseObject().Result.Token);
                 assetDescription.Validate.StatusCode(HttpStatusCode.OK);
+                Assert.That(assetDescription.GetResponseObject().Error, Is.Null);
                 Assert.That(assetDescription.GetResponseObject().Result.FullName, Is.EquivalentTo("Bitcoin"), "unexpected asset name");
                 Assert.That(assetDescription.GetResponseObject().Error, Is.Null, "Error is not null");
             }
