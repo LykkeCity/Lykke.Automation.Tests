@@ -51,5 +51,7 @@ namespace WalletApi.Api
         public ClientFirstNameLastName ClientFirstNameLastName => new ClientFirstNameLastName();
         public ClientFullName ClientFullName => new ClientFullName();
         public ClientKeys ClientKeys => new ClientKeys();
+        public ClientLog ClientLog => new ClientLog();
+        public ClientPhone ClientPhone => new ClientPhone();
     }
 }
