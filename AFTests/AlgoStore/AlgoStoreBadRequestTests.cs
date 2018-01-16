@@ -220,7 +220,7 @@ namespace AFTests.AlgoStore
             };
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
-            Assert.True(responceGetUploadString.Status == HttpStatusCode.BadRequest);
+            Assert.True(responceGetUploadString.Status == HttpStatusCode.InternalServerError);
         }
     }
 }
