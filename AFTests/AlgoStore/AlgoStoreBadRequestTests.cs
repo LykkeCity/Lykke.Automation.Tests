@@ -36,7 +36,7 @@ namespace AFTests.AlgoStore
             };
 
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
-            Assert.True(response.Status == HttpStatusCode.InternalServerError);
+            Assert.True(response.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -57,7 +57,7 @@ namespace AFTests.AlgoStore
             };
 
             var responseMetaDataAfterEdit = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responseMetaDataAfterEdit.Status == HttpStatusCode.InternalServerError);
+            Assert.True(responseMetaDataAfterEdit.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -76,7 +76,7 @@ namespace AFTests.AlgoStore
 
             string url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responceCascadeDelete.Status == HttpStatusCode.InternalServerError);
+            Assert.True(responceCascadeDelete.Status == HttpStatusCode.BadRequest);
         }
 
         //[Test]
