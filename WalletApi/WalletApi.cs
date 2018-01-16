@@ -53,5 +53,8 @@ namespace WalletApi.Api
         public ClientKeys ClientKeys => new ClientKeys();
         public ClientLog ClientLog => new ClientLog();
         public ClientPhone ClientPhone => new ClientPhone();
+        public ClientTrading ClientTrading => new ClientTrading();
+        public CountryPhoneCodes CountryPhoneCodes => new CountryPhoneCodes();
+        public Dialogs Dialogs => new Dialogs();
     }
 }
