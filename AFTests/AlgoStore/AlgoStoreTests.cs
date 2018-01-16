@@ -11,6 +11,7 @@ using XUnitTestCommon.Utils;
 using AlgoStoreData.DTOs;
 using XUnitTestData.Entities.AlgoStore;
 using System.IO;
+using AlgoStoreData.HelpersAlgoStore;
 
 namespace AFTests.AlgoStore
 {
@@ -165,7 +166,7 @@ namespace AFTests.AlgoStore
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
             Assert.True(blobExists);
         }
 
@@ -386,7 +387,7 @@ namespace AFTests.AlgoStore
             var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
             Assert.True(responceUploadString.Status == HttpStatusCode.NoContent);
 
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.STRING);
             Assert.True(blobExists);
         }
 

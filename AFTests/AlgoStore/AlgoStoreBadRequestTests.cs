@@ -17,7 +17,7 @@ namespace AFTests.AlgoStore
     [Category("FullRegression")]
     [Category("AlgoStore")]
     public partial class AlgoStoreTests : AlgoStoreTestDataFixture
-    {
+    { 
         [Test]
         [Category("BadRequest")]
         [Category("UploadMetadataBadRequest")]
