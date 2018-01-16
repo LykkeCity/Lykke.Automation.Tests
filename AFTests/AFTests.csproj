@@ -23,6 +23,7 @@
     <ProjectReference Include="..\ApiV2Data\ApiV2Data.csproj" />
     <ProjectReference Include="..\AssetsData\AssetsData.csproj" />
     <ProjectReference Include="..\BalancesData\BalancesData.csproj" />
+    <ProjectReference Include="..\BlockchainsIntegration\BlockchainsIntegration.csproj" />
     <ProjectReference Include="..\BlueApiData\BlueApiData.csproj" />
     <ProjectReference Include="..\LykkePay\LykkePay.csproj" />
     <ProjectReference Include="..\MatchingEngineData\MatchingEngineData.csproj" />
