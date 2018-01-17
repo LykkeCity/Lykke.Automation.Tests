@@ -18,7 +18,7 @@ namespace AFTests.AlgoStore
     [Category("FullRegression")]
     [Category("AlgoStore")]
     public partial class AlgoStoreTests : AlgoStoreTestDataFixture
-    { 
+    {
         [Test]
         [Category("BadRequest")]
         [Category("UploadMetadataBadRequest")]
@@ -145,8 +145,13 @@ namespace AFTests.AlgoStore
         {
             string url = ApiPaths.ALGO_STORE_ALGO_STOP;
 
-            var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(badId), Method.POST);
-            Assert.True(stopBinaryResponse.Status == HttpStatusCode.InternalServerError); // gives internal erorr
+            StopBinaryDTO stopAlgo = new StopBinaryDTO
+            {
+                AlgoId = badId
+            };
+
+            var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
+            Assert.True(stopBinaryResponse.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -203,7 +208,6 @@ namespace AFTests.AlgoStore
             var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
             Assert.True(responceUploadString.Status == HttpStatusCode.BadRequest);
         }
-
         [Test]
         [Category("BadRequest")]
         [Category("GetStringBadRequest")]
@@ -220,7 +224,7 @@ namespace AFTests.AlgoStore
             };
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
-            Assert.True(responceGetUploadString.Status == HttpStatusCode.InternalServerError);
+            Assert.True(responceGetUploadString.Status == HttpStatusCode.BadRequest);
         }
     }
 }
