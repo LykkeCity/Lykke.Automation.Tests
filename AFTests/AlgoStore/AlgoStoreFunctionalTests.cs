@@ -52,7 +52,6 @@ namespace AFTests.AlgoStore
             Assert.AreEqual(metaDataEntity.Name, responceMetaData.Name);
             Assert.AreEqual(metaDataEntity.Description, responceMetaData.Description);
         }
-
         //check the behaviour with the devs
         [Test]
         [Category("FullRegression")]
@@ -667,225 +666,172 @@ namespace AFTests.AlgoStore
             Assert.NotNull(LogObject);
         }
 
+        [Test]
+        [Category("FullRegression")]
+        [Category("Functional")]
+        [Category("GetLogOnDeployedOnlyAlgo")]
+        public async Task GetLogOnDeployedOnlyAlgo()
+        {
+            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+
+            string AlgoID = metadataForUploadedBinary.Id;
+
+            DeployBinaryDTO algo = new DeployBinaryDTO()
+            {
+                AlgoId = AlgoID
+            };
+
+            string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
+
+            var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
+            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);        
+
+            url = ApiPaths.ALGO_STORE_ALGO_LOG;
+
+            Dictionary<string, string> algoIDLog = new Dictionary<string, string>()
+            {
+                { "AlgoId", AlgoID }
+            };
+
+            var algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET);
+            Assert.True(algoIDLogResponse.Status == HttpStatusCode.OK);
+
+            LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDLogResponse.ResponseJson);
+
+            Assert.NotNull(LogObject);
+        }
+
+        [Test]
+        [Category("FullRegression")]
+        [Category("Functional")]
+        [Category("GetTailLogOnStoppedAlgo")]
+        public async Task GetTailLogOnStoppedAlgo()
+        {
+            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+
+            string AlgoID = metadataForUploadedBinary.Id;
+
+            DeployBinaryDTO algo = new DeployBinaryDTO()
+            {
+                AlgoId = AlgoID
+            };
+
+            string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
+
+            var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
+            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
+
+            StartBinaryDTO startAlgo = new StartBinaryDTO
+            {
+                AlgoId = algo.AlgoId
+            };
+
+            url = ApiPaths.ALGO_STORE_ALGO_START;
+
+            var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
+            Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
+
+            StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
+            Assert.True(startResponse.Status.Equals("STARTED"));
+
+            url = ApiPaths.ALGO_STORE_ALGO_STOP;
+
+            StopBinaryDTO stopAlgo = new StopBinaryDTO
+            {
+                AlgoId = algo.AlgoId
+            };
+
+            var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
+            Assert.True(stopBinaryResponse.Status == HttpStatusCode.OK);
+
+            StartBinaryResponseDTO stopResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(stopBinaryResponse.ResponseJson);
+            Assert.True(stopResponse.Status.Equals("STOPPED"));
+
+            url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
+
+            Dictionary<string, string> algoIDTailLog = new Dictionary<string, string>()
+            {
+                { "AlgoId", AlgoID },
+                {"Tail" , "60" }
+            };
+
+            var algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
+            Assert.True(algoIDTailLogResponse.Status == HttpStatusCode.OK);
+
+            LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDTailLogResponse.ResponseJson);
+
+            Assert.NotNull(LogObject);
+        }
+
+        [Test]
+        [Category("FullRegression")]
+        [Category("Functional")]
+        [Category("GetTailLogOnDeployedOnlyAlgo")]
+        public async Task GetTailLogOnDeployedOnlyAlgo()
+        {
+            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+
+            string AlgoID = metadataForUploadedBinary.Id;
+
+            DeployBinaryDTO algo = new DeployBinaryDTO()
+            {
+                AlgoId = AlgoID
+            };
+
+            string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
+
+            var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
+            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
+
+            url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
+
+            Dictionary<string, string> algoIDTailLog = new Dictionary<string, string>()
+            {
+                { "AlgoId", AlgoID },
+                {"Tail" , "60" }
+            };
+
+            var algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
+            Assert.True(algoIDTailLogResponse.Status == HttpStatusCode.OK);
+
+            LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDTailLogResponse.ResponseJson);
+
+            Assert.NotNull(LogObject);
+        }
+
+        [Test]
+        [Category("FullRegression")]
+        [Category("Functional")]
+        [Category("UploadStringLarge")]
+        public async Task UploadStringLarge()
+        {
+            string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+
+            MetaDataResponseDTO metadataWithUploadedString = DataManager.getMetaDataForBinaryUpload();
+
+            string AlgoId = metadataWithUploadedString.Id;
+
+            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
+            {
+                {"AlgoId", AlgoId },
+                {"Data" , Helpers.RandomString(100000) }
+            };
+
+            var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
+            Assert.True(responceUploadString.Status == HttpStatusCode.NoContent);
+
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            Assert.True(blobExists);
+        }
+
+        //discuss
         //[Test]
-        //[Category("Functional")]
-        //[Category("GetLogOnDeployedOnlyAlgo")]
-        //public async Task GetLogOnDeployedOnlyAlgo()
-        //{
-        //    MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
-
-        //    string AlgoID = metadataForUploadedBinary.Id;
-
-        //    DeployBinaryDTO algo = new DeployBinaryDTO()
-        //    {
-        //        AlgoId = AlgoID
-        //    };
-
-        //    string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
-
-        //    var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-        //    Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
-
-        //    StartBinaryDTO startAlgo = new StartBinaryDTO
-        //    {
-        //        AlgoId = algo.AlgoId
-        //    };
-
-        //    url = ApiPaths.ALGO_STORE_ALGO_START;
-
-        //    var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-        //    Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
-
-        //    StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-        //    Assert.True(startResponse.Status.Equals("STARTED"));
-
-        //    url = ApiPaths.ALGO_STORE_ALGO_LOG;
-
-        //    Dictionary<string, string> algoIDLog = new Dictionary<string, string>()
-        //    {
-        //        { "AlgoId", AlgoID }
-        //    };
-
-        //    var algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET);
-        //    Assert.True(algoIDLogResponse.Status == HttpStatusCode.OK);
-
-        //    LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDLogResponse.ResponseJson);
-
-        //    Assert.NotNull(LogObject);
-        //}
-
-        //[Test]
-        //[Category("Functional")]
-        //[Category("GetTailLogOnStoppedAlgo")]
-        //public async Task GetTailLogOnStoppedAlgo()
-        //{
-        //    MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
-
-        //    string AlgoID = metadataForUploadedBinary.Id;
-
-        //    DeployBinaryDTO algo = new DeployBinaryDTO()
-        //    {
-        //        AlgoId = AlgoID
-        //    };
-
-        //    string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
-
-        //    var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-        //    Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
-
-        //    StartBinaryDTO startAlgo = new StartBinaryDTO
-        //    {
-        //        AlgoId = algo.AlgoId
-        //    };
-
-        //    url = ApiPaths.ALGO_STORE_ALGO_START;
-
-        //    var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-        //    Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
-
-        //    StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-        //    Assert.True(startResponse.Status.Equals("STARTED"));
-
-        //    url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
-
-        //    Dictionary<string, string> algoIDTailLog = new Dictionary<string, string>()
-        //    {
-        //        { "AlgoId", AlgoID },
-        //        {"Tail" , "60" }
-        //    };
-
-        //    var algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
-        //    Assert.True(algoIDTailLogResponse.Status == HttpStatusCode.OK);
-
-        //    LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDTailLogResponse.ResponseJson);
-
-        //    Assert.NotNull(LogObject);
-        //}
-
-        //[Test]
-        //[Category("Functional")]
-        //[Category("GetTailLogOnStartedAlgo")]
-        //public async Task GetTailLogOnStartedAlgo()
-        //{
-        //    MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
-
-        //    string AlgoID = metadataForUploadedBinary.Id;
-
-        //    DeployBinaryDTO algo = new DeployBinaryDTO()
-        //    {
-        //        AlgoId = AlgoID
-        //    };
-
-        //    string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
-
-        //    var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-        //    Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
-
-        //    StartBinaryDTO startAlgo = new StartBinaryDTO
-        //    {
-        //        AlgoId = algo.AlgoId
-        //    };
-
-        //    url = ApiPaths.ALGO_STORE_ALGO_START;
-
-        //    var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-        //    Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
-
-        //    StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-        //    Assert.True(startResponse.Status.Equals("STARTED"));
-
-        //    url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
-
-        //    Dictionary<string, string> algoIDTailLog = new Dictionary<string, string>()
-        //    {
-        //        { "AlgoId", AlgoID },
-        //        {"Tail" , "60" }
-        //    };
-
-        //    var algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
-        //    Assert.True(algoIDTailLogResponse.Status == HttpStatusCode.OK);
-
-        //    LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDTailLogResponse.ResponseJson);
-
-        //    Assert.NotNull(LogObject);
-        //}
-
-        //[Test]
-        //[Category("Functional")]
-        //[Category("GetTailLogOnDeployedOnlyAlgo")]
-        //public async Task GetTailLogOnDeployedOnlyAlgo()
-        //{
-        //    MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
-
-        //    string AlgoID = metadataForUploadedBinary.Id;
-
-        //    DeployBinaryDTO algo = new DeployBinaryDTO()
-        //    {
-        //        AlgoId = AlgoID
-        //    };
-
-        //    string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
-
-        //    var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-        //    Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
-
-        //    StartBinaryDTO startAlgo = new StartBinaryDTO
-        //    {
-        //        AlgoId = algo.AlgoId
-        //    };
-
-        //    url = ApiPaths.ALGO_STORE_ALGO_START;
-
-        //    var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-        //    Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
-
-        //    StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-        //    Assert.True(startResponse.Status.Equals("STARTED"));
-
-        //    url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
-
-        //    Dictionary<string, string> algoIDTailLog = new Dictionary<string, string>()
-        //    {
-        //        { "AlgoId", AlgoID },
-        //        {"Tail" , "60" }
-        //    };
-
-        //    var algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
-        //    Assert.True(algoIDTailLogResponse.Status == HttpStatusCode.OK);
-
-        //    LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDTailLogResponse.ResponseJson);
-
-        //    Assert.NotNull(LogObject);
-        //}
-
-        //[Test]
-        //[Category("Functional")]
-        //[Category("UploadStringLarge")]
-        //public async Task UploadStringLarge()
-        //{
-        //    string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
-
-        //    MetaDataResponseDTO metadataWithUploadedString = DataManager.getMetaDataForBinaryUpload();
-
-        //    string AlgoId = metadataWithUploadedString.Id;
-
-        //    Dictionary<string, string> quaryParam = new Dictionary<string, string>()
-        //    {
-        //        {"AlgoId", AlgoId },
-        //        {"Data" , Helpers.RandomString(300) }
-        //    };
-
-        //    var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
-        //    Assert.True(responceUploadString.Status == HttpStatusCode.NoContent);
-
-        //    bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
-        //    Assert.True(blobExists);
-        //}
-
-        //[Test]
+        //[Category("FullRegression")]
         //[Category("Functional")]
         //[Category("UploadStringEmptyFile")]
-        //public async Task UploadStringEmptyFile()
+        //[TestCase("")]
+        //[TestCase("     ")]
+        //public async Task UploadStringEmptyFile(string algo)
         //{
         //    string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
 
@@ -896,7 +842,7 @@ namespace AFTests.AlgoStore
         //    Dictionary<string, string> quaryParam = new Dictionary<string, string>()
         //    {
         //        {"AlgoId", AlgoId },
-        //        {"Data" , Helpers.RandomString(300) }
+        //        {"Data" , algo }
         //    };
 
         //    var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
@@ -906,37 +852,22 @@ namespace AFTests.AlgoStore
         //    Assert.True(blobExists);
         //}
 
-        //[Test]
-        //[Category("Functional")]
-        //[Category("GetStringWrongId")]
-        //public async Task GetStringWrongId()
-        //{
-        //    string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+        [Test]
+        [Category("FullRegression")]
+        [Category("Functional")]
+        [Category("GetStringWrongId")]
+        public async Task GetStringWrongId()
+        {
+            string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
 
-        //    MetaDataResponseDTO metadataWithUploadedString = DataManager.getMetaDataForBinaryUpload();
+            Dictionary<string, string> quaryParamGetString = new Dictionary<string, string>()
+            {
+                {"AlgoId", "non-existing-id-234-555-666" }
+            };
 
-        //    string AlgoId = metadataWithUploadedString.Id;
+            var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
+            Assert.True(responceGetUploadString.Status == HttpStatusCode.NotFound);
 
-        //    Dictionary<string, string> quaryParam = new Dictionary<string, string>()
-        //    {
-        //        {"AlgoId", AlgoId },
-        //        {"Data" , Helpers.RandomString(300) }
-        //    };
-
-        //    var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
-        //    Assert.True(responceUploadString.Status == HttpStatusCode.NoContent);
-
-        //    Dictionary<string, string> quaryParamGetString = new Dictionary<string, string>()
-        //    {
-        //        {"AlgoId", AlgoId }
-        //    };
-
-        //    var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
-        //    Assert.True(responceGetUploadString.Status == HttpStatusCode.OK);
-
-        //    UploadStringDTO uploadedStringContent = JsonUtils.DeserializeJson<UploadStringDTO>(responceGetUploadString.ResponseJson);
-
-        //    Assert.True(quaryParam["Data"].Equals(uploadedStringContent.Data));
-        //}
+        }
     }
 }
