@@ -56,5 +56,6 @@ namespace WalletApi.Api
         public ClientTrading ClientTrading => new ClientTrading();
         public CountryPhoneCodes CountryPhoneCodes => new CountryPhoneCodes();
         public Dialogs Dialogs => new Dialogs();
+        public Dictionary Dictionary => new Dictionary();
     }
 }

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using BlockchainsIntegration.LitecoinSign;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -28,8 +29,10 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             [Category("LiteCoin")]
             public void GetAddressValidAddressTest()
             {
-                Assert.Ignore("Get valid adress");
-                var response = litecoinApi.Address.GetAddress("validAddress");
+                var signService = new LitecoinSign();
+                var wallet = signService.PostWallet().GetResponseObject();
+
+                var response = litecoinApi.Address.GetAddress(wallet.PublicAddress);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().IsValid, Is.True);
             }
