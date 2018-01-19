@@ -8,6 +8,7 @@ using XUnitTestCommon;
 using XUnitTestCommon.Tests;
 using XUnitTestCommon.Utils;
 
+
 namespace AlgoStoreData.Fixtures
 {
     public partial class AlgoStoreTestDataFixture : BaseTest
