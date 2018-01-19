@@ -52,7 +52,7 @@ namespace AFTests.AlgoStore
             Assert.AreEqual(metaDataEntity.Name, responceMetaData.Name);
             Assert.AreEqual(metaDataEntity.Description, responceMetaData.Description);
         }
-        //check the behaviour with the devs
+
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
@@ -72,6 +72,7 @@ namespace AFTests.AlgoStore
             MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
             Assert.Null(metaDataEntityDeleted);
         }
+
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
@@ -152,6 +153,7 @@ namespace AFTests.AlgoStore
             MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
             Assert.Null(metaDataEntityDeleted);
         }
+
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
@@ -275,6 +277,7 @@ namespace AFTests.AlgoStore
             MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
             Assert.Null(metaDataEntityDeleted);
         }
+
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
@@ -336,6 +339,7 @@ namespace AFTests.AlgoStore
             MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
             Assert.Null(metaDataEntityDeleted);
         }
+
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
@@ -365,6 +369,7 @@ namespace AFTests.AlgoStore
             bool blobExistsSecondTime = await this.BlobRepository.CheckIfBlobExists(AlgoId);
             Assert.True(blobExistsSecondTime);
         }
+
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
@@ -385,6 +390,7 @@ namespace AFTests.AlgoStore
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(quaryParam["AlgoId"]);
             Assert.False(blobExists);
         }
+
         [Test]
         [Category("Functional")]
         [Category("FullRegression")]
@@ -407,6 +413,7 @@ namespace AFTests.AlgoStore
             Assert.Null(runtimeDataEntity);
 
         }
+
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
@@ -479,6 +486,7 @@ namespace AFTests.AlgoStore
             StartBinaryResponseDTO startResponseSecond = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
             Assert.True(startResponse.Status.Equals("STARTED"));
         }
+
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
@@ -605,6 +613,7 @@ namespace AFTests.AlgoStore
             StartBinaryResponseDTO startResponseSecondTime = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
             Assert.True(startResponse.Status.Equals("STARTED"));
         }
+
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
@@ -814,7 +823,7 @@ namespace AFTests.AlgoStore
             Dictionary<string, string> quaryParam = new Dictionary<string, string>()
             {
                 {"AlgoId", AlgoId },
-                {"Data" , Helpers.RandomString(100000) }
+                {"Data" , Helpers.RandomString(1000) }
             };
 
             var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
@@ -823,34 +832,6 @@ namespace AFTests.AlgoStore
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
             Assert.True(blobExists);
         }
-
-        //discuss
-        //[Test]
-        //[Category("FullRegression")]
-        //[Category("Functional")]
-        //[Category("UploadStringEmptyFile")]
-        //[TestCase("")]
-        //[TestCase("     ")]
-        //public async Task UploadStringEmptyFile(string algo)
-        //{
-        //    string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
-
-        //    MetaDataResponseDTO metadataWithUploadedString = DataManager.getMetaDataForBinaryUpload();
-
-        //    string AlgoId = metadataWithUploadedString.Id;
-
-        //    Dictionary<string, string> quaryParam = new Dictionary<string, string>()
-        //    {
-        //        {"AlgoId", AlgoId },
-        //        {"Data" , algo }
-        //    };
-
-        //    var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
-        //    Assert.True(responceUploadString.Status == HttpStatusCode.NoContent);
-
-        //    bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
-        //    Assert.True(blobExists);
-        //}
 
         [Test]
         [Category("FullRegression")]
@@ -867,7 +848,6 @@ namespace AFTests.AlgoStore
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
             Assert.True(responceGetUploadString.Status == HttpStatusCode.NotFound);
-
         }
     }
 }
