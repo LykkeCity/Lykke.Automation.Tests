@@ -94,7 +94,6 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
 
         public class DeleteBalancesInvalidAddress : LitecoinBaseTest
         {
-            [TestCase("")]
             [TestCase("testAddress")]
             [TestCase("!@&*()")]
             [TestCase("352.58")]

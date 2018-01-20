@@ -64,7 +64,6 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
 
         public class GetAssetInvalidId : LitecoinBaseTest
         {
-            [TestCase("")]
             [TestCase("1234567")]
             [TestCase("testAssetId")]
             [TestCase("!@&*(")]
