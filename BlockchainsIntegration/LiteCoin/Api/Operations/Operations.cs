@@ -8,9 +8,9 @@ namespace BlockchainsIntegration.LiteCoin.Api
 {
     public class Operations : ApiBase
     {
-        public IResponse<BuildTransactionRequest> PostTransactions(BuildTransactionRequest model)
+        public IResponse<BuildTransactionResponse> PostTransactions(BuildTransactionRequest model)
         {
-            return Request.Post("/transactions").AddJsonBody(model).Build().Execute<BuildTransactionRequest>();
+            return Request.Post("/transactions").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
         }
 
         public IResponse PostTransactionsBroadcast(string OperationId, string SignedTransaction)
@@ -21,12 +21,12 @@ namespace BlockchainsIntegration.LiteCoin.Api
 
         public IResponse DeleteOperationId(string operationId)
         {
-            return Request.Delete($"/broadcast/{operationId}").Build().Execute();
+            return Request.Delete($"/transactions/broadcast/{operationId}").Build().Execute();
         }
 
         public IResponse<BroadcastedTransactionResponse> GetOperationId(string operationId)
         {
-            return Request.Get($"/broadcast/{operationId}").Build().Execute<BroadcastedTransactionResponse>();
+            return Request.Get($"/transactions/broadcast/{operationId}").Build().Execute<BroadcastedTransactionResponse>();
         }
     }
 }

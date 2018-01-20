@@ -17,9 +17,26 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             [Category("Litecoin")]
             public void GetOperationIdTest()
             {
-                Assert.Ignore("Get valid operation id");
-                var response = litecoinApi.Operations.GetOperationId("testoperationId");
+                var model = new BuildTransactionRequest()
+                {
+                    Amount = "100001",
+                    AssetId = "LTC",
+                    FromAddress = WALLET_ADDRESS,
+                    IncludeFee = false,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = litecoinApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString("N");
+
+                var signResponse = litecoinSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
+
+                var response = litecoinApi.Operations.PostTransactionsBroadcast(operationId, signResponse.SignedTransaction);
+
+                var getResponse = litecoinApi.Operations.GetOperationId(operationId);
                 response.Validate.StatusCode(HttpStatusCode.OK);
+                Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
             }
         }
 
@@ -43,18 +60,19 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             [Category("Litecoin")]
             public void PostTransactionsTest()
             {
-                Assert.Ignore("How to get TO adress, From address, OperationID???");
                 var model = new BuildTransactionRequest()
                 {
-                    Amount = "10",
+                    Amount = "100001",
                     AssetId = "LTC",
-                    FromAddress = "testAddress",
+                    FromAddress = WALLET_ADDRESS,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = "testAddress1"
+                    ToAddress = HOT_WALLET
                 };
 
                 var response = litecoinApi.Operations.PostTransactions(model);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+                Assert.That(response.GetResponseObject().TransactionContext, Is.Not.Null);
             }
         }
 
@@ -102,11 +120,22 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             [Category("Litecoin")]
             public void PostTransactionsBroadcastTest()
             {
-                Assert.Ignore("How to get valid OperationId and sTransaction???");
-                string operationId = "1234566";
-                string sTransaction = Guid.NewGuid().ToString("N");
+                var model = new BuildTransactionRequest()
+                {
+                    Amount = "100001",
+                    AssetId = "LTC",
+                    FromAddress = WALLET_ADDRESS,
+                    IncludeFee = false,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
 
-                var response = litecoinApi.Operations.PostTransactionsBroadcast(operationId, sTransaction);
+                var responseTransaction = litecoinApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString("N");
+
+                var signResponse = litecoinSign.PostSign(new SignRequest() {PrivateKeys = new List<string>() {PKey }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
+
+                var response = litecoinApi.Operations.PostTransactionsBroadcast(operationId, signResponse.SignedTransaction);
 
                 response.Validate.StatusCode(HttpStatusCode.OK);
             }
@@ -134,8 +163,26 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             [Category("Litecoin")]
             public void DeleteOperationIdTest()
             {
-                Assert.Ignore("How to get valid OperationId");
-                var response = litecoinApi.Operations.DeleteOperationId("testOperationId");
+                var model = new BuildTransactionRequest()
+                {
+                    Amount = "100001",
+                    AssetId = "LTC",
+                    FromAddress = WALLET_ADDRESS,
+                    IncludeFee = false,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = litecoinApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString("N");
+
+                var signResponse = litecoinSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
+
+                var response = litecoinApi.Operations.PostTransactionsBroadcast(operationId, signResponse.SignedTransaction);
+
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                var responseDelete = litecoinApi.Operations.DeleteOperationId(operationId);
                 response.Validate.StatusCode(HttpStatusCode.OK);
             }
         }
