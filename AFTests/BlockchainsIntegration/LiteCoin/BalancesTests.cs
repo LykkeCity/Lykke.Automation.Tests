@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 using XUnitTestCommon.TestsData;
@@ -9,7 +10,6 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
 {
     class BalancesTests
     {
-
         public class GetBalances : LitecoinBaseTest
         {
             [Test]
@@ -17,8 +17,25 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             public void GetBalancesTest()
             {
                 var take = "1";
-                var response = litecoinApi.Balances.GetBalances(take, null);
-                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                if (litecoinApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS))
+                {
+                    litecoinApi.Balances.DeleteBalances(WALLET_ADDRESS);
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
+                }
+
+                //enable observation
+                var pResponse = litecoinApi.Balances.PostBalances(WALLET_ADDRESS);
+
+
+                Assert.That(() => litecoinApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS), 
+                    Is.True.After(10*60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 10 minutes");
+
+                //disable
+                var dResponse = litecoinApi.Balances.DeleteBalances(WALLET_ADDRESS);
+
+                Assert.That(() => litecoinApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS),
+                    Is.False.After(1 * 60 * 1000, 1 * 1000), "Wallet still present in Get Balances after Delete");
             }
         }
 
@@ -49,18 +66,6 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             }
         }
 
-        public class PostBalances : LitecoinBaseTest
-        {
-            [Test]
-            [Category("Litecoin")]
-            public void PostBalancesTest()
-            {
-                Assert.Ignore("Get valid blockchain address");
-                var address = TestData.GenerateString(8);
-                var response = litecoinApi.Balances.PostBalances(address);
-            }
-        }
-
         public class PostBalancesInvalidAddress : LitecoinBaseTest
         {
             [TestCase("")]
@@ -75,11 +80,11 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             }
         }
 
-        public class DeleteBalances : LitecoinBaseTest
+        public class CheckBalanceIsZeroBeforeGetBalance : LitecoinBaseTest
         {
             [Test]
             [Category("Litecoin")]
-            public void DeleteBalancesTest()
+            public void CheckBalanceIsZeroBeforeGetBalanceTest()
             {
                 Assert.Ignore("Get valid blockchain address");
                 var response = litecoinApi.Balances.DeleteBalances("1");
