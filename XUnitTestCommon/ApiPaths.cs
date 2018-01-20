@@ -75,5 +75,18 @@ namespace XUnitTestCommon
         public static readonly string BALANCES_WALLET_CREDENTIAL = "/api/WalletCredential";
         public static readonly string BALANCES_WALLET_CREDENTIALS_HISTORY = "/api/WalletCredentialsHistory";
         public static readonly string BALANCES_WALLET_BALANCES = "/api/WalletsClientBalances";
+
+
+        //Algo Store
+        public static readonly string ALGO_STORE_IS_ALIVE = "/api/IsAlive";
+        public static readonly string ALGO_STORE_METADATA = "/api/v1/clientData/metadata";
+        public static readonly string ALGO_STORE_CASCADE_DELETE = "/api/v1/clientData/metadata/cascadeDelete";
+        public static readonly string ALGO_STORE_UPLOAD_BINARY = "/api/v1/clientData/imageData/upload/binary";
+        public static readonly string ALGO_STORE_UPLOAD_STRING = "/api/v1/clientData/imageData/upload/string";
+        public static readonly string ALGO_STORE_DEPLOY_BINARY = "/api/v1/management/deploy/binary";
+        public static readonly string ALGO_STORE_ALGO_START = "/api/v1/management/test/start";
+        public static readonly string ALGO_STORE_ALGO_STOP = "/api/v1/management/test/stop";
+        public static readonly string ALGO_STORE_ALGO_LOG = "/api/v1/management/test/log";
+        public static readonly string ALGO_STORE_ALGO_TAIL_LOG = "/api/v1/management/test/tailLog";
     }    
 }

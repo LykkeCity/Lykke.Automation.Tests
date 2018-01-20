@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using XUnitTestCommon.TestsCore;
 using XUnitTestCommon.DTOs;
@@ -73,6 +74,30 @@ namespace XUnitTestCommon.Consumers
             var response = await _client.ExecuteAsync(_request);
 
             Log(response);
+
+            return new Response(response.StatusCode, response.Content);
+        }
+
+        public async Task<Response> ExecuteRequestFileUpload(string path, Dictionary<string, string> queryParams, string body, Method method, string pathFile)
+        {
+            var uri = BuildUri(_urlPrefix, _baseUrl, path);
+            _client = new RestClient(uri);
+            _request = new RestRequest(method);
+            _request.AddFile("Data", pathFile);
+            AddQueryParams(queryParams);
+
+            if (body != null)
+            {
+                _request.AddParameter("application/json", body, ParameterType.RequestBody);
+            }
+
+            if (_oAuthConsumer != null)
+            {
+                await _oAuthConsumer.UpdateToken();
+                _request.AddParameter("Authorization", "Bearer " + _oAuthConsumer.AuthToken, ParameterType.HttpHeader);
+            }
+
+            var response = await _client.ExecuteAsync(_request);
 
             return new Response(response.StatusCode, response.Content);
         }

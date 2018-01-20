@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\XUnitTestCommon\Nunit\netstandard2.0\nunit.framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

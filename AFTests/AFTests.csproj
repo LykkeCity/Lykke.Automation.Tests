@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AlgoStoreData.cs\AlgoStoreData.csproj" />
     <ProjectReference Include="..\ApiV2Data\ApiV2Data.csproj" />
     <ProjectReference Include="..\AssetsData\AssetsData.csproj" />
     <ProjectReference Include="..\BalancesData\BalancesData.csproj" />
@@ -37,6 +38,9 @@
       <HintPath>..\XUnitTestCommon\Nunit\netstandard2.0\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
+    <None Update="AlgoStore\TestData\myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
 
   <ItemGroup>
     <None Update="Dockerfile">
