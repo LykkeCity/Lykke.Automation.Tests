@@ -11,23 +11,22 @@ namespace Lykke.Client.AutorestClient.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class SignRequest
+    public partial class WalletsResponse
     {
         /// <summary>
-        /// Initializes a new instance of the SignRequest class.
+        /// Initializes a new instance of the WalletsResponse class.
         /// </summary>
-        public SignRequest()
+        public WalletsResponse()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the SignRequest class.
+        /// Initializes a new instance of the WalletsResponse class.
         /// </summary>
-        public SignRequest(string transactionHex = default(string), IList<string> privateKeys = default(IList<string>))
+        public WalletsResponse(IList<WalletResponse> wallets = default(IList<WalletResponse>))
         {
-            TransactionHex = transactionHex;
-            PrivateKeys = privateKeys;
+            Wallets = wallets;
             CustomInit();
         }
 
@@ -38,13 +37,8 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "transactionHex")]
-        public string TransactionHex { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "privateKeys")]
-        public IList<string> PrivateKeys { get; set; }
+        [JsonProperty(PropertyName = "wallets")]
+        public IList<WalletResponse> Wallets { get; set; }
 
     }
 }

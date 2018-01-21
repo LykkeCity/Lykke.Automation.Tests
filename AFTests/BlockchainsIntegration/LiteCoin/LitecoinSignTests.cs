@@ -50,9 +50,8 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             {
                 var signService = new LitecoinSign();
 
-                var req = new SignRequest()
+                var req = new SignTransactionRequest()
                 {
-                    PrivateKeys = new List<string>() { "testKey"},
                     TransactionHex = "testHex"
                 };
 

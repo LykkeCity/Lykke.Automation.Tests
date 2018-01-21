@@ -13,10 +13,9 @@ namespace BlockchainsIntegration.LiteCoin.Api
             return Request.Post("/transactions").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
         }
 
-        public IResponse PostTransactionsBroadcast(string OperationId, string SignedTransaction)
+        public IResponse PostTransactionsBroadcast(BroadcastTransactionRequest model)
         {
-            return Request.Post("/transactions/broadcast").AddQueryParameterIfNotNull("OperationId", OperationId).
-                AddQueryParameterIfNotNull("SignedTransaction", SignedTransaction).Build().Execute();
+            return Request.Post("/transactions/broadcast").AddJsonBody(model).Build().Execute();
         }
 
         public IResponse DeleteOperationId(string operationId)

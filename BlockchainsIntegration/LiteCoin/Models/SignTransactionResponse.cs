@@ -9,20 +9,20 @@ namespace Lykke.Client.AutorestClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class SignOkTransactionResponce
+    public partial class SignTransactionResponse
     {
         /// <summary>
-        /// Initializes a new instance of the SignOkTransactionResponce class.
+        /// Initializes a new instance of the SignTransactionResponse class.
         /// </summary>
-        public SignOkTransactionResponce()
+        public SignTransactionResponse()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the SignOkTransactionResponce class.
+        /// Initializes a new instance of the SignTransactionResponse class.
         /// </summary>
-        public SignOkTransactionResponce(string signedTransaction = default(string))
+        public SignTransactionResponse(string signedTransaction = default(string))
         {
             SignedTransaction = signedTransaction;
             CustomInit();

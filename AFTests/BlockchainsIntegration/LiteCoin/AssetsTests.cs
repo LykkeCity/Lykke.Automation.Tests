@@ -52,11 +52,12 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
 
         public class GetAssetId : LitecoinBaseTest
         {
-            [Test]
+            [TestCase("LTC")]
+            [TestCase("63dc8492-4e9d-403e-8a51-c8e1e77caa40")]
             [Category("Litecoin")]
-            public void GetAssetsIdTest()
+            public void GetAssetsIdTest(string assetId)
             {
-                var response = litecoinApi.Assets.GetAsset("LTC");
+                var response = litecoinApi.Assets.GetAsset(assetId);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().Name, Is.EqualTo("LiteCoin"));
             }
