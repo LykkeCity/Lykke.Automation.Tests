@@ -1,4 +1,5 @@
-﻿using BlockchainsIntegration.LiteCoin;
+﻿using BlockchainsIntegration.BlockchainWallets;
+using BlockchainsIntegration.LiteCoin;
 using BlockchainsIntegration.LitecoinSign;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
     {
         protected LitecoinApi litecoinApi = new LitecoinApi();
         protected LitecoinSign litecoinSign = new LitecoinSign();
+        protected BlockchainWallets blockchainWallets = new BlockchainWallets();
 
         protected static string HOT_WALLET = "mwy2LRNecLfHxatdAxz1XQP2sqv8Nk3PFV";
         protected static string WALLET_ADDRESS = "msvNWBpFNDQ6JxiEcTFU3xXbSnDir4EqCk";
