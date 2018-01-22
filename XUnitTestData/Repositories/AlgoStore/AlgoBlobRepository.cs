@@ -16,10 +16,9 @@ namespace XUnitTestData.Repositories.AlgoStore
         {
         }
 
-        public async Task<bool> CheckIfBlobExists(string blobName)
+        public async Task<bool> CheckIfBlobExists(string blobName, string binaryType)
         {
-            return await HasBlobAsync(BlobContainer, blobName);
-          
+            return await HasBlobAsync(BlobContainer, blobName+binaryType);         
         }
 
     }
