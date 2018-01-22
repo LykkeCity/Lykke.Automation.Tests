@@ -11,6 +11,7 @@ using XUnitTestCommon.Utils;
 using AlgoStoreData.DTOs;
 using XUnitTestData.Entities.AlgoStore;
 using System.IO;
+using AlgoStoreData.HelpersAlgoStore;
 
 namespace AFTests.AlgoStore
 {
@@ -18,6 +19,7 @@ namespace AFTests.AlgoStore
     [Category("AlgoStore")]
     public partial class AlgoStoreTests : AlgoStoreTestDataFixture
     {
+
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
@@ -144,7 +146,7 @@ namespace AFTests.AlgoStore
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
             Assert.True(blobExists);
 
             url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
@@ -180,7 +182,7 @@ namespace AFTests.AlgoStore
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
             Assert.True(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
@@ -229,7 +231,7 @@ namespace AFTests.AlgoStore
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
             Assert.True(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
@@ -304,7 +306,7 @@ namespace AFTests.AlgoStore
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
             Assert.True(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
@@ -359,14 +361,14 @@ namespace AFTests.AlgoStore
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
             Assert.True(blobExists);
 
             url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
 
             var responceAllClientMetadataSecondTme = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
-            bool blobExistsSecondTime = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExistsSecondTime = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
             Assert.True(blobExistsSecondTime);
         }
 
@@ -387,7 +389,7 @@ namespace AFTests.AlgoStore
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NotFound);
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(quaryParam["AlgoId"]);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(quaryParam["AlgoId"], BinaryAlgoFileType.JAR);
             Assert.False(blobExists);
         }
 
@@ -436,7 +438,7 @@ namespace AFTests.AlgoStore
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
             Assert.True(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
@@ -508,7 +510,7 @@ namespace AFTests.AlgoStore
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
             Assert.True(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
@@ -578,7 +580,7 @@ namespace AFTests.AlgoStore
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
             Assert.True(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
@@ -829,7 +831,7 @@ namespace AFTests.AlgoStore
             var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
             Assert.True(responceUploadString.Status == HttpStatusCode.NoContent);
 
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId);
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.STRING);
             Assert.True(blobExists);
         }
 
