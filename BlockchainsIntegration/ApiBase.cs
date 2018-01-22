@@ -8,7 +8,7 @@ namespace BlockchainsIntegration
 {
     public class ApiBase
     {
-        protected string URL = "http://litecoin-api.lykke-service.svc.cluster.local/api";
+        protected string URL = "http://litecoin-api.autotests-service.svc.cluster.local/api";
 
         protected IRequestBuilder Request => Requests.For(URL);
 

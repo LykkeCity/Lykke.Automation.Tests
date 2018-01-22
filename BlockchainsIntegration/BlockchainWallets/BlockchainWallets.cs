@@ -8,7 +8,7 @@ namespace BlockchainsIntegration.BlockchainWallets
 {
     public class BlockchainWallets : ApiBase
     {
-        public BlockchainWallets() : base("http://blockchain-wallets.lykke-service.svc.cluster.local/api") { }
+        public BlockchainWallets() : base("http://blockchain-wallets.autotests-service.svc.cluster.local/api") { }
 
         public IResponse GetWalletByAddress(string integrationLayerId, string integrationLayerAssetId, string address)
         {

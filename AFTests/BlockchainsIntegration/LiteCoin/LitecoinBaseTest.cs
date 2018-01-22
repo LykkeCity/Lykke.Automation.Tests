@@ -15,7 +15,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
         protected BlockchainWallets blockchainWallets = new BlockchainWallets();
 
         protected static string HOT_WALLET = "mwy2LRNecLfHxatdAxz1XQP2sqv8Nk3PFV";
-        protected static string WALLET_ADDRESS = "muk6Vxdd7Uy629ivnLbADfFrFekX3RDZcK";
+        protected static string WALLET_ADDRESS = "msvNWBpFNDQ6JxiEcTFU3xXbSnDir4EqCk";//"muk6Vxdd7Uy629ivnLbADfFrFekX3RDZcK";
         protected static string PKey = "cRTB3eAajJchgNuybhH5SwC9L5PFoTwxXBjgB8vRNJeJ4EpcXmAP";
 
 

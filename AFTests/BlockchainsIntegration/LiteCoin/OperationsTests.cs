@@ -30,7 +30,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
                 var responseTransaction = litecoinApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString("N");
 
-                var signResponse = litecoinSign.PostSign(new SignTransactionRequest() { PublicAddresses = new List<string>() { WALLET_ADDRESS }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = litecoinSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = litecoinApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
@@ -50,7 +50,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             public void GetOperationIdInvalidIdTest(string operationId)
             {
                 var response = litecoinApi.Operations.GetOperationId(operationId);
-                response.Validate.StatusCode(HttpStatusCode.NotFound);
+                response.Validate.StatusCode(HttpStatusCode.NoContent);
             }
         }
 
@@ -133,7 +133,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
                 var responseTransaction = litecoinApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString("N");
 
-                var signResponse = litecoinSign.PostSign(new SignTransactionRequest() {PublicAddresses = new List<string>() { WALLET_ADDRESS }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = litecoinSign.PostSign(new SignRequest() {PrivateKeys = new List<string>() { PKey }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = litecoinApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
@@ -147,13 +147,13 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             [Category("Litecoin")]
             public void PostTransactionsBroadcastInvalidTransactionTest()
             {
-                string operationId = "1234566";
                 string sTransaction = Guid.NewGuid().ToString("N");
 
-                var response = litecoinApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = Guid.NewGuid(), SignedTransaction = sTransaction });
+                var response = litecoinApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest()
+                { OperationId = Guid.NewGuid(), SignedTransaction = sTransaction });
 
-                response.Validate.StatusCode(HttpStatusCode.InternalServerError);
-                Assert.That(response.Content, Does.Contain("Invalid transaction hex"));
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+                Assert.That(response.Content, Does.Contain("Invalid transaction"));
             }
         }
 
@@ -176,7 +176,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
                 var responseTransaction = litecoinApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString("N");
 
-                var signResponse = litecoinSign.PostSign(new SignTransactionRequest() { PublicAddresses = new List<string>() { WALLET_ADDRESS }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = litecoinSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = litecoinApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
@@ -197,7 +197,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             public void DeleteOperationIdInvalidOIdTest(string operationId)
             {
                 var response = litecoinApi.Operations.DeleteOperationId(operationId);
-                response.Validate.StatusCode(HttpStatusCode.NotFound);
+                response.Validate.StatusCode(HttpStatusCode.NoContent);
             }
         }
     }

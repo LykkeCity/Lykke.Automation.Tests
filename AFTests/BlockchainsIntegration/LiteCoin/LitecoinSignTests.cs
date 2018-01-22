@@ -11,7 +11,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
 {
     class LitecoinSignTests
     {
-        public class GetLitecoinSignAlive : BaseTest
+        public class GetLitecoinSignAlive : LitecoinBaseTest
         {
             [Test]
             [Category("Litecoin")]
@@ -27,7 +27,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
         }
 
 
-        public class PostWallet : BaseTest
+        public class PostWallet : LitecoinBaseTest
         {
             [Test]
             [Category("Litecoin")]
@@ -42,7 +42,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             }
         }
 
-        public class PostSign : BaseTest
+        public class PostSign : LitecoinBaseTest
         {
             [Test]
             [Category("Litecoin")]
@@ -50,8 +50,9 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             {
                 var signService = new LitecoinSign();
 
-                var req = new SignTransactionRequest()
+                var req = new SignRequest()
                 {
+                    PrivateKeys = new List<string>() { PKey },
                     TransactionHex = "testHex"
                 };
 

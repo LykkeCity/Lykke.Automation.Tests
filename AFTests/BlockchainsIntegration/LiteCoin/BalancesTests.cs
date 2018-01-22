@@ -62,7 +62,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
                 var take = "1";
                 var continuation = TestData.GenerateString();
                 var response = litecoinApi.Balances.GetBalances(take, continuation);
-                response.Validate.StatusCode(HttpStatusCode.OK);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
             }
         }
 
@@ -76,7 +76,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             public void PostBalancesInvalidAddressTest(string address)
             {
                 var response = litecoinApi.Balances.PostBalances(address);
-                response.Validate.StatusCode(HttpStatusCode.NotFound);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
             }
         }
 
@@ -86,7 +86,19 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             [Category("Litecoin")]
             public void CheckBalanceIsZeroBeforeGetBalanceTest()
             {
-                Assert.Ignore("Get valid blockchain address");
+                Assert.Ignore("Check balance is zero before transactions in complete state");
+                var response = litecoinApi.Balances.DeleteBalances("1");
+                response.Validate.StatusCode(HttpStatusCode.OK);
+            }
+        }
+
+        public class CheckBalanceAfterTransaction : LitecoinBaseTest
+        {
+            [Test]
+            [Category("Litecoin")]
+            public void CheckBalanceAfterTransactionTest()
+            {
+                Assert.Ignore("validate balance is correct after transaction is done");
                 var response = litecoinApi.Balances.DeleteBalances("1");
                 response.Validate.StatusCode(HttpStatusCode.OK);
             }

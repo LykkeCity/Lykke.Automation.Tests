@@ -14,7 +14,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             [TestCase("testAddress")]
             [TestCase("1234567")]
             [TestCase("!@$%^&*(")]
-            [Category("LiteCoin")]
+            [Category("Litecoin")]
             public void GetAddressInvalidAddressTest(string address)
             {
                 var response = litecoinApi.Address.GetAddress(address);
@@ -26,7 +26,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
         public class GetAddressValidAddress : LitecoinBaseTest
         {
             [Test]
-            [Category("LiteCoin")]
+            [Category("Litecoin")]
             public void GetAddressValidAddressTest()
             {
                 var signService = new LitecoinSign();
