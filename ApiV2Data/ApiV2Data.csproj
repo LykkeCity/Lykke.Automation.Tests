@@ -6,12 +6,18 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.1.1" />
-    <PackageReference Include="NUnit" Version="3.9.0" />
+    <PackageReference Include="RestSharp" Version="106.2.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AssetsData\AssetsData.csproj" />
     <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\XUnitTestCommon\Nunit\netstandard2.0\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
