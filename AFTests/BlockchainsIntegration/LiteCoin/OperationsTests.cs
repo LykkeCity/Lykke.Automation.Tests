@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using XUnitTestCommon.TestsData;
 
-namespace AFTests.BlockchainsIntegration.LiteCoin
+namespace AFTests.BlockchainsIntegrationTests.LiteCoin
 {
     class OperationsTests
     {
@@ -30,7 +30,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
                 var responseTransaction = litecoinApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString("N");
 
-                var signResponse = litecoinSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = litecoinSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = litecoinApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
@@ -133,7 +133,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
                 var responseTransaction = litecoinApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString("N");
 
-                var signResponse = litecoinSign.PostSign(new SignRequest() {PrivateKeys = new List<string>() { PKey }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = litecoinSign.PostSign(new SignRequest() {PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = litecoinApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
@@ -176,7 +176,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
                 var responseTransaction = litecoinApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString("N");
 
-                var signResponse = litecoinSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionHex = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = litecoinSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = litecoinApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 

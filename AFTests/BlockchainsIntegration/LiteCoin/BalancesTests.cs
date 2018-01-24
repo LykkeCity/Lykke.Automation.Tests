@@ -1,12 +1,16 @@
-﻿using NUnit.Framework;
+﻿using BlockchainsIntegration.LiteCoin.Api;
+using Lykke.Client.AutorestClient.Models;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using XUnitTestCommon.TestsData;
 
-namespace AFTests.BlockchainsIntegration.LiteCoin
+namespace AFTests.BlockchainsIntegrationTests.LiteCoin
 {
     class BalancesTests
     {
@@ -86,9 +90,82 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
             [Category("Litecoin")]
             public void CheckBalanceIsZeroBeforeGetBalanceTest()
             {
-                Assert.Ignore("Check balance is zero before transactions in complete state");
-                var response = litecoinApi.Balances.DeleteBalances("1");
-                response.Validate.StatusCode(HttpStatusCode.OK);
+                // enable observation
+
+                var pResponse = litecoinApi.Balances.PostBalances(WALLET_SINGLE_USE);
+                Assert.That(() => litecoinApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_SINGLE_USE),
+                    Is.True.After(10 * 60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 10 minutes");
+                
+                //create transaction and broadcast it
+
+                long time1 = 0;
+                long time2 = 0;
+                
+                var startBalance = litecoinApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance;
+
+                var model = new BuildTransactionRequest()
+                {
+                    Amount = "100002",
+                    AssetId = "LTC",
+                    FromAddress = WALLET_SINGLE_USE,
+                    IncludeFee = true,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = litecoinApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString("N");
+
+                var signResponse = litecoinSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { KEY_WALLET_SINGLE_USE }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+                var response = litecoinApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+                Parallel.Invoke(() =>
+                {
+                    GetBalanceDissapearingTime(startBalance, out time1);             
+                }, () =>
+                {
+                    GetTransactionCompleteStatusTime(operationId, out time2);
+                });
+
+                TestContext.Out.WriteLine($"tick when balance changed: {time1} \n tick when we get Complete status: {time2}");
+
+                Assert.That(time1, Is.LessThanOrEqualTo(time2), $"Time in Ticks. Time of balance changing is not less than Status became complete");
+            }
+
+            static void GetBalanceDissapearingTime(string startBalance, out long time)
+            {
+                var sw = new Stopwatch();
+                time = 0;
+                var request = new BlockchainsIntegration.LiteCoin.Api.Balances();
+                while (sw.Elapsed < TimeSpan.FromMinutes(10))
+                {
+                    if (int.Parse(request.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance) <
+                        int.Parse(startBalance))
+                    {
+                        time = DateTime.Now.Ticks;
+                        sw.Stop();
+                        return;
+                    }
+                }
+                sw.Stop();
+            }
+
+            static void GetTransactionCompleteStatusTime(string operationId, out long time)
+            {
+                var sw = new Stopwatch();
+                var request = new Operations();
+                time = 0;
+                while (sw.Elapsed < TimeSpan.FromMinutes(10))
+                {
+                    if ((request.GetOperationId(operationId).GetResponseObject().State == BroadcastedTransactionState.Completed))
+                    {
+                        time = DateTime.Now.Ticks;
+                        sw.Stop();
+                        return;
+                    }
+                }
+                sw.Stop();
             }
         }
 

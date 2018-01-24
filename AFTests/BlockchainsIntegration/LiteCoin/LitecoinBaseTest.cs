@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using XUnitTestCommon.Tests;
 
-namespace AFTests.BlockchainsIntegration.LiteCoin
+namespace AFTests.BlockchainsIntegrationTests.LiteCoin
 {
     class LitecoinBaseTest : BaseTest
     {
@@ -18,6 +18,8 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
         protected static string WALLET_ADDRESS = "msvNWBpFNDQ6JxiEcTFU3xXbSnDir4EqCk";//"muk6Vxdd7Uy629ivnLbADfFrFekX3RDZcK";
         protected static string PKey = "cRTB3eAajJchgNuybhH5SwC9L5PFoTwxXBjgB8vRNJeJ4EpcXmAP";
 
+        protected static string WALLET_SINGLE_USE = "mvErcbPuL4T4kxbJYejk6xLbv8pfBiiSPu";
+        protected static string KEY_WALLET_SINGLE_USE = "cNn38kw6LSfAS6WvJJbFTqWRewa1GgfwczftXrBcyAmygM1V7qKr";
 
         protected static string CLIENT_ID = "b623b171-a307-4485-897c-f3a70b763217";
         //fill here http://faucet.thonguyen.net/ltc

@@ -24,9 +24,9 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the SignRequest class.
         /// </summary>
-        public SignRequest(string transactionHex = default(string), IList<string> privateKeys = default(IList<string>))
+        public SignRequest(string transactionContext = default(string), IList<string> privateKeys = default(IList<string>))
         {
-            TransactionHex = transactionHex;
+            TransactionContext = transactionContext;
             PrivateKeys = privateKeys;
             CustomInit();
         }
@@ -38,8 +38,8 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "transactionHex")]
-        public string TransactionHex { get; set; }
+        [JsonProperty(PropertyName = "transactionContext")]
+        public string TransactionContext { get; set; }
 
         /// <summary>
         /// </summary>

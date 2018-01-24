@@ -7,7 +7,7 @@ using System.Net;
 using System.Text;
 using XUnitTestCommon.Tests;
 
-namespace AFTests.BlockchainsIntegration.LiteCoin
+namespace AFTests.BlockchainsIntegrationTests.LiteCoin
 {
     class LitecoinSignTests
     {
@@ -53,7 +53,7 @@ namespace AFTests.BlockchainsIntegration.LiteCoin
                 var req = new SignRequest()
                 {
                     PrivateKeys = new List<string>() { PKey },
-                    TransactionHex = "testHex"
+                    TransactionContext = "testHex"
                 };
 
                 var response = signService.PostSign(req);
