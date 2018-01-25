@@ -94,8 +94,6 @@ namespace AFTests.AlgoStore
                 {"AlgoId", badID }
             };
 
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
-
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.BadRequest);
         }

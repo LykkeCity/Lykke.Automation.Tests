@@ -142,8 +142,6 @@ namespace AFTests.AlgoStore
                 {"AlgoId", AlgoId }
             };
 
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
-
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
@@ -177,8 +175,6 @@ namespace AFTests.AlgoStore
             {
                 {"AlgoId", AlgoId }
             };
-
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
@@ -226,8 +222,6 @@ namespace AFTests.AlgoStore
             {
                 {"AlgoId", AlgoId }
             };
-
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
@@ -302,8 +296,6 @@ namespace AFTests.AlgoStore
                 {"AlgoId", AlgoId }
             };
 
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
-
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
@@ -357,8 +349,6 @@ namespace AFTests.AlgoStore
                 {"AlgoId", AlgoId }
             };
 
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
-
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
@@ -384,8 +374,6 @@ namespace AFTests.AlgoStore
             {
                 {"AlgoId", "non-existing-id-234-555-666" }
             };
-
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NotFound);
@@ -433,8 +421,6 @@ namespace AFTests.AlgoStore
             {
                 {"AlgoId", AlgoId }
             };
-
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
@@ -506,8 +492,6 @@ namespace AFTests.AlgoStore
                 {"AlgoId", AlgoId }
             };
 
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
-
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
@@ -575,8 +559,6 @@ namespace AFTests.AlgoStore
             {
                 {"AlgoId", AlgoId }
             };
-
-            string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
