@@ -424,6 +424,55 @@ namespace AFTests.AlgoStore
             Assert.True(quaryParam["Data"].Equals(uploadedStringContent.Data));
         }
 
+        [Test]
+        [Category("Smoke")]
+        [Category("GetAllClientInstanceData")]
+        public async Task GetAllClientInstanceData()
+        {
+            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+
+            string AlgoID = metadataForUploadedBinary.Id;
+
+
+
+        }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("PostInstanceDataForAlgo")]
+        public async Task PostInstanceDataForAlgo()
+        {
+            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+
+            string AlgoID = metadataForUploadedBinary.Id;
+
+
+
+        }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("EditInstanceDataForAlgo")]
+        public async Task EditInstanceDataForAlgo()
+        {
+            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+
+            string AlgoID = metadataForUploadedBinary.Id;
+
+        }
+
+        [Test]
+        [Category("Smoke")]
+        [Category("GetInstanceData")]
+        public async Task GetInstanceData()
+        {
+            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+
+            string AlgoID = metadataForUploadedBinary.Id;
+
+        }
+
+
         private async Task<MetaDataResponseDTO> UploadBinaryAlgoAndGetResponceDTO()
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
