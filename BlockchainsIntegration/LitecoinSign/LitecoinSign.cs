@@ -22,7 +22,7 @@ namespace BlockchainsIntegration.LitecoinSign
 
         public IResponse<WalletCreationResponse> PostWallet()
         {
-            return Request.Post("/Wallet").Build().Execute<WalletCreationResponse>();
+            return Request.Post("/Wallets").Build().Execute<WalletCreationResponse>();
         }
     }
 }

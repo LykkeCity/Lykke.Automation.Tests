@@ -30,9 +30,11 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             public void GetAddressValidAddressTest()
             {
                 var signService = new LitecoinSign();
-                var wallet = signService.PostWallet().GetResponseObject();
+                var wallet = signService.PostWallet();
+                wallet.Validate.StatusCode(HttpStatusCode.OK);
+                var address = wallet.GetResponseObject().PublicAddress;
 
-                var response = litecoinApi.Address.GetAddress(wallet.PublicAddress);
+                var response = litecoinApi.Address.GetAddress(address);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().IsValid, Is.True);
             }
