@@ -431,8 +431,9 @@ namespace AFTests.AlgoStore
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            string algoID = metadataForUploadedBinary.Id;
 
+           
 
 
         }
@@ -444,9 +445,35 @@ namespace AFTests.AlgoStore
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            string algoID = metadataForUploadedBinary.Id;
 
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
+            {
+                AlgoId = algoID,
+                HftApiKey = "key",
+                AssetPair = "BTCUSD",
+                TradedAsset = "USD",
+                Margin ="1",
+                Volume = "1"
+            };
 
+            string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
+
+            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            Assert.True(postInstanceDataResponse.Status == HttpStatusCode.OK);
+
+            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
+
+            Assert.True(postInstanceData.AlgoId.Equals(instanceForAlgo.AlgoId));
+            Assert.True(postInstanceData.AssetPair.Equals(instanceForAlgo.AssetPair));
+            Assert.True(postInstanceData.HftApiKey.Equals(instanceForAlgo.HftApiKey));
+            Assert.True(postInstanceData.TradedAsset.Equals(instanceForAlgo.TradedAsset));
+            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume) , (int)Convert.ToDouble(instanceForAlgo.Volume));
+            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin) , (int)Convert.ToDouble(instanceForAlgo.Margin));
+            Assert.NotNull(postInstanceData.InstanceId);
+
+            ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
+            Assert.NotNull(instanceDataEntityExists);
 
         }
 

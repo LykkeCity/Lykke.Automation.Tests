@@ -36,7 +36,7 @@ namespace AlgoStoreData.DependancyInjection
             builder.Register(c => new GenericRepository<ClientInstanceEntity, IClientInstance>(
                    new AzureTableStorage<ClientInstanceEntity>(
                        _configBuilder.Config["MainConnectionString"], "AlgoClientInstanceTable", null), "AlgoClientInstanceTable"))
-               .As<IDictionaryRepository<IRuntimeData>>();
+               .As<IDictionaryRepository<IClientInstance>>();
 
         }
     }

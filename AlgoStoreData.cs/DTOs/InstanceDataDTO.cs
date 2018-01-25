@@ -11,7 +11,7 @@ namespace AlgoStoreData.DTOs
         public string HftApiKey { get; set; }
         public string AssetPair { get; set; }
         public string TradedAsset { get; set; }
-        public int Volume { get; set; }
-        public int Margin { get; set; }
+        public string Volume { get; set; }
+        public string Margin { get; set; }
     }
 }
