@@ -130,7 +130,11 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
 
                 TestContext.Out.WriteLine($"tick when balance changed: {time1} \n tick when we get Complete status: {time2}");
 
-                Assert.That(time1, Is.LessThanOrEqualTo(time2), $"Time in Ticks. Time of balance changing is not less than Status became complete");
+                Assert.Multiple(() => 
+                {
+                    Assert.That(time1, Is.LessThanOrEqualTo(time2), $"Time in Ticks. Time of balance changing is not less than Status became complete");
+                    Assert.That(int.Parse(startBalance) - 100002, Is.EqualTo(int.Parse(litecoinApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance)), "New balance is not as expected");
+                });
             }
 
             static void GetBalanceDissapearingTime(string startBalance, out long time)
@@ -168,19 +172,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 sw.Stop();
             }
         }
-
-        public class CheckBalanceAfterTransaction : LitecoinBaseTest
-        {
-            [Test]
-            [Category("Litecoin")]
-            public void CheckBalanceAfterTransactionTest()
-            {
-                Assert.Ignore("validate balance is correct after transaction is done");
-                var response = litecoinApi.Balances.DeleteBalances("1");
-                response.Validate.StatusCode(HttpStatusCode.OK);
-            }
-        }
-
+    
         public class DeleteBalancesInvalidAddress : LitecoinBaseTest
         {
             [TestCase("testAddress")]
