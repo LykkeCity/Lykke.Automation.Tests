@@ -93,7 +93,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 };
 
                 var response = litecoinApi.Operations.PostTransactions(model);
-                response.Validate.StatusCode(HttpStatusCode.InternalServerError);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
                 Assert.That(response.Content, Does.Contain("Invalid ToAddress"));
             }
         }
@@ -109,7 +109,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 };
 
                 var response = litecoinApi.Operations.PostTransactions(model);
-                response.Validate.StatusCode(HttpStatusCode.InternalServerError);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
                 Assert.That(response.Content, Does.Contain("Technical"));
             }
         }

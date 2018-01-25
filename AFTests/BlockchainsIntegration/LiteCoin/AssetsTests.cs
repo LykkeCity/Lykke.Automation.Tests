@@ -53,7 +53,6 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class GetAssetId : LitecoinBaseTest
         {
             [TestCase("LTC")]
-            [TestCase("63dc8492-4e9d-403e-8a51-c8e1e77caa40")]
             [Category("Litecoin")]
             public void GetAssetsIdTest(string assetId)
             {
