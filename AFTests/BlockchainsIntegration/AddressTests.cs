@@ -14,9 +14,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             [TestCase("testAddress")]
             [TestCase("1234567")]
             [TestCase("!@$%^&*(")]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetAddressInvalidAddressTest(string address)
             {
                 var response = blockchainApi.Address.GetAddress(address);
@@ -28,9 +26,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class GetAddressValidAddress : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetAddressValidAddressTest()
             {
                 var wallet = blockchainSign.PostWallet();

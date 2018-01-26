@@ -14,9 +14,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class GetOperationId : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetOperationIdTest()
             {
                 var model = new BuildTransactionRequest()
@@ -48,9 +46,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             [TestCase("testId")]
             [TestCase("111222333")]
             [TestCase("!@%^&*(")]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetOperationIdInvalidIdTest(string operationId)
             {
                 var response = blockchainApi.Operations.GetOperationId(operationId);
@@ -61,9 +57,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class PostTransactions : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void PostTransactionsTest()
             {
                 var model = new BuildTransactionRequest()
@@ -85,9 +79,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class PostTransactionsInvalidAddress : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void PostTransactionsInvalidAddressTest()
             {
                 var model = new BuildTransactionRequest()
@@ -109,9 +101,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class PostTransactionsEmptyObject : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void PostTransactionsEmptyObjectTest()
             {
                 var model = new BuildTransactionRequest()
@@ -127,9 +117,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class PostTransactionsBroadcast : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void PostTransactionsBroadcastTest()
             {
                 var model = new BuildTransactionRequest()
@@ -156,9 +144,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class PostTransactionsBroadcastInvalidTransaction : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void PostTransactionsBroadcastInvalidTransactionTest()
             {
                 string sTransaction = Guid.NewGuid().ToString("N");
@@ -174,9 +160,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class DeleteOperationId : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void DeleteOperationIdTest()
             {
                 var model = new BuildTransactionRequest()
@@ -209,9 +193,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             [TestCase("testOId")]
             [TestCase("1234")]
             [TestCase("!@%^&*()")]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void DeleteOperationIdInvalidOIdTest(string operationId)
             {
                 var response = blockchainApi.Operations.DeleteOperationId(operationId);

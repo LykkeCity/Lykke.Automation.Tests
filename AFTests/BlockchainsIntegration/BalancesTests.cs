@@ -17,9 +17,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class GetBalances : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetBalancesTest()
             {
                 var take = "1";
@@ -51,9 +49,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             [TestCase("testTake")]
             [TestCase("325.258")]
             [TestCase("!@&*()")]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetBalancesInvalidTakeTest(string take)
             {
                 var response = blockchainApi.Balances.GetBalances(take, null);
@@ -64,9 +60,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class GetBalancesContinuation : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetBalancesContinuationTest()
             {
                 var take = "1";
@@ -82,9 +76,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             [TestCase("testAddress")]
             [TestCase("!@&*()")]
             [TestCase("352.58")]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void PostBalancesInvalidAddressTest(string address)
             {
                 var response = blockchainApi.Balances.PostBalances(address);
@@ -95,9 +87,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class CheckBalanceIsZeroBeforeGetBalance : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void CheckBalanceIsZeroBeforeGetBalanceTest()
             {
                 // enable observation
@@ -188,9 +178,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             [TestCase("testAddress")]
             [TestCase("!@&*()")]
             [TestCase("352.58")]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void DeleteBalancesInvalidAddressTest(string address)
             {
                 var response = blockchainApi.Balances.DeleteBalances(address);

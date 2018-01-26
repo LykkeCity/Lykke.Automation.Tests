@@ -12,9 +12,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class GetAssets : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetAssetsTest()
             {
                 var response = blockchainApi.Assets.GetAssets("2",null);
@@ -30,9 +28,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             [TestCase("qwerty")]
             [TestCase("35,23")]
             [TestCase("!@*()")]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetAssetsInvalidTakeTest(string take)
             {
                 var response = blockchainApi.Assets.GetAssets(take, null);
@@ -43,9 +39,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class GetAssetsContinuation : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetAssetsContinuationTest()
             {
                 var cont = TestData.GenerateString(8);
@@ -59,9 +53,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class GetAssetId : BlockchainsIntegrationBaseTest
         {
             [TestCase("LTC")]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetAssetsIdTest(string assetId)
             {
                 var response = blockchainApi.Assets.GetAsset(assetId);
@@ -75,9 +67,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             [TestCase("1234567")]
             [TestCase("testAssetId")]
             [TestCase("!@&*(")]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetAssetInvalidIdTest(string assetId)
             {
                 var response = blockchainApi.Assets.GetAsset(assetId);

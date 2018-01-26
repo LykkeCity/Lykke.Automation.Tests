@@ -14,9 +14,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class GetLitecoinSignAlive : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void GetLitecoinSignAliveTest()
             {
                 var signService = new BlockchainSign();
@@ -32,9 +30,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class PostWallet : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void PostWalletTest()
             {
                 var signService = new BlockchainSign();
@@ -49,9 +45,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         public class PostSign : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("Litecoin")]
-            [Category("Dash")]
-            [Category("Zcash")]
+            [Category("BlockchainIntegration")]
             public void PostSignTest()
             {
                 var signService = new BlockchainSign();
