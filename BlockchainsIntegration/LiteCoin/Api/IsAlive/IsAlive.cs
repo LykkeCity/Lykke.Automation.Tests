@@ -8,6 +8,9 @@ namespace BlockchainsIntegration.LiteCoin.Api
 {
     public class IsAlive : ApiBase
     {
+        public IsAlive(string url) : base(url) { }
+
+        public IsAlive() : base() { }
 
         public IResponse<IsAliveResponse> GetIsAlive()
         {

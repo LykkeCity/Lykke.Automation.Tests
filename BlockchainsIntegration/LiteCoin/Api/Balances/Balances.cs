@@ -8,6 +8,10 @@ namespace BlockchainsIntegration.LiteCoin.Api
 {
     public class Balances : ApiBase
     {
+        public Balances(string url) : base(url) { }
+
+        public Balances() : base() { }
+
         string resource = "/Balances";
 
         public IResponse<PaginationResponseWalletBalanceContract> GetBalances(string take, string continuation)

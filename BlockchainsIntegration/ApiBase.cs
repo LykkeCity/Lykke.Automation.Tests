@@ -16,7 +16,8 @@ namespace BlockchainsIntegration
 
         public ApiBase(string URL)
         {
-            this.URL = URL;
+            if(URL !=null)
+                this.URL = URL;
         }
     }
 }

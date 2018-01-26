@@ -8,6 +8,10 @@ namespace BlockchainsIntegration.LiteCoin.Api
 {
     public class Assets : ApiBase
     {
+        public Assets(string url) : base(url) { }
+
+        public Assets() : base() { }
+
         string resource = "/assets";
 
         public IResponse<PaginationResponseAssetResponse> GetAssets(string take, string continuation)

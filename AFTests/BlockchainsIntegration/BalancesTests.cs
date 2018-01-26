@@ -14,86 +14,96 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
 {
     class BalancesTests
     {
-        public class GetBalances : LitecoinBaseTest
+        public class GetBalances : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("Litecoin")]
+            [Category("Dash")]
+            [Category("Zcash")]
             public void GetBalancesTest()
             {
                 var take = "1";
 
-                if (litecoinApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS))
+                if (blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS))
                 {
-                    litecoinApi.Balances.DeleteBalances(WALLET_ADDRESS);
+                    blockchainApi.Balances.DeleteBalances(WALLET_ADDRESS);
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
                 }
 
                 //enable observation
-                var pResponse = litecoinApi.Balances.PostBalances(WALLET_ADDRESS);
+                var pResponse = blockchainApi.Balances.PostBalances(WALLET_ADDRESS);
 
 
-                Assert.That(() => litecoinApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS), 
+                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS), 
                     Is.True.After(10*60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 10 minutes");
 
                 //disable
-                var dResponse = litecoinApi.Balances.DeleteBalances(WALLET_ADDRESS);
+                var dResponse = blockchainApi.Balances.DeleteBalances(WALLET_ADDRESS);
 
-                Assert.That(() => litecoinApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS),
+                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS),
                     Is.False.After(1 * 60 * 1000, 1 * 1000), "Wallet still present in Get Balances after Delete");
             }
         }
 
-        public class GetBalancesInvalidTake : LitecoinBaseTest
+        public class GetBalancesInvalidTake : BlockchainsIntegrationBaseTest
         {
             [TestCase("")]
             [TestCase("testTake")]
             [TestCase("325.258")]
             [TestCase("!@&*()")]
             [Category("Litecoin")]
+            [Category("Dash")]
+            [Category("Zcash")]
             public void GetBalancesInvalidTakeTest(string take)
             {
-                var response = litecoinApi.Balances.GetBalances(take, null);
+                var response = blockchainApi.Balances.GetBalances(take, null);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest, $"Unexpected Status code {response.StatusCode} for take: {take}");
             }
         }
 
-        public class GetBalancesContinuation : LitecoinBaseTest
+        public class GetBalancesContinuation : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("Litecoin")]
+            [Category("Dash")]
+            [Category("Zcash")]
             public void GetBalancesContinuationTest()
             {
                 var take = "1";
                 var continuation = TestData.GenerateString();
-                var response = litecoinApi.Balances.GetBalances(take, continuation);
+                var response = blockchainApi.Balances.GetBalances(take, continuation);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
             }
         }
 
-        public class PostBalancesInvalidAddress : LitecoinBaseTest
+        public class PostBalancesInvalidAddress : BlockchainsIntegrationBaseTest
         {
             [TestCase("")]
             [TestCase("testAddress")]
             [TestCase("!@&*()")]
             [TestCase("352.58")]
             [Category("Litecoin")]
+            [Category("Dash")]
+            [Category("Zcash")]
             public void PostBalancesInvalidAddressTest(string address)
             {
-                var response = litecoinApi.Balances.PostBalances(address);
+                var response = blockchainApi.Balances.PostBalances(address);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
             }
         }
 
-        public class CheckBalanceIsZeroBeforeGetBalance : LitecoinBaseTest
+        public class CheckBalanceIsZeroBeforeGetBalance : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("Litecoin")]
+            [Category("Dash")]
+            [Category("Zcash")]
             public void CheckBalanceIsZeroBeforeGetBalanceTest()
             {
                 // enable observation
 
-                var pResponse = litecoinApi.Balances.PostBalances(WALLET_SINGLE_USE);
-                Assert.That(() => litecoinApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_SINGLE_USE),
+                var pResponse = blockchainApi.Balances.PostBalances(WALLET_SINGLE_USE);
+                Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_SINGLE_USE),
                     Is.True.After(10 * 60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 10 minutes");
                 
                 //create transaction and broadcast it
@@ -101,7 +111,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 long time1 = 0;
                 long time2 = 0;
                 
-                var startBalance = litecoinApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance;
+                var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance;
 
                 var model = new BuildTransactionRequest()
                 {
@@ -113,12 +123,12 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                     ToAddress = HOT_WALLET
                 };
 
-                var responseTransaction = litecoinApi.Operations.PostTransactions(model).GetResponseObject();
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString("N");
 
-                var signResponse = litecoinSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { KEY_WALLET_SINGLE_USE }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { KEY_WALLET_SINGLE_USE }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
-                var response = litecoinApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+                var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
                 Parallel.Invoke(() =>
                 {
@@ -133,7 +143,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 Assert.Multiple(() => 
                 {
                     Assert.That(time1, Is.LessThanOrEqualTo(time2), $"Time in Ticks. Time of balance changing is not less than Status became complete");
-                    Assert.That(int.Parse(startBalance) - 100002, Is.EqualTo(int.Parse(litecoinApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance)), "New balance is not as expected");
+                    Assert.That(int.Parse(startBalance) - 100002, Is.EqualTo(int.Parse(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance)), "New balance is not as expected");
                 });
             }
 
@@ -173,15 +183,17 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             }
         }
     
-        public class DeleteBalancesInvalidAddress : LitecoinBaseTest
+        public class DeleteBalancesInvalidAddress : BlockchainsIntegrationBaseTest
         {
             [TestCase("testAddress")]
             [TestCase("!@&*()")]
             [TestCase("352.58")]
             [Category("Litecoin")]
+            [Category("Dash")]
+            [Category("Zcash")]
             public void DeleteBalancesInvalidAddressTest(string address)
             {
-                var response = litecoinApi.Balances.DeleteBalances(address);
+                var response = blockchainApi.Balances.DeleteBalances(address);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
             }
         }

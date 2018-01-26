@@ -8,6 +8,9 @@ namespace BlockchainsIntegration.LiteCoin.Api
 {
     public class Address : ApiBase
     {
+        public Address(string url) : base(url) { }
+        public Address() : base() { }
+
         public IResponse<AddressValidationResponse> GetAddress(string address)
         {
             return Request.Get($"/addresses/{address}/validity").Build().Execute<AddressValidationResponse>();

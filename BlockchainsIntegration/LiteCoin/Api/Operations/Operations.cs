@@ -8,6 +8,10 @@ namespace BlockchainsIntegration.LiteCoin.Api
 {
     public class Operations : ApiBase
     {
+        public Operations(string url) : base(url) { }
+
+        public Operations() : base() { }
+
         public IResponse<BuildTransactionResponse> PostTransactions(BuildTransactionRequest model)
         {
             return Request.Post("/transactions").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();

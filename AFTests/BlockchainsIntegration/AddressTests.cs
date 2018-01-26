@@ -9,32 +9,35 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
 {
     class AddressTests
     {
-        public class GetAddressInvalidAddress : LitecoinBaseTest
+        public class GetAddressInvalidAddress : BlockchainsIntegrationBaseTest
         {
             [TestCase("testAddress")]
             [TestCase("1234567")]
             [TestCase("!@$%^&*(")]
             [Category("Litecoin")]
+            [Category("Dash")]
+            [Category("Zcash")]
             public void GetAddressInvalidAddressTest(string address)
             {
-                var response = litecoinApi.Address.GetAddress(address);
+                var response = blockchainApi.Address.GetAddress(address);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().IsValid, Is.False);
             }
         }
 
-        public class GetAddressValidAddress : LitecoinBaseTest
+        public class GetAddressValidAddress : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("Litecoin")]
+            [Category("Dash")]
+            [Category("Zcash")]
             public void GetAddressValidAddressTest()
             {
-                var signService = new LitecoinSign();
-                var wallet = signService.PostWallet();
+                var wallet = blockchainSign.PostWallet();
                 wallet.Validate.StatusCode(HttpStatusCode.OK);
                 var address = wallet.GetResponseObject().PublicAddress;
 
-                var response = litecoinApi.Address.GetAddress(address);
+                var response = blockchainApi.Address.GetAddress(address);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().IsValid, Is.True);
             }

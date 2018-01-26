@@ -9,15 +9,17 @@ using XUnitTestCommon.Tests;
 
 namespace AFTests.BlockchainsIntegrationTests.LiteCoin
 {
-    class LitecoinSignTests
+    class BlockchainsIntegrationSignTests
     {
-        public class GetLitecoinSignAlive : LitecoinBaseTest
+        public class GetLitecoinSignAlive : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("Litecoin")]
+            [Category("Dash")]
+            [Category("Zcash")]
             public void GetLitecoinSignAliveTest()
             {
-                var signService = new LitecoinSign();
+                var signService = new BlockchainSign();
 
                 var response = signService.GetIsAlive();
                 response.Validate.StatusCode(HttpStatusCode.OK);
@@ -27,13 +29,15 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         }
 
 
-        public class PostWallet : LitecoinBaseTest
+        public class PostWallet : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("Litecoin")]
+            [Category("Dash")]
+            [Category("Zcash")]
             public void PostWalletTest()
             {
-                var signService = new LitecoinSign();
+                var signService = new BlockchainSign();
 
                 var response = signService.PostWallet();
                 response.Validate.StatusCode(HttpStatusCode.OK);
@@ -42,13 +46,15 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             }
         }
 
-        public class PostSign : LitecoinBaseTest
+        public class PostSign : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("Litecoin")]
+            [Category("Dash")]
+            [Category("Zcash")]
             public void PostSignTest()
             {
-                var signService = new LitecoinSign();
+                var signService = new BlockchainSign();
 
                 var req = new SignRequest()
                 {
