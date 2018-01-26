@@ -7,17 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using XUnitTestCommon.Reports;
+using XUnitTestCommon.TestsCore;
 
 namespace XUnitTestCommon.Tests
 {
     [TestFixture]
+    [Parallelizable(ParallelScope.Fixtures)]
     public class BaseTest
-    {        
+    {
         public IList<string> schemesError;
 
         public static Dictionary<string, List<Response>> responses;
         private readonly List<Func<Task>> _cleanupActions = new List<Func<Task>>();
         private readonly List<Func<Task>> _oneTimeCleanupActions = new List<Func<Task>>();
+
+        private Allure2Report allure = new Allure2Report();
 
         protected virtual void Initialize() { }
 
@@ -44,8 +48,8 @@ namespace XUnitTestCommon.Tests
         [SetUp]
         public void SetUp()
         {
-            AllureReport.GetInstance().CaseStarted(TestContext.CurrentContext.Test.FullName,
-                TestContext.CurrentContext.Test.Name, "");
+            allure.AllureBeforeTest();
+
             responses = new Dictionary<string, List<Response>>();
             schemesError = new List<string>();
             TestContext.WriteLine("SetUp");
@@ -74,10 +78,9 @@ namespace XUnitTestCommon.Tests
         [TearDown]
         public void TearDown()
         {
+            
             Console.WriteLine("TearDown");
-
-            AllureReport.GetInstance().CaseFinished(TestContext.CurrentContext.Test.FullName,
-                TestContext.CurrentContext.Result.Outcome.Status);
+            allure.AllureAfterTest();
         }
 
         [TearDown]
@@ -92,43 +95,19 @@ namespace XUnitTestCommon.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            var path = TestContext.CurrentContext.WorkDirectory + Path.DirectorySeparatorChar.ToString() + "TestReportHelpers";
-            AllureReport.GetInstance().RunStarted(path);
+            allure.AllureBeforeAllTestsInClass();
         }
 
         [OneTimeTearDown]
         public void OneTimeCleanup()
         {
+            allure.AllureAfterAllTestsInClass();
             Console.WriteLine("=============================== Final Cleanup ===============================");
             Console.WriteLine();
 
             CallCleanupActions(true);
         }
 
-        #endregion
-
-        #region Allure Helpers
-
-        public static void Step(string name, Action action)
-        {
-            Exception ex = null;
-            try
-            {
-                AllureReport.GetInstance().StepStarted(TestContext.CurrentContext.Test.FullName,
-                    name);
-                Logger.WriteLine($"Step: {name}");
-                action();
-            }
-            catch (Exception e)
-            {
-                ex = e;
-            }
-            finally
-            {
-                AllureReport.GetInstance().StepFinished(TestContext.CurrentContext.Test.FullName,
-             TestContext.CurrentContext.Result.Outcome.Status, ex);
-            }
-        }
         #endregion
 
         #region CleanUp Helpers

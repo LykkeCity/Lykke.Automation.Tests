@@ -5,7 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="RestSharp" Version="106.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\XUnitTestCommon\Nunit\netstandard2.0\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
