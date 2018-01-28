@@ -135,7 +135,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 Assert.Multiple(() => 
                 {
                     Assert.That(time1, Is.LessThanOrEqualTo(time2), $"Time in Ticks. Time of balance changing is not less than Status became complete");
-                    Assert.That(int.Parse(startBalance) - 100002, Is.EqualTo(int.Parse(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance)), "New balance is not as expected");
+                    Assert.That(long.Parse(startBalance) - 100002, Is.EqualTo(long.Parse(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance)), "New balance is not as expected");
                 });
             }
 
