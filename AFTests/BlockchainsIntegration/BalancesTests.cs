@@ -1,4 +1,5 @@
-﻿using BlockchainsIntegration.LiteCoin.Api;
+﻿using BlockchainsIntegration.LiteCoin;
+using BlockchainsIntegration.LiteCoin.Api;
 using Lykke.Client.AutorestClient.Models;
 using NUnit.Framework;
 using System;
@@ -88,6 +89,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
         {
             [Test]
             [Category("BlockchainIntegration")]
+            [Description("Test will faill if at same time two or more treads will run it.")]
             public void CheckBalanceIsZeroBeforeGetBalanceTest()
             {
                 // enable observation
@@ -106,7 +108,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 var model = new BuildTransactionRequest()
                 {
                     Amount = "100002",
-                    AssetId = "LTC",
+                    AssetId = CurrentAssetId(),
                     FromAddress = WALLET_SINGLE_USE,
                     IncludeFee = true,
                     OperationId = Guid.NewGuid(),
@@ -141,10 +143,10 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             {
                 var sw = new Stopwatch();
                 time = 0;
-                var request = new BlockchainsIntegration.LiteCoin.Api.Balances();
+                var request = new BlockchainApi(BlockchainSpecificSettings().ApiUrl);
                 while (sw.Elapsed < TimeSpan.FromMinutes(10))
                 {
-                    if (int.Parse(request.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance) <
+                    if (int.Parse(request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance) <
                         int.Parse(startBalance))
                     {
                         time = DateTime.Now.Ticks;
@@ -158,11 +160,11 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             static void GetTransactionCompleteStatusTime(string operationId, out long time)
             {
                 var sw = new Stopwatch();
-                var request = new Operations();
+                var request = new BlockchainApi(BlockchainSpecificSettings().ApiUrl);
                 time = 0;
                 while (sw.Elapsed < TimeSpan.FromMinutes(10))
                 {
-                    if ((request.GetOperationId(operationId).GetResponseObject().State == BroadcastedTransactionState.Completed))
+                    if ((request.Operations.GetOperationId(operationId).GetResponseObject().State == BroadcastedTransactionState.Completed))
                     {
                         time = DateTime.Now.Ticks;
                         sw.Stop();
@@ -182,7 +184,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             public void DeleteBalancesInvalidAddressTest(string address)
             {
                 var response = blockchainApi.Balances.DeleteBalances(address);
-                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+                response.Validate.StatusCode(HttpStatusCode.NoContent);
             }
         }
     }

@@ -20,7 +20,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 var model = new BuildTransactionRequest()
                 {
                     Amount = "100001",
-                    AssetId = "LTC",
+                    AssetId = CurrentAssetId(),
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
@@ -63,7 +63,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 var model = new BuildTransactionRequest()
                 {
                     Amount = "100001",
-                    AssetId = "LTC",
+                    AssetId = CurrentAssetId(),
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
@@ -85,7 +85,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 var model = new BuildTransactionRequest()
                 {
                     Amount = "10",
-                    AssetId = "LTC",
+                    AssetId = CurrentAssetId(),
                     FromAddress = "testAddress",
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
@@ -94,7 +94,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
 
                 var response = blockchainApi.Operations.PostTransactions(model);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
-                Assert.That(response.Content, Does.Contain("Invalid ToAddress"));
+                Assert.That(response.GetResponseObject().TransactionContext, Is.Null);
             }
         }
 
@@ -110,7 +110,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
 
                 var response = blockchainApi.Operations.PostTransactions(model);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
-                Assert.That(response.Content, Does.Contain("Technical"));
+                Assert.That(response.Content, Does.Contain("errorMessage").IgnoreCase);
             }
         }
 
@@ -123,7 +123,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 var model = new BuildTransactionRequest()
                 {
                     Amount = "100002",
-                    AssetId = "LTC",
+                    AssetId = CurrentAssetId(),
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = true,
                     OperationId = Guid.NewGuid(),
@@ -153,7 +153,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 { OperationId = Guid.NewGuid(), SignedTransaction = sTransaction });
 
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
-                Assert.That(response.Content, Does.Contain("Invalid transaction"));
+                Assert.That(response.Content, Does.Contain("errorMessage").IgnoreCase);
             }
         }
 
@@ -166,7 +166,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 var model = new BuildTransactionRequest()
                 {
                     Amount = "100001",
-                    AssetId = "LTC",
+                    AssetId = CurrentAssetId(),
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),

@@ -18,7 +18,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 var response = blockchainApi.Assets.GetAssets("2",null);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().Items.Count, Is.GreaterThanOrEqualTo(1), "Assets count is less then 1");
-                Assert.That(response.Content, Does.Contain("LTC"), "LTC not present in asseets");
+                Assert.That(response.Content, Does.Contain(CurrentAssetId()).IgnoreCase, $"{CurrentAssetId()} not present in asseets");
             }
         }
 
@@ -46,19 +46,22 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 var response = blockchainApi.Assets.GetAssets("2", cont);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().Items.Count, Is.GreaterThanOrEqualTo(1), "Assets count is less then 1");
-                Assert.That(response.Content, Does.Contain("LTC"), "LTC not present in asseets");
+                Assert.That(response.Content, Does.Contain(CurrentAssetId()), $"{CurrentAssetId()} not present in asseets");
             }
         }
 
         public class GetAssetId : BlockchainsIntegrationBaseTest
         {
-            [TestCase("LTC")]
+            [Test]
             [Category("BlockchainIntegration")]
-            public void GetAssetsIdTest(string assetId)
+            public void GetAssetsIdTest()
             {
+                var assetId = CurrentAssetId();
+
+
                 var response = blockchainApi.Assets.GetAsset(assetId);
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().Name, Is.EqualTo("LiteCoin"));
+                Assert.That(response.GetResponseObject().Name.ToLower(), Is.EqualTo(CurrentAssetId().ToLower()));
             }
         }
 

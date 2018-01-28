@@ -17,7 +17,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 var response = blockchainApi.IsAlive.GetIsAlive();
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().Version, Is.Not.Null, "Unexpected Version");
-                Assert.That(response.GetResponseObject().Name, Does.Contain("LiteCoin"), "Unexpected Name");
+                Assert.That(response.GetResponseObject().Name.ToLower(), Does.Contain(SpecificBlockchain().ToLower()), "Unexpected Name");
             }
         }
     }

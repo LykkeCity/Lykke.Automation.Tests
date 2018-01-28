@@ -12,14 +12,14 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
     class BlockchainsIntegrationBaseTest : BaseTest
     {
 
-        static string SpecificBlockchain()
+       protected static string SpecificBlockchain()
         {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Zcash";// "Dash"; "Litecoin";
         }
 
         private static BlockchainSpecificModel _settings;
 
-        static BlockchainSpecificModel BlockchainSpecificSettings()
+        protected static BlockchainSpecificModel BlockchainSpecificSettings()
         {
             if (_settings != null)
                 return _settings;
@@ -34,6 +34,19 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 _settings = new ZcashSettings();
 
             return _settings;
+        }
+
+        protected static string CurrentAssetId()
+        {
+            if (SpecificBlockchain().ToLower() == "litecoin")
+                return "LTC";
+            else
+                if (SpecificBlockchain().ToLower() == "dash")
+                return "DASH";
+            else
+                if (SpecificBlockchain().ToLower() == "zcash")
+                return "ZEC";
+            return "";
         }
 
         protected BlockchainApi blockchainApi = new BlockchainApi(BlockchainSpecificSettings().ApiUrl);
@@ -88,11 +101,11 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             ApiUrl = "http://dash-api.autotests-service.svc.cluster.local/api";
             SignUrl = "http://dash-sign.autotests-service.svc.cluster.local/api";
             WalletsUrl = null;
-            HotWallet = "mwy2LRNecLfHxatdAxz1XQP2sqv8Nk3PFV";
-            WalletAddress = "msvNWBpFNDQ6JxiEcTFU3xXbSnDir4EqCk";
-            PrivateKey = "cRTB3eAajJchgNuybhH5SwC9L5PFoTwxXBjgB8vRNJeJ4EpcXmAP";
-            WalletSingleUse = "mvErcbPuL4T4kxbJYejk6xLbv8pfBiiSPu";
-            WalletSingleUseKey = "cNn38kw6LSfAS6WvJJbFTqWRewa1GgfwczftXrBcyAmygM1V7qKr";
+            HotWallet = "yMgxwyqFnQFps5VvLD9nTLT9MVEKF71fLU";//pkey cQu2HF2ysoknaX3hjAjSzz94GeMBVJfESS7hBUXtHSBeY2hvMyXU";
+            WalletAddress = "yUDQmubM2HtBFmkvbSK1rER1t57M5Mcvng";
+            PrivateKey = "cPX3K2xfuzoakmXMaJG5HrdFKuACxegcax5eq55SMHJ8YxvmttZz";
+            WalletSingleUse = "yiH2MLsx6bVZFgQ9qQNj5QeetGft8xDacC";
+            WalletSingleUseKey = "cQinitZ5SkZdARZPuXicFgGkKepWcjpB5fTx5WKHdvkMTdnB1yrq";
             ClientId = "b623b171-a307-4485-897c-f3a70b763217";
         }
     }
@@ -104,11 +117,11 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
             ApiUrl = "http://zcash-api.autotests-service.svc.cluster.local/api";
             SignUrl = "http://zcash-sign-service.autotests-service.svc.cluster.local/api";
             WalletsUrl = null;
-            HotWallet = "mwy2LRNecLfHxatdAxz1XQP2sqv8Nk3PFV";
-            WalletAddress = "msvNWBpFNDQ6JxiEcTFU3xXbSnDir4EqCk";
-            PrivateKey = "cRTB3eAajJchgNuybhH5SwC9L5PFoTwxXBjgB8vRNJeJ4EpcXmAP";
-            WalletSingleUse = "mvErcbPuL4T4kxbJYejk6xLbv8pfBiiSPu";
-            WalletSingleUseKey = "cNn38kw6LSfAS6WvJJbFTqWRewa1GgfwczftXrBcyAmygM1V7qKr";
+            HotWallet = "tmYL4L5C5oW9tPNbRbv1srTeSzqT6keBziL";
+            WalletAddress = "tmQjumT79zunETQgFxNTEMUKz8D841fMCf1";
+            PrivateKey = "cRPW3spyP9riDJWniNpcbDkiBjpLrhneSh2qTs3uSZUbm4HZLEyB";
+            WalletSingleUse = "tmCiRyHFZYeRyXV1wqyiqZad2Zf9ifdR9H5";
+            WalletSingleUseKey = "cVhrfsddvvhJhEEoqocSpdwZjJrTdQmHdWRKyvSqhyYvBDFD4die";
             ClientId = "b623b171-a307-4485-897c-f3a70b763217";
         }
     }

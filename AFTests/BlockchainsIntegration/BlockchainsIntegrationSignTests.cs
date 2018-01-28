@@ -57,6 +57,7 @@ namespace AFTests.BlockchainsIntegrationTests.LiteCoin
                 };
 
                 var response = signService.PostSign(req);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
             }
         }
     }
