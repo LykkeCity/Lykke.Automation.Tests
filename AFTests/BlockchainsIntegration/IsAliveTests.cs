@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace AFTests.BlockchainsIntegrationTests.LiteCoin
+namespace AFTests.BlockchainsIntegrationTests
 {
     class IsAliveTests
     {

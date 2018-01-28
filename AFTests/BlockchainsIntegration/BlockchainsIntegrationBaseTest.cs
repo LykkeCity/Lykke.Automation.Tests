@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using XUnitTestCommon.Tests;
 
-namespace AFTests.BlockchainsIntegrationTests.LiteCoin
+namespace AFTests.BlockchainsIntegrationTests
 {
     class BlockchainsIntegrationBaseTest : BaseTest
     {

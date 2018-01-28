@@ -7,7 +7,7 @@ using System.Net;
 using System.Text;
 using XUnitTestCommon.Tests;
 
-namespace AFTests.BlockchainsIntegrationTests.LiteCoin
+namespace AFTests.BlockchainsIntegrationTests
 {
     class BlockchainsIntegrationSignTests
     {
