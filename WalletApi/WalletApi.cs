@@ -57,5 +57,7 @@ namespace WalletApi.Api
         public CountryPhoneCodes CountryPhoneCodes => new CountryPhoneCodes();
         public Dialogs Dialogs => new Dialogs();
         public Dictionary Dictionary => new Dictionary();
+
+        public EmailVerification EmailVerification => new EmailVerification();
     }
 }
