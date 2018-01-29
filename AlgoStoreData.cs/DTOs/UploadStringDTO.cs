@@ -8,4 +8,10 @@ namespace AlgoStoreData.DTOs
     {
         public string Data { get; set; }
     }
+
+    public class PostUploadStringAlgoDTO
+    {
+        public string Data { get; set; }
+        public string AlgoId { get; set; }
+    }
 }

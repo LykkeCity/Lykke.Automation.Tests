@@ -90,20 +90,20 @@ namespace AFTests.AlgoStore
 
             string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
 
-            string AlgoId = editMetaData.Id;
+            string Algoid = editMetaData.Id;
 
-            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
+            PostUploadStringAlgoDTO uploadedStringDTO = new PostUploadStringAlgoDTO()
             {
-                {"AlgoId", AlgoId },
-                {"Data" , Helpers.RandomString(300) }
+                AlgoId = Algoid,
+                Data = Helpers.RandomString(300)
             };
 
-            var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
+            var responceUploadString = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(uploadedStringDTO), Method.POST);
             Assert.That(responceUploadString.Status == HttpStatusCode.NoContent);
 
             Dictionary<string, string> quaryParamGetString = new Dictionary<string, string>()
             {
-                {"AlgoId", AlgoId }
+                {"AlgoId", Algoid }
             };
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
@@ -111,7 +111,7 @@ namespace AFTests.AlgoStore
 
             UploadStringDTO uploadedStringContent = JsonUtils.DeserializeJson<UploadStringDTO>(responceGetUploadString.ResponseJson);
 
-            Assert.That(quaryParam["Data"].Equals(uploadedStringContent.Data));
+            Assert.That(uploadedStringDTO.Data.Equals(uploadedStringContent.Data));
 
             url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
@@ -802,18 +802,19 @@ namespace AFTests.AlgoStore
 
             MetaDataResponseDTO metadataWithUploadedString = DataManager.getMetaDataForBinaryUpload();
 
-            string AlgoId = metadataWithUploadedString.Id;
+            string Algoid = metadataWithUploadedString.Id;
 
-            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
+            PostUploadStringAlgoDTO uploadedStringDTO = new PostUploadStringAlgoDTO()
             {
-                {"AlgoId", AlgoId },
-                {"Data" , Helpers.RandomString(1000) }
+                AlgoId = Algoid,
+                Data = Helpers.RandomString(1000)
             };
 
-            var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
+            var responceUploadString = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(uploadedStringDTO), Method.POST);
             Assert.That(responceUploadString.Status == HttpStatusCode.NoContent);
 
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.STRING);
+
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(Algoid, BinaryAlgoFileType.STRING);
             Assert.That(blobExists);
         }
 

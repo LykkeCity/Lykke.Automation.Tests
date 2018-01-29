@@ -198,12 +198,15 @@ namespace AFTests.AlgoStore
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
 
-            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
+            string Algoid = badID;
+
+            PostUploadStringAlgoDTO uploadedStringDTO = new PostUploadStringAlgoDTO()
             {
-                {"AlgoId", badID },
-                {"Data" , AlgoString }
+                AlgoId = Algoid,
+                Data = AlgoString
             };
-            var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
+
+            var responceUploadString = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(uploadedStringDTO), Method.POST);
             Assert.That(responceUploadString.Status == HttpStatusCode.BadRequest);
         }
         [Test]
