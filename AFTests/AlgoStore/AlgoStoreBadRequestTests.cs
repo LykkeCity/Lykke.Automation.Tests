@@ -37,7 +37,7 @@ namespace AFTests.AlgoStore
             };
 
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
-            Assert.True(response.Status == HttpStatusCode.BadRequest);
+            Assert.That(response.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -58,7 +58,7 @@ namespace AFTests.AlgoStore
             };
 
             var responseMetaDataAfterEdit = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responseMetaDataAfterEdit.Status == HttpStatusCode.BadRequest);
+            Assert.That(responseMetaDataAfterEdit.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -77,7 +77,7 @@ namespace AFTests.AlgoStore
 
             string url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responceCascadeDelete.Status == HttpStatusCode.BadRequest);
+            Assert.That(responceCascadeDelete.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -95,7 +95,7 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.BadRequest);
+            Assert.That(responceAllClientMetadata.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -113,7 +113,7 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.BadRequest);
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -131,7 +131,7 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_ALGO_START;
 
             var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.True(startBinaryresponce.Status == HttpStatusCode.BadRequest);
+            Assert.That(startBinaryresponce.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -149,7 +149,7 @@ namespace AFTests.AlgoStore
             };
 
             var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
-            Assert.True(stopBinaryResponse.Status == HttpStatusCode.BadRequest);
+            Assert.That(stopBinaryResponse.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -167,7 +167,7 @@ namespace AFTests.AlgoStore
             };
 
             var algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET);
-            Assert.True(algoIDLogResponse.Status == HttpStatusCode.BadRequest);
+            Assert.That(algoIDLogResponse.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -186,7 +186,7 @@ namespace AFTests.AlgoStore
             };
 
             var algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
-            Assert.True(algoIDTailLogResponse.Status == HttpStatusCode.BadRequest);
+            Assert.That(algoIDTailLogResponse.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -204,7 +204,7 @@ namespace AFTests.AlgoStore
                 {"Data" , AlgoString }
             };
             var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
-            Assert.True(responceUploadString.Status == HttpStatusCode.BadRequest);
+            Assert.That(responceUploadString.Status == HttpStatusCode.BadRequest);
         }
         [Test]
         [Category("BadRequest")]
@@ -222,7 +222,7 @@ namespace AFTests.AlgoStore
             };
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
-            Assert.True(responceGetUploadString.Status == HttpStatusCode.BadRequest);
+            Assert.That(responceGetUploadString.Status == HttpStatusCode.BadRequest);
         }
     }
 }

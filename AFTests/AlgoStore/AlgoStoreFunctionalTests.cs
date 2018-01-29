@@ -36,7 +36,7 @@ namespace AFTests.AlgoStore
             };
 
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
-            Assert.True(response.Status == HttpStatusCode.OK);
+            Assert.That(response.Status == HttpStatusCode.OK);
             MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
 
             DataManager.addSingleMetadata(responceMetaData);
@@ -70,7 +70,7 @@ namespace AFTests.AlgoStore
 
             string url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responceCascadeDelete.Status == HttpStatusCode.NoContent);
+            Assert.That(responceCascadeDelete.Status == HttpStatusCode.NoContent);
             MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
             Assert.Null(metaDataEntityDeleted);
         }
@@ -99,7 +99,7 @@ namespace AFTests.AlgoStore
             };
 
             var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
-            Assert.True(responceUploadString.Status == HttpStatusCode.NoContent);
+            Assert.That(responceUploadString.Status == HttpStatusCode.NoContent);
 
             Dictionary<string, string> quaryParamGetString = new Dictionary<string, string>()
             {
@@ -107,15 +107,15 @@ namespace AFTests.AlgoStore
             };
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
-            Assert.True(responceGetUploadString.Status == HttpStatusCode.OK);
+            Assert.That(responceGetUploadString.Status == HttpStatusCode.OK);
 
             UploadStringDTO uploadedStringContent = JsonUtils.DeserializeJson<UploadStringDTO>(responceGetUploadString.ResponseJson);
 
-            Assert.True(quaryParam["Data"].Equals(uploadedStringContent.Data));
+            Assert.That(quaryParam["Data"].Equals(uploadedStringContent.Data));
 
             url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responceCascadeDelete.Status == HttpStatusCode.NoContent);
+            Assert.That(responceCascadeDelete.Status == HttpStatusCode.NoContent);
             MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
             Assert.Null(metaDataEntityDeleted);
         }
@@ -143,13 +143,13 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
+            Assert.That(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.True(blobExists);
+            Assert.That(blobExists);
 
             url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responceCascadeDelete.Status == HttpStatusCode.NoContent);
+            Assert.That(responceCascadeDelete.Status == HttpStatusCode.NoContent);
             MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
             Assert.Null(metaDataEntityDeleted);
         }
@@ -177,9 +177,9 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
+            Assert.That(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.True(blobExists);
+            Assert.That(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
@@ -189,14 +189,14 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.OK);
 
             RuntimeDataEntity runtimeDataEntity = await RuntimeDataRepository.TryGetAsync(t => t.Id == AlgoId) as RuntimeDataEntity;
             Assert.NotNull(runtimeDataEntity);
 
             url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responceCascadeDelete.Status == HttpStatusCode.NoContent);
+            Assert.That(responceCascadeDelete.Status == HttpStatusCode.NoContent);
             MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
             Assert.Null(metaDataEntityDeleted);
         }
@@ -224,9 +224,9 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
+            Assert.That(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.True(blobExists);
+            Assert.That(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
@@ -236,7 +236,7 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.OK);
 
             RuntimeDataEntity runtimeDataEntity = await RuntimeDataRepository.TryGetAsync(t => t.Id == AlgoId) as RuntimeDataEntity;
             Assert.NotNull(runtimeDataEntity);
@@ -249,10 +249,10 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_ALGO_START;
 
             var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(startBinaryresponce.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.True(startResponse.Status.Equals("STARTED"));
+            Assert.That(startResponse.Status.Equals("STARTED"));
 
             StopBinaryDTO stopAlgo = new StopBinaryDTO
             {
@@ -262,14 +262,14 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_ALGO_STOP;
 
             var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
-            Assert.True(stopBinaryResponse.Status == HttpStatusCode.OK);
+            Assert.That(stopBinaryResponse.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO stopResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(stopBinaryResponse.ResponseJson);
-            Assert.True(stopResponse.Status.Equals("STOPPED"));
+            Assert.That(stopResponse.Status.Equals("STOPPED"));
 
             url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responceCascadeDelete.Status == HttpStatusCode.NoContent);
+            Assert.That(responceCascadeDelete.Status == HttpStatusCode.NoContent);
             MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
             Assert.Null(metaDataEntityDeleted);
         }
@@ -297,9 +297,9 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
+            Assert.That(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.True(blobExists);
+            Assert.That(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
@@ -309,7 +309,7 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.OK);
 
             RuntimeDataEntity runtimeDataEntity = await RuntimeDataRepository.TryGetAsync(t => t.Id == AlgoId) as RuntimeDataEntity;
             Assert.NotNull(runtimeDataEntity);
@@ -322,14 +322,14 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_ALGO_START;
 
             var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(startBinaryresponce.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.True(startResponse.Status.Equals("STARTED"));
+            Assert.That(startResponse.Status.Equals("STARTED"));
 
             url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responceCascadeDelete.Status == HttpStatusCode.NoContent);
+            Assert.That(responceCascadeDelete.Status == HttpStatusCode.NoContent);
             MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
             Assert.Null(metaDataEntityDeleted);
         }
@@ -350,16 +350,16 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
+            Assert.That(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.True(blobExists);
+            Assert.That(blobExists);
 
             url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
 
             var responceAllClientMetadataSecondTme = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
+            Assert.That(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExistsSecondTime = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.True(blobExistsSecondTime);
+            Assert.That(blobExistsSecondTime);
         }
 
         [Test]
@@ -376,7 +376,7 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NotFound);
+            Assert.That(responceAllClientMetadata.Status == HttpStatusCode.NotFound);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(quaryParam["AlgoId"], BinaryAlgoFileType.JAR);
             Assert.False(blobExists);
         }
@@ -397,7 +397,7 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.NotFound);
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.NotFound);
 
             RuntimeDataEntity runtimeDataEntity = await RuntimeDataRepository.TryGetAsync(t => t.Id == AlgoID) as RuntimeDataEntity;
             Assert.Null(runtimeDataEntity);
@@ -423,9 +423,9 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
+            Assert.That(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.True(blobExists);
+            Assert.That(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
@@ -435,7 +435,7 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.OK);
 
             RuntimeDataEntity runtimeDataEntity = await RuntimeDataRepository.TryGetAsync(t => t.Id == AlgoId) as RuntimeDataEntity;
             Assert.NotNull(runtimeDataEntity);
@@ -448,10 +448,10 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_ALGO_START;
 
             var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(startBinaryresponce.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.True(startResponse.Status.Equals("STARTED"));
+            Assert.That(startResponse.Status.Equals("STARTED"));
 
             StopBinaryDTO stopAlgo = new StopBinaryDTO
             {
@@ -461,18 +461,18 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_ALGO_STOP;
 
             var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
-            Assert.True(stopBinaryResponse.Status == HttpStatusCode.OK);
+            Assert.That(stopBinaryResponse.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO stopResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(stopBinaryResponse.ResponseJson);
-            Assert.True(stopResponse.Status.Equals("STOPPED"));
+            Assert.That(stopResponse.Status.Equals("STOPPED"));
 
             url = ApiPaths.ALGO_STORE_ALGO_START;
 
             var startBinaryresponceSecond = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(startBinaryresponce.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO startResponseSecond = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.True(startResponse.Status.Equals("STARTED"));
+            Assert.That(startResponse.Status.Equals("STARTED"));
         }
 
         [Test]
@@ -493,9 +493,9 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
+            Assert.That(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.True(blobExists);
+            Assert.That(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
@@ -505,7 +505,7 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.OK);
 
             RuntimeDataEntity runtimeDataEntity = await RuntimeDataRepository.TryGetAsync(t => t.Id == AlgoId) as RuntimeDataEntity;
             Assert.NotNull(runtimeDataEntity);
@@ -518,10 +518,10 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_ALGO_START;
 
             var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(startBinaryresponce.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.True(startResponse.Status.Equals("STARTED"));
+            Assert.That(startResponse.Status.Equals("STARTED"));
 
             StopBinaryDTO stopAlgo = new StopBinaryDTO
             {
@@ -531,16 +531,16 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_ALGO_STOP;
 
             var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
-            Assert.True(stopBinaryResponse.Status == HttpStatusCode.OK);
+            Assert.That(stopBinaryResponse.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO stopResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(stopBinaryResponse.ResponseJson);
-            Assert.True(stopResponse.Status.Equals("STOPPED"));
+            Assert.That(stopResponse.Status.Equals("STOPPED"));
 
             var stopBinaryResponseSecondTime = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
-            Assert.True(stopBinaryResponse.Status == HttpStatusCode.OK);
+            Assert.That(stopBinaryResponse.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO stopResponseSecondTime = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(stopBinaryResponse.ResponseJson);
-            Assert.True(stopResponse.Status.Equals("STOPPED"));
+            Assert.That(stopResponse.Status.Equals("STOPPED"));
         }
 
         [Test]
@@ -561,9 +561,9 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
+            Assert.That(responceAllClientMetadata.Status == HttpStatusCode.NoContent);
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.True(blobExists);
+            Assert.That(blobExists);
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
@@ -573,7 +573,7 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.OK);
 
             RuntimeDataEntity runtimeDataEntity = await RuntimeDataRepository.TryGetAsync(t => t.Id == AlgoId) as RuntimeDataEntity;
             Assert.NotNull(runtimeDataEntity);
@@ -586,16 +586,16 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_ALGO_START;
 
             var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(startBinaryresponce.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.True(startResponse.Status.Equals("STARTED"));
+            Assert.That(startResponse.Status.Equals("STARTED"));
 
             var startBinaryresponceSecondTime = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(startBinaryresponce.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO startResponseSecondTime = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.True(startResponse.Status.Equals("STARTED"));
+            Assert.That(startResponse.Status.Equals("STARTED"));
         }
 
         [Test]
@@ -616,7 +616,7 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.OK);
 
             StartBinaryDTO startAlgo = new StartBinaryDTO
             {
@@ -626,10 +626,10 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_ALGO_START;
 
             var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(startBinaryresponce.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.True(startResponse.Status.Equals("STARTED"));
+            Assert.That(startResponse.Status.Equals("STARTED"));
 
             url = ApiPaths.ALGO_STORE_ALGO_STOP;
 
@@ -639,10 +639,10 @@ namespace AFTests.AlgoStore
             };
 
             var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
-            Assert.True(stopBinaryResponse.Status == HttpStatusCode.OK);
+            Assert.That(stopBinaryResponse.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO stopResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(stopBinaryResponse.ResponseJson);
-            Assert.True(stopResponse.Status.Equals("STOPPED"));
+            Assert.That(stopResponse.Status.Equals("STOPPED"));
 
             url = ApiPaths.ALGO_STORE_ALGO_LOG;
 
@@ -652,7 +652,7 @@ namespace AFTests.AlgoStore
             };
 
             var algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET);
-            Assert.True(algoIDLogResponse.Status == HttpStatusCode.OK);
+            Assert.That(algoIDLogResponse.Status == HttpStatusCode.OK);
 
             LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDLogResponse.ResponseJson);
 
@@ -677,7 +677,7 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);        
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.OK);        
 
             url = ApiPaths.ALGO_STORE_ALGO_LOG;
 
@@ -687,7 +687,7 @@ namespace AFTests.AlgoStore
             };
 
             var algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET);
-            Assert.True(algoIDLogResponse.Status == HttpStatusCode.OK);
+            Assert.That(algoIDLogResponse.Status == HttpStatusCode.OK);
 
             LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDLogResponse.ResponseJson);
 
@@ -712,7 +712,7 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.OK);
 
             StartBinaryDTO startAlgo = new StartBinaryDTO
             {
@@ -722,10 +722,10 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_ALGO_START;
 
             var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.True(startBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(startBinaryresponce.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.True(startResponse.Status.Equals("STARTED"));
+            Assert.That(startResponse.Status.Equals("STARTED"));
 
             url = ApiPaths.ALGO_STORE_ALGO_STOP;
 
@@ -735,10 +735,10 @@ namespace AFTests.AlgoStore
             };
 
             var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
-            Assert.True(stopBinaryResponse.Status == HttpStatusCode.OK);
+            Assert.That(stopBinaryResponse.Status == HttpStatusCode.OK);
 
             StartBinaryResponseDTO stopResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(stopBinaryResponse.ResponseJson);
-            Assert.True(stopResponse.Status.Equals("STOPPED"));
+            Assert.That(stopResponse.Status.Equals("STOPPED"));
 
             url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
 
@@ -749,7 +749,7 @@ namespace AFTests.AlgoStore
             };
 
             var algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
-            Assert.True(algoIDTailLogResponse.Status == HttpStatusCode.OK);
+            Assert.That(algoIDTailLogResponse.Status == HttpStatusCode.OK);
 
             LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDTailLogResponse.ResponseJson);
 
@@ -774,7 +774,7 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.OK);
+            Assert.That(uploadBinaryresponce.Status == HttpStatusCode.OK);
 
             url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
 
@@ -785,7 +785,7 @@ namespace AFTests.AlgoStore
             };
 
             var algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
-            Assert.True(algoIDTailLogResponse.Status == HttpStatusCode.OK);
+            Assert.That(algoIDTailLogResponse.Status == HttpStatusCode.OK);
 
             LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDTailLogResponse.ResponseJson);
 
@@ -811,10 +811,10 @@ namespace AFTests.AlgoStore
             };
 
             var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
-            Assert.True(responceUploadString.Status == HttpStatusCode.NoContent);
+            Assert.That(responceUploadString.Status == HttpStatusCode.NoContent);
 
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.STRING);
-            Assert.True(blobExists);
+            Assert.That(blobExists);
         }
 
         [Test]
@@ -831,7 +831,7 @@ namespace AFTests.AlgoStore
             };
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
-            Assert.True(responceGetUploadString.Status == HttpStatusCode.NotFound);
+            Assert.That(responceGetUploadString.Status == HttpStatusCode.NotFound);
         }
     }
 }
