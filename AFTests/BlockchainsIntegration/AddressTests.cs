@@ -1,4 +1,4 @@
-﻿using BlockchainsIntegration.LitecoinSign;
+﻿using BlockchainsIntegration.Sign;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

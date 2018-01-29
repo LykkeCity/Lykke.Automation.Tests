@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using XUnitTestCommon.RestRequests.Interfaces;
 
-namespace BlockchainsIntegration.LitecoinSign
+namespace BlockchainsIntegration.Sign
 {
     public class BlockchainSign : ApiBase
     {

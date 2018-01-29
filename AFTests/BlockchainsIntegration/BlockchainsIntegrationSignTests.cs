@@ -1,4 +1,4 @@
-﻿using BlockchainsIntegration.LitecoinSign;
+﻿using BlockchainsIntegration.Sign;
 using Lykke.Client.AutorestClient.Models;
 using NUnit.Framework;
 using System;

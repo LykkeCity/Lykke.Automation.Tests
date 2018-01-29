@@ -1,5 +1,4 @@
-﻿using BlockchainsIntegration.LiteCoin;
-using BlockchainsIntegration.LiteCoin.Api;
+﻿using BlockchainsIntegration.Api;
 using Lykke.Client.AutorestClient.Models;
 using NUnit.Framework;
 using System;

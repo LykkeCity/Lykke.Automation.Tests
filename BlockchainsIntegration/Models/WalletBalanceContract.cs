@@ -22,11 +22,12 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the WalletBalanceContract class.
         /// </summary>
-        public WalletBalanceContract(string address = default(string), string assetId = default(string), string balance = default(string))
+        public WalletBalanceContract(string address = default(string), string assetId = default(string), string balance = default(string), long block = default(long))
         {
             Address = address;
             AssetId = assetId;
             Balance = balance;
+            Block = block;
             CustomInit();
         }
 
@@ -50,5 +51,7 @@ namespace Lykke.Client.AutorestClient.Models
         [JsonProperty(PropertyName = "balance")]
         public string Balance { get; set; }
 
+        [JsonProperty(PropertyName = "block")]
+        public long Block { get; set; }
     }
 }

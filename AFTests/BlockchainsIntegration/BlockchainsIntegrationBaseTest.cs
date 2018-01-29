@@ -1,6 +1,6 @@
 ﻿using BlockchainsIntegration.BlockchainWallets;
-using BlockchainsIntegration.LiteCoin;
-using BlockchainsIntegration.LitecoinSign;
+using BlockchainsIntegration.Api;
+using BlockchainsIntegration.Sign;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

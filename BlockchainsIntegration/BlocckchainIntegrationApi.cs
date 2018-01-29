@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BlockchainsIntegration.LiteCoin
+namespace BlockchainsIntegration.Api
 {
     public class BlockchainApi
     {
