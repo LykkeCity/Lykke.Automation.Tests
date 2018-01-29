@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace XUnitTestCommon.TestsCore
@@ -9,7 +10,7 @@ namespace XUnitTestCommon.TestsCore
     {
         private static object _lock = new object();
         private static AllurePropertiesBuilder _intance;
-        private static List<string> properties = new List<string>();
+        private static HashSet<string> properties = new HashSet<string>();
 
         private AllurePropertiesBuilder() { }
 
@@ -36,7 +37,16 @@ namespace XUnitTestCommon.TestsCore
 
         public void SaveAllureProperties(string pathToSave)
         {
-            File.WriteAllLines(pathToSave, properties.ToArray());
+            int i = 1;
+            var finalProperties = new List<string>();
+            properties.ToList().ForEach(p => 
+            {
+                if (p.Contains("service="))
+                    finalProperties.Add(p.Replace("service=", $"service{i++}="));
+                else
+                    finalProperties.Add(p);
+            });
+            File.WriteAllLines(pathToSave, finalProperties.ToList());
         }
     }
 }

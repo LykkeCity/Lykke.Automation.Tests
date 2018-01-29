@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using XUnitTestCommon.RestRequests;
 using XUnitTestCommon.RestRequests.Interfaces;
+using XUnitTestCommon.TestsCore;
 
 namespace BlockchainsIntegration
 {
@@ -12,12 +13,13 @@ namespace BlockchainsIntegration
 
         protected IRequestBuilder Request => Requests.For(URL);
 
-        public ApiBase() { }
+        public ApiBase() { AllurePropertiesBuilder.Instance.AddPropertyPair("service", URL); }
 
         public ApiBase(string URL)
         {
             if(URL !=null)
                 this.URL = URL;
+            AllurePropertiesBuilder.Instance.AddPropertyPair("service", URL);
         }
     }
 }

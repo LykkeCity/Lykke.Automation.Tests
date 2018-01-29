@@ -59,6 +59,14 @@ namespace XUnitTestCommon.TestsCore
             }
         }
 
+        public void CreateEnvFile()
+        {
+            string propertiesPath = Path.Combine(Allure.ResultsDirectory, "environment.properties");
+            AllurePropertiesBuilder.Instance.AddPropertyPair("Date", DateTime.Now.ToString());
+            
+            AllurePropertiesBuilder.Instance.SaveAllureProperties(propertiesPath);
+        }
+
         private void AddMissedTest(ITestResult result)
         {
             var testResult = new Allure.Commons.TestResult

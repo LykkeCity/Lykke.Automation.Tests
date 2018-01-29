@@ -105,8 +105,11 @@ namespace XUnitTestCommon.Tests
             Console.WriteLine("=============================== Final Cleanup ===============================");
             Console.WriteLine();
 
+            allure.CreateEnvFile();
+
             CallCleanupActions(true);
         }
+
 
         #endregion
 

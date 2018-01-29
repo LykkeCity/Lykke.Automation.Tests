@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using XUnitTestCommon.RestRequests;
 using XUnitTestCommon.RestRequests.Interfaces;
 using XUnitTestCommon.ServiceSettings;
+using XUnitTestCommon.TestsCore;
 
 namespace LykkePay.Api
 {
@@ -22,6 +23,8 @@ namespace LykkePay.Api
     {
         protected static string BaseURL = "https://payapi-test.lykkex.net/api/v1";
         protected IRequestBuilder Request => Requests.For(BaseURL);
+
+        public LykkePayApi() { AllurePropertiesBuilder.Instance.AddPropertyPair("service", BaseURL); }
 
         public ServiceSettingsApi settings => new ServiceSettingsApi();
         public AssetPairRates assetPairRates => new AssetPairRates();
