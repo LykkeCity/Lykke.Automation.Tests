@@ -26,6 +26,7 @@ namespace AlgoStoreData.Fixtures
         private IContainer _container;
         public GenericRepository<MetaDataEntity, IMetaData> MetaDataRepository;
         public GenericRepository<RuntimeDataEntity, IRuntimeData> RuntimeDataRepository;
+        public GenericRepository<ClientInstanceEntity, IClientInstance> ClientInstanceRepository;
         public List<MetaDataResponseDTO> PreStoredMetadata;
         public AlgoBlobRepository BlobRepository;
 
@@ -50,6 +51,7 @@ namespace AlgoStoreData.Fixtures
 
             this.MetaDataRepository = RepositoryUtils.ResolveGenericRepository<MetaDataEntity, IMetaData>(this._container);
             this.RuntimeDataRepository = RepositoryUtils.ResolveGenericRepository<RuntimeDataEntity, IRuntimeData>(this._container);
+            this.ClientInstanceRepository = RepositoryUtils.ResolveGenericRepository<ClientInstanceEntity, IClientInstance>(this._container);
             this.BlobRepository = new AlgoBlobRepository(_configBuilder.Config["MainConnectionString"]);
     }
 

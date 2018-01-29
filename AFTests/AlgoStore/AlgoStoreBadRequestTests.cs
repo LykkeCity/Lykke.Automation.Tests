@@ -19,9 +19,8 @@ namespace AFTests.AlgoStore
     [Category("AlgoStore")]
     public partial class AlgoStoreTests : AlgoStoreTestDataFixture
     {
-        [Test]
-        [Category("BadRequest")]
-        [Category("UploadMetadataBadRequest")]
+
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -37,11 +36,10 @@ namespace AFTests.AlgoStore
             };
 
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
-            Assert.True(response.Status == HttpStatusCode.BadRequest);
+            Assert.That(response.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
-        [Test]
-        [Category("BadRequest")]
-        [Category("EditMetadataBadRequest")]
+
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -58,11 +56,10 @@ namespace AFTests.AlgoStore
             };
 
             var responseMetaDataAfterEdit = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responseMetaDataAfterEdit.Status == HttpStatusCode.BadRequest);
+            Assert.That(responseMetaDataAfterEdit.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
-        [Test]
-        [Category("BadRequest")]
-        [Category("DeleteMethadataBadRequest")]
+
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -77,11 +74,10 @@ namespace AFTests.AlgoStore
 
             string url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.True(responceCascadeDelete.Status == HttpStatusCode.BadRequest);
+            Assert.That(responceCascadeDelete.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
-        [Test]
-        [Category("BadRequest")]
-        [Category("UploadBinaryAlgoBadRequest")]
+
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -95,11 +91,10 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.True(responceAllClientMetadata.Status == HttpStatusCode.BadRequest);
+            Assert.That(responceAllClientMetadata.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
-        [Test]
-        [Category("BadRequest")]
-        [Category("DeployBianryAlgoBadRequest")]
+
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -113,11 +108,10 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.True(uploadBinaryresponce.Status == HttpStatusCode.BadRequest);
+            Assert.That(uploadBinaryresponce.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
-        [Test]
-        [Category("BadRequest")]
-        [Category("StartBinaryBadRequest")]
+
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -131,11 +125,10 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_ALGO_START;
 
             var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.True(startBinaryresponce.Status == HttpStatusCode.BadRequest);
+            Assert.That(startBinaryresponce.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
-        [Test]
-        [Category("BadRequest")]
-        [Category("StopBinaryBadRequest")]
+
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -149,11 +142,10 @@ namespace AFTests.AlgoStore
             };
 
             var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
-            Assert.True(stopBinaryResponse.Status == HttpStatusCode.BadRequest);
+            Assert.That(stopBinaryResponse.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
-        [Test]
-        [Category("BadRequest")]
-        [Category("GetLogBadRequest")]
+
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -167,11 +159,10 @@ namespace AFTests.AlgoStore
             };
 
             var algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET);
-            Assert.True(algoIDLogResponse.Status == HttpStatusCode.BadRequest);
+            Assert.That(algoIDLogResponse.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
-        [Test]
-        [Category("BadRequest")]
-        [Category("GetTailLogBadRequest")]
+
+        [Category("AlgoStore")]
         [TestCase("", "")]
         [TestCase("     ", "   ")]
         [TestCase(null, null)]
@@ -186,11 +177,10 @@ namespace AFTests.AlgoStore
             };
 
             var algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
-            Assert.True(algoIDTailLogResponse.Status == HttpStatusCode.BadRequest);
+            Assert.That(algoIDTailLogResponse.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
-        [Test]
-        [Category("BadRequest")]
-        [Category("UploadStringBadRequest")]
+
+        [Category("AlgoStore")]
         [TestCase("", "")]
         [TestCase("     ", "   ")]
         [TestCase(null, null)]
@@ -198,17 +188,19 @@ namespace AFTests.AlgoStore
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
 
-            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
+            string Algoid = badID;
+
+            PostUploadStringAlgoDTO uploadedStringDTO = new PostUploadStringAlgoDTO()
             {
-                {"AlgoId", badID },
-                {"Data" , AlgoString }
+                AlgoId = Algoid,
+                Data = AlgoString
             };
-            var responceUploadString = await this.Consumer.ExecuteRequest(url, quaryParam, null, Method.POST);
-            Assert.True(responceUploadString.Status == HttpStatusCode.BadRequest);
+
+            var responceUploadString = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(uploadedStringDTO), Method.POST);
+            Assert.That(responceUploadString.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
-        [Test]
-        [Category("BadRequest")]
-        [Category("GetStringBadRequest")]
+
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -222,7 +214,7 @@ namespace AFTests.AlgoStore
             };
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
-            Assert.True(responceGetUploadString.Status == HttpStatusCode.BadRequest);
+            Assert.That(responceGetUploadString.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
     }
 }
