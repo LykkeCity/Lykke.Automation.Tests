@@ -23,7 +23,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("UploadMetadataWithEmptyDescription")]
+        [Category("AlgoStore")]
         public async Task UploadMetadataWithEmptyDescription()
         {
 
@@ -58,7 +58,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("DeleteMetadataOnlyWithIdParam")]
+        [Category("AlgoStore")]
         public async Task DeleteMetadataOnlyWithIdParam()
         {
             MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForDelete();
@@ -78,7 +78,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("DeleteMetadataWithUpoadAlgoString")]
+        [Category("AlgoStore")]
         public async Task DeleteMetadataWithUpoadAlgoString()
         {
             MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForDelete();
@@ -123,7 +123,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("DeleteMetadataWithUpoadAlgoBinary")]
+        [Category("AlgoStore")]
         public async Task DeleteMetadataWithUpoadAlgoBinary()
         {
             MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForDelete();
@@ -157,7 +157,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("DeleteMetadataWithDeployedAlgo")]
+        [Category("AlgoStore")]
         public async Task DeleteMetadataWithDeployedAlgo()
         {
             MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForDelete();
@@ -204,7 +204,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("DeleteMetadataWithStoppedAlgo")]
+        [Category("AlgoStore")]
         public async Task DeleteMetadataWithStoppedAlgo()
         {
             MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForDelete();
@@ -277,7 +277,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("DeleteMetadataWithStartedAlgo")]
+        [Category("AlgoStore")]
         public async Task DeleteMetadataWithStartedAlgo()
         {
             MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForDelete();
@@ -337,7 +337,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("UploadBinaryAlgoWithIdThatHasAlreadyUploadedAlgo")]
+        [Category("AlgoStore")]
         public async Task UploadBinaryAlgoWithIdThatHasAlreadyUploadedAlgo()
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
@@ -365,7 +365,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("UploadBinaryAlgoWithWrongId")]
+        [Category("AlgoStore")]
         public async Task UploadBinaryAlgoWithWrongId()
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
@@ -384,7 +384,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("Functional")]
         [Category("FullRegression")]
-        [Category("DeployBianryAlgoWithWrongId")]
+        [Category("AlgoStore")]
         public async Task DeployBianryAlgoWithWrongId()
         {
             string AlgoID = "non-existing-id-234-555-666";
@@ -407,7 +407,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("RestartBinary")]
+        [Category("AlgoStore")]
         public async Task RestartBinary()
         {
 
@@ -478,7 +478,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("DoubleStopBinary")]
+        [Category("AlgoStore")]
         public async Task DoubleStopBinary()
         {
             MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetaDataForBinaryUpload();
@@ -546,7 +546,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("Functional")]
         [Category("FullRegression")]
-        [Category("DoubleStartBinary")]
+        [Category("AlgoStore")]
         public async Task DoubleStartBinary()
         {
             MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetaDataForBinaryUpload();
@@ -601,7 +601,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("GetLogOnStoppedAlgo")]
+        [Category("AlgoStore")]
         public async Task GetLogOnStoppedAlgo()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -662,7 +662,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("GetLogOnDeployedOnlyAlgo")]
+        [Category("AlgoStore")]
         public async Task GetLogOnDeployedOnlyAlgo()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -697,7 +697,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("GetTailLogOnStoppedAlgo")]
+        [Category("AlgoStore")]
         public async Task GetTailLogOnStoppedAlgo()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -759,7 +759,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("GetTailLogOnDeployedOnlyAlgo")]
+        [Category("AlgoStore")]
         public async Task GetTailLogOnDeployedOnlyAlgo()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -795,7 +795,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("UploadStringLarge")]
+        [Category("AlgoStore")]
         public async Task UploadStringLarge()
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
@@ -820,7 +820,7 @@ namespace AFTests.AlgoStore
         [Test]
         [Category("FullRegression")]
         [Category("Functional")]
-        [Category("GetStringWrongId")]
+        [Category("AlgoStore")]
         public async Task GetStringWrongId()
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;

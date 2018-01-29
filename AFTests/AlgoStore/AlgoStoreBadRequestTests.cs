@@ -21,7 +21,7 @@ namespace AFTests.AlgoStore
     {
         [Test]
         [Category("BadRequest")]
-        [Category("UploadMetadataBadRequest")]
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -41,7 +41,7 @@ namespace AFTests.AlgoStore
         }
         [Test]
         [Category("BadRequest")]
-        [Category("EditMetadataBadRequest")]
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -62,7 +62,7 @@ namespace AFTests.AlgoStore
         }
         [Test]
         [Category("BadRequest")]
-        [Category("DeleteMethadataBadRequest")]
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -81,7 +81,7 @@ namespace AFTests.AlgoStore
         }
         [Test]
         [Category("BadRequest")]
-        [Category("UploadBinaryAlgoBadRequest")]
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -99,7 +99,7 @@ namespace AFTests.AlgoStore
         }
         [Test]
         [Category("BadRequest")]
-        [Category("DeployBianryAlgoBadRequest")]
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -117,7 +117,7 @@ namespace AFTests.AlgoStore
         }
         [Test]
         [Category("BadRequest")]
-        [Category("StartBinaryBadRequest")]
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -135,7 +135,7 @@ namespace AFTests.AlgoStore
         }
         [Test]
         [Category("BadRequest")]
-        [Category("StopBinaryBadRequest")]
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -153,7 +153,7 @@ namespace AFTests.AlgoStore
         }
         [Test]
         [Category("BadRequest")]
-        [Category("GetLogBadRequest")]
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
@@ -171,7 +171,7 @@ namespace AFTests.AlgoStore
         }
         [Test]
         [Category("BadRequest")]
-        [Category("GetTailLogBadRequest")]
+        [Category("AlgoStore")]
         [TestCase("", "")]
         [TestCase("     ", "   ")]
         [TestCase(null, null)]
@@ -190,7 +190,7 @@ namespace AFTests.AlgoStore
         }
         [Test]
         [Category("BadRequest")]
-        [Category("UploadStringBadRequest")]
+        [Category("AlgoStore")]
         [TestCase("", "")]
         [TestCase("     ", "   ")]
         [TestCase(null, null)]
@@ -208,7 +208,7 @@ namespace AFTests.AlgoStore
         }
         [Test]
         [Category("BadRequest")]
-        [Category("GetStringBadRequest")]
+        [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]

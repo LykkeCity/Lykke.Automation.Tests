@@ -23,7 +23,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("IsAlive")]
+        [Category("AlgoStore")]
         public async Task CheckIfServiceIsAlive()
         {
 
@@ -37,7 +37,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("UploadMetadata")]
+        [Category("AlgoStore")]
         public async Task UploadMetadata()
         {
 
@@ -71,7 +71,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("EditMetadata")]
+        [Category("AlgoStore")]
         public async Task EditMetadata()
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
@@ -109,7 +109,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("DeleteMethadata")]
+        [Category("AlgoStore")]
         public async Task DeleteMetadata()
         {
             MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForDelete();
@@ -128,7 +128,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("GetAllMetadataForClient")]
+        [Category("AlgoStore")]
         public async Task GetAllMetadataForClient()
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
@@ -152,7 +152,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("UploadBinaryAlgo")]
+        [Category("AlgoStore")]
         public async Task UploadBinaryAlgo()
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
@@ -172,7 +172,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("DeployBianryAlgo")]
+        [Category("AlgoStore")]
         public async Task DeployBinaryAlgo()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -195,7 +195,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("StartBinary")]
+        [Category("AlgoStore")]
         public async Task StartBinary()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -228,7 +228,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("StopBinary")]
+        [Category("AlgoStore")]
         public async Task StopBinary()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -274,7 +274,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("GetLog")]
+        [Category("AlgoStore")]
         public async Task GetLog()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -321,7 +321,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("GetTailLog")]
+        [Category("AlgoStore")]
         public async Task GetTailLog()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -369,7 +369,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("UploadString")]
+        [Category("AlgoStore")]
         public async Task UploadString()
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
@@ -393,7 +393,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("GetString")]
+        [Category("AlgoStore")]
         public async Task GetUploadedString()
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
@@ -426,7 +426,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("GetAllClientInstanceData")]
+        [Category("AlgoStore")]
         public async Task GetAllClientInstanceData()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -486,7 +486,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("PostInstanceDataForAlgo")]
+        [Category("AlgoStore")]
         public async Task PostInstanceDataForAlgo()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -524,7 +524,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("EditInstanceDataForAlgo")]
+        [Category("AlgoStore")]
         public async Task EditInstanceDataForAlgo()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
@@ -585,7 +585,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("Smoke")]
-        [Category("GetInstanceData")]
+        [Category("AlgoStore")]
         public async Task GetInstanceData()
         {
             MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
