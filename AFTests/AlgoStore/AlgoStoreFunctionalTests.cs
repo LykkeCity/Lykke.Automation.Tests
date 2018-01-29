@@ -21,8 +21,6 @@ namespace AFTests.AlgoStore
     {
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task UploadMetadataWithEmptyDescription()
         {
@@ -56,8 +54,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task DeleteMetadataOnlyWithIdParam()
         {
@@ -76,8 +72,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task DeleteMetadataWithUpoadAlgoString()
         {
@@ -121,8 +115,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task DeleteMetadataWithUpoadAlgoBinary()
         {
@@ -155,8 +147,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task DeleteMetadataWithDeployedAlgo()
         {
@@ -202,8 +192,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task DeleteMetadataWithStoppedAlgo()
         {
@@ -275,8 +263,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task DeleteMetadataWithStartedAlgo()
         {
@@ -335,8 +321,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task UploadBinaryAlgoWithIdThatHasAlreadyUploadedAlgo()
         {
@@ -363,8 +347,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task UploadBinaryAlgoWithWrongId()
         {
@@ -382,8 +364,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Functional")]
-        [Category("FullRegression")]
         [Category("AlgoStore")]
         public async Task DeployBianryAlgoWithWrongId()
         {
@@ -405,8 +385,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task RestartBinary()
         {
@@ -476,8 +454,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task DoubleStopBinary()
         {
@@ -544,8 +520,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Functional")]
-        [Category("FullRegression")]
         [Category("AlgoStore")]
         public async Task DoubleStartBinary()
         {
@@ -599,8 +573,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task GetLogOnStoppedAlgo()
         {
@@ -660,8 +632,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task GetLogOnDeployedOnlyAlgo()
         {
@@ -695,8 +665,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task GetTailLogOnStoppedAlgo()
         {
@@ -757,8 +725,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task GetTailLogOnDeployedOnlyAlgo()
         {
@@ -793,8 +759,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task UploadStringLarge()
         {
@@ -819,8 +783,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("FullRegression")]
-        [Category("Functional")]
         [Category("AlgoStore")]
         public async Task GetStringWrongId()
         {

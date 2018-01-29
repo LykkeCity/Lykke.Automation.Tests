@@ -22,7 +22,6 @@ namespace AFTests.AlgoStore
         public static string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task CheckIfServiceIsAlive()
         {
@@ -36,7 +35,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task UploadMetadata()
         {
@@ -70,7 +68,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task EditMetadata()
         {
@@ -108,7 +105,6 @@ namespace AFTests.AlgoStore
 
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task DeleteMetadata()
         {
@@ -127,7 +123,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task GetAllMetadataForClient()
         {
@@ -151,7 +146,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task UploadBinaryAlgo()
         {
@@ -171,7 +165,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task DeployBinaryAlgo()
         {
@@ -194,7 +187,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task StartBinary()
         {
@@ -227,7 +219,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task StopBinary()
         {
@@ -273,7 +264,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task GetLog()
         {
@@ -320,7 +310,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task GetTailLog()
         {
@@ -368,7 +357,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task UploadString()
         {
@@ -392,7 +380,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task GetUploadedString()
         {
@@ -425,7 +412,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task GetAllClientInstanceData()
         {
@@ -485,7 +471,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task PostInstanceDataForAlgo()
         {
@@ -523,7 +508,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task EditInstanceDataForAlgo()
         {
@@ -584,7 +568,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("Smoke")]
         [Category("AlgoStore")]
         public async Task GetInstanceData()
         {
