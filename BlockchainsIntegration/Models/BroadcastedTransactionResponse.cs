@@ -26,7 +26,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         /// <param name="state">Possible values include: 'InProgress',
         /// 'Completed', 'Failed'</param>
-        public BroadcastedTransactionResponse(System.Guid operationId, BroadcastedTransactionState state, System.DateTime timestamp, string amount = default(string), string fee = default(string), string hash = default(string), string error = default(string))
+        public BroadcastedTransactionResponse(System.Guid operationId, BroadcastedTransactionState state, System.DateTime timestamp, string amount = default(string), string fee = default(string), string hash = default(string), string error = default(string), string errorCode = default(string), long block = default(long))
         {
             OperationId = operationId;
             State = state;
@@ -35,6 +35,8 @@ namespace Lykke.Client.AutorestClient.Models
             Fee = fee;
             Hash = hash;
             Error = error;
+            ErrorCode = errorCode;
+            Block = block;
             CustomInit();
         }
 
@@ -80,6 +82,11 @@ namespace Lykke.Client.AutorestClient.Models
         [JsonProperty(PropertyName = "error")]
         public string Error { get; set; }
 
+        [JsonProperty(PropertyName = "errorCode")]
+        public string ErrorCode { get; set; }
+
+        [JsonProperty(PropertyName = "block")]
+        public long Block { get; set; }
         /// <summary>
         /// Validate the object.
         /// </summary>
