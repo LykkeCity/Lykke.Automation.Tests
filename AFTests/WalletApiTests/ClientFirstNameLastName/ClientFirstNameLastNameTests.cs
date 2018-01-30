@@ -20,7 +20,7 @@ namespace AFTests.WalletApiTests.ClientFirstNameLastName
                 var registrationresponse = walletApi.Registration.PostRegistrationResponse(newUser).GetResponseObject();
 
                 var getClient = walletApi.PersonalData.GetPersonalDataResponse(registrationresponse.Result.Token).GetResponseObject();
-                Assert.That(newUser.FullName, Does.Contain(getClient.PersonalData.FullName));
+                Assert.That(newUser.FullName, Does.Contain(getClient.Result.FullName));
 
                 var newFirstName = TestData.GenerateLetterString(6);
                 var newLastName = TestData.GenerateLetterString(6);
@@ -31,8 +31,8 @@ namespace AFTests.WalletApiTests.ClientFirstNameLastName
                 postResponse.Validate.StatusCode(HttpStatusCode.OK);
                 var getNewClient = walletApi.PersonalData.GetPersonalDataResponse(registrationresponse.Result.Token).GetResponseObject();
 
-                Assert.That(getNewClient.PersonalData.FirstName, Is.EqualTo(newFirstName));
-                Assert.That(getNewClient.PersonalData.LastName, Is.EqualTo(newLastName));
+                Assert.That(getNewClient.Result.FirstName, Is.EqualTo(newFirstName));
+                Assert.That(getNewClient.Result.LastName, Is.EqualTo(newLastName));
             }
         }
 
