@@ -19,5 +19,7 @@ namespace BlockchainsIntegration.Api
         public Balances Balances => new Balances(BaseUrl);
         public IsAlive IsAlive => new IsAlive(BaseUrl);
         public Operations Operations => new Operations(BaseUrl);
+        public Capabilities Capabilities => new Capabilities(BaseUrl);
+        public History History => new History(BaseUrl);
     }
 }

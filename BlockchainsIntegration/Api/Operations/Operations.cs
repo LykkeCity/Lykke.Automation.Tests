@@ -12,14 +12,14 @@ namespace BlockchainsIntegration.LiteCoin.Api
 
         public Operations() : base() { }
 
-        public IResponse<BuildTransactionResponse> PostTransactions(BuildTransactionRequest model)
+        public IResponse<BuildTransactionResponse> PostTransactions(BuildSingleTransactionRequest model)
         {
             return Request.Post("/transactions/single").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
         }
 
-        public IResponse<PostTransactionBroadcastResponse> PostTransactionsBroadcast(BroadcastTransactionRequest model)
+        public IResponse<BroadcastTransactionResponse> PostTransactionsBroadcast(BroadcastTransactionRequest model)
         {
-            return Request.Post("/transactions/broadcast").AddJsonBody(model).Build().Execute<PostTransactionBroadcastResponse>();
+            return Request.Post("/transactions/broadcast").AddJsonBody(model).Build().Execute<BroadcastTransactionResponse>();
         }
 
         public IResponse DeleteOperationId(string operationId)
@@ -27,32 +27,32 @@ namespace BlockchainsIntegration.LiteCoin.Api
             return Request.Delete($"/transactions/broadcast/{operationId}").Build().Execute();
         }
 
-        public IResponse<BroadcastedTransactionResponse> GetOperationId(string operationId)
+        public IResponse<BroadcastedSingleTransactionResponse> GetOperationId(string operationId)
         {
-            return Request.Get($"/transactions/broadcast/single/{operationId}").Build().Execute<BroadcastedTransactionResponse>();
+            return Request.Get($"/transactions/broadcast/single/{operationId}").Build().Execute<BroadcastedSingleTransactionResponse>();
         }
 
-        public IResponse<TransactionsManyInputsResponse> PostTransactionsManyInputs(TransactionsManyInputsRequest model)
+        public IResponse<BuildTransactionResponse> PostTransactionsManyInputs(BuildTransactionWithManyInputsRequest model)
         {
-            return Request.Post("/transactions/many-inputs").AddJsonBody(model).Build().Execute<TransactionsManyInputsResponse>();
+            return Request.Post("/transactions/many-inputs").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
         }
 
-        public IResponse<TransactionsManyOutputsResponse> PostTransactionsManyOutputs(TransactionsManyOutputsRequest model)
+        public IResponse<BuildTransactionResponse> PostTransactionsManyOutputs(BuildTransactionWithManyOutputsRequest model)
         {
-            return Request.Post("/transactions/many-outputs").Build().Execute<TransactionsManyOutputsResponse>();
+            return Request.Post("/transactions/many-outputs").Build().Execute<BuildTransactionResponse>();
         }
 
-        public IResponse<GetTransactionsManyInputsResponse> GetTransactionsManyInputs(string operationId)
+        public IResponse<BroadcastedTransactionWithManyInputsResponse> GetTransactionsManyInputs(string operationId)
         {
-            return Request.Post($"/transactions/many-inputs/{operationId}").Build().Execute<GetTransactionsManyInputsResponse>();
+            return Request.Post($"/transactions/many-inputs/{operationId}").Build().Execute<BroadcastedTransactionWithManyInputsResponse>();
         }
 
-        public IResponse<GetTransactionsManyOutputsResponse> GetTransactionsManyOutputs(string operationId)
+        public IResponse<BroadcastedTransactionWithManyOutputsResponse> GetTransactionsManyOutputs(string operationId)
         {
-            return Request.Get($"/transactions/many-outputs/{operationId}").Build().Execute<GetTransactionsManyOutputsResponse>();
+            return Request.Get($"/transactions/many-outputs/{operationId}").Build().Execute<BroadcastedTransactionWithManyOutputsResponse>();
         }
 
-        public IResponse<PutTransactionsResponse> PutTransactions(PutTransactionsRequest model)
+        public IResponse<PutTransactionsResponse> PutTransactions(RebuildTransactionRequest model)
         {
             return Request.Put("/transactions").AddJsonBody(model).Build().Execute<PutTransactionsResponse>();
         }

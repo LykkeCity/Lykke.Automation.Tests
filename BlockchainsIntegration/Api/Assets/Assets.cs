@@ -14,9 +14,9 @@ namespace BlockchainsIntegration.LiteCoin.Api
 
         string resource = "/assets";
 
-        public IResponse<PaginationResponseAssetResponse> GetAssets(string take, string continuation)
+        public IResponse<PaginationResponseAssetContract> GetAssets(string take, string continuation)
         {
-            return Request.Get(resource).AddQueryParameterIfNotNull("take", take).AddQueryParameterIfNotNull("continuation", continuation).Build().Execute<PaginationResponseAssetResponse>();
+            return Request.Get(resource).AddQueryParameterIfNotNull("take", take).AddQueryParameterIfNotNull("continuation", continuation).Build().Execute<PaginationResponseAssetContract>();
         }
 
         public IResponse<AssetResponse> GetAsset(string assetId)

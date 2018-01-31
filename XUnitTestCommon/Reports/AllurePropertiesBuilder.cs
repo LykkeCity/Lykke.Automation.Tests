@@ -9,7 +9,8 @@ namespace XUnitTestCommon.TestsCore
     public class AllurePropertiesBuilder
     {
         private static object _lock = new object();
-        private static AllurePropertiesBuilder _intance;
+        private static object _envLock = new object();
+        private static Lazy<AllurePropertiesBuilder> _intance;
         private static HashSet<string> properties = new HashSet<string>();
 
         private AllurePropertiesBuilder() { }
@@ -18,12 +19,10 @@ namespace XUnitTestCommon.TestsCore
         {
             get
             {
-                if (_intance == null)
-                    lock (_lock)
-                    {
-                        _intance = new AllurePropertiesBuilder();
-                    }
-                return _intance;
+                    if (_intance == null)
+                        _intance = new Lazy<AllurePropertiesBuilder>(new AllurePropertiesBuilder());
+
+                return _intance.Value;
             }
         }
 
@@ -46,7 +45,10 @@ namespace XUnitTestCommon.TestsCore
                 else
                     finalProperties.Add(p);
             });
-            File.WriteAllLines(pathToSave, finalProperties.ToList());
+            lock (_envLock)
+            {
+                File.AppendAllLines(pathToSave, finalProperties.ToList());
+            }
         }
     }
 }

@@ -9,23 +9,23 @@ namespace Lykke.Client.AutorestClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class IssueIndicator
+    public partial class TransactionOutputContract
     {
         /// <summary>
-        /// Initializes a new instance of the IssueIndicator class.
+        /// Initializes a new instance of the TransactionOutputContract class.
         /// </summary>
-        public IssueIndicator()
+        public TransactionOutputContract()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the IssueIndicator class.
+        /// Initializes a new instance of the TransactionOutputContract class.
         /// </summary>
-        public IssueIndicator(string type = default(string), string value = default(string))
+        public TransactionOutputContract(string toAddress = default(string), string amount = default(string))
         {
-            Type = type;
-            Value = value;
+            ToAddress = toAddress;
+            Amount = amount;
             CustomInit();
         }
 
@@ -36,13 +36,13 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
+        [JsonProperty(PropertyName = "toAddress")]
+        public string ToAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "value")]
-        public string Value { get; set; }
+        [JsonProperty(PropertyName = "amount")]
+        public string Amount { get; set; }
 
     }
 }

@@ -96,6 +96,7 @@ namespace XUnitTestCommon.Tests
         public void OneTimeSetUp()
         {
             allure.AllureBeforeAllTestsInClass();
+            allure.PrepareEnvFile();
         }
 
         [OneTimeTearDown]
@@ -109,7 +110,6 @@ namespace XUnitTestCommon.Tests
 
             CallCleanupActions(true);
         }
-
 
         #endregion
 

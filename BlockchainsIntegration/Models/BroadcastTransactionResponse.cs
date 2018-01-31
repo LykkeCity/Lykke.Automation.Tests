@@ -9,25 +9,26 @@ namespace Lykke.Client.AutorestClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class BuildTransactionResponse
+    public partial class BroadcastTransactionResponse
     {
         /// <summary>
-        /// Initializes a new instance of the BuildTransactionResponse class.
+        /// Initializes a new instance of the BroadcastTransactionResponse
+        /// class.
         /// </summary>
-        public BuildTransactionResponse()
+        public BroadcastTransactionResponse()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the BuildTransactionResponse class.
+        /// Initializes a new instance of the BroadcastTransactionResponse
+        /// class.
         /// </summary>
         /// <param name="errorCode">Possible values include: 'unknown',
         /// 'amountIsTooSmall', 'notEnoughtBalance'</param>
-        public BuildTransactionResponse(TransactionExecutionError? errorCode = default(TransactionExecutionError?), string transactionContext = default(string))
+        public BroadcastTransactionResponse(TransactionExecutionError? errorCode = default(TransactionExecutionError?))
         {
             ErrorCode = errorCode;
-            TransactionContext = transactionContext;
             CustomInit();
         }
 
@@ -42,11 +43,6 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "errorCode")]
         public TransactionExecutionError? ErrorCode { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "transactionContext")]
-        public string TransactionContext { get; set; }
 
     }
 }

@@ -11,26 +11,27 @@ namespace Lykke.Client.AutorestClient.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class IsAliveResponse
+    public partial class BuildTransactionWithManyInputsRequest
     {
         /// <summary>
-        /// Initializes a new instance of the IsAliveResponse class.
+        /// Initializes a new instance of the
+        /// BuildTransactionWithManyInputsRequest class.
         /// </summary>
-        public IsAliveResponse()
+        public BuildTransactionWithManyInputsRequest()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the IsAliveResponse class.
+        /// Initializes a new instance of the
+        /// BuildTransactionWithManyInputsRequest class.
         /// </summary>
-        public IsAliveResponse(bool isDebug, string name = default(string), string version = default(string), string env = default(string), IList<IssueIndicator> issueIndicators = default(IList<IssueIndicator>))
+        public BuildTransactionWithManyInputsRequest(System.Guid operationId, IList<TransactionInputContract> inputs = default(IList<TransactionInputContract>), string toAddress = default(string), string assetId = default(string))
         {
-            Name = name;
-            Version = version;
-            Env = env;
-            IsDebug = isDebug;
-            IssueIndicators = issueIndicators;
+            OperationId = operationId;
+            Inputs = inputs;
+            ToAddress = toAddress;
+            AssetId = assetId;
             CustomInit();
         }
 
@@ -41,28 +42,23 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
+        [JsonProperty(PropertyName = "operationId")]
+        public System.Guid OperationId { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "version")]
-        public string Version { get; set; }
+        [JsonProperty(PropertyName = "inputs")]
+        public IList<TransactionInputContract> Inputs { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "env")]
-        public string Env { get; set; }
+        [JsonProperty(PropertyName = "toAddress")]
+        public string ToAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "isDebug")]
-        public bool IsDebug { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "issueIndicators")]
-        public IList<IssueIndicator> IssueIndicators { get; set; }
+        [JsonProperty(PropertyName = "assetId")]
+        public string AssetId { get; set; }
 
         /// <summary>
         /// Validate the object.

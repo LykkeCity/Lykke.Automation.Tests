@@ -11,23 +11,25 @@ namespace Lykke.Client.AutorestClient.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class ErrorResponse
+    public partial class PaginationResponseAssetContract
     {
         /// <summary>
-        /// Initializes a new instance of the ErrorResponse class.
+        /// Initializes a new instance of the PaginationResponseAssetContract
+        /// class.
         /// </summary>
-        public ErrorResponse()
+        public PaginationResponseAssetContract()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the ErrorResponse class.
+        /// Initializes a new instance of the PaginationResponseAssetContract
+        /// class.
         /// </summary>
-        public ErrorResponse(string errorMessage = default(string), IDictionary<string, IList<string>> modelErrors = default(IDictionary<string, IList<string>>))
+        public PaginationResponseAssetContract(string continuation = default(string), IList<AssetContract> items = default(IList<AssetContract>))
         {
-            ErrorMessage = errorMessage;
-            ModelErrors = modelErrors;
+            Continuation = continuation;
+            Items = items;
             CustomInit();
         }
 
@@ -38,13 +40,13 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "errorMessage")]
-        public string ErrorMessage { get; set; }
+        [JsonProperty(PropertyName = "continuation")]
+        public string Continuation { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "modelErrors")]
-        public IDictionary<string, IList<string>> ModelErrors { get; set; }
+        [JsonProperty(PropertyName = "items")]
+        public IList<AssetContract> Items { get; set; }
 
     }
 }

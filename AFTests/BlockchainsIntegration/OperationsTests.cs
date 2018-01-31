@@ -17,7 +17,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetOperationIdTest()
             {
-                var model = new BuildTransactionRequest()
+                var model = new BuildSingleTransactionRequest()
                 {
                     Amount = "100001",
                     AssetId = CurrentAssetId(),
@@ -60,7 +60,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostTransactionsTest()
             {
-                var model = new BuildTransactionRequest()
+                var model = new BuildSingleTransactionRequest()
                 {
                     Amount = "100001",
                     AssetId = CurrentAssetId(),
@@ -82,7 +82,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostTransactionsInvalidAddressTest()
             {
-                var model = new BuildTransactionRequest()
+                var model = new BuildSingleTransactionRequest()
                 {
                     Amount = "10",
                     AssetId = CurrentAssetId(),
@@ -104,7 +104,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostTransactionsEmptyObjectTest()
             {
-                var model = new BuildTransactionRequest()
+                var model = new BuildSingleTransactionRequest()
                 {
                 };
 
@@ -120,7 +120,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostTransactionsBroadcastTest()
             {
-                var model = new BuildTransactionRequest()
+                var model = new BuildSingleTransactionRequest()
                 {
                     Amount = "100002",
                     AssetId = CurrentAssetId(),
@@ -163,7 +163,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DeleteOperationIdTest()
             {
-                var model = new BuildTransactionRequest()
+                var model = new BuildSingleTransactionRequest()
                 {
                     Amount = "100001",
                     AssetId = CurrentAssetId(),

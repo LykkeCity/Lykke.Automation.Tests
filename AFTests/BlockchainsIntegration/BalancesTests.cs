@@ -104,7 +104,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 
                 var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance;
 
-                var model = new BuildTransactionRequest()
+                var model = new BuildSingleTransactionRequest()
                 {
                     Amount = "100002",
                     AssetId = CurrentAssetId(),

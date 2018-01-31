@@ -9,25 +9,23 @@ namespace Lykke.Client.AutorestClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class WalletBalanceContract
+    public partial class RebuildTransactionRequest
     {
         /// <summary>
-        /// Initializes a new instance of the WalletBalanceContract class.
+        /// Initializes a new instance of the RebuildTransactionRequest class.
         /// </summary>
-        public WalletBalanceContract()
+        public RebuildTransactionRequest()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the WalletBalanceContract class.
+        /// Initializes a new instance of the RebuildTransactionRequest class.
         /// </summary>
-        public WalletBalanceContract(long block, string address = default(string), string assetId = default(string), string balance = default(string))
+        public RebuildTransactionRequest(System.Guid operationId, double feeFactor)
         {
-            Address = address;
-            AssetId = assetId;
-            Balance = balance;
-            Block = block;
+            OperationId = operationId;
+            FeeFactor = feeFactor;
             CustomInit();
         }
 
@@ -38,23 +36,13 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "address")]
-        public string Address { get; set; }
+        [JsonProperty(PropertyName = "operationId")]
+        public System.Guid OperationId { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "assetId")]
-        public string AssetId { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "balance")]
-        public string Balance { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "block")]
-        public long Block { get; set; }
+        [JsonProperty(PropertyName = "feeFactor")]
+        public double FeeFactor { get; set; }
 
         /// <summary>
         /// Validate the object.

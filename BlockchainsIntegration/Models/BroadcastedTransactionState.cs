@@ -17,11 +17,11 @@ namespace Lykke.Client.AutorestClient.Models
     [JsonConverter(typeof(StringEnumConverter))]
     public enum BroadcastedTransactionState
     {
-        [EnumMember(Value = "InProgress")]
+        [EnumMember(Value = "inProgress")]
         InProgress,
-        [EnumMember(Value = "Completed")]
+        [EnumMember(Value = "completed")]
         Completed,
-        [EnumMember(Value = "Failed")]
+        [EnumMember(Value = "failed")]
         Failed
     }
     internal static class BroadcastedTransactionStateEnumExtension
@@ -36,11 +36,11 @@ namespace Lykke.Client.AutorestClient.Models
             switch( value )
             {
                 case BroadcastedTransactionState.InProgress:
-                    return "InProgress";
+                    return "inProgress";
                 case BroadcastedTransactionState.Completed:
-                    return "Completed";
+                    return "completed";
                 case BroadcastedTransactionState.Failed:
-                    return "Failed";
+                    return "failed";
             }
             return null;
         }
@@ -49,11 +49,11 @@ namespace Lykke.Client.AutorestClient.Models
         {
             switch( value )
             {
-                case "InProgress":
+                case "inProgress":
                     return BroadcastedTransactionState.InProgress;
-                case "Completed":
+                case "completed":
                     return BroadcastedTransactionState.Completed;
-                case "Failed":
+                case "failed":
                     return BroadcastedTransactionState.Failed;
             }
             return null;

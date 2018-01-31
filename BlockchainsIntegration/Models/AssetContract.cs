@@ -9,25 +9,25 @@ namespace Lykke.Client.AutorestClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class WalletBalanceContract
+    public partial class AssetContract
     {
         /// <summary>
-        /// Initializes a new instance of the WalletBalanceContract class.
+        /// Initializes a new instance of the AssetContract class.
         /// </summary>
-        public WalletBalanceContract()
+        public AssetContract()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the WalletBalanceContract class.
+        /// Initializes a new instance of the AssetContract class.
         /// </summary>
-        public WalletBalanceContract(long block, string address = default(string), string assetId = default(string), string balance = default(string))
+        public AssetContract(int accuracy, string assetId = default(string), string address = default(string), string name = default(string))
         {
-            Address = address;
             AssetId = assetId;
-            Balance = balance;
-            Block = block;
+            Address = address;
+            Name = name;
+            Accuracy = accuracy;
             CustomInit();
         }
 
@@ -38,23 +38,23 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "address")]
-        public string Address { get; set; }
-
-        /// <summary>
-        /// </summary>
         [JsonProperty(PropertyName = "assetId")]
         public string AssetId { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "balance")]
-        public string Balance { get; set; }
+        [JsonProperty(PropertyName = "address")]
+        public string Address { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "block")]
-        public long Block { get; set; }
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "accuracy")]
+        public int Accuracy { get; set; }
 
         /// <summary>
         /// Validate the object.

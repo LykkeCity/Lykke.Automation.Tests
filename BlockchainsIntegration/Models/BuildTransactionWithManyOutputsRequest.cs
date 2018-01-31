@@ -11,26 +11,27 @@ namespace Lykke.Client.AutorestClient.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class IsAliveResponse
+    public partial class BuildTransactionWithManyOutputsRequest
     {
         /// <summary>
-        /// Initializes a new instance of the IsAliveResponse class.
+        /// Initializes a new instance of the
+        /// BuildTransactionWithManyOutputsRequest class.
         /// </summary>
-        public IsAliveResponse()
+        public BuildTransactionWithManyOutputsRequest()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the IsAliveResponse class.
+        /// Initializes a new instance of the
+        /// BuildTransactionWithManyOutputsRequest class.
         /// </summary>
-        public IsAliveResponse(bool isDebug, string name = default(string), string version = default(string), string env = default(string), IList<IssueIndicator> issueIndicators = default(IList<IssueIndicator>))
+        public BuildTransactionWithManyOutputsRequest(System.Guid operationId, string fromAddress = default(string), IList<TransactionOutputContract> outputs = default(IList<TransactionOutputContract>), string assetId = default(string))
         {
-            Name = name;
-            Version = version;
-            Env = env;
-            IsDebug = isDebug;
-            IssueIndicators = issueIndicators;
+            OperationId = operationId;
+            FromAddress = fromAddress;
+            Outputs = outputs;
+            AssetId = assetId;
             CustomInit();
         }
 
@@ -41,28 +42,23 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
+        [JsonProperty(PropertyName = "operationId")]
+        public System.Guid OperationId { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "version")]
-        public string Version { get; set; }
+        [JsonProperty(PropertyName = "fromAddress")]
+        public string FromAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "env")]
-        public string Env { get; set; }
+        [JsonProperty(PropertyName = "outputs")]
+        public IList<TransactionOutputContract> Outputs { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "isDebug")]
-        public bool IsDebug { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "issueIndicators")]
-        public IList<IssueIndicator> IssueIndicators { get; set; }
+        [JsonProperty(PropertyName = "assetId")]
+        public string AssetId { get; set; }
 
         /// <summary>
         /// Validate the object.
