@@ -27,6 +27,7 @@ namespace AFTests.ApiRegression
             string phoneNumber = TestData.GenerateNumbers(9);
             string token = null;
             string country = null;
+            var privateKey = new NBitcoin.Key();
 
             //STEP 1
             var getClientState = walletApi.ClientState
@@ -156,13 +157,14 @@ namespace AFTests.ApiRegression
                 Is.True);
 
             //STEP 15
-            //var postClientKeys = walletApi.ClientKeys
-            //    .PostClientKeys(new ClientKeysModel()
-            //    {
-
-            //    }, token)
-            //    .Validate.StatusCode(HttpStatusCode.OK)
-            //    .Validate.NoApiError();
+            var postClientKeys = walletApi.ClientKeys
+                .PostClientKeys(new ClientKeysModel()
+                {
+                    PubKey = privateKey.PubKey.ToString(),
+                    EncodedPrivateKey = privateKey.PubKey.ToString() + privateKey.PubKey.ToString() //Change this
+                }, token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
         }
     }
 }
