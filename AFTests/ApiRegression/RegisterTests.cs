@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 using Lykke.Client.AutorestClient.Models;
@@ -14,12 +15,18 @@ namespace AFTests.ApiRegression
         [Category("ApiRegression")]
         public void RegisterTest()
         {
-            var email = TestData.GenerateEmail();
+            string email = TestData.GenerateEmail();
+            string firstName = "Autotest";
+            string lastName = "User";
             string code = "0000"; //TODO: What is it?
+            string pin = "1111";
             string clientInfo = "iPhone; Model:6 Plus; Os:9.3.5; Screen:414x736";
             string hint = "qwe";
             string password = Guid.NewGuid().ToString("N");
+            string phonePrefix = null;
+            string phoneNumber = TestData.GenerateNumbers(9);
             string token = null;
+            string country = null;
 
             //STEP 1
             var getClientState = walletApi.ClientState
@@ -31,10 +38,7 @@ namespace AFTests.ApiRegression
 
             //STEP 2
             var postEmailVerification = walletApi.EmailVerification
-                .PostEmailVerification(new PostEmailModel()
-                {
-                    Email = email
-                })
+                .PostEmailVerification(new PostEmailModel() { Email = email })
                 .Validate.StatusCode(HttpStatusCode.OK)
                 .Validate.NoApiError();
             Assert.That(postEmailVerification.GetResponseObject().Error, Is.Null);
@@ -85,7 +89,80 @@ namespace AFTests.ApiRegression
                     .Email, Is.EqualTo(email));
 
             //STEP 7
-            //var postClientFullName = walletApi.ClientFullName.PostClientFullName
+            var postClientFullName = walletApi.ClientFullName
+                .PostClientFullName(new PostClientFullNameModel() { FullName = $"{firstName} {lastName}" }, token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+
+            //STEP 8
+            getPersonalData = walletApi.PersonalData
+                .GetPersonalDataResponse(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            var getPersonalDataResult = getPersonalData.GetResponseObject().Result;
+            Assert.That(getPersonalDataResult.FullName, Is.EqualTo($"{firstName} {lastName}"));
+            Assert.That(getPersonalDataResult.FirstName, Is.EqualTo(firstName));
+            Assert.That(getPersonalDataResult.LastName, Is.EqualTo(lastName));
+            Assert.That(getPersonalDataResult.Country, Is.Not.Null.And.Not.Empty);
+            country = getPersonalData.GetResponseObject().Result.Country;
+
+            //STEP 9
+            var getCountryPhoneCodes = walletApi.CountryPhoneCodes
+                .GetCountryPhoneCodes(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            var getCountryPhoneCodesResult = getCountryPhoneCodes.GetResponseObject().Result;
+            Assert.That(getCountryPhoneCodesResult.Current, Is.EqualTo(country));
+            phonePrefix = getCountryPhoneCodesResult.CountriesList
+                .FirstOrDefault(c => c.Id == country).Prefix;
+            Assert.That(phonePrefix, Is.Not.Null);
+
+            //STEP 10
+            var postCheckMobilePhone = walletApi.CheckMobilePhone
+                .PostCheckMobilePhone(new PostClientPhoneModel() { PhoneNumber = phonePrefix + phoneNumber }, token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+
+            //STEP 11
+            var getCheckMobilePhone = walletApi.CheckMobilePhone
+                .GetCheckMobilePhone(phonePrefix + phoneNumber, code, token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            Assert.That(getCheckMobilePhone.GetResponseObject().Result
+                .Passed, Is.True);
+
+            //STEP 12
+            var getCheckDocumentsToUpload = walletApi.CheckDocumentsToUpload
+                .GetCheckDocumentsToUpload(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            var getCheckDocumentsToUploadResult = getCheckDocumentsToUpload.GetResponseObject().Result;
+            Assert.That(getCheckDocumentsToUploadResult.IdCard, Is.True);
+            Assert.That(getCheckDocumentsToUploadResult.ProofOfAddress, Is.True);
+            Assert.That(getCheckDocumentsToUploadResult.Selfie, Is.True);
+
+            //STEP 13
+            var postPinSecurity = walletApi.PinSecurity
+                .PostPinSecurity(new PinSecurityChangeModel() { Pin = pin }, token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+
+            //STEP 14
+            var getMyLykkeSettings = walletApi.MyLykkeSettings
+                .GetMyLykkeSettings(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            Assert.That(getMyLykkeSettings.GetResponseObject().Result.MyLykkeEnabled,
+                Is.True);
+
+            //STEP 15
+            //var postClientKeys = walletApi.ClientKeys
+            //    .PostClientKeys(new ClientKeysModel()
+            //    {
+
+            //    }, token)
+            //    .Validate.StatusCode(HttpStatusCode.OK)
+            //    .Validate.NoApiError();
         }
     }
 }
