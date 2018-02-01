@@ -96,7 +96,7 @@ namespace XUnitTestCommon.Tests
         public void OneTimeSetUp()
         {
             allure.AllureBeforeAllTestsInClass();
-            allure.PrepareEnvFile();
+            
         }
 
         [OneTimeTearDown]
@@ -106,7 +106,7 @@ namespace XUnitTestCommon.Tests
             Console.WriteLine("=============================== Final Cleanup ===============================");
             Console.WriteLine();
 
-            allure.CreateEnvFile();
+           // allure.CreateEnvFile();
 
             CallCleanupActions(true);
         }
