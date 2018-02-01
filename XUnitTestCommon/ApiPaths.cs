@@ -90,5 +90,7 @@ namespace XUnitTestCommon
         public static readonly string ALGO_STORE_ALGO_TAIL_LOG = "/api/v1/management/test/tailLog";
         public static readonly string ALGO_STORE_ALGO_GET_ALL_INSTANCE_DATA = "/api/v1/clientData/instanceData/all";
         public static readonly string ALGO_STORE_ALGO_INSTANCE_DATA = "/api/v1/clientData/instanceData";
+        public static readonly string ALGO_STORE_CLIENT_DATA_GET_ALL_ALGOS = "/api/v1/clientData/getAllAlgos";
+        public static readonly string ALGO_STORE_ADD_TO_PUBLIC = "/api/v1/clientData/addToPublic";
     }    
 }
