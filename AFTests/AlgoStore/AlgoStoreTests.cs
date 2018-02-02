@@ -623,6 +623,50 @@ namespace AFTests.AlgoStore
             Assert.That(returnedClinetInstanceData.InstanceId, Is.EqualTo((postInstanceData.InstanceId)));
         }
 
+        [Test]
+        [Category("AlgoStore")]
+        public async Task ClientDataGetAllAlgos()
+        {
+            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+
+            string algoID = metadataForUploadedBinary.Id;
+
+            string url = ApiPaths.ALGO_STORE_ADD_TO_PUBLIC;
+
+            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == metadataForUploadedBinary.Id) as MetaDataEntity;
+            Assert.NotNull(metaDataEntity);
+
+            AddToPublicDTO addAlgo = new AddToPublicDTO()
+            {
+                AlgoId = algoID,
+                ClientId = metaDataEntity.PartitionKey
+            };
+
+            var addAlgoToPublicEndpoint = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(addAlgo), Method.POST);
+            Assert.That(addAlgoToPublicEndpoint.Status, Is.EqualTo(HttpStatusCode.OK));
+
+            url = ApiPaths.ALGO_STORE_CLIENT_DATA_GET_ALL_ALGOS;
+
+            var clientDataAllAlgos = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.That(clientDataAllAlgos.Status, Is.EqualTo(HttpStatusCode.OK));
+
+            Object responceclientDataAllAlgos = JsonUtils.DeserializeJson(clientDataAllAlgos.ResponseJson);
+            List<AlgoDTO> listAllAlgos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<AlgoDTO>>(responceclientDataAllAlgos.ToString());
+            AlgoDTO expectedAlgoDTO = listAllAlgos.FindLast(t => t.Id.Equals(algoID));
+            string AlgoIdFromGettAllAlgos = expectedAlgoDTO.Id;
+            Assert.That(algoID, Is.EqualTo(AlgoIdFromGettAllAlgos));
+            foreach (AlgoDTO algo in listAllAlgos)
+            {
+                Assert.NotZero(expectedAlgoDTO.Rating);
+                Assert.NotZero(expectedAlgoDTO.UsersCount);
+                Assert.NotNull(expectedAlgoDTO.Id);
+                Assert.NotNull(expectedAlgoDTO.Name);
+                Assert.NotNull(expectedAlgoDTO.Description);
+                Assert.NotNull(expectedAlgoDTO.Date);
+                Assert.NotNull(expectedAlgoDTO.Author);
+            }
+        }
+
         private async Task<MetaDataResponseDTO> UploadBinaryAlgoAndGetResponceDTO()
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
