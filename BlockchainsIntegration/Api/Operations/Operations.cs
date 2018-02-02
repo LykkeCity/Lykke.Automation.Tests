@@ -69,14 +69,19 @@ namespace BlockchainsIntegration.LiteCoin.Api
 
         public IResponse<GetTransactionsHistoryFromToResponse> GetTransactionHistorFromAddress(string address, string take=null, string afterHash = null)
         {
-            return Request.Get($"/api/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
+            return Request.Get($"/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
                 .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<GetTransactionsHistoryFromToResponse>();
         }
 
         public IResponse<GetTransactionsHistoryFromToResponse> GetTransactionHistorToAddress(string address, string take = null, string afterHash = null)
         {
-            return Request.Get($"/api/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
+            return Request.Get($"/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
                 .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<GetTransactionsHistoryFromToResponse>();
+        }
+
+        public IResponse PostHistoryFromToAddress(string fromTo, string address)
+        {
+            return Request.Post($"/transactions/history/{fromTo}/{address}/observation").Build().Execute();
         }
     }
 }

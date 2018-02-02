@@ -50,7 +50,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void GetOperationIdInvalidIdTest(string operationId)
             {
                 var response = blockchainApi.Operations.GetOperationId(operationId);
-                response.Validate.StatusCode(HttpStatusCode.NoContent);
+                response.Validate.StatusCode(HttpStatusCode.NotFound);
             }
         }
 
@@ -197,7 +197,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void DeleteOperationIdInvalidOIdTest(string operationId)
             {
                 var response = blockchainApi.Operations.DeleteOperationId(operationId);
-                response.Validate.StatusCode(HttpStatusCode.NoContent);
+                response.Validate.StatusCode(HttpStatusCode.NotFound);
             }
         }
     }
