@@ -29,6 +29,12 @@ namespace AFTests.ApiRegression
             string country = null;
             var privateKey = new NBitcoin.Key();
 
+            //STEP 0
+            var getApplicationInfo = walletApi.ApplicationInfo
+                .GetApplicationInfo()
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+
             //STEP 1
             var getClientState = walletApi.ClientState
                 .GetClientState(email, null)
