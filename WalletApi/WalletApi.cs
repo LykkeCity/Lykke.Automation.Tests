@@ -60,5 +60,7 @@ namespace WalletApi.Api
         public EmailVerification EmailVerification => new EmailVerification();
         public PinSecurity PinSecurity => new PinSecurity();
         public MyLykkeSettings MyLykkeSettings => new MyLykkeSettings();
+        public Dicts Dicts => new Dicts();
+        public Issuers Issuers => new Issuers();
     }
 }

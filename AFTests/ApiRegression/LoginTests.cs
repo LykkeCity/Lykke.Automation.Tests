@@ -21,6 +21,7 @@ namespace AFTests.ApiRegression
             string code = "0000";
             string token = null;
             string accessToken = null;
+            string encodedPrivateKey = null;
 
             //STEP 1
             var getClientState = walletApi.ClientState
@@ -36,7 +37,7 @@ namespace AFTests.ApiRegression
                 {
                     ClientInfo = clientInfo,
                     Email = email,
-                    Password = "" //TODO: Add password;
+                    Password = password //TODO: Add encoded password;
                 })
                 .Validate.StatusCode(HttpStatusCode.OK)
                 .Validate.NoApiError();
@@ -75,9 +76,68 @@ namespace AFTests.ApiRegression
                 .Validate.NoApiError();
             accessToken = postClientCodes.GetResponseObject().Result.AccessToken;
             Assert.That(accessToken, Is.Not.Null);
-            
-            //STEP 7
 
+            //STEP 7 POST https://api-test.lykkex.net/api/Client/keys/encodedmainkey 
+            var postEncodedMainKey = walletApi.Client
+                .PostClientEncodedMainKey(new AccessTokenModel
+                {
+                    AccessToken = accessToken
+                }, token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            encodedPrivateKey = postEncodedMainKey.GetResponseObject().Result.EncodedPrivateKey;
+            Assert.That(encodedPrivateKey, Is.Not.Null);
+
+            //STEP 8
+            getClientState = walletApi.ClientState
+                .GetClientState(email, null)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+
+            //STEP 9 GET https://api-test.lykkex.net/api/Dicts/Assets
+            var getDictAssets = walletApi.Dicts.GetAssetts(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 10 GET https://api-test.lykkex.net/api/BaseAssets
+            var getBaseAssets = walletApi.BaseAssets.GetBaseAssets(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 11 GET https://api-test.lykkex.net/api/AppSettings
+            var getAppSettings = walletApi.AppSettings.GetAppSettings(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 12 GET https://api-test.lykkex.net/api/ApplicationInfo
+            var getApplicationInfo = walletApi.ApplicationInfo.GetApplicationInfo()
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 13 GET https://api-test.lykkex.net/api/AssetPairs
+            var getAssetPairs = walletApi.AssetPairs.GetAssetPairs(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 14 GET https://api-test.lykkex.net/api/Issuers
+            var getIssuers = walletApi.Issuers.Get(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 15 GET https://api-test.lykkex.net/api/Client/pendingActions
+            var getPendingActions = walletApi.Client.GetClientPendingActions(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 16 GET https://api-test.lykkex.net/api/offchain/limit/list
+            //var getOffchainLimitList = walletApi.
         }
     }
 }
