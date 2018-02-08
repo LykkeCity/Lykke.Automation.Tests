@@ -62,5 +62,8 @@ namespace WalletApi.Api
         public MyLykkeSettings MyLykkeSettings => new MyLykkeSettings();
         public Dicts Dicts => new Dicts();
         public Issuers Issuers => new Issuers();
+        public LimitOrders LimitOrders => new LimitOrders();
+        public Wallets Wallets => new Wallets();
+        public WatchLists WatchLists => new WatchLists();
     }
 }

@@ -23,6 +23,8 @@ namespace AFTests.ApiRegression
             string accessToken = null;
             string encodedPrivateKey = null;
 
+            ApplicationInfoResponseModel appInfo = null;
+
             //STEP 1
             var getClientState = walletApi.ClientState
                 .GetClientState(email, null)
@@ -116,6 +118,7 @@ namespace AFTests.ApiRegression
             var getApplicationInfo = walletApi.ApplicationInfo.GetApplicationInfo()
                 .Validate.StatusCode(HttpStatusCode.OK)
                 .Validate.NoApiError();
+            appInfo = getApplicationInfo.GetResponseObject().Result;
             //TODO: Add asserts
 
             //STEP 13 GET https://api-test.lykkex.net/api/AssetPairs
@@ -137,7 +140,60 @@ namespace AFTests.ApiRegression
             //TODO: Add asserts
 
             //STEP 16 GET https://api-test.lykkex.net/api/offchain/limit/list
-            //var getOffchainLimitList = walletApi.
+            var getOffchainLimitList = walletApi.LimitOrders.GetOffchainLimitList(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 17 GET https://api-test.lykkex.net/api/offchain/limit/count
+            var getOffchainLimitCount = walletApi.LimitOrders.GetOffchainLimitCount(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 18 GET https://api-test.lykkex.net/api/Dictionary/ico
+            var getDictionaryIco = walletApi.Dictionary.GetDictionaryKey("ico")
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 19 GET https://api-test.lykkex.net/api/assetcategories
+            var getAssetCategories = walletApi.AssetsCategories.GetAssetsCategories(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 20 GET https://mt-api-test.lykkex.net/api/init/data
+            //TODO: ADD
+
+            //STEP 21 GET https://api-test.lykkex.net/api/Wallets
+            var getWallets = walletApi.Wallets.GetWalltes(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 22 GET https://mt-api-test.lykkex.net/api/watchlists
+            //var getWatchlists = walletApi.WatchLists.Get(token)
+            //    .Validate.StatusCode(HttpStatusCode.OK)
+            //    .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 23 GET https://mt-api-test.lykkex.net/api/orders
+            //TODO: ADD
+
+            //STEP 24 GET https://api-test.lykkex.net/api/offchain/limit/count
+            getOffchainLimitCount = walletApi.LimitOrders.GetOffchainLimitCount(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+            //STEP 25 GET https://api-test.lykkex.net/api/offchain/limit/list
+            getOffchainLimitList = walletApi.LimitOrders.GetOffchainLimitList(token)
+                .Validate.StatusCode(HttpStatusCode.OK)
+                .Validate.NoApiError();
+            //TODO: Add asserts
+
+
         }
     }
 }
