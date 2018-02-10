@@ -10,6 +10,7 @@ using System.Linq;
 using NUnit.Framework;
 using XUnitTestCommon.TestsCore;
 using XUnitTestCommon.Reports;
+using System.Net.Sockets;
 
 namespace XUnitTestCommon.RestRequests.RestSharpRequest
 {
@@ -34,9 +35,17 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
             client = new RestClient(BaseUrl);
             request = new RestRequest(Resource, Method);
 
-            if (Environment.OSVersion.ToString().ToLower().Contains("windows"))
+            //set proxy for local debug
+            try
+            {
+                new TcpClient().Connect("127.0.0.1", 8888);
                 client.Proxy = new WebProxy("127.0.0.1", 8888);
-
+            }
+            catch (Exception)
+            {
+                //do nothing
+            }
+            
             Headers = new Dictionary<string, string>();
             QueryParams = new Dictionary<string, object>();
         }
