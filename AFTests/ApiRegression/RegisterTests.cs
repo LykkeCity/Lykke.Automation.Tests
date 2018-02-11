@@ -123,7 +123,7 @@ namespace AFTests.ApiRegression
             var getCountryPhoneCodesResult = getCountryPhoneCodes.GetResponseObject().Result;
             Assert.That(getCountryPhoneCodesResult.Current, Is.EqualTo(country));
             phonePrefix = getCountryPhoneCodesResult.CountriesList
-                .FirstOrDefault(c => c.Id == country).Prefix;
+                .FirstOrDefault(c => c.Id == country)?.Prefix;
             Assert.That(phonePrefix, Is.Not.Null);
 
             //STEP 10
