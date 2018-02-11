@@ -13,6 +13,7 @@ namespace XUnitTestCommon.TestsCore
     public class Allure2Report
     {
         private static AllureLifecycle Allure => AllureLifecycle.Instance;
+        private static int count = 0;
 
         //Need for run via VS
         static Allure2Report()
@@ -57,6 +58,21 @@ namespace XUnitTestCommon.TestsCore
                     AddMissedTest(testResult);
                 }
             }
+        }
+
+        public void PrepareEnvFile()
+        {
+            string propertiesPath = Path.Combine(Allure.ResultsDirectory, "environment.properties");
+            File.Delete(propertiesPath);
+            TestContext.WriteLine($"Count of env file execution {count++}");
+        }
+
+        public void CreateEnvFile()
+        {
+            string propertiesPath = Path.Combine(Allure.ResultsDirectory, "environment.properties");
+            AllurePropertiesBuilder.Instance.AddPropertyPair("Date", DateTime.Now.ToString());
+            
+            AllurePropertiesBuilder.Instance.SaveAllureProperties(propertiesPath);
         }
 
         private void AddMissedTest(ITestResult result)
