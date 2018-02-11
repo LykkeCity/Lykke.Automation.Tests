@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using Lykke.Client.AutorestClient.Models;
+using LykkeAutomationPrivate.DataGenerators;
 using NUnit.Framework;
 using XUnitTestCommon.TestsData;
 
@@ -39,7 +40,7 @@ namespace AFTests.ApiRegression
                 {
                     ClientInfo = clientInfo,
                     Email = email,
-                    Password = password //TODO: Add encoded password;
+                    Password = Sha256.GenerateHash(password)
                 })
                 .Validate.StatusCode(HttpStatusCode.OK)
                 .Validate.NoApiError();

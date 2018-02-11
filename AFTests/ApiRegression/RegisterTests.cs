@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Lykke.Client.AutorestClient.Models;
+using LykkeAutomationPrivate.DataGenerators;
 using NUnit.Framework;
 using XUnitTestCommon.TestsData;
 
@@ -18,16 +19,17 @@ namespace AFTests.ApiRegression
             string email = TestData.GenerateEmail();
             string firstName = "Autotest";
             string lastName = "User";
-            string code = "0000"; //TODO: What is it?
+            string code = "0000";
             string pin = "1111";
             string clientInfo = "iPhone; Model:6 Plus; Os:9.3.5; Screen:414x736";
             string hint = "qwe";
-            string password = Guid.NewGuid().ToString("N");
+            string password = Guid.NewGuid().ToString("N").Substring(0, 10);
             string phonePrefix = null;
             string phoneNumber = TestData.GenerateNumbers(9);
             string token = null;
             string country = null;
-            var privateKey = new NBitcoin.Key();
+
+            var bitcoinPrivateKey = new NBitcoin.Key().GetWif(NBitcoin.Network.TestNet);
 
             //STEP 0
             var getApplicationInfo = walletApi.ApplicationInfo
@@ -63,7 +65,7 @@ namespace AFTests.ApiRegression
                 ClientInfo = clientInfo,
                 Email = email,
                 Hint = hint,
-                Password = password
+                Password = Sha256.GenerateHash(password)
             })
             .Validate.StatusCode(HttpStatusCode.OK)
             .Validate.NoApiError();
@@ -166,8 +168,8 @@ namespace AFTests.ApiRegression
             var postClientKeys = walletApi.ClientKeys
                 .PostClientKeys(new ClientKeysModel()
                 {
-                    PubKey = privateKey.PubKey.ToString(),
-                    EncodedPrivateKey = privateKey.PubKey.ToString() + privateKey.PubKey.ToString() //Change this
+                    PubKey = bitcoinPrivateKey.PubKey.ToString(),
+                    EncodedPrivateKey = AesUtils.Encrypt(bitcoinPrivateKey.ToString(), password)
                 }, token)
                 .Validate.StatusCode(HttpStatusCode.OK)
                 .Validate.NoApiError();
