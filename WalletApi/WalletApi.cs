@@ -65,5 +65,6 @@ namespace WalletApi.Api
         public LimitOrders LimitOrders => new LimitOrders();
         public Wallets Wallets => new Wallets();
         public WatchLists WatchLists => new WatchLists();
+        public SignatureVerificationToken SignatureVerificationToken => new SignatureVerificationToken();
     }
 }
