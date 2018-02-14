@@ -1,40 +1,36 @@
 ﻿using AlgoStoreData.DTOs;
+using NUnit.Framework;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using XUnitTestCommon;
+using XUnitTestCommon.Utils;
 
 namespace AlgoStoreData.Fixtures
 {
     public static class DataManager
     {
-        private static List<MetaDataResponseDTO> PreStoredMetadata = new List<MetaDataResponseDTO>();
+        private static List<BuilInitialDataObjectDTO> PreStoredMetadata = new List<BuilInitialDataObjectDTO>();
         private static Random rnd = new Random();
         private static List<int> metaDataIndexIDWithFile = new List<int>();
 
-        public static void addSingleMetadata(MetaDataResponseDTO metaData)
-        {
-            lock (PreStoredMetadata)
-            {
-                PreStoredMetadata.Add(metaData);
-            }
-        }
-
-        public static void storeMetadata(List<MetaDataResponseDTO> preStoredMetadata)
+        public static void storeMetadata(List<BuilInitialDataObjectDTO> preStoredMetadata)
         {
             PreStoredMetadata = preStoredMetadata;
         }
 
-        public static MetaDataResponseDTO getMetadataForEdit()
+        public static BuilInitialDataObjectDTO getMetadataForEdit()
         {
             lock (PreStoredMetadata)
             {
                 int r = rnd.Next(PreStoredMetadata.Count);
-                MetaDataResponseDTO editMetadataResponceDTO = PreStoredMetadata[r];
+                BuilInitialDataObjectDTO editMetadataResponceDTO = PreStoredMetadata[r];
                 return editMetadataResponceDTO;
             }
         }
 
-        public static MetaDataResponseDTO getMetaDataForBinaryUpload()
+        public static BuilInitialDataObjectDTO getMetaDataForStringUpload()
         {
             lock (PreStoredMetadata)
             {
@@ -44,24 +40,24 @@ namespace AlgoStoreData.Fixtures
                     r = rnd.Next(PreStoredMetadata.Count);
                 }
                 while (metaDataIndexIDWithFile.Contains(r));
-                MetaDataResponseDTO editMetadataResponceDTO = PreStoredMetadata[r];
+                BuilInitialDataObjectDTO editMetadataResponceDTO = PreStoredMetadata[r];
                 metaDataIndexIDWithFile.Add(r);
                 return editMetadataResponceDTO;
             }
         }
 
-        public static MetaDataResponseDTO getMetadataForDelete()
+        public static BuilInitialDataObjectDTO getMetadataForDelete()
         {
             lock (PreStoredMetadata)
             {
                 int r = rnd.Next(PreStoredMetadata.Count);
-                MetaDataResponseDTO editMetadataResponceDTO = PreStoredMetadata[r];
+                BuilInitialDataObjectDTO editMetadataResponceDTO = PreStoredMetadata[r];
                 PreStoredMetadata.RemoveAt(r);
                 return editMetadataResponceDTO;
             }
         }
 
-        public static List<MetaDataResponseDTO> getAllMetaData()
+        public static List<BuilInitialDataObjectDTO> getAllMetaData()
         {
             lock (PreStoredMetadata)
             {

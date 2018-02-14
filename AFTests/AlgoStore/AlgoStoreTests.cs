@@ -51,8 +51,6 @@ namespace AFTests.AlgoStore
             Assert.That(response.Status , Is.EqualTo(HttpStatusCode.OK));
             MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
 
-            DataManager.addSingleMetadata(responceMetaData);
-
             Assert.AreEqual(metadata.Name, responceMetaData.Name);
             Assert.AreEqual(metadata.Description, responceMetaData.Description);
             Assert.NotNull(responceMetaData.Date);
@@ -73,16 +71,24 @@ namespace AFTests.AlgoStore
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
 
-            MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForEdit();
+            MetaDataDTO metadata = new MetaDataDTO()
+            {
+                Name = Helpers.RandomString(8),
+                Description = Helpers.RandomString(8)
+            };
+
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK));
+            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
+
+            url = ApiPaths.ALGO_STORE_METADATA;
+
             MetaDataEditDTO editMetaData = new MetaDataEditDTO()
             {
-                Id = temporaryResponseDTO.Id,
+                Id = responceMetaData.Id,
                 Name = Helpers.RandomString(9),
                 Description = Helpers.RandomString(9)
             };
-
-            temporaryResponseDTO.Name = editMetaData.Name;
-            temporaryResponseDTO.Description = editMetaData.Description;
 
             var responseMetaDataAfterEdit = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
             Assert.That(responseMetaDataAfterEdit.Status , Is.EqualTo(HttpStatusCode.OK));
@@ -103,25 +109,6 @@ namespace AFTests.AlgoStore
             Assert.AreEqual(metaDataEntity.Description, responceMetaDataAfterEdit.Description);
         }
 
-
-        [Test]
-        [Category("AlgoStore")]
-        public async Task DeleteMetadata()
-        {
-            MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForDelete();
-            CascadeDeleteDTO editMetaData = new CascadeDeleteDTO()
-            {
-                Id = temporaryResponseDTO.Id,
-                Name = temporaryResponseDTO.Name
-            };
-
-            string url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
-            var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.That(responceCascadeDelete.Status , Is.EqualTo(HttpStatusCode.NoContent));
-            MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
-            Assert.Null(metaDataEntityDeleted);
-        }
-
         [Test]
         [Category("AlgoStore")]
         public async Task GetAllMetadataForClient()
@@ -132,7 +119,7 @@ namespace AFTests.AlgoStore
             Object responceClientGetAll = JsonUtils.DeserializeJson(responceAllClientMetadata.ResponseJson);
             List<MetaDataResponseDTO> listAllClinetObjects = Newtonsoft.Json.JsonConvert.DeserializeObject<List<MetaDataResponseDTO>>(responceClientGetAll.ToString());
             List<string> keysPreBuildData = new List<string>();
-            DataManager.getAllMetaData().ForEach(e => keysPreBuildData.Add(e.Id));
+            DataManager.getAllMetaData().ForEach(e => keysPreBuildData.Add(e.AlgoId));
             int mathcedKeysCounter = 0;
             foreach (MetaDataResponseDTO currentData in listAllClinetObjects)
             {
@@ -146,25 +133,7 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("AlgoStore")]
-        public async Task UploadBinaryAlgo()
-        {
-            string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
-
-            string AlgoId = DataManager.getMetaDataForBinaryUpload().Id;
-
-            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
-            {
-                {"AlgoId", AlgoId }
-            };
-
-            var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.That(responceAllClientMetadata.Status , Is.EqualTo(HttpStatusCode.NoContent));
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.That(blobExists , Is.EqualTo(true));
-        }
-
-        [Test]
+        [Ignore("Ignore currently not implemented")]
         [Category("AlgoStore")]
         public async Task DeployBinaryAlgo()
         {
@@ -187,6 +156,7 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
+        [Ignore("Ignore currently not implemented")]
         [Category("AlgoStore")]
         public async Task StartBinary()
         {
@@ -219,6 +189,7 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
+        [Ignore("Ignore currently not implemented")]
         [Category("AlgoStore")]
         public async Task StopBinary()
         {
@@ -362,9 +333,9 @@ namespace AFTests.AlgoStore
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
 
-            MetaDataResponseDTO metadataWithUploadedString = DataManager.getMetaDataForBinaryUpload();
+            BuilInitialDataObjectDTO metadataWithUploadedString = DataManager.getMetaDataForStringUpload();
 
-            string Algoid = metadataWithUploadedString.Id;
+            string Algoid = metadataWithUploadedString.AlgoId;
 
             PostUploadStringAlgoDTO uploadedStringDTO = new PostUploadStringAlgoDTO()
             {
@@ -385,9 +356,9 @@ namespace AFTests.AlgoStore
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
 
-            MetaDataResponseDTO metadataWithUploadedString = DataManager.getMetaDataForBinaryUpload();
+            BuilInitialDataObjectDTO metadataWithUploadedString = DataManager.getMetaDataForStringUpload();
 
-            string Algoid = metadataWithUploadedString.Id;
+            string Algoid = metadataWithUploadedString.AlgoId;
 
             PostUploadStringAlgoDTO uploadedStringDTO = new PostUploadStringAlgoDTO()
             {
@@ -669,11 +640,13 @@ namespace AFTests.AlgoStore
 
         private async Task<MetaDataResponseDTO> UploadBinaryAlgoAndGetResponceDTO()
         {
+            // will need rework
+
             string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
 
-            MetaDataResponseDTO metadataWithUploadedBinary = DataManager.getMetaDataForBinaryUpload();
+            BuilInitialDataObjectDTO metadataWithUploadedBinary = DataManager.getMetaDataForStringUpload();
 
-            string AlgoId = metadataWithUploadedBinary.Id;
+            string AlgoId = metadataWithUploadedBinary.AlgoId;
 
             Dictionary<string, string> quaryParam = new Dictionary<string, string>()
             {
@@ -683,7 +656,7 @@ namespace AFTests.AlgoStore
             var responceUploadBinary = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.That(responceUploadBinary.Status, Is.EqualTo(HttpStatusCode.NoContent));
 
-            return metadataWithUploadedBinary;
+            return null;
         }
     }
 }

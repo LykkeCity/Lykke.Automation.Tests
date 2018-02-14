@@ -6,7 +6,7 @@ namespace AlgoStoreData.DTOs
 {
     public class CascadeDeleteDTO
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public string AlgoId { get; set; }
+        public string InstanceId { get; set; }
     }
 }

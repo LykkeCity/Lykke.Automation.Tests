@@ -28,7 +28,7 @@ namespace AlgoStoreData.Fixtures
         public GenericRepository<MetaDataEntity, IMetaData> MetaDataRepository;
         public GenericRepository<RuntimeDataEntity, IRuntimeData> RuntimeDataRepository;
         public GenericRepository<ClientInstanceEntity, IClientInstance> ClientInstanceRepository;
-        public List<MetaDataResponseDTO> PreStoredMetadata;
+        public List<BuilInitialDataObjectDTO> PreStoredMetadata;
         public AlgoBlobRepository BlobRepository;
 
 

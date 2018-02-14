@@ -47,10 +47,10 @@ namespace AFTests.AlgoStore
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
 
-            MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForEdit();
+            BuilInitialDataObjectDTO temporaryResponseDTO = DataManager.getMetadataForEdit();
             MetaDataEditDTO editMetaData = new MetaDataEditDTO()
             {
-                Id = temporaryResponseDTO.Id,
+                Id = temporaryResponseDTO.AlgoId,
                 Name = badName,
                 Description = badName
             };
@@ -65,11 +65,11 @@ namespace AFTests.AlgoStore
         [TestCase(null)]
         public async Task DeleteMetadataBadRequest(string badID)
         {
-            MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForEdit();
+            BuilInitialDataObjectDTO temporaryResponseDTO = DataManager.getMetadataForEdit();
             CascadeDeleteDTO editMetaData = new CascadeDeleteDTO()
             {
-                Id = badID,
-                Name = temporaryResponseDTO.Name
+                AlgoId = badID,
+                InstanceId = temporaryResponseDTO.Name
             };
 
             string url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
