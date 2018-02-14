@@ -66,5 +66,7 @@ namespace WalletApi.Api
         public Wallets Wallets => new Wallets();
         public WatchLists WatchLists => new WatchLists();
         public SignatureVerificationToken SignatureVerificationToken => new SignatureVerificationToken();
+        public OrderBook OrderBook => new OrderBook();
+        public HotWallet HotWallet => new HotWallet();
     }
 }
