@@ -95,9 +95,12 @@ namespace AFTests.AlgoStore
             var responceUploadString = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(uploadedStringDTO), Method.POST);
             Assert.That(responceUploadString.Status , Is.EqualTo(HttpStatusCode.NoContent));
 
+            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == Algoid) as MetaDataEntity;
+
             Dictionary<string, string> quaryParamGetString = new Dictionary<string, string>()
             {
-                {"AlgoId", Algoid }
+                {"AlgoId", Algoid },
+                {"ClientId", metaDataEntity.PartitionKey }
             };
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
@@ -790,7 +793,8 @@ namespace AFTests.AlgoStore
 
             Dictionary<string, string> quaryParamGetString = new Dictionary<string, string>()
             {
-                {"AlgoId", "non-existing-id-234-555-666" }
+                {"AlgoId", "non-existing-id-234-555-666" },
+                {"ClientId", "non-existing-it-123-44" }
             };
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
