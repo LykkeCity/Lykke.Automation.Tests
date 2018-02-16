@@ -1,0 +1,16 @@
+phantom:
+  address: zcash-api.autotests-service.svc.cluster.local:80 # [Target's address]:[target's port]
+  load_profile:
+    load_type: rps # schedule load by defining requests per second
+    schedule: line(10, 1000, 3m) # starting from 1rps growing linearly to 10rps during 10 minutes
+  header_http: '1.1'
+  headers: ["Host: testHost", "Connection: close"]
+  uris: ["/api/assets/ZEC"]
+telegraf:
+  enabled: false # let's disable telegraf monitoring for this time
+ 
+uploader:
+  enabled: true
+  package: yandextank.plugins.DataUploader
+  api_address: https://overload.yandex.net
+  token_file: token.txt
