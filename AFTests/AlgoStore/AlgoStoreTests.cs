@@ -669,9 +669,11 @@ namespace AFTests.AlgoStore
                 Assert.NotNull(expectedAlgoDTO.Author);
             }
         }
-        [Test]
+       
         [Category("AlgoStore")]
-        public async Task GetAlgoMetaData()
+        [TestCase("")]
+        [TestCase("getFromData")]
+        public async Task GetAlgoMetaData(string clientIdTemp)
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
 
@@ -691,12 +693,17 @@ namespace AFTests.AlgoStore
 
             MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == AlgoId) as MetaDataEntity;
 
+            if (clientIdTemp.Equals("getFromData"))
+            {
+                clientIdTemp = metaDataEntity.PartitionKey;
+            }
+
             url = ApiPaths.ALGO_STORE_GET_ALGO_METADATA;
 
             Dictionary<string, string> quaryParamAlgoData = new Dictionary<string, string>()
             {
                 {"AlgoId", AlgoId },
-                {"clientId", metaDataEntity.PartitionKey}
+                {"clientId", clientIdTemp}
             };
 
             var responceAlgoMetadata = await this.Consumer.ExecuteRequest(url, quaryParamAlgoData, null, Method.GET);
