@@ -11,15 +11,13 @@ namespace AFTests.BlockchainsIntegrationTests
 {
     class BlockchainsIntegrationSignTests
     {
-        public class GetLitecoinSignAlive : BlockchainsIntegrationBaseTest
+        public class GetBlockchainSignAlive : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]
             public void GetLitecoinSignAliveTest()
             {
-                var signService = new BlockchainSign();
-
-                var response = signService.GetIsAlive();
+                var response = blockchainSign.GetIsAlive();
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().Name, Does.Contain("Sign"));
                 Assert.That(response.GetResponseObject().Version, Is.Not.Null);
@@ -33,9 +31,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostWalletTest()
             {
-                var signService = new BlockchainSign();
-
-                var response = signService.PostWallet();
+                var response = blockchainSign.PostWallet();
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().PublicAddress, Is.Not.Empty);
                 Assert.That(response.GetResponseObject().PrivateKey, Is.Not.Empty);
@@ -47,16 +43,14 @@ namespace AFTests.BlockchainsIntegrationTests
             [Test]
             [Category("BlockchainIntegration")]
             public void PostSignTest()
-            {
-                var signService = new BlockchainSign();
-
+            { 
                 var req = new SignRequest()
                 {
                     PrivateKeys = new List<string>() { PKey },
                     TransactionContext = "testHex"
                 };
 
-                var response = signService.PostSign(req);
+                var response = blockchainSign.PostSign(req);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
             }
         }

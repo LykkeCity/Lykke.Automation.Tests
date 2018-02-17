@@ -21,11 +21,13 @@ namespace AlgoStoreData.Fixtures
     public partial class AlgoStoreTestDataFixture : BaseTest
     {
         private ConfigBuilder _configBuilder;
+        private TimeSpan timespan = TimeSpan.FromSeconds(120);
         public ApiConsumer Consumer;
         private OAuthConsumer User;
         private IContainer _container;
         public GenericRepository<MetaDataEntity, IMetaData> MetaDataRepository;
         public GenericRepository<RuntimeDataEntity, IRuntimeData> RuntimeDataRepository;
+        public GenericRepository<ClientInstanceEntity, IClientInstance> ClientInstanceRepository;
         public List<MetaDataResponseDTO> PreStoredMetadata;
         public AlgoBlobRepository BlobRepository;
 
@@ -50,12 +52,13 @@ namespace AlgoStoreData.Fixtures
 
             this.MetaDataRepository = RepositoryUtils.ResolveGenericRepository<MetaDataEntity, IMetaData>(this._container);
             this.RuntimeDataRepository = RepositoryUtils.ResolveGenericRepository<RuntimeDataEntity, IRuntimeData>(this._container);
-            this.BlobRepository = new AlgoBlobRepository(_configBuilder.Config["MainConnectionString"]);
+            this.ClientInstanceRepository = RepositoryUtils.ResolveGenericRepository<ClientInstanceEntity, IClientInstance>(this._container);
+            this.BlobRepository = new AlgoBlobRepository(_configBuilder.Config["MainConnectionString"], timespan);
     }
 
         private async Task PrepareTestData()
         {
-            PreStoredMetadata = await UploadSomeBaseMetaData(15);
+            PreStoredMetadata = await UploadSomeBaseMetaData(30);
             DataManager.storeMetadata(PreStoredMetadata);
         }
 
