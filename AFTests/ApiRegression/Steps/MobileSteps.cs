@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using Lykke.Client.AutorestClient.Models;
+using NUnit.Framework;
 
 namespace AFTests.ApiRegression.Steps
 {
@@ -17,6 +18,11 @@ namespace AFTests.ApiRegression.Steps
 
         public (string token, string encodedPrivateKey) Login(string email, string password, string pin)
         {
+            Assert.That(api.ClientState.GetClientState(email, null)
+                .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
+                .GetResponseObject().Result
+                .IsRegistered, Is.True, $"Account {email} doesn't exist");
+
             string token = api.Auth.PostAuthResponse(new AuthenticateModel()
                 {
                     Email = email,

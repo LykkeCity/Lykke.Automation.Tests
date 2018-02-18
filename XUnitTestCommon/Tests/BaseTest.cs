@@ -25,6 +25,12 @@ namespace XUnitTestCommon.Tests
 
         protected virtual void Initialize() { }
 
+        protected void Step(string name, Action action)
+        {
+            Console.WriteLine(name);
+            action.Invoke();
+        }
+
         #region response info
         public static void ValidateScheme(bool valid, IList<string> errors)
         {

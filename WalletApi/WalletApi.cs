@@ -69,5 +69,6 @@ namespace WalletApi.Api
         public OrderBook OrderBook => new OrderBook();
         public HotWallet HotWallet => new HotWallet();
         public AssetPairRates AssetPairRates => new AssetPairRates();
+        public History History => new History();
     }
 }
