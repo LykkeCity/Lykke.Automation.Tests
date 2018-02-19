@@ -1,4 +1,5 @@
 ﻿using Lykke.Client.AutorestClient.Models;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -198,6 +199,156 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var response = blockchainApi.Operations.DeleteOperationId(operationId);
                 response.Validate.StatusCode(HttpStatusCode.NotFound);
+            }
+        }
+
+        //outputs
+        public class GetTransactionsManyOutputsInvalidOperationId : BlockchainsIntegrationBaseTest
+        {
+            [TestCase("")]
+            [TestCase("testOId")]
+            [TestCase("1234")]
+            [TestCase("!@%^&*()")]
+            [Category("BlockchainIntegration")]
+            public void GetTransactionsManyOutputsInvalidOperationIdTest(string operationId)
+            {
+                var response = blockchainApi.Operations.GetTransactionsManyOutputs(operationId);
+                response.Validate.StatusCode(HttpStatusCode.NotFound);
+            }
+        }
+
+        public class GetTransactionsManyOutputs: BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void GetTransactionsManyOutputsTest()
+            {
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = "100001",
+                    AssetId = CurrentAssetId(),
+                    FromAddress = WALLET_ADDRESS,
+                    IncludeFee = false,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString("N");
+
+                var signResponse = blockchainSign.PostSign(new SignRequest() { TransactionContext = responseTransaction.TransactionContext, PrivateKeys = new List<string>() { PKey } });
+
+                var broadcastRequset = new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.GetResponseObject().SignedTransaction };
+                var broadcatedResponse = blockchainApi.Operations.PostTransactionsBroadcast(broadcastRequset);
+
+                var response = blockchainApi.Operations.GetTransactionsManyOutputs(operationId);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+            }
+        }
+
+        //inputs
+        public class GetTransactionsManyInputsInvalidOperationId : BlockchainsIntegrationBaseTest
+        {
+            [TestCase("")]
+            [TestCase("testOId")]
+            [TestCase("1234")]
+            [TestCase("!@%^&*()")]
+            [Category("BlockchainIntegration")]
+            public void GetTransactionsManyInputsInvalidOperationIdTest(string operationId)
+            {
+                var response = blockchainApi.Operations.GetTransactionsManyInputs(operationId);
+                response.Validate.StatusCode(HttpStatusCode.NotFound);
+            }
+        }
+
+        public class GetTransactionsManyInputs : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void GetTransactionsManyInputsTest()
+            {
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = "100001",
+                    AssetId = CurrentAssetId(),
+                    FromAddress = WALLET_ADDRESS,
+                    IncludeFee = false,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString("N");
+
+                var signResponse = blockchainSign.PostSign(new SignRequest() { TransactionContext = responseTransaction.TransactionContext, PrivateKeys = new List<string>() { PKey } });
+
+                var broadcastRequset = new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.GetResponseObject().SignedTransaction };
+                var broadcatedResponse = blockchainApi.Operations.PostTransactionsBroadcast(broadcastRequset);
+
+                var response = blockchainApi.Operations.GetTransactionsManyInputs(operationId);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+            }
+        }
+
+
+        //post many inputs
+        public class PostTransactionsManyInputs : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void PostTransactionsManyInputsTest()
+            {
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = "100001",
+                    AssetId = CurrentAssetId(),
+                    FromAddress = WALLET_ADDRESS,
+                    IncludeFee = false,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+
+                var request = new BuildTransactionWithManyInputsRequest()
+                {
+                    AssetId = ASSET_ID,
+                    OperationId = model.OperationId,
+                    ToAddress = HOT_WALLET,
+                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract() {Amount = "100001", FromAddress = WALLET_ADDRESS } }
+                };
+
+                var response = blockchainApi.Operations.PostTransactionsManyInputs(request);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                //??
+                //var responseManyInputs = blockchainApi.Operations.GetTransactionsManyInputs(model.OperationId.ToString("N"));
+                //response.Validate.StatusCode(HttpStatusCode.OK);
+            }
+        }
+
+        public class PostTransactionsManyInputsInvalidOperationId : BlockchainsIntegrationBaseTest
+        {
+            [TestCase("")]
+            [TestCase("testOId")]
+            [TestCase("1234")]
+            [TestCase("!@%^&*()")]
+            [Category("BlockchainIntegration")]
+            public void PostTransactionsManyInputsInvalidOperationIdTest(string operationId)
+            {
+                var request = new BuildTransactionWithManyInputsRequest()
+                {
+                    AssetId = ASSET_ID,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET,
+                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract() { Amount = "100001", FromAddress = WALLET_ADDRESS } }
+                };
+
+                var json = JsonConvert.SerializeObject(request);
+                json = json.Replace(request.OperationId.ToString(), operationId);
+
+                var response = blockchainApi.Operations.PostTransactionsManyInputs(json);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
             }
         }
     }

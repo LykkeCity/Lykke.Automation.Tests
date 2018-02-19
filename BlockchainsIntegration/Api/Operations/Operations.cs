@@ -17,9 +17,9 @@ namespace BlockchainsIntegration.LiteCoin.Api
             return Request.Post("/transactions/single").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
         }
 
-        public IResponse<BroadcastTransactionResponse> PostTransactionsBroadcast(BroadcastTransactionRequest model)
+        public IResponse PostTransactionsBroadcast(BroadcastTransactionRequest model)
         {
-            return Request.Post("/transactions/broadcast").AddJsonBody(model).Build().Execute<BroadcastTransactionResponse>();
+            return Request.Post("/transactions/broadcast").AddJsonBody(model).Build().Execute();
         }
 
         public IResponse DeleteOperationId(string operationId)
@@ -33,6 +33,11 @@ namespace BlockchainsIntegration.LiteCoin.Api
         }
 
         public IResponse<BuildTransactionResponse> PostTransactionsManyInputs(BuildTransactionWithManyInputsRequest model)
+        {
+            return Request.Post("/transactions/many-inputs").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
+        }
+
+        public IResponse<BuildTransactionResponse> PostTransactionsManyInputs(string model)
         {
             return Request.Post("/transactions/many-inputs").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
         }

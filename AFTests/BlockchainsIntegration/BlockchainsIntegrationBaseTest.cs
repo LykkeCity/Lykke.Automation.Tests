@@ -61,6 +61,7 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static string KEY_WALLET_SINGLE_USE = BlockchainSpecificSettings().WalletSingleUseKey;
 
         protected static string CLIENT_ID = BlockchainSpecificSettings().ClientId;
+        protected static string ASSET_ID = BlockchainSpecificSettings().AssetId;
         //fill here http://faucet.thonguyen.net/ltc
     }
 
