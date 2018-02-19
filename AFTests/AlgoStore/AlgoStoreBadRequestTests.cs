@@ -45,12 +45,24 @@ namespace AFTests.AlgoStore
         [TestCase(null)]
         public async Task EditMetadataBadRequest(string badName)
         {
+
             string url = ApiPaths.ALGO_STORE_METADATA;
 
-            BuilInitialDataObjectDTO temporaryResponseDTO = DataManager.getMetadataForEdit();
+            MetaDataDTO metadata = new MetaDataDTO()
+            {
+                Name = Helpers.RandomString(8),
+                Description = Helpers.RandomString(8)
+            };
+
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK));
+            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
+
+            url = ApiPaths.ALGO_STORE_METADATA;
+
             MetaDataEditDTO editMetaData = new MetaDataEditDTO()
             {
-                Id = temporaryResponseDTO.AlgoId,
+                Id = responceMetaData.Id,
                 Name = badName,
                 Description = badName
             };
@@ -65,14 +77,25 @@ namespace AFTests.AlgoStore
         [TestCase(null)]
         public async Task DeleteMetadataBadRequest(string badID)
         {
-            BuilInitialDataObjectDTO temporaryResponseDTO = DataManager.getMetadataForEdit();
+            string url = ApiPaths.ALGO_STORE_METADATA;
+
+            MetaDataDTO metadata = new MetaDataDTO()
+            {
+                Name = Helpers.RandomString(8),
+                Description = Helpers.RandomString(8)
+            };
+
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK));
+            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
+
             CascadeDeleteDTO editMetaData = new CascadeDeleteDTO()
             {
                 AlgoId = badID,
-                InstanceId = temporaryResponseDTO.Name
+                InstanceId = responceMetaData.Name
             };
 
-            string url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
+            url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
             Assert.That(responceCascadeDelete.Status , Is.EqualTo(HttpStatusCode.BadRequest));
         }
@@ -102,7 +125,8 @@ namespace AFTests.AlgoStore
         {
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
-                AlgoId = badID
+                AlgoId = badID,
+                InstanceId = badID
             };
 
             string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;

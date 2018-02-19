@@ -314,9 +314,9 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetLogOnStoppedAlgo()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            string AlgoID = metadataForUploadedBinary.AlgoId;
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
@@ -373,9 +373,9 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetLogOnDeployedOnlyAlgo()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            string AlgoID = metadataForUploadedBinary.AlgoId;
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
@@ -407,9 +407,9 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetTailLogOnStoppedAlgo()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            string AlgoID = metadataForUploadedBinary.AlgoId;
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
@@ -467,9 +467,9 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetTailLogOnDeployedOnlyAlgo()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            string AlgoID = metadataForUploadedBinary.AlgoId;
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {

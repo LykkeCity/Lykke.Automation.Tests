@@ -68,6 +68,17 @@ namespace AlgoStoreData.Fixtures
 
                 InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
 
+                url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
+
+                DeployBinaryDTO deploy = new DeployBinaryDTO()
+                {
+                    AlgoId = stringDTO.AlgoId,
+                    InstanceId = postInstanceData.InstanceId,
+                };
+
+                var deployBynaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
+                Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.NoContent);
+
                 BuilInitialDataObjectDTO tempDataDTO = new BuilInitialDataObjectDTO()
                 {
                     AlgoId = stringDTO.AlgoId,

@@ -137,13 +137,14 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task DeployBinaryAlgo()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            string AlgoID = metadataForUploadedBinary.AlgoId;
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
-                AlgoId = AlgoID
+                AlgoId = AlgoID,
+                InstanceId = AlgoID
             };
 
             string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
@@ -151,7 +152,7 @@ namespace AFTests.AlgoStore
             var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
             Assert.That(uploadBinaryresponce.Status , Is.EqualTo(HttpStatusCode.OK));
 
-            RuntimeDataEntity runtimeDataEntity = await RuntimeDataRepository.TryGetAsync(t => t.Id == metadataForUploadedBinary.Id) as RuntimeDataEntity;
+            RuntimeDataEntity runtimeDataEntity = await RuntimeDataRepository.TryGetAsync(t => t.Id == metadataForUploadedBinary.AlgoId) as RuntimeDataEntity;
             Assert.NotNull(runtimeDataEntity);
         }
 
@@ -160,13 +161,14 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task StartBinary()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            string AlgoID = metadataForUploadedBinary.AlgoId;
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
-                AlgoId = AlgoID
+                AlgoId = AlgoID,
+                InstanceId = AlgoID
             };
 
             string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
@@ -193,13 +195,14 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task StopBinary()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            string AlgoID = metadataForUploadedBinary.AlgoId;
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
-                AlgoId = AlgoID
+                AlgoId = AlgoID,
+                InstanceId = AlgoID
             };
 
             string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
@@ -238,9 +241,9 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetLog()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            string AlgoID = metadataForUploadedBinary.AlgoId;
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
@@ -284,9 +287,9 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetTailLog()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            string AlgoID = metadataForUploadedBinary.AlgoId;
 
             DeployBinaryDTO algo = new DeployBinaryDTO()
             {
@@ -331,22 +334,58 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task UploadString()
         {
-            string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+            string url = ApiPaths.ALGO_STORE_METADATA;
 
-            BuilInitialDataObjectDTO metadataWithUploadedString = DataManager.getMetaDataForStringUpload();
-
-            string Algoid = metadataWithUploadedString.AlgoId;
-
-            PostUploadStringAlgoDTO uploadedStringDTO = new PostUploadStringAlgoDTO()
+            MetaDataDTO metadata = new MetaDataDTO()
             {
-                AlgoId = Algoid,
-                Data = Helpers.RandomString(300) 
+                Name = Helpers.RandomString(13),
+                Description = Helpers.RandomString(13)
             };
 
-            var responceUploadString = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(uploadedStringDTO), Method.POST);
-            Assert.That(responceUploadString.Status , Is.EqualTo(HttpStatusCode.NoContent));
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
 
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(Algoid, BinaryAlgoFileType.STRING);
+
+            url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+
+            UploadStringDTO stringDTO = new UploadStringDTO()
+            {
+                AlgoId = responceMetaData.Id,
+                Data = "TEST FOR NOW NOT WORKING ALGO"
+            };
+
+            var responsetemp = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
+            Assert.True(response.Status == System.Net.HttpStatusCode.NoContent);
+
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
+            {
+                AlgoId = stringDTO.AlgoId,
+                HftApiKey = "key",
+                AssetPair = "BTCUSD",
+                TradedAsset = "USD",
+                Margin = "1",
+                Volume = "1"
+            };
+
+            url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
+
+            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
+
+            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
+
+            url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
+
+            DeployBinaryDTO deploy = new DeployBinaryDTO()
+            {
+                AlgoId = stringDTO.AlgoId,
+                InstanceId = postInstanceData.InstanceId,
+            };
+
+            var deployBynaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
+            Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.NoContent);
+
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(stringDTO.AlgoId, BinaryAlgoFileType.STRING);
             Assert.That(blobExists , Is.EqualTo(true));
         }
 
@@ -356,9 +395,9 @@ namespace AFTests.AlgoStore
         {
             string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
 
-            BuilInitialDataObjectDTO metadataWithUploadedString = DataManager.getMetaDataForStringUpload();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string Algoid = metadataWithUploadedString.AlgoId;
+            string Algoid = metadataForUploadedBinary.AlgoId;
 
             PostUploadStringAlgoDTO uploadedStringDTO = new PostUploadStringAlgoDTO()
             {
@@ -386,9 +425,9 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetAllClientInstanceData()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string algoID = metadataForUploadedBinary.Id;
+            string algoID = metadataForUploadedBinary.AlgoId;
 
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -445,9 +484,9 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task PostInstanceDataForAlgo()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string algoID = metadataForUploadedBinary.Id;
+            string algoID = metadataForUploadedBinary.AlgoId;
 
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -482,8 +521,8 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task EditInstanceDataForAlgo()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
-            string algoID = metadataForUploadedBinary.Id;
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            string algoID = metadataForUploadedBinary.AlgoId;
 
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -542,9 +581,9 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetInstanceData()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string algoID = metadataForUploadedBinary.Id;
+            string algoID = metadataForUploadedBinary.AlgoId;
 
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -598,13 +637,13 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task ClientDataGetAllAlgos()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string algoID = metadataForUploadedBinary.Id;
+            string algoID = metadataForUploadedBinary.AlgoId;
 
             string url = ApiPaths.ALGO_STORE_ADD_TO_PUBLIC;
 
-            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == metadataForUploadedBinary.Id) as MetaDataEntity;
+            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == algoID) as MetaDataEntity;
             Assert.NotNull(metaDataEntity);
 
             AddToPublicDTO addAlgo = new AddToPublicDTO()
@@ -638,25 +677,69 @@ namespace AFTests.AlgoStore
             }
         }
 
-        private async Task<MetaDataResponseDTO> UploadBinaryAlgoAndGetResponceDTO()
+        private async Task<BuilInitialDataObjectDTO> UploadBinaryAlgoAndGetResponceDTO()
         {
-            // will need rework
 
-            string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
+            string url = ApiPaths.ALGO_STORE_METADATA;
 
-            BuilInitialDataObjectDTO metadataWithUploadedBinary = DataManager.getMetaDataForStringUpload();
-
-            string AlgoId = metadataWithUploadedBinary.AlgoId;
-
-            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
+            MetaDataDTO metadata = new MetaDataDTO()
             {
-                {"AlgoId", AlgoId }
+                Name = Helpers.RandomString(13),
+                Description = Helpers.RandomString(13)
             };
 
-            var responceUploadBinary = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.That(responceUploadBinary.Status, Is.EqualTo(HttpStatusCode.NoContent));
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
 
-            return null;
+
+            url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+
+            UploadStringDTO stringDTO = new UploadStringDTO()
+            {
+                AlgoId = responceMetaData.Id,
+                Data = "TEST FOR NOW NOT WORKING ALGO"
+            };
+
+            var responsetemp = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
+            Assert.True(response.Status == System.Net.HttpStatusCode.NoContent);
+
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
+            {
+                AlgoId = stringDTO.AlgoId,
+                HftApiKey = "key",
+                AssetPair = "BTCUSD",
+                TradedAsset = "USD",
+                Margin = "1",
+                Volume = "1"
+            };
+
+            url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
+
+            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
+
+            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
+
+            url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
+
+            DeployBinaryDTO deploy = new DeployBinaryDTO()
+            {
+                AlgoId = stringDTO.AlgoId,
+                InstanceId = postInstanceData.InstanceId,
+            };
+
+            var deployBynaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
+            Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.NoContent);
+
+            BuilInitialDataObjectDTO tempDataDTO = new BuilInitialDataObjectDTO()
+            {
+                AlgoId = stringDTO.AlgoId,
+                InstanceId = postInstanceData.InstanceId,
+                Name = responceMetaData.Name,
+                Description = responceMetaData.Description
+            };
+
+            return tempDataDTO;
         }
     }
 }

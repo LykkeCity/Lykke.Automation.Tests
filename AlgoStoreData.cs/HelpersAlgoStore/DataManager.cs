@@ -20,32 +20,6 @@ namespace AlgoStoreData.Fixtures
             PreStoredMetadata = preStoredMetadata;
         }
 
-        public static BuilInitialDataObjectDTO getMetadataForEdit()
-        {
-            lock (PreStoredMetadata)
-            {
-                int r = rnd.Next(PreStoredMetadata.Count);
-                BuilInitialDataObjectDTO editMetadataResponceDTO = PreStoredMetadata[r];
-                return editMetadataResponceDTO;
-            }
-        }
-
-        public static BuilInitialDataObjectDTO getMetaDataForStringUpload()
-        {
-            lock (PreStoredMetadata)
-            {
-                int r;
-                do
-                {
-                    r = rnd.Next(PreStoredMetadata.Count);
-                }
-                while (metaDataIndexIDWithFile.Contains(r));
-                BuilInitialDataObjectDTO editMetadataResponceDTO = PreStoredMetadata[r];
-                metaDataIndexIDWithFile.Add(r);
-                return editMetadataResponceDTO;
-            }
-        }
-
         public static BuilInitialDataObjectDTO getMetadataForDelete()
         {
             lock (PreStoredMetadata)
