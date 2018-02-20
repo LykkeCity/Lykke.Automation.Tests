@@ -57,10 +57,9 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var assetId = CurrentAssetId();
 
-
                 var response = blockchainApi.Assets.GetAsset(assetId);
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().Name.ToLower(), Is.EqualTo(CurrentAssetId().ToLower()));
+                Assert.That(response.GetResponseObject().AssetId, Is.EqualTo(CurrentAssetId()).IgnoreCase);
             }
         }
 

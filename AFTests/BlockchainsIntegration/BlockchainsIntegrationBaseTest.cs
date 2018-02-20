@@ -16,7 +16,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
         {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Zcash";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Ripple";// "Dash"; "Litecoin";
         }
 
         private static BlockchainSpecificModel _settings;
@@ -40,6 +40,9 @@ namespace AFTests.BlockchainsIntegrationTests
 
             if (SpecificBlockchain().ToLower() == "zcash")
                 _settings = new ZcashSettings();
+
+            if (SpecificBlockchain().ToLower() == "ripple")
+                _settings = new RippleSettings();
 
             return _settings;
         }
@@ -124,6 +127,22 @@ namespace AFTests.BlockchainsIntegrationTests
             WalletSingleUseKey = "cVhrfsddvvhJhEEoqocSpdwZjJrTdQmHdWRKyvSqhyYvBDFD4die";
             ClientId = "b623b171-a307-4485-897c-f3a70b763217";
             AssetId = "ZEC";
+        }
+    }
+
+    class RippleSettings : BlockchainSpecificModel
+    {
+        public RippleSettings()
+        {
+            BlockchainApi = "http://ripple-api.autotests-service.svc.cluster.local/api";
+            BlockchainSign = "http://ripple-sign-service.autotests-service.svc.cluster.local/api";
+            WalletsUrl = null;
+            WalletKey = "ssrCxY476RJMNTPKpMrvNM1CJrKWz";
+            WalletAddress = "rLp1GxXdTQa6nEM4iS8LCVKvxKd5jyKWAU";
+            WalletSingleUse = "rwAC8DbqubkRcYKuQQaqSBYppHD4JU84Pa";
+            WalletSingleUseKey = "snfFfwhb7tobJcamWtH6GhvvhM6pi";
+            ClientId = "b623b171-a307-4485-897c-f3a70b763217";
+            AssetId = "XRP";
         }
     }
 

@@ -198,7 +198,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void DeleteOperationIdInvalidOIdTest(string operationId)
             {
                 var response = blockchainApi.Operations.DeleteOperationId(operationId);
-                response.Validate.StatusCode(HttpStatusCode.NotFound);
+                response.Validate.StatusCode(HttpStatusCode.NoContent);
             }
         }
 

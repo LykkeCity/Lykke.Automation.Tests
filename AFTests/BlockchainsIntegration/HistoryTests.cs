@@ -9,8 +9,16 @@ namespace AFTests.BlockchainsIntegration
 {
     class HistoryTests
     {
-        string transaction = "3526277cff91afeeb6c7dac4052d800d3883a6b8546a3547b3fddc199cf83c94";
-
+        public class GetHistoryFromBadRequest : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void GetHistoryFromBadRequestTest()
+            {
+                var response = blockchainApi.Operations.GetTransactionHistorFromAddress(WALLET_ADDRESS, null);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+            }
+        }
 
         public class GetHistoryFrom : BlockchainsIntegrationBaseTest
         {
@@ -18,9 +26,8 @@ namespace AFTests.BlockchainsIntegration
             [Category("BlockchainIntegration")]
             public void GetHistoryFromTest()
             {
-                var response = blockchainApi.Operations.GetTransactionHistorFromAddress(WALLET_ADDRESS);
+                var response = blockchainApi.Operations.GetTransactionHistorFromAddress(WALLET_ADDRESS, "1");
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.Content, Is.EqualTo("[]"), "Unexpected count for invalid address");
             }
         }
 
