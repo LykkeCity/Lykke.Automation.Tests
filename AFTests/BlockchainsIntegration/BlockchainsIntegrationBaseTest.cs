@@ -42,7 +42,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 _settings = new ZcashSettings();
 
             if (SpecificBlockchain().ToLower() == "ripple")
-                _settings = new RippleSettings();
+                _settings = new  RippleSettings();
 
             return _settings;
         }
@@ -145,6 +145,7 @@ namespace AFTests.BlockchainsIntegrationTests
             AssetId = "XRP";
         }
     }
+
 
     public class LocalConfig : BlockchainSpecificModel
     {
