@@ -124,7 +124,7 @@ namespace XUnitTestCommon.Consumers
             string protocol = "http";
             if (_isSecure)
                 protocol = "https";
-            UriBuilder uriBuilder = new UriBuilder($"{protocol}://{baseUrl}");
+            UriBuilder uriBuilder = new UriBuilder($"{protocol}://{urlPreffix}.{baseUrl}");
             uriBuilder.Path = path;
             if (port != null)
             {
