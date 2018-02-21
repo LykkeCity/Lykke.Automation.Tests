@@ -45,7 +45,7 @@ namespace AlgoStoreData.Fixtures
                 UploadStringDTO stringDTO = new UploadStringDTO()
                 {
                     AlgoId = responceMetadataList[i].Id,
-                    Data = "TEST FOR NOW NOT WORKING ALGO"                    
+                    Data = "package com.lykke.algos;\n public class Algo \n { \n public void run() throws InterruptedException \n { \n for (int i = 100000; i > 0; i--) \n { \n java.lang.Thread.sleep(1000); \n System.out.println(\"Demo Algo Fil VS\" + i); \n } \n } \n }"             
                 };
 
                 var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
@@ -77,7 +77,7 @@ namespace AlgoStoreData.Fixtures
                 };
 
                 var deployBynaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
-                Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.NoContent);
+                Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
 
                 BuilInitialDataObjectDTO tempDataDTO = new BuilInitialDataObjectDTO()
                 {
