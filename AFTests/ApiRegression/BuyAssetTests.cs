@@ -17,10 +17,6 @@ namespace AFTests.ApiRegression
         [Category("ApiRegression")]
         public void BuyAssetLimitOrderTest()
         {
-            //TODO: Move to config
-            string email = "untest005@test.com";
-            string password = "1234567";
-            string pin = "1111";
             string asset = "EUR";
             double assetBalance = 0;
             string assetToBuy = "BTC";
@@ -122,6 +118,118 @@ namespace AFTests.ApiRegression
             Step("Asserting history", () =>
             {
                 Assert.That(()=> walletApi.History.GetByAssetId("", token)
+                                 .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
+                                 .GetResponseObject().Result
+                                 .Any(record => record.Trade?.OrderId == orderId && record.Trade?.Asset == asset),
+                    Is.True.After(60 * 1000, 1000));
+            });
+        }
+
+        [Test]
+        [Category("ApiRegression")]
+        public void SellAssetLimitOrderTest()
+        {
+            string asset = "USD";
+            double assetBalance = 0;
+            string assetToSell = "BTC";
+            double assetToSellBalance = 0;
+            double volume = 0.001;
+            string assetPair = "BTCUSD";
+            double assetPairPrice = 0;
+            string orderId = null;
+            string token = null;
+            Key key = null;
+
+            Step($"Login as {email} user", () =>
+            {
+                var loginStep = new MobileSteps(walletApi).Login(email, password, pin);
+                var encodedPrivateKey = loginStep.encodedPrivateKey;
+                var privateKey = AesUtils.Decrypt(encodedPrivateKey, password);
+                token = loginStep.token;
+                key = Key.Parse(privateKey);
+            });
+
+            Step("Get current wallets and balances", () =>
+            {
+                var walltes = walletApi.Wallets.GetWalltes(token)
+                    .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
+                    .GetResponseObject().Result;
+
+                var assetBalanceNullable = walltes.Lykke.Assets
+                    .FirstOrDefault(wallet => wallet.Id == asset)?.Balance;
+                Assert.That(assetBalanceNullable, Is.Not.Null);
+                assetBalance = assetBalanceNullable.Value;
+                
+                var assetToSellBalanceNullable = walltes.Lykke.Assets
+                    .FirstOrDefault(wallet => wallet.Id == assetToSell)?.Balance;
+                Assert.That(assetToSellBalanceNullable, Is.Not.Null);
+                assetToSellBalance = assetToSellBalanceNullable.Value;
+                //TODO: Should 0.5 BTC be enough???
+                Assert.That(assetToSellBalance, Is.GreaterThan(0.5), $"Less than 0.5 {assetToSell} at the wallet!");
+            });
+
+            Step("Find price to purchase", () =>
+            {
+                var assetPairRates = walletApi.AssetPairRates.GetById(assetPair, token)
+                    .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
+                    .GetResponseObject().Result;
+                Assert.That(assetPairRates.Rate.Bid, Is.Not.Null);
+                assetPairPrice = assetPairRates.Rate.Bid.Value;
+            });
+
+            Step($"Sell {assetToSell} for {asset}", () =>
+            {
+                string message = walletApi.SignatureVerificationToken
+                    .GetKeyConfirmation(email, token)
+                    .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
+                    .GetResponseObject().Result?.Message;
+                Assert.That(message, Is.Not.Null);
+
+                var signedMessage = key.SignMessage(message);
+
+                string accessToken = walletApi.SignatureVerificationToken
+                    .PostKeyConfirmation(new RecoveryTokenChallangeResponse(email, signedMessage), token)
+                    .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
+                    .GetResponseObject().Result.AccessToken;
+                Assert.That(accessToken, Is.Not.Null);
+
+                orderId = walletApi.HotWallet
+                    .PostLimitOrder(new HotWalletLimitOperation
+                    {
+                        AssetId = assetToSell,
+                        AssetPair = assetPair,
+                        Price = assetPairPrice,
+                        Volume = -volume
+                    }, accessToken, token)
+                    .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
+                    .GetResponseObject().Result.Order?.Id;
+                Assert.That(orderId, Is.Not.Null);
+            });
+
+            Step("Waiting for 1 minute until asset has been sold", () =>
+            {
+                Assert.That(() => walletApi.LimitOrders.GetOffchainLimitList(token, assetPair)
+                        .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
+                        .GetResponseObject().Result.Orders,
+                    Is.Empty.After(60 * 1000, 1000));
+            });
+
+            Step($"Assert that {assetToSell} balance has been decreased, and {asset} balance increased", () =>
+            {
+                Assert.That(walletApi.Wallets.GetWalletsById(assetToSell, token)
+                        .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
+                        .GetResponseObject().Result.Balance,
+                    Is.EqualTo(assetToSellBalance - volume).Within(assetToSellBalance * 0.01));
+
+                Assert.That(walletApi.Wallets.GetWalletsById(asset, token)
+                        .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
+                        .GetResponseObject().Result.Balance,
+                    Is.EqualTo(assetBalance + volume * assetPairPrice).Within(assetBalance * 0.01));
+            });
+
+            Step("Asserting history", () =>
+            {
+                Assert.That(() => walletApi.History.GetByAssetId("", token)
                                  .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
                                  .GetResponseObject().Result
                                  .Any(record => record.Trade?.OrderId == orderId && record.Trade?.Asset == asset),

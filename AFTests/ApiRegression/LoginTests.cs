@@ -15,10 +15,7 @@ namespace AFTests.ApiRegression
         [Category("ApiRegression")]
         public void LoginTest()
         {
-            string email = "untest001@test.com"; //TODO: Register new user
-            string password = "123456";
             string clientInfo = "<android>; Model:<Android SDK built for x86>; Os:<android>; Screen:<1080x1794>;";
-            string pin = "1111";
             string code = "0000";
             string token = null;
             string accessToken = null;
