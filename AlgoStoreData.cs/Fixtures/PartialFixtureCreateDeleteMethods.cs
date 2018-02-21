@@ -106,6 +106,7 @@ namespace AlgoStoreData.Fixtures
                     InstanceId = deleteMetadata.InstanceId
                 };
                 var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
+                Assert.That(responceCascadeDelete.Status == System.Net.HttpStatusCode.NoContent);
 
                 responces.Add(responceCascadeDelete);               
             }

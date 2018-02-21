@@ -58,7 +58,7 @@ namespace AlgoStoreData.Fixtures
 
         private async Task PrepareTestData()
         {
-            PreStoredMetadata = await UploadSomeBaseMetaData(1);
+            PreStoredMetadata = await UploadSomeBaseMetaData(3);
             DataManager.storeMetadata(PreStoredMetadata);
         }
 

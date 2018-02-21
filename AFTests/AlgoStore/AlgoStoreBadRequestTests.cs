@@ -183,7 +183,7 @@ namespace AFTests.AlgoStore
             };
 
             var algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET);
-            Assert.That(algoIDLogResponse.Status , Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(algoIDLogResponse.Status , Is.EqualTo(HttpStatusCode.NotFound));
         }
 
         [Category("AlgoStore")]
