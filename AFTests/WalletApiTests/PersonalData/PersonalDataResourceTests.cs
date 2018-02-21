@@ -74,9 +74,9 @@ namespace AFTests.WalletApiTests
                 ValidateScheme(valid, schemesError);
 
                 var responseModel = walletApi.PersonalData.GetPersonalDataResponse(registationResponse.Result.Token).GetResponseObject();
-                Assert.That(responseModel.PersonalData.FullName, Is.EqualTo(user.FullName), "Full Name is not the same");
-                Assert.That(responseModel.PersonalData.Email, Is.EqualTo(user.Email), "Email is not the same");
-                Assert.That(responseModel.PersonalData.Phone, Is.EqualTo(user.ContactPhone), "Phone is not the same");
+                Assert.That(responseModel.Result.FullName, Is.EqualTo(user.FullName), "Full Name is not the same");
+                Assert.That(responseModel.Result.Email, Is.EqualTo(user.Email), "Email is not the same");
+                Assert.That(responseModel.Result.Phone, Is.EqualTo(user.ContactPhone), "Phone is not the same");
             }
         }
     }

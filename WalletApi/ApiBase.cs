@@ -8,7 +8,9 @@ namespace WalletApi
 {
     public class ApiBase
     {
-        protected string URL = "https://api-test.lykkex.net/api";
+        //TODO: To config
+        protected string URL = Environment.GetEnvironmentVariable("WalletApiUrl") 
+                               ?? "https://api-test.lykkex.net/api";
 
         protected IRequestBuilder Request => Requests.For(URL);
     }
