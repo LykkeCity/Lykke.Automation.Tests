@@ -137,8 +137,8 @@ namespace AFTests.BlockchainsIntegrationTests
             BlockchainApi = "http://ripple-api.autotests-service.svc.cluster.local/api";
             BlockchainSign = "http://ripple-sign-service.autotests-service.svc.cluster.local/api";
             WalletsUrl = null;
-            WalletKey = "ssrCxY476RJMNTPKpMrvNM1CJrKWz";
-            WalletAddress = "rLp1GxXdTQa6nEM4iS8LCVKvxKd5jyKWAU";
+            WalletKey = "rwAC8DbqubkRcYKuQQaqSBYppHD4JU84Pa";
+            WalletAddress = "snfFfwhb7tobJcamWtH6GhvvhM6pi";
             WalletSingleUse = "rwAC8DbqubkRcYKuQQaqSBYppHD4JU84Pa";
             WalletSingleUseKey = "snfFfwhb7tobJcamWtH6GhvvhM6pi";
             ClientId = "b623b171-a307-4485-897c-f3a70b763217";
