@@ -44,6 +44,9 @@ namespace AFTests.BlockchainsIntegrationTests
             if (SpecificBlockchain().ToLower() == "ripple")
                 _settings = new  RippleSettings();
 
+            if (SpecificBlockchain().ToLower() == "stellar")
+                _settings = new StellarSettings();
+
             return _settings;
         }
 
@@ -137,10 +140,26 @@ namespace AFTests.BlockchainsIntegrationTests
             BlockchainApi = "http://ripple-api.autotests-service.svc.cluster.local/api";
             BlockchainSign = "http://ripple-sign-service.autotests-service.svc.cluster.local/api";
             WalletsUrl = null;
-            WalletKey = "rwAC8DbqubkRcYKuQQaqSBYppHD4JU84Pa";
-            WalletAddress = "snfFfwhb7tobJcamWtH6GhvvhM6pi";
+            WalletKey = "snfFfwhb7tobJcamWtH6GhvvhM6pi";
+            WalletAddress = "rwAC8DbqubkRcYKuQQaqSBYppHD4JU84Pa";
             WalletSingleUse = "rwAC8DbqubkRcYKuQQaqSBYppHD4JU84Pa";
             WalletSingleUseKey = "snfFfwhb7tobJcamWtH6GhvvhM6pi";
+            ClientId = "b623b171-a307-4485-897c-f3a70b763217";
+            AssetId = "XRP";
+        }
+    }
+
+    class StellarSettings : BlockchainSpecificModel
+    {
+        public StellarSettings()
+        {
+            BlockchainApi = "http://stellar-api.lykke-service.svc.cluster.local/api";
+            BlockchainSign = "http://stellar-sign-service.lykke-service.svc.cluster.local/api";
+            WalletsUrl = null;
+            WalletKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
+            WalletAddress = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
+            WalletSingleUse = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
+            WalletSingleUseKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
             ClientId = "b623b171-a307-4485-897c-f3a70b763217";
             AssetId = "XRP";
         }
