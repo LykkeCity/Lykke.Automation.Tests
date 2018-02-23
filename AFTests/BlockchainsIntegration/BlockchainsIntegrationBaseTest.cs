@@ -15,14 +15,14 @@ namespace AFTests.BlockchainsIntegrationTests
     {
 
        protected static string SpecificBlockchain()
-        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Ripple";// "Dash"; "Litecoin";
-        }
+       {
+           return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Stellar"; //"Ripple";// "Dash"; "Litecoin";
+       }
 
         private static BlockchainSpecificModel _settings;
 
         protected static BlockchainSpecificModel BlockchainSpecificSettings()
-        {
+        { 
             if (_settings != null)
                 return _settings;
 
@@ -43,6 +43,9 @@ namespace AFTests.BlockchainsIntegrationTests
 
             if (SpecificBlockchain().ToLower() == "ripple")
                 _settings = new  RippleSettings();
+
+            if (SpecificBlockchain().ToLower() == "stellar")
+                _settings = new StellarSettings();
 
             return _settings;
         }
@@ -146,6 +149,22 @@ namespace AFTests.BlockchainsIntegrationTests
         }
     }
 
+    class StellarSettings : BlockchainSpecificModel
+    {
+        public StellarSettings()
+        {
+            BlockchainIntegration = "Stellar";
+            BlockchainApi = "http://stellar-api.lykke-service.svc.cluster.local/api";
+            BlockchainSign = "http://stellar-sign-service.lykke-service.svc.cluster.local/api";
+            WalletsUrl = null;
+            WalletKey = "SAWACMPFSQLDPUSW3RCIYVI3AQ2BVK5ZAI7YZ3W2A5LBS6HJGAJUFHIJ";
+            WalletAddress = "CUYJXBP5KWOA6L3BUCQPLBBONEKJYF3GF3TWY5NRQHH4TJF7EKEGLTV";
+            WalletSingleUse = "CUYJXBP5KWOA6L3BUCQPLBBONEKJYF3GF3TWY5NRQHH4TJF7EKEGLTV";
+            WalletSingleUseKey = "SAWACMPFSQLDPUSW3RCIYVI3AQ2BVK5ZAI7YZ3W2A5LBS6HJGAJUFHIJ";
+            ClientId = "b623b171-a307-4485-897c-f3a70b763217";
+            AssetId = "XLM";
+        }
+    }
 
     public class LocalConfig : BlockchainSpecificModel
     {
