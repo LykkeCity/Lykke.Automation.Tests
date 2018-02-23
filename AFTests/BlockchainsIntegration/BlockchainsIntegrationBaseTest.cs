@@ -8,170 +8,45 @@ using System.Text;
 using XUnitTestCommon.Tests;
 using Newtonsoft.Json;
 using System.IO;
+using AFTests.BlockchainsIntegration;
 
 namespace AFTests.BlockchainsIntegrationTests
 {
     class BlockchainsIntegrationBaseTest : BaseTest
     {
+        private static Lazy<BlockchainSpecificModel> _currentSettings
+        {
+            get
+            {
+                return new Lazy<BlockchainSpecificModel>
+                                    (BlockchainSpecificSettingsFactory.BlockchainSpecificSettings(SpecificBlockchain()));
+            }
+        }
 
        protected static string SpecificBlockchain()
        {
-           return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Stellar"; //"Ripple";// "Dash"; "Litecoin";
+           return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Ripple"; //"Ripple";// "Dash"; "Litecoin";
        }
-
-        private static BlockchainSpecificModel _settings;
-
-        protected static BlockchainSpecificModel BlockchainSpecificSettings()
-        { 
-            if (_settings != null)
-                return _settings;
-
-            if (File.Exists(TestContext.CurrentContext.WorkDirectory + "\\properties.json"))
-            {
-                _settings = LocalConfig.LocalConfigModel();
-                return _settings;
-            }
-
-            if (SpecificBlockchain().ToLower() == "litecoin")
-                _settings = new LitecoinSettings();
-
-            if (SpecificBlockchain().ToLower() == "dash")
-                _settings = new DashSettings();
-
-            if (SpecificBlockchain().ToLower() == "zcash")
-                _settings = new ZcashSettings();
-
-            if (SpecificBlockchain().ToLower() == "ripple")
-                _settings = new  RippleSettings();
-
-            if (SpecificBlockchain().ToLower() == "stellar")
-                _settings = new StellarSettings();
-
-            return _settings;
-        }
 
         protected static string CurrentAssetId()
         {
-            return BlockchainSpecificSettings().AssetId;
+            return _currentSettings.Value.AssetId;
         }
 
-        protected BlockchainApi blockchainApi = new BlockchainApi(BlockchainSpecificSettings().BlockchainApi);
-        protected BlockchainSign blockchainSign = new BlockchainSign(BlockchainSpecificSettings().BlockchainSign);
+        protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
+        protected BlockchainApi blockchainApi = new BlockchainApi(_currentSettings.Value.BlockchainApi);
+        protected BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
         protected BlockchainWallets blockchainWallets = new BlockchainWallets();
 
-        protected static string HOT_WALLET = new BlockchainSign(BlockchainSpecificSettings().BlockchainSign).PostWallet().GetResponseObject().PublicAddress;
-        protected static string WALLET_ADDRESS = BlockchainSpecificSettings().WalletAddress;
-        protected static string PKey = BlockchainSpecificSettings().WalletKey;
+        protected static string HOT_WALLET = new BlockchainSign(_currentSettings.Value.BlockchainSign).PostWallet().GetResponseObject().PublicAddress;
+        protected static string WALLET_ADDRESS = _currentSettings.Value.WalletAddress;
+        protected static string PKey = _currentSettings.Value.WalletKey;
 
-        protected static string WALLET_SINGLE_USE = BlockchainSpecificSettings().WalletSingleUse;
-        protected static string KEY_WALLET_SINGLE_USE = BlockchainSpecificSettings().WalletSingleUseKey;
+        protected static string WALLET_SINGLE_USE = _currentSettings.Value.WalletSingleUse;
+        protected static string KEY_WALLET_SINGLE_USE = _currentSettings.Value.WalletSingleUseKey;
 
-        protected static string CLIENT_ID = BlockchainSpecificSettings().ClientId;
-        protected static string ASSET_ID = BlockchainSpecificSettings().AssetId;
+        protected static string CLIENT_ID = _currentSettings.Value.ClientId;
+        protected static string ASSET_ID = _currentSettings.Value.AssetId;
         //fill here http://faucet.thonguyen.net/ltc
-    }
-
-    public abstract class BlockchainSpecificModel
-    {
-        public string BlockchainIntegration { get; set; }
-        public string BlockchainApi { get; set; }
-        public string BlockchainSign { get; set; }
-        public string WalletsUrl { get; set; }
-        public string WalletAddress { get; set; }
-        public string WalletKey { get; set; }
-        public string WalletSingleUse { get; set; }
-        public string WalletSingleUseKey { get; set; }
-        public string ClientId { get; set; }
-        public string AssetId { get; set; }
-    }
-
-    class LitecoinSettings : BlockchainSpecificModel
-    {
-        public LitecoinSettings()
-        {
-            BlockchainApi = "http://litecoin-api.autotests-service.svc.cluster.local/api";
-            BlockchainSign = "http://litecoin-sign.autotests-service.svc.cluster.local/api";
-            WalletsUrl = null;
-            WalletAddress = "msvNWBpFNDQ6JxiEcTFU3xXbSnDir4EqCk";
-            WalletKey = "cRTB3eAajJchgNuybhH5SwC9L5PFoTwxXBjgB8vRNJeJ4EpcXmAP";
-            WalletSingleUse = "mvErcbPuL4T4kxbJYejk6xLbv8pfBiiSPu";
-            WalletSingleUseKey = "cNn38kw6LSfAS6WvJJbFTqWRewa1GgfwczftXrBcyAmygM1V7qKr";
-            ClientId = "b623b171-a307-4485-897c-f3a70b763217";
-            AssetId = "LTC";
-        }
-    }
-
-    class DashSettings : BlockchainSpecificModel
-    {
-        public DashSettings()
-        {
-            BlockchainApi = "http://dash-api.autotests-service.svc.cluster.local/api";
-            BlockchainSign = "http://dash-sign.autotests-service.svc.cluster.local/api";
-            WalletsUrl = null;
-            WalletAddress = "yUDQmubM2HtBFmkvbSK1rER1t57M5Mcvng";
-            WalletKey = "cPX3K2xfuzoakmXMaJG5HrdFKuACxegcax5eq55SMHJ8YxvmttZz";
-            WalletSingleUse = "yiH2MLsx6bVZFgQ9qQNj5QeetGft8xDacC";
-            WalletSingleUseKey = "cQinitZ5SkZdARZPuXicFgGkKepWcjpB5fTx5WKHdvkMTdnB1yrq";
-            ClientId = "b623b171-a307-4485-897c-f3a70b763217";
-            AssetId = "DASH";
-        }
-    }
-
-    class ZcashSettings : BlockchainSpecificModel
-    {
-        public ZcashSettings()
-        {
-            BlockchainApi = "http://zcash-api.autotests-service.svc.cluster.local/api";
-            BlockchainSign = "http://zcash-sign-service.autotests-service.svc.cluster.local/api";
-            WalletsUrl = null;
-            WalletAddress = "tmQjumT79zunETQgFxNTEMUKz8D841fMCf1";
-            WalletKey = "cRPW3spyP9riDJWniNpcbDkiBjpLrhneSh2qTs3uSZUbm4HZLEyB";
-            WalletSingleUse = "tmCiRyHFZYeRyXV1wqyiqZad2Zf9ifdR9H5";
-            WalletSingleUseKey = "cVhrfsddvvhJhEEoqocSpdwZjJrTdQmHdWRKyvSqhyYvBDFD4die";
-            ClientId = "b623b171-a307-4485-897c-f3a70b763217";
-            AssetId = "ZEC";
-        }
-    }
-
-    class RippleSettings : BlockchainSpecificModel
-    {
-        public RippleSettings()
-        {
-            BlockchainApi = "http://ripple-api.autotests-service.svc.cluster.local/api";
-            BlockchainSign = "http://ripple-sign-service.autotests-service.svc.cluster.local/api";
-            WalletsUrl = null;
-            WalletKey = "snfFfwhb7tobJcamWtH6GhvvhM6pi";
-            WalletAddress = "rwAC8DbqubkRcYKuQQaqSBYppHD4JU84Pa";
-            WalletSingleUse = "rwAC8DbqubkRcYKuQQaqSBYppHD4JU84Pa";
-            WalletSingleUseKey = "snfFfwhb7tobJcamWtH6GhvvhM6pi";
-            ClientId = "b623b171-a307-4485-897c-f3a70b763217";
-            AssetId = "XRP";
-        }
-    }
-
-    class StellarSettings : BlockchainSpecificModel
-    {
-        public StellarSettings()
-        {
-            BlockchainApi = "http://stellar-api.lykke-service.svc.cluster.local/api";
-            BlockchainSign = "http://stellar-sign-service.lykke-service.svc.cluster.local/api";
-            WalletsUrl = null;
-            WalletKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
-            WalletAddress = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
-            WalletSingleUse = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
-            WalletSingleUseKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
-            ClientId = "b623b171-a307-4485-897c-f3a70b763217";
-            AssetId = "XRP";
-        }
-    }
-
-
-    public class LocalConfig : BlockchainSpecificModel
-    {
-        public static BlockchainSpecificModel LocalConfigModel()
-        {
-            return JsonConvert.DeserializeObject<LocalConfig>(File.ReadAllText(TestContext.CurrentContext.WorkDirectory + "\\properties.json")); ;
-        }
-
-    }
+    }  
 }

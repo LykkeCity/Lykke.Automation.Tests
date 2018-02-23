@@ -156,7 +156,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var sw = new Stopwatch();
                 time = 0;
-                var request = new BlockchainApi(BlockchainSpecificSettings().BlockchainApi);
+                var request = new BlockchainApi(BlockchainApi);
                 sw.Start();
                 while (sw.Elapsed < TimeSpan.FromMinutes(10))
                 {
@@ -174,7 +174,7 @@ namespace AFTests.BlockchainsIntegrationTests
             static void GetTransactionCompleteStatusTime(string operationId, out long time)
             {
                 var sw = new Stopwatch();
-                var request = new BlockchainApi(BlockchainSpecificSettings().BlockchainApi);
+                var request = new BlockchainApi(BlockchainApi);
                 time = 0;
                 sw.Start();
                 while (sw.Elapsed < TimeSpan.FromMinutes(10))

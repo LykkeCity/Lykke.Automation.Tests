@@ -351,5 +351,89 @@ namespace AFTests.BlockchainsIntegrationTests
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
             }
         }
+
+        public class DeleteTranstactionsObservationFromInvalidAddress : BlockchainsIntegrationBaseTest
+        {
+            [TestCase("testOId")]
+            [TestCase("1234")]
+            [TestCase("!@%^&*()")]
+            [Category("BlockchainIntegration")]
+            public void DeleteTranstactionsObservationFromInvalidAddressTest(string address)
+            {
+                var response = blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(address);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public class DeleteTranstactionsObservationFromValidAddress : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void DeleteTranstactionsObservationFromValidAddressTest()
+            {
+                var address = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                var response = blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(address);
+                response.Validate.StatusCode(HttpStatusCode.NoContent);
+            }
+        }
+
+        public class DeleteTranstactionsObservationToInvalidAddress : BlockchainsIntegrationBaseTest
+        {
+            [TestCase("testOId")]
+            [TestCase("1234")]
+            [TestCase("!@%^&*()")]
+            [Category("BlockchainIntegration")]
+            public void DeleteTranstactionsObservationToInvalidAddressTest(string address)
+            {
+                var response = blockchainApi.Operations.DeleteTranstactionsObservationToAddress(address);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public class DeleteTranstactionsObservationToValidAddress : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void DeleteTranstactionsObservatioToValidAddressTest()
+            {
+                var address = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                var response = blockchainApi.Operations.DeleteTranstactionsObservationToAddress(address);
+                response.Validate.StatusCode(HttpStatusCode.NoContent);
+            }
+        }
+
+        public class DeleteTranstactionsObservationFromValidAddressPositive : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void DeleteTranstactionsObservationFromValidAddressPositiveTest()
+            {
+                //remove in case it is enabled
+                blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(WALLET_ADDRESS);
+
+                var response = blockchainApi.Operations.PostHistoryFromToAddress("from", WALLET_ADDRESS);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                var delete = blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(WALLET_ADDRESS);
+                delete.Validate.StatusCode(HttpStatusCode.OK);
+            }
+        }
+
+        public class DeleteTranstactionsObservationToValidAddressPositive : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void DeleteTranstactionsObservationToValidAddressPositiveTest()
+            {
+                //remove in case it is enabled
+                blockchainApi.Operations.DeleteTranstactionsObservationToAddress(WALLET_ADDRESS);
+
+                var response = blockchainApi.Operations.PostHistoryFromToAddress("to", WALLET_ADDRESS);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                var delete = blockchainApi.Operations.DeleteTranstactionsObservationToAddress(WALLET_ADDRESS);
+                delete.Validate.StatusCode(HttpStatusCode.OK);
+            }
+        }
     }
 }

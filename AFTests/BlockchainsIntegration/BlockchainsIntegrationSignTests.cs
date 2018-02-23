@@ -15,7 +15,7 @@ namespace AFTests.BlockchainsIntegrationTests
         {
             [Test]
             [Category("BlockchainIntegration")]
-            public void GetLitecoinSignAliveTest()
+            public void GetBlockchainSignAliveTest()
             {
                 var response = blockchainSign.GetIsAlive();
                 response.Validate.StatusCode(HttpStatusCode.OK);
