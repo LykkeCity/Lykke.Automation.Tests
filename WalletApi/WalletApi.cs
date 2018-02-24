@@ -70,5 +70,6 @@ namespace WalletApi.Api
         public HotWallet HotWallet => new HotWallet();
         public AssetPairRates AssetPairRates => new AssetPairRates();
         public History History => new History();
+        public Offchain Offchain => new Offchain();
     }
 }

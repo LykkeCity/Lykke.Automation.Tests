@@ -8,6 +8,10 @@ namespace WalletApi.Api
 {
     public class Offchain : ApiBase
     {
-        //TODO: Add implementation
+        public IResponse<ResponseModel> PostLimitCancel(OffchainLimitCancelModel cancelModel, string token) =>
+            Request.Post("/offchain/limit/cancel").WithBearerToken(token)
+                .AddJsonBody(cancelModel).Build().Execute<ResponseModel>();
+
+        //TODO: Add other implementation
     }
 }
