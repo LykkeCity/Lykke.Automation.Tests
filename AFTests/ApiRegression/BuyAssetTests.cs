@@ -468,6 +468,5 @@ namespace AFTests.ApiRegression
                     Is.True.After(60).Seconds.PollEvery(5).Seconds);
             });
         }
-
     }
 }

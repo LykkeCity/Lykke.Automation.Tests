@@ -1,5 +1,4 @@
-﻿using LykkeAutomation.Api.ApiModels.AccountExistModels;
-using LykkeAutomation.TestsCore;
+﻿using LykkeAutomation.TestsCore;
 using XUnitTestCommon.TestsData;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -35,7 +34,7 @@ namespace AFTests.WalletApiTests
                 var obj = JObject.Parse(response.Content);
                 ValidateScheme(obj.IsValid(apiSchemes.AccountExistSchemes.AuthResponseScheme, out schemesError), schemesError);
 
-                var model = AccountExistModel.ConvertToAccountExistModel(response.Content);
+                var model = response.GetResponseObject();
                 Assert.That(model.Result.IsEmailRegistered, Is.False, "Email is registered");
                 Assert.That(model.Error, Is.Null, "Error is not null");
             }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using XUnitTestCommon.RestRequests.Interfaces;
 using Lykke.Client.AutorestClient.Models;
 
-namespace WalletApi.Api.RegistrationResource
+namespace WalletApi.Api
 {
     public class Registration : ApiBase
     {
