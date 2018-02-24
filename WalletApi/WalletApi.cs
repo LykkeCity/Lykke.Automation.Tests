@@ -1,7 +1,9 @@
 ﻿namespace WalletApi.Api
 {
-   public class WalletApi
+    public class WalletApi
     {
+        public string ApiUrl => ApiBase.ApiUrl;
+
         public PersonalData PersonalData => new PersonalData();
         public Registration Registration => new Registration();
         public Auth Auth => new Auth();
