@@ -44,17 +44,17 @@ namespace BlockchainsIntegration.LiteCoin.Api
 
         public IResponse<BuildTransactionResponse> PostTransactionsManyOutputs(BuildTransactionWithManyOutputsRequest model)
         {
-            return Request.Post("/transactions/many-outputs").Build().Execute<BuildTransactionResponse>();
+            return Request.Post("/transactions/many-outputs").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
         }
 
         public IResponse<BroadcastedTransactionWithManyInputsResponse> GetTransactionsManyInputs(string operationId)
         {
-            return Request.Post($"/transactions/many-inputs/{operationId}").Build().Execute<BroadcastedTransactionWithManyInputsResponse>();
+            return Request.Get($"/transactions/broadcast/many-inputs/{operationId}").Build().Execute<BroadcastedTransactionWithManyInputsResponse>();
         }
 
         public IResponse<BroadcastedTransactionWithManyOutputsResponse> GetTransactionsManyOutputs(string operationId)
         {
-            return Request.Get($"/transactions/many-outputs/{operationId}").Build().Execute<BroadcastedTransactionWithManyOutputsResponse>();
+            return Request.Get($"/transactions/broadcast/many-outputs/{operationId}").Build().Execute<BroadcastedTransactionWithManyOutputsResponse>();
         }
 
         public IResponse<PutTransactionsResponse> PutTransactions(RebuildTransactionRequest model)

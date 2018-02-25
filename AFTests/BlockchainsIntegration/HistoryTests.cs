@@ -13,6 +13,7 @@ namespace AFTests.BlockchainsIntegration
         {
             [Test]
             [Category("BlockchainIntegration")]
+            [Description("take is requered!")]
             public void GetHistoryFromBadRequestTest()
             {
                 var response = blockchainApi.Operations.GetTransactionHistorFromAddress(WALLET_ADDRESS, null);
@@ -49,6 +50,8 @@ namespace AFTests.BlockchainsIntegration
             [Category("BlockchainIntegration")]
             public void PostHistoryToConflictTest()
             {
+                //enabled if disabled
+                blockchainApi.Operations.PostHistoryFromToAddress("to", WALLET_ADDRESS);
                 var response = blockchainApi.Operations.PostHistoryFromToAddress("to", WALLET_ADDRESS);
                 response.Validate.StatusCode(HttpStatusCode.Conflict);
             }
@@ -73,6 +76,8 @@ namespace AFTests.BlockchainsIntegration
             [Category("BlockchainIntegration")]
             public void PostHistoryFromConflictTest()
             {
+                //enable if disabled
+                blockchainApi.Operations.PostHistoryFromToAddress("from", WALLET_ADDRESS);
                 var response = blockchainApi.Operations.PostHistoryFromToAddress("from", WALLET_ADDRESS);
                 response.Validate.StatusCode(HttpStatusCode.Conflict);
             }
