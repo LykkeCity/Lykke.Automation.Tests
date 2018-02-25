@@ -398,9 +398,12 @@ namespace AFTests.AlgoStore
             var responceUploadString = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(uploadedStringDTO), Method.POST);
             Assert.That(responceUploadString.Status , Is.EqualTo(HttpStatusCode.NoContent));
 
+            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == Algoid) as MetaDataEntity;
+
             Dictionary<string, string> quaryParamGetString = new Dictionary<string, string>()
             {
-                {"AlgoId", Algoid }
+                {"AlgoId", Algoid },
+                { "ClientId", metaDataEntity.PartitionKey}
             };
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
@@ -665,6 +668,57 @@ namespace AFTests.AlgoStore
                 Assert.NotNull(expectedAlgoDTO.Date);
                 Assert.NotNull(expectedAlgoDTO.Author);
             }
+        }
+       
+        [Category("AlgoStore")]
+        [TestCase("")]
+        [TestCase("getFromData")]
+        public async Task GetAlgoMetaData(string clientIdTemp)
+        {
+            string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
+
+            MetaDataResponseDTO metadata = DataManager.getMetaDataForBinaryUpload();
+
+            string AlgoId = metadata.Id;
+
+            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
+            {
+                {"AlgoId", AlgoId }
+            };
+
+            var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
+            Assert.That(responceAllClientMetadata.Status, Is.EqualTo(HttpStatusCode.NoContent));
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
+            Assert.That(blobExists, Is.True);
+
+            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == AlgoId) as MetaDataEntity;
+
+            if (clientIdTemp.Equals("getFromData"))
+            {
+                clientIdTemp = metaDataEntity.PartitionKey;
+            }
+
+            url = ApiPaths.ALGO_STORE_GET_ALGO_METADATA;
+
+            Dictionary<string, string> quaryParamAlgoData = new Dictionary<string, string>()
+            {
+                {"AlgoId", AlgoId },
+                {"clientId", clientIdTemp}
+            };
+
+            var responceAlgoMetadata = await this.Consumer.ExecuteRequest(url, quaryParamAlgoData, null, Method.GET);
+            Assert.That(responceAlgoMetadata.Status , Is.EqualTo(HttpStatusCode.OK));
+
+            GetAlgoMetaDataDTO postInstanceData = JsonUtils.DeserializeJson<GetAlgoMetaDataDTO>(responceAlgoMetadata.ResponseJson);
+
+            Assert.That(postInstanceData.AlgoId, Is.EqualTo(AlgoId));
+            Assert.That(postInstanceData.Name, Is.EqualTo(metadata.Name));
+            Assert.That(postInstanceData.Description, Is.EqualTo(metadata.Description));
+            Assert.That(postInstanceData.Date, Is.Not.Null);
+            Assert.That(postInstanceData.Author, Is.Not.Null);
+            Assert.That(postInstanceData.Rating, Is.Not.Zero);
+            Assert.That(postInstanceData.UsersCount, Is.Not.Zero);
+            Assert.That(postInstanceData.AlgoMetaDataInformation, Is.Null);
         }
 
         private async Task<MetaDataResponseDTO> UploadBinaryAlgoAndGetResponceDTO()
