@@ -9,15 +9,15 @@ namespace AFTests.BlockchainsIntegration
 {
     class HistoryTests
     {
-        public class GetHistoryFromBadRequest : BlockchainsIntegrationBaseTest
+        public class GetHistoryFromTakeIsRequiredRequest : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]
             [Description("take is requered!")]
-            public void GetHistoryFromBadRequestTest()
+            public void GetHistoryFromTakeIsRequiredTest()
             {
                 var response = blockchainApi.Operations.GetTransactionHistorFromAddress(WALLET_ADDRESS, null);
-                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest, "Take is required, Should be BadRequest");
             }
         }
 
