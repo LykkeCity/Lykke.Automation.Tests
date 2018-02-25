@@ -14,6 +14,8 @@ namespace AFTests.BlockchainsIntegrationTests
 {
     class BlockchainsIntegrationBaseTest : BaseTest
     {
+        private static object _lock = new object();
+
         private static Lazy<BlockchainSpecificModel> _currentSettings
         {
             get
@@ -38,7 +40,20 @@ namespace AFTests.BlockchainsIntegrationTests
         protected BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
         protected BlockchainWallets blockchainWallets = new BlockchainWallets();
 
-        protected static string HOT_WALLET = new BlockchainSign(_currentSettings.Value.BlockchainSign).PostWallet().GetResponseObject().PublicAddress;
+        protected static string HOT_WALLET
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    if (string.IsNullOrEmpty(_currentSettings.Value.HotWallet))
+                        _currentSettings.Value.HotWallet = new BlockchainSign(_currentSettings.Value.BlockchainSign).PostWallet().GetResponseObject().PublicAddress;
+                }
+
+                return _currentSettings.Value.HotWallet;
+            }
+        }
+
         protected static string WALLET_ADDRESS = _currentSettings.Value.WalletAddress;
         protected static string PKey = _currentSettings.Value.WalletKey;
 
@@ -47,6 +62,5 @@ namespace AFTests.BlockchainsIntegrationTests
 
         protected static string CLIENT_ID = _currentSettings.Value.ClientId;
         protected static string ASSET_ID = _currentSettings.Value.AssetId;
-        //fill here http://faucet.thonguyen.net/ltc
     }  
 }

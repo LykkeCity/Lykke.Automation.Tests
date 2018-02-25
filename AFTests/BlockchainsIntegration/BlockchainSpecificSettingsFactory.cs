@@ -156,6 +156,7 @@ namespace AFTests.BlockchainsIntegration
         public string BlockchainIntegration { get; set; }
         public string BlockchainApi { get; set; }
         public string BlockchainSign { get; set; }
+        public string HotWallet { get; set; }
         public string WalletsUrl { get; set; }
         public string WalletAddress { get; set; }
         public string WalletKey { get; set; }

@@ -83,7 +83,7 @@ namespace XUnitTestCommon.Tests
         [TearDown]
         public void TestCleanup()
         {
-            Console.WriteLine($"================== Test Finished {TestContext.CurrentContext.Test.MethodName} ===================");
+            Console.WriteLine($"=================== Test Finished {TestContext.CurrentContext.Test.MethodName} ===================");
             Console.WriteLine();
 
             CallCleanupActions();

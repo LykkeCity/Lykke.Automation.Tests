@@ -214,7 +214,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void GetTransactionsManyOutputsInvalidOperationIdTest(string operationId)
             {
                 var response = blockchainApi.Operations.GetTransactionsManyOutputs(operationId);
-                Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest }, Has.Member(response.StatusCode));
+                Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest }, Does.Contain(response.StatusCode));
             }
         }
 
