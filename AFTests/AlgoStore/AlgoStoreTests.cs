@@ -689,7 +689,7 @@ namespace AFTests.AlgoStore
             var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
             Assert.That(responceAllClientMetadata.Status, Is.EqualTo(HttpStatusCode.NoContent));
             bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.That(blobExists, Is.EqualTo(true));
+            Assert.That(blobExists, Is.True);
 
             MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == AlgoId) as MetaDataEntity;
 
