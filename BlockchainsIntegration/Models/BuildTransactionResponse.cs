@@ -24,9 +24,8 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         /// <param name="errorCode">Possible values include: 'unknown',
         /// 'amountIsTooSmall', 'notEnoughtBalance'</param>
-        public BuildTransactionResponse(TransactionExecutionError? errorCode = default(TransactionExecutionError?), string transactionContext = default(string))
+        public BuildTransactionResponse(string transactionContext = default(string))
         {
-            ErrorCode = errorCode;
             TransactionContext = transactionContext;
             CustomInit();
         }
@@ -35,13 +34,6 @@ namespace Lykke.Client.AutorestClient.Models
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();
-
-        /// <summary>
-        /// Gets or sets possible values include: 'unknown',
-        /// 'amountIsTooSmall', 'notEnoughtBalance'
-        /// </summary>
-        [JsonProperty(PropertyName = "errorCode")]
-        public TransactionExecutionError? ErrorCode { get; set; }
 
         /// <summary>
         /// </summary>

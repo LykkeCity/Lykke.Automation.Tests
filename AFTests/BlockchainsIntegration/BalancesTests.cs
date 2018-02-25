@@ -74,7 +74,6 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public class PostBalancesInvalidAddress : BlockchainsIntegrationBaseTest
         {
-            [TestCase("")]
             [TestCase("testAddress")]
             [TestCase("!@&*()")]
             [TestCase("352.58")]
@@ -83,6 +82,17 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var response = blockchainApi.Balances.PostBalances(address);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public class PostBalancesEmptyAddress : BlockchainsIntegrationBaseTest
+        {
+            [TestCase("")]
+            [Category("BlockchainIntegration")]
+            public void PostBalancesEmptyAddressTest(string address)
+            {
+                var response = blockchainApi.Balances.PostBalances(address);
+                response.Validate.StatusCode(HttpStatusCode.NotFound);
             }
         }
 
@@ -146,7 +156,8 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var sw = new Stopwatch();
                 time = 0;
-                var request = new BlockchainApi(BlockchainSpecificSettings().ApiUrl);
+                var request = new BlockchainApi(BlockchainApi);
+                sw.Start();
                 while (sw.Elapsed < TimeSpan.FromMinutes(10))
                 {
                     if (int.Parse(request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance) <
@@ -163,13 +174,17 @@ namespace AFTests.BlockchainsIntegrationTests
             static void GetTransactionCompleteStatusTime(string operationId, out long time)
             {
                 var sw = new Stopwatch();
-                var request = new BlockchainApi(BlockchainSpecificSettings().ApiUrl);
+                var request = new BlockchainApi(BlockchainApi);
                 time = 0;
+                sw.Start();
                 while (sw.Elapsed < TimeSpan.FromMinutes(10))
                 {
                     var r = request.Operations.GetOperationId(operationId);
                     if(r.GetResponseObject().State != BroadcastedTransactionState.InProgress)
                     {
+                        if (r.GetResponseObject().State == BroadcastedTransactionState.Failed)
+                            Assert.Fail("Operation got 'Failed status'");
+
                         time = DateTime.Now.Ticks;
                         sw.Stop();
                         return;
@@ -188,7 +203,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void DeleteBalancesInvalidAddressTest(string address)
             {
                 var response = blockchainApi.Balances.DeleteBalances(address);
-                response.Validate.StatusCode(HttpStatusCode.NoContent);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
             }
         }
     }
