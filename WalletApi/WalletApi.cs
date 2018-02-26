@@ -57,5 +57,18 @@ namespace WalletApi.Api
         public CountryPhoneCodes CountryPhoneCodes => new CountryPhoneCodes();
         public Dialogs Dialogs => new Dialogs();
         public Dictionary Dictionary => new Dictionary();
+        public EmailVerification EmailVerification => new EmailVerification();
+        public PinSecurity PinSecurity => new PinSecurity();
+        public MyLykkeSettings MyLykkeSettings => new MyLykkeSettings();
+        public Dicts Dicts => new Dicts();
+        public Issuers Issuers => new Issuers();
+        public LimitOrders LimitOrders => new LimitOrders();
+        public Wallets Wallets => new Wallets();
+        public WatchLists WatchLists => new WatchLists();
+        public SignatureVerificationToken SignatureVerificationToken => new SignatureVerificationToken();
+        public OrderBook OrderBook => new OrderBook();
+        public HotWallet HotWallet => new HotWallet();
+        public AssetPairRates AssetPairRates => new AssetPairRates();
+        public History History => new History();
     }
 }

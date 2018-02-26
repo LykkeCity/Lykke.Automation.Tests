@@ -17,9 +17,9 @@ namespace BlockchainsIntegration.LiteCoin.Api
             return Request.Post("/transactions/single").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
         }
 
-        public IResponse<BroadcastTransactionResponse> PostTransactionsBroadcast(BroadcastTransactionRequest model)
+        public IResponse PostTransactionsBroadcast(BroadcastTransactionRequest model)
         {
-            return Request.Post("/transactions/broadcast").AddJsonBody(model).Build().Execute<BroadcastTransactionResponse>();
+            return Request.Post("/transactions/broadcast").AddJsonBody(model).Build().Execute();
         }
 
         public IResponse DeleteOperationId(string operationId)
@@ -37,19 +37,24 @@ namespace BlockchainsIntegration.LiteCoin.Api
             return Request.Post("/transactions/many-inputs").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
         }
 
+        public IResponse<BuildTransactionResponse> PostTransactionsManyInputs(string model)
+        {
+            return Request.Post("/transactions/many-inputs").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
+        }
+
         public IResponse<BuildTransactionResponse> PostTransactionsManyOutputs(BuildTransactionWithManyOutputsRequest model)
         {
-            return Request.Post("/transactions/many-outputs").Build().Execute<BuildTransactionResponse>();
+            return Request.Post("/transactions/many-outputs").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
         }
 
         public IResponse<BroadcastedTransactionWithManyInputsResponse> GetTransactionsManyInputs(string operationId)
         {
-            return Request.Post($"/transactions/many-inputs/{operationId}").Build().Execute<BroadcastedTransactionWithManyInputsResponse>();
+            return Request.Get($"/transactions/broadcast/many-inputs/{operationId}").Build().Execute<BroadcastedTransactionWithManyInputsResponse>();
         }
 
         public IResponse<BroadcastedTransactionWithManyOutputsResponse> GetTransactionsManyOutputs(string operationId)
         {
-            return Request.Get($"/transactions/many-outputs/{operationId}").Build().Execute<BroadcastedTransactionWithManyOutputsResponse>();
+            return Request.Get($"/transactions/broadcast/many-outputs/{operationId}").Build().Execute<BroadcastedTransactionWithManyOutputsResponse>();
         }
 
         public IResponse<PutTransactionsResponse> PutTransactions(RebuildTransactionRequest model)
@@ -67,16 +72,21 @@ namespace BlockchainsIntegration.LiteCoin.Api
             return Request.Delete($"/transactions/history/to/{address}/observation").Build().Execute();
         }
 
-        public IResponse<GetTransactionsHistoryFromToResponse> GetTransactionHistorFromAddress(string address, string take=null, string afterHash = null)
+        public IResponse<GetTransactionsHistoryFromToResponse> GetTransactionHistorFromAddress(string address, string take, string afterHash = null)
         {
-            return Request.Get($"/api/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
+            return Request.Get($"/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
                 .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<GetTransactionsHistoryFromToResponse>();
         }
 
         public IResponse<GetTransactionsHistoryFromToResponse> GetTransactionHistorToAddress(string address, string take = null, string afterHash = null)
         {
-            return Request.Get($"/api/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
+            return Request.Get($"/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
                 .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<GetTransactionsHistoryFromToResponse>();
+        }
+
+        public IResponse PostHistoryFromToAddress(string fromTo, string address)
+        {
+            return Request.Post($"/transactions/history/{fromTo}/{address}/observation").Build().Execute();
         }
     }
 }

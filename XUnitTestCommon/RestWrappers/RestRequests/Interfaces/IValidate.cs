@@ -13,5 +13,6 @@ namespace XUnitTestCommon.RestRequests.Interfaces
     public interface IValidate<T>
     {
         IResponse<T> StatusCode(HttpStatusCode code, string message = null);
+        IResponse<T> NoApiError(string message = null);
     }
 }

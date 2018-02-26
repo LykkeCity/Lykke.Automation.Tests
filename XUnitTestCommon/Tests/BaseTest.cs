@@ -25,6 +25,12 @@ namespace XUnitTestCommon.Tests
 
         protected virtual void Initialize() { }
 
+        protected void Step(string name, Action action)
+        {
+            Console.WriteLine(name);
+            action.Invoke();
+        }
+
         #region response info
         public static void ValidateScheme(bool valid, IList<string> errors)
         {
@@ -58,7 +64,7 @@ namespace XUnitTestCommon.Tests
         [SetUp]
         public void TestInitialize()
         {
-            Console.WriteLine("=============================== Test initialize ===============================");
+            Console.WriteLine($"================= Test Start {TestContext.CurrentContext.Test.MethodName} ===================");
             _cleanupActions.Clear();
 
             try
@@ -70,9 +76,6 @@ namespace XUnitTestCommon.Tests
                 CallCleanupActions();
                 throw;
             }
-
-            Console.WriteLine("=============================== Test method ===============================");
-            Console.WriteLine();
         }
 
         [TearDown]
@@ -86,7 +89,7 @@ namespace XUnitTestCommon.Tests
         [TearDown]
         public void TestCleanup()
         {
-            Console.WriteLine("=============================== Test Cleanup ===============================");
+            Console.WriteLine($"=================== Test Finished {TestContext.CurrentContext.Test.MethodName} ===================");
             Console.WriteLine();
 
             CallCleanupActions();

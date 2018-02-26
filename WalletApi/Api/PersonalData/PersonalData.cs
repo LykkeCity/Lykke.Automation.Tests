@@ -1,6 +1,4 @@
 ﻿using Lykke.Client.AutorestClient.Models;
-using LykkeAutomation.ApiModels;
-using LykkeAutomation.ApiModels.PersonalDataModels;
 using LykkeAutomation.TestsCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -20,9 +18,9 @@ namespace WalletApi.Api.PersonalDataResource
     {
         private const string resource = "/PersonalData";
 
-        public IResponse<PersonalDataModel> GetPersonalDataResponse(string token)
+        public IResponse<ResponseModelApiPersonalDataModel> GetPersonalDataResponse(string token)
         {
-            return Request.Get(resource).WithBearerToken(token).Build().Execute<PersonalDataModel>();
+            return Request.Get(resource).WithBearerToken(token).Build().Execute<ResponseModelApiPersonalDataModel>();
         }
     }
 }
