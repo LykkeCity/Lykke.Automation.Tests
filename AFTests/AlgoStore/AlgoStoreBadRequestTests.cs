@@ -104,23 +104,6 @@ namespace AFTests.AlgoStore
         [TestCase("")]
         [TestCase("     ")]
         [TestCase(null)]
-        public async Task UploadBinaryAlgoBadRequest(string badID)
-        {
-            string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
-
-            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
-            {
-                {"AlgoId", badID }
-            };
-
-            var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.That(responceAllClientMetadata.Status , Is.EqualTo(HttpStatusCode.BadRequest));
-        }
-
-        [Category("AlgoStore")]
-        [TestCase("")]
-        [TestCase("     ")]
-        [TestCase(null)]
         public async Task DeployBinaryAlgoBadRequest(string badID)
         {
             DeployBinaryDTO algo = new DeployBinaryDTO()

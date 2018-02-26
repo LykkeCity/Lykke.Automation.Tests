@@ -14,10 +14,11 @@ namespace AlgoStoreData.Fixtures
 {
     public partial class AlgoStoreTestDataFixture : BaseTest
     {
+        private static List<BuilInitialDataObjectDTO> initialDTOObjectsList = new List<BuilInitialDataObjectDTO>();
+
         public async Task<List<BuilInitialDataObjectDTO>> UploadSomeBaseMetaData(int nuberDto)
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
-            List<BuilInitialDataObjectDTO> initialDTOObjectsList = new List<BuilInitialDataObjectDTO>();
             List <MetaDataDTO> metadataList = new List<MetaDataDTO>();
             List<MetaDataResponseDTO> responceMetadataList = new List<MetaDataResponseDTO>();
 
@@ -97,6 +98,7 @@ namespace AlgoStoreData.Fixtures
         {
             List<Response> responces = new List<Response>();
             string url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
+            int retryCounter = 0;
 
             foreach (var deleteMetadata in listDtoToBeDeleted)
             {
@@ -106,6 +108,16 @@ namespace AlgoStoreData.Fixtures
                     InstanceId = deleteMetadata.InstanceId
                 };
                 var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
+
+                // Currently we can not send cascade delete to kubernatees if he has not build the algo before that thorus not found and we leave data
+
+                while (responceCascadeDelete.Status.Equals(System.Net.HttpStatusCode.NotFound) && retryCounter <= 30)
+                {
+                    System.Threading.Thread.Sleep(10000);
+                    responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
+                    retryCounter++;
+                }
+
                 Assert.That(responceCascadeDelete.Status == System.Net.HttpStatusCode.NoContent);
 
                 responces.Add(responceCascadeDelete);               

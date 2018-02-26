@@ -44,16 +44,15 @@
       <HintPath>System</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <None Update="AlgoStore\TestData\myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-	</ItemGroup>
 
   <ItemGroup>
     <None Update="Dockerfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AlgoStore\TestData\" />
   </ItemGroup>
 
 </Project>
