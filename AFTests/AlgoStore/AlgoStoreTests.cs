@@ -19,8 +19,6 @@ namespace AFTests.AlgoStore
     [Category("AlgoStore")]
     public partial class AlgoStoreTests : AlgoStoreTestDataFixture
     {
-        public static string pathFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar");
-
         [Test]
         [Category("AlgoStore")]
         public async Task CheckIfServiceIsAlive()
@@ -51,8 +49,6 @@ namespace AFTests.AlgoStore
             Assert.That(response.Status , Is.EqualTo(HttpStatusCode.OK));
             MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
 
-            DataManager.addSingleMetadata(responceMetaData);
-
             Assert.AreEqual(metadata.Name, responceMetaData.Name);
             Assert.AreEqual(metadata.Description, responceMetaData.Description);
             Assert.NotNull(responceMetaData.Date);
@@ -73,16 +69,24 @@ namespace AFTests.AlgoStore
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
 
-            MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForEdit();
+            MetaDataDTO metadata = new MetaDataDTO()
+            {
+                Name = Helpers.RandomString(8),
+                Description = Helpers.RandomString(8)
+            };
+
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK));
+            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
+
+            url = ApiPaths.ALGO_STORE_METADATA;
+
             MetaDataEditDTO editMetaData = new MetaDataEditDTO()
             {
-                Id = temporaryResponseDTO.Id,
+                Id = responceMetaData.Id,
                 Name = Helpers.RandomString(9),
                 Description = Helpers.RandomString(9)
             };
-
-            temporaryResponseDTO.Name = editMetaData.Name;
-            temporaryResponseDTO.Description = editMetaData.Description;
 
             var responseMetaDataAfterEdit = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
             Assert.That(responseMetaDataAfterEdit.Status , Is.EqualTo(HttpStatusCode.OK));
@@ -103,25 +107,6 @@ namespace AFTests.AlgoStore
             Assert.AreEqual(metaDataEntity.Description, responceMetaDataAfterEdit.Description);
         }
 
-
-        [Test]
-        [Category("AlgoStore")]
-        public async Task DeleteMetadata()
-        {
-            MetaDataResponseDTO temporaryResponseDTO = DataManager.getMetadataForDelete();
-            CascadeDeleteDTO editMetaData = new CascadeDeleteDTO()
-            {
-                Id = temporaryResponseDTO.Id,
-                Name = temporaryResponseDTO.Name
-            };
-
-            string url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
-            var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.That(responceCascadeDelete.Status , Is.EqualTo(HttpStatusCode.NoContent));
-            MetaDataEntity metaDataEntityDeleted = await MetaDataRepository.TryGetAsync(t => t.Id == editMetaData.Id) as MetaDataEntity;
-            Assert.Null(metaDataEntityDeleted);
-        }
-
         [Test]
         [Category("AlgoStore")]
         public async Task GetAllMetadataForClient()
@@ -132,7 +117,7 @@ namespace AFTests.AlgoStore
             Object responceClientGetAll = JsonUtils.DeserializeJson(responceAllClientMetadata.ResponseJson);
             List<MetaDataResponseDTO> listAllClinetObjects = Newtonsoft.Json.JsonConvert.DeserializeObject<List<MetaDataResponseDTO>>(responceClientGetAll.ToString());
             List<string> keysPreBuildData = new List<string>();
-            DataManager.getAllMetaData().ForEach(e => keysPreBuildData.Add(e.Id));
+            DataManager.getAllMetaData().ForEach(e => keysPreBuildData.Add(e.AlgoId));
             int mathcedKeysCounter = 0;
             foreach (MetaDataResponseDTO currentData in listAllClinetObjects)
             {
@@ -146,163 +131,36 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Category("AlgoStore")]
-        public async Task UploadBinaryAlgo()
-        {
-            string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
-
-            string AlgoId = DataManager.getMetaDataForBinaryUpload().Id;
-
-            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
-            {
-                {"AlgoId", AlgoId }
-            };
-
-            var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.That(responceAllClientMetadata.Status , Is.EqualTo(HttpStatusCode.NoContent));
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.That(blobExists , Is.EqualTo(true));
-        }
-
-        [Test]
-        [Category("AlgoStore")]
-        public async Task DeployBinaryAlgo()
-        {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
-
-            string AlgoID = metadataForUploadedBinary.Id;
-
-            DeployBinaryDTO algo = new DeployBinaryDTO()
-            {
-                AlgoId = AlgoID
-            };
-
-            string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
-
-            var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.That(uploadBinaryresponce.Status , Is.EqualTo(HttpStatusCode.OK));
-
-            RuntimeDataEntity runtimeDataEntity = await RuntimeDataRepository.TryGetAsync(t => t.Id == metadataForUploadedBinary.Id) as RuntimeDataEntity;
-            Assert.NotNull(runtimeDataEntity);
-        }
-
-        [Test]
-        [Category("AlgoStore")]
-        public async Task StartBinary()
-        {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
-
-            string AlgoID = metadataForUploadedBinary.Id;
-
-            DeployBinaryDTO algo = new DeployBinaryDTO()
-            {
-                AlgoId = AlgoID
-            };
-
-            string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
-
-            var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.That(uploadBinaryresponce.Status , Is.EqualTo(HttpStatusCode.OK));
-
-            StartBinaryDTO startAlgo = new StartBinaryDTO
-            {
-                AlgoId = algo.AlgoId
-            };
-
-            url = ApiPaths.ALGO_STORE_ALGO_START;
-
-            var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.That(startBinaryresponce.Status , Is.EqualTo(HttpStatusCode.OK));
-
-            StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.That(startResponse.Status, Is.EqualTo("STARTED"));
-        }
-
-        [Test]
-        [Category("AlgoStore")]
-        public async Task StopBinary()
-        {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
-
-            string AlgoID = metadataForUploadedBinary.Id;
-
-            DeployBinaryDTO algo = new DeployBinaryDTO()
-            {
-                AlgoId = AlgoID
-            };
-
-            string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
-
-            var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.That(uploadBinaryresponce.Status , Is.EqualTo(HttpStatusCode.OK));
-
-            StartBinaryDTO startAlgo = new StartBinaryDTO
-            {
-                AlgoId = algo.AlgoId
-            };
-
-            url = ApiPaths.ALGO_STORE_ALGO_START;
-
-            var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.That(startBinaryresponce.Status , Is.EqualTo(HttpStatusCode.OK));
-
-            StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.That(startResponse.Status, Is.EqualTo("STARTED"));
-
-            StopBinaryDTO stopAlgo = new StopBinaryDTO
-            {
-                AlgoId = AlgoID
-            };
-
-            url = ApiPaths.ALGO_STORE_ALGO_STOP;
-
-            var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
-            Assert.That(stopBinaryResponse.Status == HttpStatusCode.OK);
-
-            StartBinaryResponseDTO stopResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(stopBinaryResponse.ResponseJson);
-            Assert.That(stopResponse.Status, Is.EqualTo("STOPPED"));
-        }
-
-        [Test]
+        [Ignore("Ignore currently not implemented")]
         [Category("AlgoStore")]
         public async Task GetLog()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            List<BuilInitialDataObjectDTO> metadataForUploadedBinaryList = await UploadSomeBaseMetaData(1);
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            BuilInitialDataObjectDTO metadataForUploadedBinary = metadataForUploadedBinaryList[metadataForUploadedBinaryList.Count-1];
 
-            DeployBinaryDTO algo = new DeployBinaryDTO()
-            {
-                AlgoId = AlgoID
-            };
+            string AlgoID = metadataForUploadedBinary.AlgoId;
 
-            string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
-
-            var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.That(uploadBinaryresponce.Status , Is.EqualTo(HttpStatusCode.OK));
-
-            StartBinaryDTO startAlgo = new StartBinaryDTO
-            {
-                AlgoId = algo.AlgoId
-            };
-
-            url = ApiPaths.ALGO_STORE_ALGO_START;
-
-            var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.That(startBinaryresponce.Status , Is.EqualTo(HttpStatusCode.OK));
-
-            StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.That(startResponse.Status, Is.EqualTo("STARTED"));
-
-            url = ApiPaths.ALGO_STORE_ALGO_LOG;
+           
+            string url = ApiPaths.ALGO_STORE_ALGO_LOG;
 
             Dictionary<string, string> algoIDLog = new Dictionary<string, string>()
             {
-                { "AlgoId", AlgoID }
+                 { "AlgoId", AlgoID },
+                { "InstanceId" , metadataForUploadedBinary.InstanceId }
             };
+            int retryCounter = 0;
 
-            var algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET);
-            Assert.That(algoIDLogResponse.Status , Is.EqualTo(HttpStatusCode.OK));
+            var algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET); ;
+
+            while (algoIDLogResponse.Status.Equals(System.Net.HttpStatusCode.NotFound) && retryCounter <= 30)
+            {
+                System.Threading.Thread.Sleep(10000);
+                algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET);
+                retryCounter++;
+            }
+
+            Assert.That(algoIDLogResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
             LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDLogResponse.ResponseJson);
 
@@ -310,45 +168,36 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
+        [Ignore("AL-266")]
         [Category("AlgoStore")]
         public async Task GetTailLog()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            List<BuilInitialDataObjectDTO> metadataForUploadedBinaryList = await UploadSomeBaseMetaData(1);
 
-            string AlgoID = metadataForUploadedBinary.Id;
+            BuilInitialDataObjectDTO metadataForUploadedBinary = metadataForUploadedBinaryList[metadataForUploadedBinaryList.Count - 1];
 
-            DeployBinaryDTO algo = new DeployBinaryDTO()
-            {
-                AlgoId = AlgoID
-            };
+            string AlgoID = metadataForUploadedBinary.AlgoId;
 
-            string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
-            var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.That(uploadBinaryresponce.Status , Is.EqualTo(HttpStatusCode.OK));
-
-            StartBinaryDTO startAlgo = new StartBinaryDTO
-            {
-                AlgoId = algo.AlgoId
-            };
-
-            url = ApiPaths.ALGO_STORE_ALGO_START;
-
-            var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.That(startBinaryresponce.Status , Is.EqualTo(HttpStatusCode.OK));
-
-            StartBinaryResponseDTO startResponse = JsonUtils.DeserializeJson<StartBinaryResponseDTO>(startBinaryresponce.ResponseJson);
-            Assert.That(startResponse.Status, Is.EqualTo("STARTED"));
-
-            url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
+            string url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
 
             Dictionary<string, string> algoIDTailLog = new Dictionary<string, string>()
             {
                 { "AlgoId", AlgoID },
+                { "InstanceId" , metadataForUploadedBinary.InstanceId },
                 {"Tail" , "60" }
             };
+            int retryCounter = 0;
 
             var algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
+
+            while (algoIDTailLogResponse.Status.Equals(System.Net.HttpStatusCode.NotFound) && retryCounter <= 30)
+            {
+                System.Threading.Thread.Sleep(10000);
+                algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
+                retryCounter++;
+            }
+
             Assert.That(algoIDTailLogResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
             LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDTailLogResponse.ResponseJson);
@@ -360,22 +209,30 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task UploadString()
         {
-            string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+            string url = ApiPaths.ALGO_STORE_METADATA;
 
-            MetaDataResponseDTO metadataWithUploadedString = DataManager.getMetaDataForBinaryUpload();
-
-            string Algoid = metadataWithUploadedString.Id;
-
-            PostUploadStringAlgoDTO uploadedStringDTO = new PostUploadStringAlgoDTO()
+            MetaDataDTO metadata = new MetaDataDTO()
             {
-                AlgoId = Algoid,
-                Data = Helpers.RandomString(300) 
+                Name = Helpers.RandomString(13),
+                Description = Helpers.RandomString(13)
             };
 
-            var responceUploadString = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(uploadedStringDTO), Method.POST);
-            Assert.That(responceUploadString.Status , Is.EqualTo(HttpStatusCode.NoContent));
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
 
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(Algoid, BinaryAlgoFileType.STRING);
+
+            url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+
+            UploadStringDTO stringDTO = new UploadStringDTO()
+            {
+                AlgoId = responceMetaData.Id,
+                Data = "TEST FOR NOW NOT WORKING ALGO"
+            };
+
+            var responsetemp = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
+            Assert.True(response.Status == System.Net.HttpStatusCode.OK);
+
+            bool blobExists = await this.BlobRepository.CheckIfBlobExists(stringDTO.AlgoId, BinaryAlgoFileType.STRING);
             Assert.That(blobExists , Is.EqualTo(true));
         }
 
@@ -383,27 +240,32 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetUploadedString()
         {
-            string url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+            string url = ApiPaths.ALGO_STORE_METADATA;
 
-            MetaDataResponseDTO metadataWithUploadedString = DataManager.getMetaDataForBinaryUpload();
-
-            string Algoid = metadataWithUploadedString.Id;
-
-            PostUploadStringAlgoDTO uploadedStringDTO = new PostUploadStringAlgoDTO()
+            MetaDataDTO metadata = new MetaDataDTO()
             {
-                AlgoId = Algoid,
-                Data = Helpers.RandomString(300)
+                Name = Helpers.RandomString(13),
+                Description = Helpers.RandomString(13)
             };
 
-            var responceUploadString = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(uploadedStringDTO), Method.POST);
-            Assert.That(responceUploadString.Status , Is.EqualTo(HttpStatusCode.NoContent));
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
 
-            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == Algoid) as MetaDataEntity;
+
+            url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+
+            UploadStringDTO stringDTO = new UploadStringDTO()
+            {
+                AlgoId = responceMetaData.Id,
+                Data = "package com.lykke.algos;\n public class Algo \n { \n public void run() throws InterruptedException \n { \n for (int i = 100000; i > 0; i--) \n { \n java.lang.Thread.sleep(1000); \n System.out.println(\"Demo Algo Fil VS\" + i); \n } \n } \n }"
+            };
+
+            var responsetemp = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
+            Assert.True(response.Status == System.Net.HttpStatusCode.OK);
 
             Dictionary<string, string> quaryParamGetString = new Dictionary<string, string>()
             {
-                {"AlgoId", Algoid },
-                { "ClientId", metaDataEntity.PartitionKey}
+                {"AlgoId", responceMetaData.Id }
             };
 
             var responceGetUploadString = await this.Consumer.ExecuteRequest(url, quaryParamGetString, null, Method.GET);
@@ -411,16 +273,17 @@ namespace AFTests.AlgoStore
 
             UploadStringDTO uploadedStringContent = JsonUtils.DeserializeJson<UploadStringDTO>(responceGetUploadString.ResponseJson);
 
-            Assert.That(uploadedStringDTO.Data, Is.EqualTo(uploadedStringContent.Data));
+            Assert.That(stringDTO.Data, Is.EqualTo(uploadedStringContent.Data));
         }
 
         [Test]
         [Category("AlgoStore")]
         public async Task GetAllClientInstanceData()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
 
-            string algoID = metadataForUploadedBinary.Id;
+            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
+
+            string algoID = metadataForUploadedBinary.AlgoId;
 
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -477,9 +340,9 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task PostInstanceDataForAlgo()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
 
-            string algoID = metadataForUploadedBinary.Id;
+            string algoID = metadataForUploadedBinary.AlgoId;
 
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -514,8 +377,8 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task EditInstanceDataForAlgo()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
-            string algoID = metadataForUploadedBinary.Id;
+            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
+            string algoID = metadataForUploadedBinary.AlgoId;
 
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -574,9 +437,9 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetInstanceData()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
 
-            string algoID = metadataForUploadedBinary.Id;
+            string algoID = metadataForUploadedBinary.AlgoId;
 
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -630,13 +493,13 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task ClientDataGetAllAlgos()
         {
-            MetaDataResponseDTO metadataForUploadedBinary = await UploadBinaryAlgoAndGetResponceDTO();
+            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
 
-            string algoID = metadataForUploadedBinary.Id;
+            string algoID = metadataForUploadedBinary.AlgoId;
 
             string url = ApiPaths.ALGO_STORE_ADD_TO_PUBLIC;
 
-            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == metadataForUploadedBinary.Id) as MetaDataEntity;
+            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == algoID) as MetaDataEntity;
             Assert.NotNull(metaDataEntity);
 
             AddToPublicDTO addAlgo = new AddToPublicDTO()
@@ -675,34 +538,22 @@ namespace AFTests.AlgoStore
         [TestCase("getFromData")]
         public async Task GetAlgoMetaData(string clientIdTemp)
         {
-            string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
+            List<BuilInitialDataObjectDTO> metadataForUploadedBinaryList = await UploadSomeBaseMetaData(1);
 
-            MetaDataResponseDTO metadata = DataManager.getMetaDataForBinaryUpload();
+            BuilInitialDataObjectDTO metadataForUploadedBinary = metadataForUploadedBinaryList[metadataForUploadedBinaryList.Count - 1];
 
-            string AlgoId = metadata.Id;
-
-            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
-            {
-                {"AlgoId", AlgoId }
-            };
-
-            var responceAllClientMetadata = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.That(responceAllClientMetadata.Status, Is.EqualTo(HttpStatusCode.NoContent));
-            bool blobExists = await this.BlobRepository.CheckIfBlobExists(AlgoId, BinaryAlgoFileType.JAR);
-            Assert.That(blobExists, Is.True);
-
-            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == AlgoId) as MetaDataEntity;
+            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == metadataForUploadedBinary.AlgoId) as MetaDataEntity;
 
             if (clientIdTemp.Equals("getFromData"))
             {
                 clientIdTemp = metaDataEntity.PartitionKey;
             }
 
-            url = ApiPaths.ALGO_STORE_GET_ALGO_METADATA;
+            string url = ApiPaths.ALGO_STORE_GET_ALGO_METADATA;
 
             Dictionary<string, string> quaryParamAlgoData = new Dictionary<string, string>()
             {
-                {"AlgoId", AlgoId },
+                {"AlgoId",  metadataForUploadedBinary.AlgoId },
                 {"clientId", clientIdTemp}
             };
 
@@ -711,9 +562,9 @@ namespace AFTests.AlgoStore
 
             GetAlgoMetaDataDTO postInstanceData = JsonUtils.DeserializeJson<GetAlgoMetaDataDTO>(responceAlgoMetadata.ResponseJson);
 
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo(AlgoId));
-            Assert.That(postInstanceData.Name, Is.EqualTo(metadata.Name));
-            Assert.That(postInstanceData.Description, Is.EqualTo(metadata.Description));
+            Assert.That(postInstanceData.AlgoId, Is.EqualTo(metadataForUploadedBinary.AlgoId));
+            Assert.That(postInstanceData.Name, Is.EqualTo(metadataForUploadedBinary.Name));
+            Assert.That(postInstanceData.Description, Is.EqualTo(metadataForUploadedBinary.Description));
             Assert.That(postInstanceData.Date, Is.Not.Null);
             Assert.That(postInstanceData.Author, Is.Not.Null);
             Assert.That(postInstanceData.Rating, Is.Not.Zero);
@@ -721,23 +572,31 @@ namespace AFTests.AlgoStore
             Assert.That(postInstanceData.AlgoMetaDataInformation, Is.Null);
         }
 
-        private async Task<MetaDataResponseDTO> UploadBinaryAlgoAndGetResponceDTO()
+        private async Task<UploadStringDTO> UploadStringAlgo()
         {
-            string url = ApiPaths.ALGO_STORE_UPLOAD_BINARY;
+            string url = ApiPaths.ALGO_STORE_METADATA;
 
-            MetaDataResponseDTO metadataWithUploadedBinary = DataManager.getMetaDataForBinaryUpload();
-
-            string AlgoId = metadataWithUploadedBinary.Id;
-
-            Dictionary<string, string> quaryParam = new Dictionary<string, string>()
+            MetaDataDTO metadata = new MetaDataDTO()
             {
-                {"AlgoId", AlgoId }
+                Name = Helpers.RandomString(13),
+                Description = Helpers.RandomString(13)
             };
 
-            var responceUploadBinary = await this.Consumer.ExecuteRequestFileUpload(url, quaryParam, null, Method.POST, pathFile);
-            Assert.That(responceUploadBinary.Status, Is.EqualTo(HttpStatusCode.NoContent));
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
 
-            return metadataWithUploadedBinary;
+
+            url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+
+            UploadStringDTO stringDTO = new UploadStringDTO()
+            {
+                AlgoId = responceMetaData.Id,
+                Data = "package com.lykke.algos;\n public class Algo \n { \n public void run() throws InterruptedException \n { \n for (int i = 100000; i > 0; i--) \n { \n java.lang.Thread.sleep(1000); \n System.out.println(\"Demo Algo Fil VS\" + i); \n } \n } \n }"
+            };
+
+            var responsetemp = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
+            Assert.True(response.Status == System.Net.HttpStatusCode.OK);
+            return stringDTO;
         }
     }
 }
