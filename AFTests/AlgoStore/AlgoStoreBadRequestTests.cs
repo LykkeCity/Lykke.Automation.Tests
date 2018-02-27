@@ -98,59 +98,7 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
             var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
             Assert.That(responceCascadeDelete.Status , Is.EqualTo(HttpStatusCode.BadRequest));
-        }
-
-        [Category("AlgoStore")]
-        [TestCase("")]
-        [TestCase("     ")]
-        [TestCase(null)]
-        public async Task DeployBinaryAlgoBadRequest(string badID)
-        {
-            DeployBinaryDTO algo = new DeployBinaryDTO()
-            {
-                AlgoId = badID,
-                InstanceId = badID
-            };
-
-            string url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
-
-            var uploadBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algo), Method.POST);
-            Assert.That(uploadBinaryresponce.Status , Is.EqualTo(HttpStatusCode.BadRequest));
-        }
-
-        [Category("AlgoStore")]
-        [TestCase("")]
-        [TestCase("     ")]
-        [TestCase(null)]
-        public async Task StartBinaryBadRequest(string badID)
-        {
-            StartBinaryDTO startAlgo = new StartBinaryDTO
-            {
-                AlgoId = badID
-            };
-
-            string url = ApiPaths.ALGO_STORE_ALGO_START;
-
-            var startBinaryresponce = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(startAlgo), Method.POST);
-            Assert.That(startBinaryresponce.Status , Is.EqualTo(HttpStatusCode.BadRequest));
-        }
-
-        [Category("AlgoStore")]
-        [TestCase("")]
-        [TestCase("     ")]
-        [TestCase(null)]
-        public async Task StopBinaryBadRequest(string badId)
-        {
-            string url = ApiPaths.ALGO_STORE_ALGO_STOP;
-
-            StopBinaryDTO stopAlgo = new StopBinaryDTO
-            {
-                AlgoId = badId
-            };
-
-            var stopBinaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
-            Assert.That(stopBinaryResponse.Status , Is.EqualTo(HttpStatusCode.BadRequest));
-        }
+        }   
 
         [Category("AlgoStore")]
         [TestCase("")]
