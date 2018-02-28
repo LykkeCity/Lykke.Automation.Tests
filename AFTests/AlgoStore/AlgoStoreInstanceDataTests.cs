@@ -21,6 +21,29 @@ namespace AFTests.AlgoStore
     {
         [Test]
         [Category("AlgoStore")]
+        public async Task PostInvalidInstanceAssetPair()
+        {
+            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
+
+            string algoID = metadataForUploadedBinary.AlgoId;
+
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
+            {
+                AlgoId = algoID,
+                HftApiKey = "key",
+                AssetPair = "BTCcoin",
+                TradedAsset = "USD",
+                Margin = "1",
+                Volume = "1"
+            };
+
+            string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
+
+            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
+        }
+        [Test]
+        [Category("AlgoStore")]
         public async Task PostInvalidInstanceTradedAsset()
         {
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
@@ -32,7 +55,7 @@ namespace AFTests.AlgoStore
                 AlgoId = algoID,
                 HftApiKey = "key",
                 AssetPair = "BTCUSD",
-                TradedAsset = "USD",
+                TradedAsset = "BTC",
                 Margin = "1",
                 Volume = "1"
             };
@@ -40,68 +63,16 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
+            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.BadRequest);
 
-            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
-
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo((instanceForAlgo.AlgoId)));
-            Assert.That(postInstanceData.AssetPair, Is.EqualTo((instanceForAlgo.AssetPair)));
-            Assert.That(postInstanceData.HftApiKey, Is.EqualTo((instanceForAlgo.HftApiKey)));
-            Assert.That(postInstanceData.TradedAsset, Is.EqualTo((instanceForAlgo.TradedAsset)));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(instanceForAlgo.Volume));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(instanceForAlgo.Margin));
-            Assert.NotNull(postInstanceData.InstanceId);
-
-            ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
-            Assert.NotNull(instanceDataEntityExists);
-        }
-        [Test]
-        [Category("AlgoStore")]
-        public async Task PostInvalidInstanceAssetPair()
-        {
-            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-
-            string algoID = metadataForUploadedBinary.AlgoId;
-
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = algoID,
-                HftApiKey = "key",
-                AssetPair = "BTCUSD",
-                TradedAsset = "USD",
-                Margin = "1",
-                Volume = "1"
-            };
-
-            string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
-
-            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
-
-            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
-
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo((instanceForAlgo.AlgoId)));
-            Assert.That(postInstanceData.AssetPair, Is.EqualTo((instanceForAlgo.AssetPair)));
-            Assert.That(postInstanceData.HftApiKey, Is.EqualTo((instanceForAlgo.HftApiKey)));
-            Assert.That(postInstanceData.TradedAsset, Is.EqualTo((instanceForAlgo.TradedAsset)));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(instanceForAlgo.Volume));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(instanceForAlgo.Margin));
-            Assert.NotNull(postInstanceData.InstanceId);
-
-            ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
-            Assert.NotNull(instanceDataEntityExists);
         }
         [Test]
         [Category("AlgoStore")]
         public async Task PostInvalidAlgoId()
         {
-            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-
-            string algoID = metadataForUploadedBinary.AlgoId;
-
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
-                AlgoId = algoID,
+                AlgoId = "Invalid Id",
                 HftApiKey = "key",
                 AssetPair = "BTCUSD",
                 TradedAsset = "USD",
@@ -112,22 +83,11 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
+            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
 
-            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
-
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo((instanceForAlgo.AlgoId)));
-            Assert.That(postInstanceData.AssetPair, Is.EqualTo((instanceForAlgo.AssetPair)));
-            Assert.That(postInstanceData.HftApiKey, Is.EqualTo((instanceForAlgo.HftApiKey)));
-            Assert.That(postInstanceData.TradedAsset, Is.EqualTo((instanceForAlgo.TradedAsset)));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(instanceForAlgo.Volume));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(instanceForAlgo.Margin));
-            Assert.NotNull(postInstanceData.InstanceId);
-
-            ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
-            Assert.NotNull(instanceDataEntityExists);
         }
         [Test]
+        [Ignore("Bug AL-274")]
         [Category("AlgoStore")]
         public async Task PostInvalidMargin()
         {
@@ -141,27 +101,15 @@ namespace AFTests.AlgoStore
                 HftApiKey = "key",
                 AssetPair = "BTCUSD",
                 TradedAsset = "USD",
-                Margin = "1",
+                Margin = "-111",
                 Volume = "1"
             };
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
+            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.BadRequest);
 
-            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
-
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo((instanceForAlgo.AlgoId)));
-            Assert.That(postInstanceData.AssetPair, Is.EqualTo((instanceForAlgo.AssetPair)));
-            Assert.That(postInstanceData.HftApiKey, Is.EqualTo((instanceForAlgo.HftApiKey)));
-            Assert.That(postInstanceData.TradedAsset, Is.EqualTo((instanceForAlgo.TradedAsset)));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(instanceForAlgo.Volume));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(instanceForAlgo.Margin));
-            Assert.NotNull(postInstanceData.InstanceId);
-
-            ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
-            Assert.NotNull(instanceDataEntityExists);
         }
         [Test]
         [Category("AlgoStore")]
@@ -178,26 +126,13 @@ namespace AFTests.AlgoStore
                 AssetPair = "BTCUSD",
                 TradedAsset = "USD",
                 Margin = "1",
-                Volume = "1"
+                Volume = "-333"
             };
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
-
-            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
-
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo((instanceForAlgo.AlgoId)));
-            Assert.That(postInstanceData.AssetPair, Is.EqualTo((instanceForAlgo.AssetPair)));
-            Assert.That(postInstanceData.HftApiKey, Is.EqualTo((instanceForAlgo.HftApiKey)));
-            Assert.That(postInstanceData.TradedAsset, Is.EqualTo((instanceForAlgo.TradedAsset)));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(instanceForAlgo.Volume));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(instanceForAlgo.Margin));
-            Assert.NotNull(postInstanceData.InstanceId);
-
-            ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
-            Assert.NotNull(instanceDataEntityExists);
+            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.BadRequest);
         }
 
         [Test]
@@ -222,19 +157,6 @@ namespace AFTests.AlgoStore
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
             Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
-
-            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
-
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo((instanceForAlgo.AlgoId)));
-            Assert.That(postInstanceData.AssetPair, Is.EqualTo((instanceForAlgo.AssetPair)));
-            Assert.That(postInstanceData.HftApiKey, Is.EqualTo((instanceForAlgo.HftApiKey)));
-            Assert.That(postInstanceData.TradedAsset, Is.EqualTo((instanceForAlgo.TradedAsset)));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(instanceForAlgo.Volume));
-            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(instanceForAlgo.Margin));
-            Assert.NotNull(postInstanceData.InstanceId);
-
-            ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
-            Assert.NotNull(instanceDataEntityExists);
         }
 
     }
