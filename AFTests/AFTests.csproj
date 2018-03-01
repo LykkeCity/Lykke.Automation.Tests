@@ -30,6 +30,7 @@
     <ProjectReference Include="..\BalancesData\BalancesData.csproj" />
     <ProjectReference Include="..\BlockchainsIntegration\BlockchainsIntegration.csproj" />
     <ProjectReference Include="..\BlueApiData\BlueApiData.csproj" />
+    <ProjectReference Include="..\HFT\HFT.csproj" />
     <ProjectReference Include="..\LykkePay\LykkePay.csproj" />
     <ProjectReference Include="..\MatchingEngineData\MatchingEngineData.csproj" />
     <ProjectReference Include="..\PrivateServices\PrivateServices.csproj" />
