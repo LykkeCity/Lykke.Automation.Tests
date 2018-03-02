@@ -375,6 +375,50 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("AlgoStore")]
+        public async Task GetInstanceDataForAlgo()
+        {
+            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
+
+            string algoID = metadataForUploadedBinary.AlgoId;
+
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
+            {
+                AlgoId = algoID,
+                HftApiKey = "key",
+                AssetPair = "BTCUSD",
+                TradedAsset = "USD",
+                Margin = "1",
+                Volume = "1"
+            };
+
+            string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
+
+            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
+
+            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
+
+            Dictionary<string, string> queryParmas = new Dictionary<string, string>()
+            {
+                { "algoId" , postInstanceData.AlgoId },
+                { "instanceId", postInstanceData.InstanceId}
+            };
+
+            var getInstanceDataResponse = await this.Consumer.ExecuteRequest(url, queryParmas, null, Method.GET);
+            Assert.That(getInstanceDataResponse.Status == HttpStatusCode.OK);
+            InstanceDataDTO getInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(getInstanceDataResponse.ResponseJson);
+
+            Assert.That(postInstanceData.AlgoId, Is.EqualTo((getInstanceData.AlgoId)));
+            Assert.That(postInstanceData.AssetPair, Is.EqualTo((getInstanceData.AssetPair)));
+            Assert.That(postInstanceData.HftApiKey, Is.EqualTo((getInstanceData.HftApiKey)));
+            Assert.That(postInstanceData.TradedAsset, Is.EqualTo((getInstanceData.TradedAsset)));
+            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(getInstanceData.Volume));
+            Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(getInstanceData.Margin));
+            Assert.That(postInstanceData.InstanceId, Is.EqualTo((getInstanceData.InstanceId)));
+        }
+
+        [Test]
+        [Category("AlgoStore")]
         public async Task EditInstanceDataForAlgo()
         {
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
