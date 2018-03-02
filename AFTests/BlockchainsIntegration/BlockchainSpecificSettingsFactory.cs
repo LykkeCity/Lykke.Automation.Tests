@@ -17,7 +17,7 @@ namespace AFTests.BlockchainsIntegration
             if (_settings != null)
                 return _settings;
 
-            if (File.Exists(TestContext.CurrentContext.WorkDirectory + "\\properties.json"))
+            if (File.Exists(Path.Combine(TestContext.CurrentContext.WorkDirectory, "properties.json")))
             {
                 _settings = LocalConfig.LocalConfigModel();
                 return _settings;
@@ -149,7 +149,7 @@ namespace AFTests.BlockchainsIntegration
         {
             public static BlockchainSpecificModel LocalConfigModel()
             {
-                var json = File.ReadAllText(TestContext.CurrentContext.WorkDirectory + "\\properties.json");
+                var json = File.ReadAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "properties.json"));
                 TestContext.Progress.WriteLine($"properties.json: {json}");
                 return JsonConvert.DeserializeObject<LocalConfig>(json);
             }

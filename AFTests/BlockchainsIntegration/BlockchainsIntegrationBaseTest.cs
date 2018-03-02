@@ -28,7 +28,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-           return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Zcash"; //"Ripple";// "Dash"; "Litecoin";
+           return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Ripple"; //"Ripple";// "Dash"; "Litecoin";
        }
 
         protected static string CurrentAssetId()
