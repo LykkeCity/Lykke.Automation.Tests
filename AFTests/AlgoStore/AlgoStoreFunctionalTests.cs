@@ -134,5 +134,32 @@ namespace AFTests.AlgoStore
             var responsetemp = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
             Assert.True(responsetemp.Status == System.Net.HttpStatusCode.NotFound);
         }
+
+        [Test]
+        [Category("AlgoStore")]
+        public async Task EditInstanceDataWhileRunningAlgo()
+        {
+            List<BuilInitialDataObjectDTO> metadataForUploadedBinaryList = await UploadSomeBaseMetaData(1);
+
+            BuilInitialDataObjectDTO metadataForUploadedBinary = metadataForUploadedBinaryList[metadataForUploadedBinaryList.Count - 1];
+        }
+
+        [Test]
+        [Category("AlgoStore")]
+        public async Task EditMethadataWhileRunningAlgo()
+        {
+            List<BuilInitialDataObjectDTO> metadataForUploadedBinaryList = await UploadSomeBaseMetaData(1);
+
+            BuilInitialDataObjectDTO metadataForUploadedBinary = metadataForUploadedBinaryList[metadataForUploadedBinaryList.Count - 1];
+        }
+
+        [Test]
+        [Category("AlgoStore")]
+        public async Task UpdateAlgoWhileDeployed()
+        {
+            List<BuilInitialDataObjectDTO> metadataForUploadedBinaryList = await UploadSomeBaseMetaData(1);
+
+            BuilInitialDataObjectDTO metadataForUploadedBinary = metadataForUploadedBinaryList[metadataForUploadedBinaryList.Count - 1];
+        }
     }
 }

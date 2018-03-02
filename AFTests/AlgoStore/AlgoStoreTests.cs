@@ -614,6 +614,60 @@ namespace AFTests.AlgoStore
             Assert.That(postInstanceData.UsersCount, Is.Not.Zero);
             Assert.That(postInstanceData.AlgoMetaDataInformation, Is.Null);
         }
+        [Test]
+        [Category("AlgoStore")]
+        public async Task DeployStringAlgo()
+        {
+            string url = ApiPaths.ALGO_STORE_METADATA;
+
+            MetaDataDTO metadata = new MetaDataDTO()
+             {
+                 Name = Helpers.RandomString(13),
+                 Description = Helpers.RandomString(13)
+             };
+        
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
+
+            url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+
+            UploadStringDTO stringDTO = new UploadStringDTO()
+                {
+                    AlgoId = responceMetaData.Id,
+                    Data = this.CSharpAlgoString
+                };
+
+            var responsetemp = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
+            Assert.True(responsetemp.Status == System.Net.HttpStatusCode.NoContent);
+
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
+                {
+                    AlgoId = stringDTO.AlgoId,
+                    HftApiKey = "key",
+                    AssetPair = "BTCUSD",
+                    TradedAsset = "USD",
+                    Margin = "1",
+                    Volume = "1"
+                };
+
+            url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
+
+            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
+
+            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
+
+            url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
+
+            DeployBinaryDTO deploy = new DeployBinaryDTO()
+                {
+                    AlgoId = stringDTO.AlgoId,
+                    InstanceId = postInstanceData.InstanceId,
+                };
+
+            var deployBynaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
+            Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
+        }
 
         private async Task<UploadStringDTO> UploadStringAlgo()
         {
