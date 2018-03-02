@@ -159,5 +159,29 @@ namespace AFTests.AlgoStore
             Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
         }
 
+        [Test]
+        [Category("AlgoStore")]
+        public async Task PostInstanceDataOnlyWithZeroMArginZeroVolume()
+        {
+            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
+
+            string algoID = metadataForUploadedBinary.AlgoId;
+
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
+            {
+                AlgoId = algoID,
+                HftApiKey = "key",
+                AssetPair = "BTCUSD",
+                TradedAsset = "USD",
+                Margin = "0",
+                Volume = "0"
+            };
+
+            string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
+
+            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.BadRequest);
+        }
+
     }
 }
