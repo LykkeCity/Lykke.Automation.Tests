@@ -13,6 +13,11 @@ namespace AFTests.ApiRegression
 {
     class BuyAssetTests : ApiRegressionBaseTest
     {
+        //TODO: Move to config
+        protected string email = "untest005@test.com";
+        protected string password = "1234567";
+        protected string pin = "1111";
+
         [Test]
         [Category("ApiRegression")]
         public void BuyAssetLimitOrderTest()
