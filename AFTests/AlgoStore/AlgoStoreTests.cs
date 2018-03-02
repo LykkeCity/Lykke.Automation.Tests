@@ -372,7 +372,6 @@ namespace AFTests.AlgoStore
             ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
             Assert.NotNull(instanceDataEntityExists);
         }
-
         [Test]
         [Category("AlgoStore")]
         public async Task GetInstanceDataForAlgo()
