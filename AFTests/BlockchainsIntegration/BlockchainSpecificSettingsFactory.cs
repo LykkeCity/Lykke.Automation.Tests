@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using XUnitTestCommon.TestsCore;
 
 namespace AFTests.BlockchainsIntegration
 {
@@ -42,7 +43,7 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "bitshares")
                 _settings = new BitsharesSettings();
 
-            Console.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
+            TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
         }
@@ -149,7 +150,7 @@ namespace AFTests.BlockchainsIntegration
             public static BlockchainSpecificModel LocalConfigModel()
             {
                 var json = File.ReadAllText(TestContext.CurrentContext.WorkDirectory + "\\properties.json");
-                Console.WriteLine($"properties.json: {json}");
+                TestContext.Progress.WriteLine($"properties.json: {json}");
                 return JsonConvert.DeserializeObject<LocalConfig>(json);
             }
         }
