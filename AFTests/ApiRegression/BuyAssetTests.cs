@@ -68,11 +68,13 @@ namespace AFTests.ApiRegression
                 assetBalance = assetBalanceNullable.Value;
                 //TODO: Should 100 eur be enough???
                 Assert.That(assetBalance, Is.GreaterThan(100), $"Less than 100 {asset} at the wallet!");
+                Console.WriteLine($"{asset} balance: {assetBalance}");
 
                 var assetToBuyBalanceNullable = walltes.Lykke.Assets
                     .FirstOrDefault(wallet => wallet.Id == assetToBuy)?.Balance;
                 Assert.That(assetToBuyBalanceNullable, Is.Not.Null);
                 assetToBuyBalance = assetToBuyBalanceNullable.Value;
+                Console.WriteLine($"{assetToBuy} balance: {assetToBuyBalance}");
             });
 
             Step("Find price to purchase", () =>
@@ -202,11 +204,14 @@ namespace AFTests.ApiRegression
                     .FirstOrDefault(wallet => wallet.Id == asset)?.Balance;
                 Assert.That(assetBalanceNullable, Is.Not.Null);
                 assetBalance = assetBalanceNullable.Value;
-                
+                Console.WriteLine($"{asset} balance: {assetBalance}");
+
                 var assetToSellBalanceNullable = walltes.Lykke.Assets
                     .FirstOrDefault(wallet => wallet.Id == assetToSell)?.Balance;
                 Assert.That(assetToSellBalanceNullable, Is.Not.Null);
                 assetToSellBalance = assetToSellBalanceNullable.Value;
+                Console.WriteLine($"{assetToSell} balance: {assetToSellBalance}");
+
                 //TODO: Should 0.5 BTC be enough???
                 Assert.That(assetToSellBalance, Is.GreaterThan(0.5), $"Less than 0.5 {assetToSell} at the wallet!");
             });
@@ -319,12 +324,14 @@ namespace AFTests.ApiRegression
                     .FirstOrDefault(wallet => wallet.Id == asset)?.Balance;
                 Assert.That(assetBalanceNullable, Is.Not.Null);
                 assetBalance = assetBalanceNullable.Value;
+                Console.WriteLine($"{asset} balance: {assetBalance}");
                 Assert.That(assetBalance, Is.GreaterThan(100), $"Less than 100 {asset} at the wallet!");
 
                 var assetToBuyBalanceNullable = walltes.Lykke.Assets
                     .FirstOrDefault(wallet => wallet.Id == assetToBuy)?.Balance;
                 Assert.That(assetToBuyBalanceNullable, Is.Not.Null);
                 assetToBuyBalance = assetToBuyBalanceNullable.Value;
+                Console.WriteLine($"{assetToBuy} balance: {assetToBuyBalance}");
             });
 
             Step($"Buy {assetToBuy} for {asset}", () =>
@@ -421,12 +428,14 @@ namespace AFTests.ApiRegression
                     .FirstOrDefault(wallet => wallet.Id == asset)?.Balance;
                 Assert.That(assetBalanceNullable, Is.Not.Null);
                 assetBalance = assetBalanceNullable.Value;
+                Console.WriteLine($"{asset} balance: {assetBalance}");
 
                 var assetToSellBalanceNullable = walltes.Lykke.Assets
                     .FirstOrDefault(wallet => wallet.Id == assetToSell)?.Balance;
                 Assert.That(assetToSellBalanceNullable, Is.Not.Null);
                 assetToSellBalance = assetToSellBalanceNullable.Value;
                 Assert.That(assetToSellBalance, Is.GreaterThan(0.5), $"Less than 0.5 {assetToSell} at the wallet!");
+                Console.WriteLine($"{assetToSell} balance: {assetToSellBalance}");
             });
 
             Step($"Sell {assetToSell} for {asset}", () =>
