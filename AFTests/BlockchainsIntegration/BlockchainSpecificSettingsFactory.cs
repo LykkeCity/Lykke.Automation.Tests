@@ -42,6 +42,8 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "bitshares")
                 _settings = new BitsharesSettings();
 
+            Console.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
+
             return _settings;
         }
 
