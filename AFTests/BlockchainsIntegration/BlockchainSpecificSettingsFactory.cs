@@ -146,7 +146,9 @@ namespace AFTests.BlockchainsIntegration
         {
             public static BlockchainSpecificModel LocalConfigModel()
             {
-                return JsonConvert.DeserializeObject<LocalConfig>(File.ReadAllText(TestContext.CurrentContext.WorkDirectory + "\\properties.json")); ;
+                var json = File.ReadAllText(TestContext.CurrentContext.WorkDirectory + "\\properties.json");
+                Console.WriteLine($"properties.json: {json}");
+                return JsonConvert.DeserializeObject<LocalConfig>(json);
             }
         }
     }
