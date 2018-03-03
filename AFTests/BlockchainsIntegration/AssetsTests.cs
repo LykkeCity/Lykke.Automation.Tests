@@ -44,9 +44,8 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var cont = TestData.GenerateString(8);
                 var response = blockchainApi.Assets.GetAssets("2", cont);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().Items.Count, Is.GreaterThanOrEqualTo(1), "Assets count is less then 1");
-                Assert.That(response.Content, Does.Contain(CurrentAssetId()), $"{CurrentAssetId()} not present in asseets");
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+                Assert.That(response.GetResponseObject().Items, Is.Null);
             }
         }
 
@@ -58,10 +57,9 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var assetId = CurrentAssetId();
 
-
                 var response = blockchainApi.Assets.GetAsset(assetId);
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().Name.ToLower(), Is.EqualTo(CurrentAssetId().ToLower()));
+                Assert.That(response.GetResponseObject().AssetId, Is.EqualTo(CurrentAssetId()).IgnoreCase);
             }
         }
 
@@ -74,7 +72,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void GetAssetInvalidIdTest(string assetId)
             {
                 var response = blockchainApi.Assets.GetAsset(assetId);
-                response.Validate.StatusCode(HttpStatusCode.NotFound);
+                response.Validate.StatusCode(HttpStatusCode.NoContent);
             }
         }
     }

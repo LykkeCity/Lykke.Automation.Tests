@@ -9,6 +9,6 @@ namespace AlgoStoreData.HelpersAlgoStore
         public static string JAR = "";
         public static string NET = "";
         public static string PY = "";
-        public static string STRING = "";
+        public static string STRING = ".txt";
     }
 }
