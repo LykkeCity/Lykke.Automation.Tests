@@ -9,6 +9,7 @@ using XUnitTestCommon.Tests;
 using Newtonsoft.Json;
 using System.IO;
 using AFTests.BlockchainsIntegration;
+using XUnitTestCommon.TestsCore;
 
 namespace AFTests.BlockchainsIntegrationTests
 {
@@ -27,7 +28,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-           return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Zcash"; //"Ripple";// "Dash"; "Litecoin";
+           return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Ripple"; //"Ripple";// "Dash"; "Litecoin";
        }
 
         protected static string CurrentAssetId()
@@ -62,5 +63,22 @@ namespace AFTests.BlockchainsIntegrationTests
 
         protected static string CLIENT_ID = _currentSettings.Value.ClientId;
         protected static string ASSET_ID = _currentSettings.Value.AssetId;
+
+
+        [OneTimeTearDown]
+        public void SetProperty()
+        {
+            AllurePropertiesBuilder.Instance.AddPropertyPair("Date", DateTime.Now.ToString());
+            try
+            {
+                var isAlive = blockchainApi.IsAlive.GetIsAlive().GetResponseObject();
+                AllurePropertiesBuilder.Instance.AddPropertyPair("Env", isAlive.Env);
+                AllurePropertiesBuilder.Instance.AddPropertyPair("Name", isAlive.Name);
+                AllurePropertiesBuilder.Instance.AddPropertyPair("Version", isAlive.Version);
+            }
+            catch (Exception) { /*do nothing*/}
+
+            new Allure2Report().CreateEnvFile();
+        }
     }  
 }
