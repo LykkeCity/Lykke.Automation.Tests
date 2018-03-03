@@ -19,8 +19,19 @@ namespace AFTests.BlockchainsIntegration
 
             if (File.Exists(Path.Combine(TestContext.CurrentContext.WorkDirectory, "properties.json")))
             {
-                _settings = LocalConfig.LocalConfigModel();
-                return _settings;
+                try
+                {
+                    _settings = LocalConfig.LocalConfigModel();
+                }catch(Exception e)
+                {
+                    TestContext.Progress.WriteLine("An error while parsing settings from properties.json");
+                    TestContext.Progress.WriteLine(e);
+                    TestContext.Progress.WriteLine(File.ReadAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "properties.json")));
+                }
+                if (!string.IsNullOrEmpty(_settings?.BlockchainApi))
+                    return _settings;
+                else
+                    TestContext.Progress.WriteLine("properties.json is present but api url is null or empty");
             }
 
             blockchain = blockchain.ToLower();
@@ -150,7 +161,6 @@ namespace AFTests.BlockchainsIntegration
             public static BlockchainSpecificModel LocalConfigModel()
             {
                 var json = File.ReadAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "properties.json"));
-                TestContext.Progress.WriteLine($"properties.json: {json}");
                 return JsonConvert.DeserializeObject<LocalConfig>(json);
             }
         }
