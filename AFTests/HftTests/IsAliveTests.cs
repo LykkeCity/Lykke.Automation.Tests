@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AFTests.HftTests
 {
-    class IsAlive
+    class IsAliveTests
     {
         public class GetIsAlive : HftBaseTest
         {

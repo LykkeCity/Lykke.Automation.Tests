@@ -14,7 +14,6 @@ namespace AFTests.HftTests
 
         protected Hft hft = new Hft();
 
-
         [OneTimeTearDown]
         public void SetProperty()
         {

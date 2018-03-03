@@ -16,7 +16,7 @@ namespace HFT.Api
 
         public IResponse<List<OrderBook>> GetOrderBooks(string assetPairId)
         {
-            return Request.Get("/OrderBooks/assetPairId").Build().Execute<List<OrderBook>>();
+            return Request.Get($"/OrderBooks/{assetPairId}").Build().Execute<List<OrderBook>>();
         }
     }
 }
