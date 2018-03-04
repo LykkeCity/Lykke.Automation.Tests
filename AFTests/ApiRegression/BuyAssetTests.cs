@@ -21,10 +21,10 @@ namespace AFTests.ApiRegression
         private string password = "1234567";
         private string pin = "1111";
 
-        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Limit, 0.0001)]
-        [TestCase("BTC", "USD", BuyOrSell.Sell, Order.Limit, 0.001)]
-        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Market, 0.0001)]
-        [TestCase("BTC", "USD", BuyOrSell.Sell, Order.Market, 0.001)]
+        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Limit, 0.0001, Category = "ApiRegression")]
+        [TestCase("BTC", "USD", BuyOrSell.Sell, Order.Limit, 0.001, Category = "ApiRegression")]
+        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Market, 0.0001, Category = "ApiRegression")]
+        [TestCase("BTC", "USD", BuyOrSell.Sell, Order.Market, 0.001, Category = "ApiRegression")]
         public void OrderTest(string asset1, string asset2, BuyOrSell buyOrSell, Order order, double volume)
         {
             var steps = new MobileSteps(walletApi);
@@ -136,6 +136,7 @@ namespace AFTests.ApiRegression
                     : asset2Balance + volume * assetPairPrice;
 
                 //TODO: Add more acurate assertion
+                //TODO: Remove after and polling?
                 Assert.That(() => steps.GetAssetBalance(asset1, token),
                     Is.EqualTo(expectedAsset1Balance).Within(expectedAsset1Balance * 0.01)
                         .After(60).Seconds.PollEvery(2).Seconds,
