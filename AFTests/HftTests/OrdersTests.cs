@@ -57,24 +57,123 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void PostOrdersMarketTest()
             {
-                //valid scenario??
-                var request = new MarketOrderRequest() {Asset = "EUR", AssetPairId = "AUDEUR", OrderAction = OrderAction.Sell, Volume = 0.5 };
+                var request = new MarketOrderRequest() {Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = 0.2 };
 
                 var response = hft.Orders.PostOrdersMarket(request, ApiKey);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+                Assert.That(response.GetResponseObject().Result, Is.Not.Null);
+
+                var requestSell = new MarketOrderRequest() { Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1 };
+
+                var responseSell = hft.Orders.PostOrdersMarket(requestSell, ApiKey);
+            }
+        }
+
+        public class PostOrdersMarketBuy : HftBaseTest
+        {
+            [Test]
+            [Category("HFT")]
+            public void PostOrdersMarketBuyTest()
+            {
+                var request = new MarketOrderRequest() { Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = 0.2 };
+
+                var response = hft.Orders.PostOrdersMarket(request, ApiKey);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                var requestBuy = new MarketOrderRequest() { Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1};
+
+                var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, ApiKey);
+                responseBuy.Validate.StatusCode(HttpStatusCode.OK);
+                Assert.That(responseBuy.GetResponseObject().Result, Is.Not.Null);
+            }
+        }
+
+        public class PostOrdersMarketWrongAsset : HftBaseTest
+        {
+            [TestCase("1234")]
+            [TestCase("invalidAsset")]
+            [TestCase("")]
+            [TestCase("!^&*(")]
+            [Category("HFT")]
+            public void PostOrdersMarketWrongAssetTest(string asset)
+            {
+                var request = new MarketOrderRequest() { Asset = asset, AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = 0.5 };
+
+                var response = hft.Orders.PostOrdersMarket(request, ApiKey);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public class PostOrdersMarketWrongAssetPair : HftBaseTest
+        {
+            [TestCase("1234")]
+            [TestCase("invalidAsset")]
+            [TestCase("")]
+            [TestCase("!^&*(")]
+            [Category("HFT")]
+            public void PostOrdersMarketWrongAssetPairTest(string assetPair)
+            {
+                var request = new MarketOrderRequest() { Asset = "CHF", AssetPairId = assetPair, OrderAction = OrderAction.Sell, Volume = 0.5 };
+
+                var response = hft.Orders.PostOrdersMarket(request, ApiKey);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public class PostOrdersMarketWrongVolume : HftBaseTest
+        {
+            [TestCase(0000)]
+            [TestCase(0.00000000001)]
+            [TestCase(-15.2)]
+            [Category("HFT")]
+            public void PostOrdersMarketWrongVolumeTest(double volume)
+            {
+                var request = new MarketOrderRequest() { Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = volume };
+
+                var response = hft.Orders.PostOrdersMarket(request, ApiKey);
+                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public class PostOrdersMarketNotFullRequest : HftBaseTest
+        {
+            [Test]
+            [Category("HFT")]
+            public void PostOrdersMarketNotFullRequestTest()
+            {
+                var requests = new List<MarketOrderRequest>();
+                requests.Add(new MarketOrderRequest() { Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell });
+                requests.Add(new MarketOrderRequest() { Asset = "CHF", OrderAction = OrderAction.Sell, Volume = 0.5 });
+                requests.Add(new MarketOrderRequest() { AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = 0.5 });
+                Assert.Multiple(() => 
+                {
+                    Assert.That(hft.Orders.PostOrdersMarket(requests[0], ApiKey).StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(hft.Orders.PostOrdersMarket(requests[1], ApiKey).StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(hft.Orders.PostOrdersMarket(requests[2], ApiKey).StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                });
+            }
+        }
+
+        public class PostOrdersLimitBuy : HftBaseTest
+        {
+            [Test]
+            [Category("HFT")]
+            public void PostOrdersLimitBuyTest()
+            {
+                var request = new LimitOrderRequest() {Price = 1.0, AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1 };
+
+                var response = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
             }
         }
 
-        //add negative market test
-
-        public class PostOrdersLimit : HftBaseTest
+        public class PostOrdersLimitSell : HftBaseTest
         {
             [Test]
             [Category("HFT")]
-            public void PostOrdersLimitTest()
+            public void PostOrdersLimitSellTest()
             {
-                //valid scenario??
-                var request = new LimitOrderRequest() {Price = 1.0, AssetPairId = "AUDEUR", OrderAction = OrderAction.Sell, Volume = 0.5 };
+                var request = new LimitOrderRequest() { Price = 1.0, AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1 };
 
                 var response = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
