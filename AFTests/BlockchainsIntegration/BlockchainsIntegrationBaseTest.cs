@@ -63,6 +63,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
         protected static string CLIENT_ID = _currentSettings.Value.ClientId;
         protected static string ASSET_ID = _currentSettings.Value.AssetId;
+        protected static string BlockChainName = _currentSettings.Value.BlockchainIntegration;
 
 
         [OneTimeTearDown]
