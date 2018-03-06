@@ -28,7 +28,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-           return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Ripple"; //"Ripple";// "Dash"; "Litecoin";
+           return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Bitshares"; //"Ripple";// "Dash"; "Litecoin";
        }
 
         protected static string CurrentAssetId()
@@ -55,8 +55,8 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        protected static string WALLET_ADDRESS = _currentSettings.Value.WalletAddress;
-        protected static string PKey = _currentSettings.Value.WalletKey;
+        protected static string WALLET_ADDRESS = _currentSettings.Value.DepositWalletAddress;
+        protected static string PKey = _currentSettings.Value.DepositWalletKey;
 
         protected static string WALLET_SINGLE_USE = _currentSettings.Value.WalletSingleUse;
         protected static string KEY_WALLET_SINGLE_USE = _currentSettings.Value.WalletSingleUseKey;
