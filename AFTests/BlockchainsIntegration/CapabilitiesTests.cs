@@ -9,7 +9,6 @@ namespace AFTests.BlockchainsIntegration
 {
     class CapabilitiesTests 
     {
-
         public class GetCapabilities : BlockchainsIntegrationBaseTest
         {
             [Test]
@@ -18,7 +17,7 @@ namespace AFTests.BlockchainsIntegration
             {
                 var response = blockchainApi.Capabilities.GetCapabilities();
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().IsTransactionsRebuildingSupported, Is.False);
+                Assert.That(response.GetResponseObject().IsTransactionsRebuildingSupported, Is.False.Or.False);
             }
         }
     }

@@ -18,7 +18,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 var response = blockchainApi.Assets.GetAssets("2",null);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().Items.Count, Is.GreaterThanOrEqualTo(1), "Assets count is less then 1");
-                Assert.That(response.Content, Does.Contain(CurrentAssetId()).IgnoreCase, $"{CurrentAssetId()} not present in asseets");
+                Assert.That(response.Content, Does.Contain(ASSET_ID).IgnoreCase, $"{ASSET_ID} not present in asseets");
             }
         }
 
@@ -55,11 +55,9 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetAssetsIdTest()
             {
-                var assetId = CurrentAssetId();
-
-                var response = blockchainApi.Assets.GetAsset(assetId);
+                var response = blockchainApi.Assets.GetAsset(ASSET_ID);
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().AssetId, Is.EqualTo(CurrentAssetId()).IgnoreCase);
+                Assert.That(response.GetResponseObject().AssetId, Is.EqualTo(ASSET_ID).IgnoreCase);
             }
         }
 

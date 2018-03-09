@@ -31,13 +31,8 @@ namespace AFTests.BlockchainsIntegrationTests
            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Bitshares"; //"Ripple";// "Dash"; "Litecoin";
        }
 
-        protected static string CurrentAssetId()
-        {
-            return _currentSettings.Value.AssetId;
-        }
-
         protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
-        protected BlockchainApi blockchainApi = new BlockchainApi(_currentSettings.Value.BlockchainApi);
+        protected BlockchainApi blockchainApi = new BlockchainApi(BlockchainApi);
         protected BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
         protected BlockchainWallets blockchainWallets = new BlockchainWallets();
 
@@ -48,12 +43,19 @@ namespace AFTests.BlockchainsIntegrationTests
                 lock (_lock)
                 {
                     if (string.IsNullOrEmpty(_currentSettings.Value.HotWallet))
-                        _currentSettings.Value.HotWallet = new BlockchainSign(_currentSettings.Value.BlockchainSign).PostWallet().GetResponseObject().PublicAddress;
+                    {
+                        var wallet = new BlockchainSign(_currentSettings.Value.BlockchainSign).PostWallet().GetResponseObject();
+                        _currentSettings.Value.HotWallet = wallet.PublicAddress;
+                        _currentSettings.Value.HotWalletKey = wallet.PrivateKey;
+                    }
                 }
 
                 return _currentSettings.Value.HotWallet;
             }
         }
+        protected static string HOT_WALLET_KEY = _currentSettings.Value.HotWalletKey;
+
+        protected static string BlockChainName = _currentSettings.Value.BlockchainIntegration;
 
         protected static string WALLET_ADDRESS = _currentSettings.Value.DepositWalletAddress;
         protected static string PKey = _currentSettings.Value.DepositWalletKey;
@@ -63,7 +65,10 @@ namespace AFTests.BlockchainsIntegrationTests
 
         protected static string CLIENT_ID = _currentSettings.Value.ClientId;
         protected static string ASSET_ID = _currentSettings.Value.AssetId;
-        protected static string BlockChainName = _currentSettings.Value.BlockchainIntegration;
+
+        protected static string EXTERNAL_WALLET = _currentSettings.Value.ExternalWalletAddress;
+        protected static string EXTERNAL_WALLET_KEY = _currentSettings.Value.ExternalWalletKey;
+
 
 
         [OneTimeTearDown]
