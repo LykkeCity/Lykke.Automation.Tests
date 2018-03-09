@@ -144,6 +144,7 @@ namespace AFTests.BlockchainsIntegration
         {
             public BitsharesSettings()
             {
+                BlockchainIntegration = "Bitshares";
                 BlockchainApi = "http://lykke-service-bitshares-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://lykke-service-bitshares-sign.lykke-service.svc.cluster.local/api";
                 WalletsUrl = null;
