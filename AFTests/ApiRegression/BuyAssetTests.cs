@@ -20,9 +20,9 @@ namespace AFTests.ApiRegression
         private string password = Config.BuyAssetPassword;
         private string pin = Config.BuyAssetPin;
 
-        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Limit, 0.0001, Category = "ApiRegression")]
+        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Limit, 0.001, Category = "ApiRegression")]
         [TestCase("BTC", "USD", BuyOrSell.Sell, Order.Limit, 0.001, Category = "ApiRegression")]
-        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Market, 0.0001, Category = "ApiRegression")]
+        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Market, 0.001, Category = "ApiRegression")]
         [TestCase("BTC", "USD", BuyOrSell.Sell, Order.Market, 0.001, Category = "ApiRegression")]
         public void OrderTest(string asset1, string asset2, BuyOrSell buyOrSell, Order order, double volume)
         {
@@ -72,7 +72,7 @@ namespace AFTests.ApiRegression
                 });
             }
 
-            Step($"{buyOrSell} {asset1} for {asset2}", () =>
+            Step($"{buyOrSell} {volume} {asset1} for {asset2}", () =>
             {
                 string accessToken = steps.GetAccessToken(email, token, key);
                 double assetVolume = buyOrSell == BuyOrSell.Buy ? volume : -volume;
@@ -80,6 +80,7 @@ namespace AFTests.ApiRegression
 
                 if (order == Order.Limit)
                 {
+                    Console.WriteLine($"Placing Limit order for pair {asset1 + asset2} with price {assetPairPrice}");
                     orderId = walletApi.HotWallet
                         .PostLimitOrder(new HotWalletLimitOperation
                         {
@@ -106,6 +107,7 @@ namespace AFTests.ApiRegression
 
                     Assert.That(marketOrder.Order?.Price, Is.Not.Null, "No order price found");
                     assetPairPrice = marketOrder.Order.Price.Value;
+                    Console.WriteLine($"Market order has been placed for pair {asset1 + asset2} with price {assetPairPrice}");
                 }
                 
                 Assert.That(orderId, Is.Not.Null.Or.Not.Empty, "Order Id is null or empty");
