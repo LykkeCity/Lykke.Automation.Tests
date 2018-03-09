@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using Lykke.Client.AutorestClient.Models;
+using LykkeAutomationPrivate.DataGenerators;
 using NBitcoin;
 using NUnit.Framework;
 
@@ -17,7 +18,7 @@ namespace AFTests.ApiRegression.Steps
             api = walletApi;
         }
 
-        public (string token, string encodedPrivateKey) Login(string email, string password, string pin)
+        public (string token, Key privateKey) Login(string email, string password, string pin)
         {
             Assert.That(api.ClientState.GetClientState(email, null)
                 .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
@@ -43,7 +44,9 @@ namespace AFTests.ApiRegression.Steps
                 .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
                 .GetResponseObject().Result.EncodedPrivateKey;
 
-            return (token, encodedPrivateKey);
+            string privateKeyStr = AesUtils.Decrypt(encodedPrivateKey, password);
+            Key privateKey = Key.Parse(privateKeyStr);
+            return (token, privateKey);
         }
 
         public void CancelAnyLimitOrder(string token)

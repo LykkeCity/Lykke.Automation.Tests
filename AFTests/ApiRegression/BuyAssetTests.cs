@@ -39,10 +39,8 @@ namespace AFTests.ApiRegression
             Step($"Login as {email} user", () =>
             {
                 var loginStep = steps.Login(email, password, pin);
-                var encodedPrivateKey = loginStep.encodedPrivateKey;
-                var privateKey = AesUtils.Decrypt(encodedPrivateKey, password);
                 token = loginStep.token;
-                key = Key.Parse(privateKey);
+                key = loginStep.privateKey;
             });
 
             if (order == Order.Limit)
@@ -66,8 +64,8 @@ namespace AFTests.ApiRegression
                     var assetPairRates = walletApi.AssetPairRates.GetById(assetPair, token)
                         .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
                         .GetResponseObject().Result;
-                    Assert.That(assetPairRates?.Rate?.Ask, Is.Not.Null);
-                    Assert.That(assetPairRates?.Rate?.Bid, Is.Not.Null);
+                    Assert.That(assetPairRates?.Rate?.Ask, Is.Not.Null, "No Ask rate found");
+                    Assert.That(assetPairRates?.Rate?.Bid, Is.Not.Null, "No Bid rate found");
                     assetPairPrice = buyOrSell == BuyOrSell.Buy 
                         ? assetPairRates.Rate.Ask.Value //Buying for the highest price
                         : assetPairRates.Rate.Bid.Value; //Selling for the lowest price
@@ -106,7 +104,7 @@ namespace AFTests.ApiRegression
                         .GetResponseObject().Result;
                     orderId = marketOrder.Order?.Id;
 
-                    Assert.That(marketOrder.Order?.Price, Is.Not.Null);
+                    Assert.That(marketOrder.Order?.Price, Is.Not.Null, "No order price found");
                     assetPairPrice = marketOrder.Order.Price.Value;
                 }
                 
@@ -120,7 +118,8 @@ namespace AFTests.ApiRegression
                     Assert.That(() => walletApi.LimitOrders.GetOffchainLimitList(token, assetPair)
                             .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
                             .GetResponseObject().Result.Orders,
-                        Is.Empty.After(60).Seconds.PollEvery(1).Seconds);
+                        Is.Empty.After(60).Seconds.PollEvery(1).Seconds, 
+                        "Limit order has not been sold!");
                 });
             }
 
@@ -158,7 +157,8 @@ namespace AFTests.ApiRegression
                                  .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
                                  .GetResponseObject().Result
                                  .Any(record => record.Trade?.OrderId == orderId && record.Trade?.Asset == asset1),
-                    Is.True.After(60).Seconds.PollEvery(5).Seconds);
+                    Is.True.After(60).Seconds.PollEvery(5).Seconds, 
+                    "No history found for the last order");
             });
         }
     }
