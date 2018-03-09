@@ -454,7 +454,7 @@ namespace AFTests.BlockchainsIntegrationTests
         public class EWDWTransfer : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("")]
+            [Category("BlockchainIntegration")]
             public void EWDWTransferTest()
             {
                 Assert.That(EXTERNAL_WALLET, Is.Not.Null.Or.Empty, "External wallet address and key are empty!");
@@ -499,7 +499,7 @@ namespace AFTests.BlockchainsIntegrationTests
         public class HwEwTransfer : BlockchainsIntegrationBaseTest
         {
             [Test]
-            [Category("")]
+            [Category("BlockchainIntegration")]
             public void HwEwTransferTest()
             {
                 Assert.That(EXTERNAL_WALLET, Is.Not.Null.Or.Empty, "External wallet address and key are empty!");
