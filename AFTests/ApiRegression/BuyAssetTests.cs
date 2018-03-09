@@ -16,10 +16,9 @@ namespace AFTests.ApiRegression
         public enum BuyOrSell { Buy, Sell }
         public enum Order { Limit, Market }
 
-        //TODO: Move to config
-        private string email = "untest005@test.com";
-        private string password = "1234567";
-        private string pin = "1111";
+        private string email = Config.BuyAssetEmail;
+        private string password = Config.BuyAssetPassword;
+        private string pin = Config.BuyAssetPin;
 
         [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Limit, 0.0001, Category = "ApiRegression")]
         [TestCase("BTC", "USD", BuyOrSell.Sell, Order.Limit, 0.001, Category = "ApiRegression")]
