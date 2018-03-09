@@ -16,7 +16,7 @@ namespace AFTests.BlockchainsIntegrationTests
     {
         public class GetBalances : BlockchainsIntegrationBaseTest
         {
-            [Test]
+           // [Test]
             [Category("BlockchainIntegration")]
             public void GetBalancesTest()
             {
@@ -98,7 +98,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public class CheckBalanceIsZeroBeforeGetBalance : BlockchainsIntegrationBaseTest
         {
-            [Test]
+            //[Test]
             [Category("BlockchainIntegration")]
             [Description("Test will faill if at same time two or more treads will run it.")]
             public void CheckBalanceIsZeroBeforeGetBalanceTest()
