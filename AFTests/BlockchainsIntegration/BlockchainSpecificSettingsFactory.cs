@@ -52,7 +52,7 @@ namespace AFTests.BlockchainsIntegration
                 _settings = new StellarSettings();
 
             if (blockchain == "stellar-v2")
-                _settings = new StellarSettings();
+                _settings = new StellarV2Settings();
 
             if (blockchain == "bitshares")
                 _settings = new BitsharesSettings();
