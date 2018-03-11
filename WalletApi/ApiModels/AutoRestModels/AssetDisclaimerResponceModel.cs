@@ -7,24 +7,28 @@
 namespace Lykke.Client.AutorestClient.Models
 {
     using Newtonsoft.Json;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
 
-    public partial class FeeSettings
+    public partial class AssetDisclaimerResponceModel
     {
         /// <summary>
-        /// Initializes a new instance of the FeeSettings class.
+        /// Initializes a new instance of the AssetDisclaimerResponceModel
+        /// class.
         /// </summary>
-        public FeeSettings()
+        public AssetDisclaimerResponceModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the FeeSettings class.
+        /// Initializes a new instance of the AssetDisclaimerResponceModel
+        /// class.
         /// </summary>
-        public FeeSettings(double? bankCardsFeeSizePercentage = default(double?))
+        public AssetDisclaimerResponceModel(IList<AssetDisclaimerModel> disclaimers = default(IList<AssetDisclaimerModel>))
         {
-            BankCardsFeeSizePercentage = bankCardsFeeSizePercentage;
+            Disclaimers = disclaimers;
             CustomInit();
         }
 
@@ -35,8 +39,8 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "BankCardsFeeSizePercentage")]
-        public double? BankCardsFeeSizePercentage { get; set; }
+        [JsonProperty(PropertyName = "Disclaimers")]
+        public IList<AssetDisclaimerModel> Disclaimers { get; set; }
 
     }
 }

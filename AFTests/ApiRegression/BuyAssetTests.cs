@@ -20,21 +20,14 @@ namespace AFTests.ApiRegression
         private string password = Config.BuyAssetPassword;
         private string pin = Config.BuyAssetPin;
 
-        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Limit, 0.001, Category = "ApiRegression")]
-        [TestCase("BTC", "USD", BuyOrSell.Sell, Order.Limit, 0.001, Category = "ApiRegression")]
-        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Market, 0.001, Category = "ApiRegression")]
-        [TestCase("BTC", "USD", BuyOrSell.Sell, Order.Market, 0.001, Category = "ApiRegression")]
-        public void OrderTest(string asset1, string asset2, BuyOrSell buyOrSell, Order order, double volume)
-        {
-            var steps = new MobileSteps(walletApi);
+        private MobileSteps steps;
+        private string token;
+        private Key key;
 
-            string assetPair = asset1 + asset2;
-            double asset1Balance = 0;
-            double asset2Balance = 0;
-            double assetPairPrice = 0;
-            string orderId = null;
-            string token = null;
-            Key key = null;
+        [OneTimeSetUp]
+        public void Login()
+        {
+            steps = new MobileSteps(walletApi);
 
             Step($"Login as {email} user", () =>
             {
@@ -42,6 +35,22 @@ namespace AFTests.ApiRegression
                 token = loginStep.token;
                 key = loginStep.privateKey;
             });
+        }
+
+        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Limit, 0.001, Category = "ApiRegression")]
+        [TestCase("BTC", "USD", BuyOrSell.Sell, Order.Limit, 0.001, Category = "ApiRegression")]
+        [TestCase("BTC", "EUR", BuyOrSell.Buy, Order.Market, 0.001, Category = "ApiRegression")]
+        [TestCase("BTC", "USD", BuyOrSell.Sell, Order.Market, 0.001, Category = "ApiRegression")]
+        public void OrderTest(string asset1, string asset2, BuyOrSell buyOrSell, Order order, double volume)
+        {
+            
+
+            string assetPair = asset1 + asset2;
+            double asset1Balance = 0;
+            double asset2Balance = 0;
+            double assetPairPrice = 0;
+            string orderId = null;
+
 
             if (order == Order.Limit)
             {

@@ -11,25 +11,23 @@ namespace Lykke.Client.AutorestClient.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class ResponseModelApiTransactionSequence
+    public partial class ApiFeeSettings
     {
         /// <summary>
-        /// Initializes a new instance of the
-        /// ResponseModelApiTransactionSequence class.
+        /// Initializes a new instance of the ApiFeeSettings class.
         /// </summary>
-        public ResponseModelApiTransactionSequence()
+        public ApiFeeSettings()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the
-        /// ResponseModelApiTransactionSequence class.
+        /// Initializes a new instance of the ApiFeeSettings class.
         /// </summary>
-        public ResponseModelApiTransactionSequence(IList<ApiTransaction> result = default(IList<ApiTransaction>), ErrorModel error = default(ErrorModel))
+        public ApiFeeSettings(double? bankCardsFeeSizePercentage = default(double?), IList<CashOutFee> cashOut = default(IList<CashOutFee>))
         {
-            Result = result;
-            Error = error;
+            BankCardsFeeSizePercentage = bankCardsFeeSizePercentage;
+            CashOut = cashOut;
             CustomInit();
         }
 
@@ -40,13 +38,13 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "Result")]
-        public IList<ApiTransaction> Result { get; set; }
+        [JsonProperty(PropertyName = "BankCardsFeeSizePercentage")]
+        public double? BankCardsFeeSizePercentage { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "Error")]
-        public ErrorModel Error { get; set; }
+        [JsonProperty(PropertyName = "CashOut")]
+        public IList<CashOutFee> CashOut { get; set; }
 
     }
 }

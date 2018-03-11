@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using XUnitTestCommon.RestRequests.Interfaces;
 
-namespace WalletApi.Api.ApplicationInfo
+namespace WalletApi.Api
 {
     public class ApplicationInfo : ApiBase
     {

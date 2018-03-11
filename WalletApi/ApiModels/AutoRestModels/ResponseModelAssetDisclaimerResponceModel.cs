@@ -7,26 +7,24 @@
 namespace Lykke.Client.AutorestClient.Models
 {
     using Newtonsoft.Json;
-    using System.Collections;
-    using System.Collections.Generic;
     using System.Linq;
 
-    public partial class ResponseModelIKeyValueSequence
+    public partial class ResponseModelAssetDisclaimerResponceModel
     {
         /// <summary>
-        /// Initializes a new instance of the ResponseModelIKeyValueSequence
-        /// class.
+        /// Initializes a new instance of the
+        /// ResponseModelAssetDisclaimerResponceModel class.
         /// </summary>
-        public ResponseModelIKeyValueSequence()
+        public ResponseModelAssetDisclaimerResponceModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the ResponseModelIKeyValueSequence
-        /// class.
+        /// Initializes a new instance of the
+        /// ResponseModelAssetDisclaimerResponceModel class.
         /// </summary>
-        public ResponseModelIKeyValueSequence(IList<IKeyValue> result = default(IList<IKeyValue>), ErrorModel error = default(ErrorModel))
+        public ResponseModelAssetDisclaimerResponceModel(AssetDisclaimerResponceModel result = default(AssetDisclaimerResponceModel), ErrorModel error = default(ErrorModel))
         {
             Result = result;
             Error = error;
@@ -41,7 +39,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "Result")]
-        public IList<IKeyValue> Result { get; set; }
+        public AssetDisclaimerResponceModel Result { get; set; }
 
         /// <summary>
         /// </summary>

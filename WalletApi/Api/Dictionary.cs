@@ -9,9 +9,9 @@ namespace WalletApi.Api
     public class Dictionary : ApiBase
     {
 
-        public IResponse<ResponseModelIKeyValueSequence> GetDictionary()
+        public IResponse<ResponseModelIKeyValue2> GetDictionary()
         {
-            return Request.Get("/Dictionary").Build().Execute<ResponseModelIKeyValueSequence>();
+            return Request.Get("/Dictionary").Build().Execute<ResponseModelIKeyValue2>();
         }
 
         public IResponse<ResponseModelIKeyValue> GetDictionaryKey(string key)

@@ -8,7 +8,7 @@
         public Registration Registration => new Registration();
         public Auth Auth => new Auth();
         public AccountExist AccountExist => new AccountExist();
-        public ApplicationInfo.ApplicationInfo ApplicationInfo => new ApplicationInfo.ApplicationInfo();
+        public ApplicationInfo ApplicationInfo => new ApplicationInfo();
         public AllAssetPairRates AllAssetPairRates => new AllAssetPairRates();
         public AllAssets AllAssets => new AllAssets();
         public AppSettings AppSettings => new AppSettings();
@@ -61,5 +61,6 @@
         public AssetPairRates AssetPairRates => new AssetPairRates();
         public History History => new History();
         public Offchain Offchain => new Offchain();
+        public AssetDisclaimers AssetDisclaimers => new AssetDisclaimers();
     }
 }

@@ -11,22 +11,22 @@ namespace Lykke.Client.AutorestClient.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class ResponseModelPrivateWalletHistoryRecordSequence
+    public partial class ResponseModelPrivateWalletHistoryRecord
     {
         /// <summary>
         /// Initializes a new instance of the
-        /// ResponseModelPrivateWalletHistoryRecordSequence class.
+        /// ResponseModelPrivateWalletHistoryRecord class.
         /// </summary>
-        public ResponseModelPrivateWalletHistoryRecordSequence()
+        public ResponseModelPrivateWalletHistoryRecord()
         {
             CustomInit();
         }
 
         /// <summary>
         /// Initializes a new instance of the
-        /// ResponseModelPrivateWalletHistoryRecordSequence class.
+        /// ResponseModelPrivateWalletHistoryRecord class.
         /// </summary>
-        public ResponseModelPrivateWalletHistoryRecordSequence(IList<PrivateWalletHistoryRecord> result = default(IList<PrivateWalletHistoryRecord>), ErrorModel error = default(ErrorModel))
+        public ResponseModelPrivateWalletHistoryRecord(IList<PrivateWalletHistoryRecord> result = default(IList<PrivateWalletHistoryRecord>), ErrorModel error = default(ErrorModel))
         {
             Result = result;
             Error = error;

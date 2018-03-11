@@ -22,13 +22,14 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the ApiLimitOrder class.
         /// </summary>
-        public ApiLimitOrder(string id = default(string), string dateTime = default(string), string orderType = default(string), double? volume = default(double?), double? remainingVolume = default(double?), double? price = default(double?), string baseAsset = default(string), string assetPair = default(string), double? totalCost = default(double?), int? accuracy = default(int?), string orderStatus = default(string))
+        public ApiLimitOrder(string id = default(string), string dateTime = default(string), string orderType = default(string), double? volume = default(double?), double? remainingVolume = default(double?), double? remainingOtherVolume = default(double?), double? price = default(double?), string baseAsset = default(string), string assetPair = default(string), double? totalCost = default(double?), int? accuracy = default(int?), string orderStatus = default(string))
         {
             Id = id;
             DateTime = dateTime;
             OrderType = orderType;
             Volume = volume;
             RemainingVolume = remainingVolume;
+            RemainingOtherVolume = remainingOtherVolume;
             Price = price;
             BaseAsset = baseAsset;
             AssetPair = assetPair;
@@ -67,6 +68,11 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "RemainingVolume")]
         public double? RemainingVolume { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "RemainingOtherVolume")]
+        public double? RemainingOtherVolume { get; set; }
 
         /// <summary>
         /// </summary>
