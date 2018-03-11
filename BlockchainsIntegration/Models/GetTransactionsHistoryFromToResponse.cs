@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Lykke.Client.AutorestClient.Models
 {
+    [JsonArray]
     public class GetTransactionsHistoryFromToResponse
-    {
+    {    
         public TransactionHistory[] TransactionHistoryFrom { get; set; }
     }
     public class TransactionHistory
