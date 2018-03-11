@@ -22,7 +22,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the ApiAppSettingsModel class.
         /// </summary>
-        public ApiAppSettingsModel(int? rateRefreshPeriod = default(int?), ApiAssetModel baseAsset = default(ApiAssetModel), bool? signOrder = default(bool?), string depositUrl = default(string), bool? debugMode = default(bool?), ApiRefundSettings refundSettings = default(ApiRefundSettings), double? marketOrderPriceDeviation = default(double?), FeeSettings feeSettings = default(FeeSettings))
+        public ApiAppSettingsModel(int? rateRefreshPeriod = default(int?), ApiAssetModel baseAsset = default(ApiAssetModel), bool? signOrder = default(bool?), string depositUrl = default(string), bool? debugMode = default(bool?), ApiRefundSettings refundSettings = default(ApiRefundSettings), double? marketOrderPriceDeviation = default(double?), ApiFeeSettings feeSettings = default(ApiFeeSettings))
         {
             RateRefreshPeriod = rateRefreshPeriod;
             BaseAsset = baseAsset;
@@ -78,7 +78,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "FeeSettings")]
-        public FeeSettings FeeSettings { get; set; }
+        public ApiFeeSettings FeeSettings { get; set; }
 
     }
 }

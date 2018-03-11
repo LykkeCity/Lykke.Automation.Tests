@@ -22,8 +22,8 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the OperationModel class.
         /// </summary>
-        /// <param name="type">Possible values include: 'Transfer',
-        /// 'VisaCardPayment'</param>
+        /// <param name="type">Possible values include: 'Transfer', 'Cashout',
+        /// 'VisaCardPayment', 'NewOrder'</param>
         /// <param name="status">Possible values include: 'Created',
         /// 'Accepted', 'Confirmed', 'Completed', 'Canceled', 'Failed'</param>
         public OperationModel(System.Guid? id = default(System.Guid?), System.DateTime? created = default(System.DateTime?), string type = default(string), string status = default(string), TransferContext transfer = default(TransferContext))
@@ -52,7 +52,8 @@ namespace Lykke.Client.AutorestClient.Models
         public System.DateTime? Created { get; set; }
 
         /// <summary>
-        /// Gets or sets possible values include: 'Transfer', 'VisaCardPayment'
+        /// Gets or sets possible values include: 'Transfer', 'Cashout',
+        /// 'VisaCardPayment', 'NewOrder'
         /// </summary>
         [JsonProperty(PropertyName = "Type")]
         public string Type { get; set; }

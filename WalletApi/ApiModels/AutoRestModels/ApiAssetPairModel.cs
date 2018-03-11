@@ -22,7 +22,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the ApiAssetPairModel class.
         /// </summary>
-        public ApiAssetPairModel(string group = default(string), string id = default(string), string name = default(string), int? accuracy = default(int?), int? invertedAccuracy = default(int?), string baseAssetId = default(string), string quotingAssetId = default(string), bool? inverted = default(bool?))
+        public ApiAssetPairModel(string group = default(string), string id = default(string), string name = default(string), int? accuracy = default(int?), int? invertedAccuracy = default(int?), string baseAssetId = default(string), string quotingAssetId = default(string), bool? inverted = default(bool?), double? minVolume = default(double?), double? minInvertedVolume = default(double?))
         {
             Group = group;
             Id = id;
@@ -32,6 +32,8 @@ namespace Lykke.Client.AutorestClient.Models
             BaseAssetId = baseAssetId;
             QuotingAssetId = quotingAssetId;
             Inverted = inverted;
+            MinVolume = minVolume;
+            MinInvertedVolume = minInvertedVolume;
             CustomInit();
         }
 
@@ -79,6 +81,16 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "Inverted")]
         public bool? Inverted { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "MinVolume")]
+        public double? MinVolume { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "MinInvertedVolume")]
+        public double? MinInvertedVolume { get; set; }
 
     }
 }

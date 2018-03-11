@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<RunSettings>
+  <!-- Parameters used by tests at runtime -->  
+  <TestRunParameters>  
+    <Parameter name="WalletApiUrl" value="https://api-dev.lykkex.net/api" />  
+    <Parameter name="ApiRegressionBuyAssetEmail" value="untest005@test.com" />  
+    <Parameter name="ApiRegressionBuyAssetPassword" value="1234567" />  
+    <Parameter name="ApiRegressionBuyAssetPin" value="1111" />  
+  </TestRunParameters>  
+</RunSettings>

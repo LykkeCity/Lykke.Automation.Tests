@@ -25,7 +25,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// <param name="state">Possible values include: 'InProcessOnchain',
         /// 'SettledOnchain', 'InProcessOffchain', 'SettledOffchain',
         /// 'SettledNoChain'</param>
-        public ApiBalanceChangeModel(string id = default(string), double? amount = default(double?), string dateTime = default(string), string asset = default(string), string iconId = default(string), string blockChainHash = default(string), bool? isRefund = default(bool?), string addressFrom = default(string), string addressTo = default(string), bool? isSettled = default(bool?), string type = default(string), string state = default(string))
+        public ApiBalanceChangeModel(string id = default(string), double? amount = default(double?), string dateTime = default(string), string asset = default(string), string iconId = default(string), string blockChainHash = default(string), bool? isRefund = default(bool?), string addressFrom = default(string), string addressTo = default(string), bool? isSettled = default(bool?), string type = default(string), string state = default(string), Fee fee = default(Fee))
         {
             Id = id;
             Amount = amount;
@@ -39,6 +39,7 @@ namespace Lykke.Client.AutorestClient.Models
             IsSettled = isSettled;
             Type = type;
             State = state;
+            Fee = fee;
             CustomInit();
         }
 
@@ -109,6 +110,11 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "State")]
         public string State { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "Fee")]
+        public Fee Fee { get; set; }
 
     }
 }
