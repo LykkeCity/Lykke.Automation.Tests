@@ -29,7 +29,10 @@ namespace AFTests.BlockchainsIntegration
                     TestContext.Progress.WriteLine(File.ReadAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "properties.json")));
                 }
                 if (!string.IsNullOrEmpty(_settings?.BlockchainApi))
+                {
+                    TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
                     return _settings;
+                }  
                 else
                     TestContext.Progress.WriteLine("properties.json is present but api url is null or empty");
             }
