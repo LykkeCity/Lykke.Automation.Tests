@@ -142,7 +142,7 @@ namespace AFTests.BlockchainsIntegration
                 WalletSingleUse = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
                 WalletSingleUseKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
-                AssetId = "XRP";
+                AssetId = "XLM";
             }
         }
 
@@ -150,15 +150,15 @@ namespace AFTests.BlockchainsIntegration
         {
             public StellarV2Settings()
             {
-                BlockchainApi = "http://stellar-api-schnidlo.lykke-service.svc.cluster.local/api";
-                BlockchainSign = "http://stellar-sign-service-schnidlo.lykke-service.svc.cluster.local/api";
+                BlockchainApi = "http://stellar-api-schnidlo.lykke-service.svc.cluster.local/";
+                BlockchainSign = "http://stellar-sign-service-schnidlo.lykke-service.svc.cluster.local/";
                 WalletsUrl = null;
                 DepositWalletKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
                 DepositWalletAddress = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
                 WalletSingleUse = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
                 WalletSingleUseKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
-                AssetId = "XRP";
+                AssetId = "XLM";
             }
         }
 
