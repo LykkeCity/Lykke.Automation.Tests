@@ -72,7 +72,8 @@ namespace AlgoStoreData.Fixtures
         [OneTimeTearDown]
         public void Cleanup()
         {
-            ClearTestData().Wait();
+            System.Threading.Thread.Sleep(1000000);
+            ClearTestData().Wait(1000000);
             GC.SuppressFinalize(this);
         }
     }

@@ -52,15 +52,9 @@ namespace AlgoStoreData.Fixtures
                 var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
                 Assert.True(response.Status == System.Net.HttpStatusCode.NoContent);
 
-                InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-                {
-                    AlgoId = stringDTO.AlgoId,
-                    HftApiKey = "key",
-                    AssetPair = "BTCUSD",
-                    TradedAsset = "USD",
-                    Margin = "1",
-                    Volume = "1"
-                };
+                GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+                InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId);
 
                 url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 

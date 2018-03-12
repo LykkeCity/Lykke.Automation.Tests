@@ -285,15 +285,9 @@ namespace AFTests.AlgoStore
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = algoID,
-                HftApiKey = "key",
-                AssetPair = "BTCUSD",
-                TradedAsset = "USD",
-                Margin = "1",
-                Volume = "1"
-            };
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -301,6 +295,8 @@ namespace AFTests.AlgoStore
             Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
 
             InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
+
+            //check
 
             Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
             Assert.That(postInstanceData.AssetPair, Is.EqualTo(instanceForAlgo.AssetPair));
@@ -310,6 +306,8 @@ namespace AFTests.AlgoStore
             Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(instanceForAlgo.Margin));
             Assert.NotNull(postInstanceData.InstanceId);
 
+
+            // possibli rewirte te entity
             ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
             Assert.NotNull(instanceDataEntityExists);
 
@@ -340,19 +338,14 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task PostInstanceDataForAlgo()
         {
+            // will need to check the response
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = algoID,
-                HftApiKey = "key",
-                AssetPair = "BTCUSD",
-                TradedAsset = "USD",
-                Margin ="1",
-                Volume = "1"
-            };
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -376,19 +369,14 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetInstanceDataForAlgo()
         {
+            //check the instance retirn data
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = algoID,
-                HftApiKey = "key",
-                AssetPair = "BTCUSD",
-                TradedAsset = "USD",
-                Margin = "1",
-                Volume = "1"
-            };
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -420,18 +408,13 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task EditInstanceDataForAlgo()
         {
+            // edition logic is changed nee rewrite
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = algoID,
-                HftApiKey = "key",
-                AssetPair = "BTCUSD",
-                TradedAsset = "USD",
-                Margin = "1",
-                Volume = "1"
-            };
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -458,7 +441,8 @@ namespace AFTests.AlgoStore
                 AssetPair = "BTCEUR",
                 TradedAsset = "EUR",
                 Margin = "2",
-                Volume = "2"
+                Volume = "2",
+                WalletId = "2134"
             };
             var postInstanceDataResponseEdit = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgoEdit), Method.POST);
 
@@ -480,19 +464,15 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetInstanceData()
         {
+
+            // check the returned data
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = algoID,
-                HftApiKey = "key",
-                AssetPair = "BTCUSD",
-                TradedAsset = "USD",
-                Margin = "1",
-                Volume = "1"
-            };
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -640,15 +620,11 @@ namespace AFTests.AlgoStore
             var responsetemp = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
             Assert.True(responsetemp.Status == System.Net.HttpStatusCode.NoContent);
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-                {
-                    AlgoId = stringDTO.AlgoId,
-                    HftApiKey = "key",
-                    AssetPair = "BTCUSD",
-                    TradedAsset = "USD",
-                    Margin = "1",
-                    Volume = "1"
-                };
+
+
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId);
 
             url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
