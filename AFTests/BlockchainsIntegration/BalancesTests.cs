@@ -35,7 +35,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
 
                 Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS), 
-                    Is.True.After(10*60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 10 minutes");
+                    Is.True.After(5*60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 10 minutes");
 
                 //disable
                 var dResponse = blockchainApi.Balances.DeleteBalances(WALLET_ADDRESS);
@@ -109,7 +109,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 blockchainApi.Balances.GetBalances("500", null).Validate.StatusCode(HttpStatusCode.OK);
 
                 Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_SINGLE_USE),
-                    Is.True.After(10 * 60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 10 minutes");
+                    Is.True.After(5 * 60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 10 minutes");
                 
                 //create transaction and broadcast it
 

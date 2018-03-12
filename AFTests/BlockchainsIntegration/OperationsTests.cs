@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using XUnitTestCommon.TestsData;
 using System.Linq;
+using System.Collections;
 
 namespace AFTests.BlockchainsIntegrationTests
 {
@@ -53,7 +54,8 @@ namespace AFTests.BlockchainsIntegrationTests
             public void GetOperationIdInvalidIdTest(string operationId)
             {
                 var response = blockchainApi.Operations.GetOperationId(operationId);
-                response.Validate.StatusCode(HttpStatusCode.NotFound);
+
+                Assert.That(new ArrayList() { HttpStatusCode.BadRequest, HttpStatusCode.NotFound }, Has.Member(response.StatusCode));
             }
         }
 
@@ -363,7 +365,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 json = json.Replace(request.OperationId.ToString(), operationId);
 
                 var response = blockchainApi.Operations.PostTransactionsManyInputs(json);
-                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+                Assert.That(new ArrayList() {HttpStatusCode.BadRequest, HttpStatusCode.NotImplemented }, Has.Member(response.StatusCode));
             }
         }
 

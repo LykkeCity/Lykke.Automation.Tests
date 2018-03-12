@@ -1,4 +1,6 @@
 ﻿using AFTests.BlockchainsIntegrationTests;
+using Lykke.Client.AutorestClient.Models;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -40,7 +42,9 @@ namespace AFTests.BlockchainsIntegration
             {
                 var response = blockchainApi.Operations.GetTransactionHistorToAddress(WALLET_ADDRESS);
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.Content, Is.EqualTo("[]"), "Unexpected count for invalid address");
+
+                var empty = JsonConvert.DeserializeObject<TransactionHistory[]>("[]");
+                Assert.That(JsonConvert.DeserializeObject<TransactionHistory[]>(response.Content), Is.EqualTo(empty), "Unexpected count for invalid address");
             }
         }
 
