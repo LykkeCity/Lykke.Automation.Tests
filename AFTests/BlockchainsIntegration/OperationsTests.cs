@@ -59,28 +59,6 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class PostTransactions : BlockchainsIntegrationBaseTest
-        {
-            [Test]
-            [Category("BlockchainIntegration")]
-            public void PostTransactionsTest()
-            {
-                var model = new BuildSingleTransactionRequest()
-                {
-                    Amount = "100001",
-                    AssetId = ASSET_ID,
-                    FromAddress = WALLET_ADDRESS,
-                    IncludeFee = false,
-                    OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET
-                };
-
-                var response = blockchainApi.Operations.PostTransactions(model);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().TransactionContext, Is.Not.Null);
-            }
-        }
-
         public class PostTransactionsInvalidAddress : BlockchainsIntegrationBaseTest
         {
             [Test]
@@ -203,7 +181,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void DeleteOperationIdInvalidOIdTest(string operationId)
             {
                 var response = blockchainApi.Operations.DeleteOperationId(operationId);
-                Assert.That(new object[] { HttpStatusCode.BadRequest, HttpStatusCode.NoContent}, Has.Member(response.StatusCode));
+                Assert.That(new object[] { HttpStatusCode.BadRequest, HttpStatusCode.NoContent, HttpStatusCode.NotFound}, Has.Member(response.StatusCode));
             }
         }
 
@@ -217,6 +195,10 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetTransactionsManyOutputsInvalidOperationIdTest(string operationId)
             {
+                var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyOutputsSupported;
+                if (!run.Value)
+                    Assert.Ignore("Many outputs are not supported by blockachain");
+
                 var response = blockchainApi.Operations.GetTransactionsManyOutputs(operationId);
                 Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest }, Does.Contain(response.StatusCode));
             }
@@ -228,6 +210,10 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetTransactionsManyOutputsTest()
             {
+                var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyOutputsSupported;
+                if (!run.Value)
+                    Assert.Ignore("Many outputs are not supported by blockachain");
+
                 var model = new BuildSingleTransactionRequest()
                 {
                     Amount = "100001",
@@ -269,8 +255,12 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetTransactionsManyInputsInvalidOperationIdTest(string operationId)
             {
+                var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyInputsSupported;
+                if (!run.Value)
+                    Assert.Ignore("Many inputs not supported by blockachain");
+
                 var response = blockchainApi.Operations.GetTransactionsManyInputs(operationId);
-                Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest }, Has.Member(response.StatusCode));
+                Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest, HttpStatusCode.NotFound }, Has.Member(response.StatusCode));
             }
         }
 
@@ -280,6 +270,10 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetTransactionsManyInputsTest()
             {
+                var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyInputsSupported;
+                if (!run.Value)
+                    Assert.Ignore("Many inputs are not supported by blockachain");
+
                 var model = new BuildSingleTransactionRequest()
                 {
                     Amount = "100001",
@@ -313,36 +307,6 @@ namespace AFTests.BlockchainsIntegrationTests
         }
 
         //post many inputs
-        public class PostTransactionsManyInputs : BlockchainsIntegrationBaseTest
-        {
-            [Test]
-            [Category("BlockchainIntegration")]
-            public void PostTransactionsManyInputsTest()
-            {
-                var model = new BuildSingleTransactionRequest()
-                {
-                    Amount = "100001",
-                    AssetId = ASSET_ID,
-                    FromAddress = WALLET_ADDRESS,
-                    IncludeFee = false,
-                    OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET
-                };
-
-                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
-
-                var request = new BuildTransactionWithManyInputsRequest()
-                {
-                    AssetId = ASSET_ID,
-                    OperationId = model.OperationId,
-                    ToAddress = HOT_WALLET,
-                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract() {Amount = "100001", FromAddress = WALLET_ADDRESS } }
-                };
-
-                var response = blockchainApi.Operations.PostTransactionsManyInputs(request);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-            }
-        }
 
         public class PostTransactionsManyInputsInvalidOperationId : BlockchainsIntegrationBaseTest
         {
@@ -353,6 +317,10 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostTransactionsManyInputsInvalidOperationIdTest(string operationId)
             {
+                var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyInputsSupported;
+                if (!run.Value)
+                    Assert.Ignore("Many inputs not supported by blockachain");
+
                 var request = new BuildTransactionWithManyInputsRequest()
                 {
                     AssetId = ASSET_ID,

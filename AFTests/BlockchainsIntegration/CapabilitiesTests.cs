@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace AFTests.BlockchainsIntegration
+namespace AFTests.BlockchainsIntegrationTests
 {
     class CapabilitiesTests 
     {
