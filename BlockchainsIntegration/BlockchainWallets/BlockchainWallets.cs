@@ -17,7 +17,7 @@ namespace BlockchainsIntegration.BlockchainWallets
 
         public IResponse<IsAliveResponse> GetIsAlive()
         {
-            return Request.Get($"/IsAlive").Build().Execute<IsAliveResponse>();
+            return Request.Get($"/isalive").Build().Execute<IsAliveResponse>();
         }
 
         public IResponse GetWalletByClientId(string integrationLayerId, string integrationLayerAssetId, string clientId)
