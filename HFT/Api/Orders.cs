@@ -34,12 +34,12 @@ namespace HFT.Api
                 .Build().Execute<ResponseModelDouble>();
         }
 
-        public IResponse<ResponseModelDouble> PostOrdersLimitOrder(LimitOrderRequest request, string apiKey)
+        public IResponse PostOrdersLimitOrder(LimitOrderRequest request, string apiKey)
         {
             return Request.Post($"/Orders/limit")
                 .AddJsonBody(request)
                 .WithHeaders("api-key", apiKey)
-                .Build().Execute<ResponseModelDouble>();
+                .Build().Execute();
         }
 
         public IResponse<ResponseModelDouble> PostOrdersCancelOrder(string id, string apiKey)

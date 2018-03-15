@@ -10,7 +10,7 @@ namespace AFTests.HftTests
 {
     class HftBaseTest : BaseTest
     {
-        protected const string ApiKey = "6eba78a1-1594-462f-9b28-3822baf9397c";
+        protected const string ApiKey = "3982d2d7-ae7b-4995-8074-d563707b986e";
 
         protected Hft hft = new Hft();
 

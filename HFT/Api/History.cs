@@ -10,7 +10,7 @@ namespace HFT.Api
     {
         public IResponse<List<HistoryTradeModel>> GetHistory(string assetId, string skip, string take, string apiKey)
         {
-            return Request.Get("/History/trades")
+            return Request.Get("/history/trades")
                 .AddQueryParameterIfNotNull("assetId", assetId)
                 .AddQueryParameterIfNotNull("skip", skip)
                 .AddQueryParameterIfNotNull("take", take)
@@ -20,7 +20,7 @@ namespace HFT.Api
 
         public IResponse<HistoryTradeModel> GetHistoryTrade(string tradeId, string apiKey)
         {
-            return Request.Get($"/History/trades/{tradeId}")
+            return Request.Get($"/history/trades/{tradeId}")
                 .AddQueryParameter("tradeId", tradeId)
                 .WithHeaders("api-key", apiKey)
                 .Build().Execute<HistoryTradeModel>();

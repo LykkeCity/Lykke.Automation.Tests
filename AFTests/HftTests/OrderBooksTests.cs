@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Lykke.Client.AutorestClient.Models;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -49,6 +50,5 @@ namespace AFTests.HftTests
                 response.Validate.StatusCode(HttpStatusCode.NotFound);
             }
         }
-
     }
 }
