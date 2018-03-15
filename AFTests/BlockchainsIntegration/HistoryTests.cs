@@ -40,7 +40,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetHistoryToTest()
             {
-                var response = blockchainApi.Operations.GetTransactionHistorToAddress(WALLET_ADDRESS);
+                var response = blockchainApi.Operations.GetTransactionHistorToAddress(WALLET_ADDRESS, "10");
                 response.Validate.StatusCode(HttpStatusCode.OK);
 
                 var empty = JsonConvert.DeserializeObject<TransactionHistory[]>("[]");

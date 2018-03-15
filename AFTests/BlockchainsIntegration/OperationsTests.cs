@@ -32,7 +32,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
-                string operationId = model.OperationId.ToString("N");
+                string operationId = model.OperationId.ToString(); // Stefan/ with dashes
 
                 var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
@@ -93,7 +93,6 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var response = blockchainApi.Operations.PostTransactions(model);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
-                Assert.That(response.Content, Does.Contain("errorMessage").IgnoreCase);
             }
         }
 
@@ -130,7 +129,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostTransactionsBroadcastInvalidTransactionTest()
             {
-                string sTransaction = Guid.NewGuid().ToString("N");
+                string sTransaction = Guid.NewGuid().ToString();
 
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest()
                 { OperationId = Guid.NewGuid(), SignedTransaction = sTransaction });
@@ -485,7 +484,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
-                string operationId = model.OperationId.ToString("N");
+                string operationId = model.OperationId.ToString();
 
                 var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { HOT_WALLET_KEY }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
