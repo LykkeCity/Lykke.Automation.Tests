@@ -1,24 +1,14 @@
-﻿using WalletApi.Api.PersonalDataResource;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WalletApi.Api.RegistrationResource;
-using LykkeAutomation.Api.ApiModels.AccountExistModels;
-using WalletApi.Api.ApiResources.AccountExist;
-using XUnitTestCommon.RestRequests;
-using XUnitTestCommon.RestRequests.Interfaces;
-
-namespace WalletApi.Api
+﻿namespace WalletApi.Api
 {
-   public class WalletApi
+    public class WalletApi
     {
+        public string ApiUrl => ApiBase.ApiUrl;
+
         public PersonalData PersonalData => new PersonalData();
         public Registration Registration => new Registration();
         public Auth Auth => new Auth();
         public AccountExist AccountExist => new AccountExist();
-        public ApplicationInfo.ApplicationInfo ApplicationInfo => new ApplicationInfo.ApplicationInfo();
+        public ApplicationInfo ApplicationInfo => new ApplicationInfo();
         public AllAssetPairRates AllAssetPairRates => new AllAssetPairRates();
         public AllAssets AllAssets => new AllAssets();
         public AppSettings AppSettings => new AppSettings();
@@ -70,5 +60,7 @@ namespace WalletApi.Api
         public HotWallet HotWallet => new HotWallet();
         public AssetPairRates AssetPairRates => new AssetPairRates();
         public History History => new History();
+        public Offchain Offchain => new Offchain();
+        public AssetDisclaimers AssetDisclaimers => new AssetDisclaimers();
     }
 }

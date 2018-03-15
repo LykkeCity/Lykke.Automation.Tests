@@ -33,13 +33,15 @@ namespace Lykke.Client.AutorestClient.Models
         /// 'BadAccessToken', 'NoEncodedMainKey',
         /// 'PreviousTransactionsWereNotCompleted', 'LimitationCheckFailed',
         /// 'TransactionAlreadyExists', 'UnknownTrustedTransferDirection',
-        /// 'InvalidGuidValue', 'BadTempAccessToken', 'BadRequest',
-        /// 'NotEnoughGas'</param>
-        public ErrorModel(string code = default(string), string field = default(string), string message = default(string))
+        /// 'InvalidGuidValue', 'BadTempAccessToken', 'NotEnoughLiquidity',
+        /// 'InvalidCashoutAddress', 'MinVolumeViolation', 'PendingDisclaimer',
+        /// 'BadRequest', 'NotEnoughGas'</param>
+        public ErrorModel(string code = default(string), string field = default(string), string message = default(string), object details = default(object))
         {
             Code = code;
             Field = field;
             Message = message;
+            Details = details;
             CustomInit();
         }
 
@@ -60,8 +62,9 @@ namespace Lykke.Client.AutorestClient.Models
         /// 'BadAccessToken', 'NoEncodedMainKey',
         /// 'PreviousTransactionsWereNotCompleted', 'LimitationCheckFailed',
         /// 'TransactionAlreadyExists', 'UnknownTrustedTransferDirection',
-        /// 'InvalidGuidValue', 'BadTempAccessToken', 'BadRequest',
-        /// 'NotEnoughGas'
+        /// 'InvalidGuidValue', 'BadTempAccessToken', 'NotEnoughLiquidity',
+        /// 'InvalidCashoutAddress', 'MinVolumeViolation', 'PendingDisclaimer',
+        /// 'BadRequest', 'NotEnoughGas'
         /// </summary>
         [JsonProperty(PropertyName = "Code")]
         public string Code { get; set; }
@@ -76,9 +79,10 @@ namespace Lykke.Client.AutorestClient.Models
         [JsonProperty(PropertyName = "Message")]
         public string Message { get; set; }
 
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "Details")]
+        public object Details { get; set; }
+
     }
 }

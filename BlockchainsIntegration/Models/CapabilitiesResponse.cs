@@ -22,11 +22,14 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the CapabilitiesResponse class.
         /// </summary>
-        public CapabilitiesResponse(bool isTransactionsRebuildingSupported, bool? areMultipleInputsSupported = default(bool?), bool? areMultipleOutputsSupported = default(bool?))
+        public CapabilitiesResponse(bool isTransactionsRebuildingSupported, bool? areManyInputsSupported = default(bool?),
+            bool? areManyOutputsSupported = default(bool?), string contractVersion = default(string), bool isTestingTransfersSupported = default(bool))
         {
+            ContractVersion = contractVersion;
             IsTransactionsRebuildingSupported = isTransactionsRebuildingSupported;
-            AreMultipleInputsSupported = areMultipleInputsSupported;
-            AreMultipleOutputsSupported = areMultipleOutputsSupported;
+            AreManyInputsSupported = areManyInputsSupported;
+            AreManyOutputsSupported = areManyOutputsSupported;
+            IsTestingTransfersSupported = isTestingTransfersSupported;
             CustomInit();
         }
 
@@ -37,18 +40,28 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
+        [JsonProperty(PropertyName = "contractVersion")]
+        public string ContractVersion { get; set; }
+
+        /// <summary>
+        /// </summary>
         [JsonProperty(PropertyName = "isTransactionsRebuildingSupported")]
         public bool IsTransactionsRebuildingSupported { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "areMultipleInputsSupported")]
-        public bool? AreMultipleInputsSupported { get; set; }
+        [JsonProperty(PropertyName = "areManyInputsSupported")]
+        public bool? AreManyInputsSupported { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "areMultipleOutputsSupported")]
-        public bool? AreMultipleOutputsSupported { get; set; }
+        [JsonProperty(PropertyName = "areManyOutputsSupported")]
+        public bool? AreManyOutputsSupported { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "isTestingTransfersSupported")]
+        public bool IsTestingTransfersSupported { get; set; }
 
         /// <summary>
         /// Validate the object.

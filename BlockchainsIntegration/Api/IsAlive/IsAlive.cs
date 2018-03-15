@@ -14,7 +14,7 @@ namespace BlockchainsIntegration.LiteCoin.Api
 
         public IResponse<IsAliveResponse> GetIsAlive()
         {
-            return Request.Get("/IsAlive").Build().Execute<IsAliveResponse>();
+            return Request.Get("/isalive").Build().Execute<IsAliveResponse>();
         }
     }
 }

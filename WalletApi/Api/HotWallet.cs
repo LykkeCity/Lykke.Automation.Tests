@@ -10,7 +10,16 @@ namespace WalletApi.Api
     {
         public IResponse<ResponseModelHotWalletSuccessTradeRespModel> PostLimitOrder(
             HotWalletLimitOperation operation, string accessToken, string token) =>
-            Request.Post("/HotWallet/limitOrder").WithBearerToken(token).WithHeaders("SignatureVerificationToken", accessToken)
+            Request.Post("/HotWallet/limitOrder").WithBearerToken(token)
+                .WithHeaders("SignatureVerificationToken", accessToken)
                 .AddJsonBody(operation).Build().Execute<ResponseModelHotWalletSuccessTradeRespModel>();
+
+        public IResponse<ResponseModelHotWalletSuccessTradeRespModel> PostMarketOrder(
+            HotWalletOperation operation, string accessToken, string token) =>
+            Request.Post("/HotWallet/marketOrder").WithBearerToken(token)
+                .WithHeaders("SignatureVerificationToken", accessToken)
+                .AddJsonBody(operation).Build().Execute<ResponseModelHotWalletSuccessTradeRespModel>();
+
+        //TODO: Add other
     }
 }

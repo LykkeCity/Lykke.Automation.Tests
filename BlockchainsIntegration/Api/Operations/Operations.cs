@@ -78,7 +78,7 @@ namespace BlockchainsIntegration.LiteCoin.Api
                 .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<GetTransactionsHistoryFromToResponse>();
         }
 
-        public IResponse<GetTransactionsHistoryFromToResponse> GetTransactionHistorToAddress(string address, string take = null, string afterHash = null)
+        public IResponse<GetTransactionsHistoryFromToResponse> GetTransactionHistorToAddress(string address, string take, string afterHash = null)
         {
             return Request.Get($"/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
                 .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<GetTransactionsHistoryFromToResponse>();
