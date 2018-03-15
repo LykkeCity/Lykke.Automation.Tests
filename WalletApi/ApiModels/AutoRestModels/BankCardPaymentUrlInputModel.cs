@@ -24,10 +24,11 @@ namespace Lykke.Client.AutorestClient.Models
         /// Initializes a new instance of the BankCardPaymentUrlInputModel
         /// class.
         /// </summary>
-        public BankCardPaymentUrlInputModel(double? amount = default(double?), string assetId = default(string), string firstName = default(string), string lastName = default(string), string city = default(string), string zip = default(string), string address = default(string), string country = default(string), string email = default(string), string phone = default(string))
+        public BankCardPaymentUrlInputModel(double? amount = default(double?), string assetId = default(string), string walletId = default(string), string firstName = default(string), string lastName = default(string), string city = default(string), string zip = default(string), string address = default(string), string country = default(string), string email = default(string), string phone = default(string), string depositOption = default(string))
         {
             Amount = amount;
             AssetId = assetId;
+            WalletId = walletId;
             FirstName = firstName;
             LastName = lastName;
             City = city;
@@ -36,6 +37,7 @@ namespace Lykke.Client.AutorestClient.Models
             Country = country;
             Email = email;
             Phone = phone;
+            DepositOption = depositOption;
             CustomInit();
         }
 
@@ -53,6 +55,11 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "AssetId")]
         public string AssetId { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "WalletId")]
+        public string WalletId { get; set; }
 
         /// <summary>
         /// </summary>
@@ -93,6 +100,11 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "Phone")]
         public string Phone { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "DepositOption")]
+        public string DepositOption { get; set; }
 
     }
 }

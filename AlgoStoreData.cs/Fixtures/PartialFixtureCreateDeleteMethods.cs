@@ -1,4 +1,5 @@
 ﻿using AlgoStoreData.DTOs;
+using NUnit.Framework;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,12 @@ namespace AlgoStoreData.Fixtures
 {
     public partial class AlgoStoreTestDataFixture : BaseTest
     {
-        public async Task<List<MetaDataResponseDTO>> UploadSomeBaseMetaData(int nuberDto)
+        private static List<BuilInitialDataObjectDTO> initialDTOObjectsList = new List<BuilInitialDataObjectDTO>();
+
+        public async Task<List<BuilInitialDataObjectDTO>> UploadSomeBaseMetaData(int nuberDto)
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
-            List<MetaDataDTO> metadataList = new List<MetaDataDTO>();
+            List <MetaDataDTO> metadataList = new List<MetaDataDTO>();
             List<MetaDataResponseDTO> responceMetadataList = new List<MetaDataResponseDTO>();
 
             for (int i = 0; i < nuberDto; i++)
@@ -36,22 +39,86 @@ namespace AlgoStoreData.Fixtures
                 responceMetadataList.Add(responceMetaData);
             }
 
-            return responceMetadataList;
+            for (int i = 0; i < nuberDto; i++)
+            {
+                url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+
+                UploadStringDTO stringDTO = new UploadStringDTO()
+                {
+                    AlgoId = responceMetadataList[i].Id,
+                    Data = "package com.lykke.algos;\n public class Algo \n { \n public void run() throws InterruptedException \n { \n for (int i = 100000; i > 0; i--) \n { \n java.lang.Thread.sleep(1000); \n System.out.println(\"Demo Algo Fil VS\" + i); \n } \n } \n }"             
+                };
+
+                var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
+                Assert.True(response.Status == System.Net.HttpStatusCode.NoContent);
+
+                InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
+                {
+                    AlgoId = stringDTO.AlgoId,
+                    HftApiKey = "key",
+                    AssetPair = "BTCUSD",
+                    TradedAsset = "USD",
+                    Margin = "1",
+                    Volume = "1"
+                };
+
+                url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
+
+                var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+                Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
+
+                InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
+
+                url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
+
+                DeployBinaryDTO deploy = new DeployBinaryDTO()
+                {
+                    AlgoId = stringDTO.AlgoId,
+                    InstanceId = postInstanceData.InstanceId,
+                };
+
+                var deployBynaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
+                Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
+
+                BuilInitialDataObjectDTO tempDataDTO = new BuilInitialDataObjectDTO()
+                {
+                    AlgoId = stringDTO.AlgoId,
+                    InstanceId = postInstanceData.InstanceId,
+                    Name = responceMetadataList[i].Name,
+                    Description = responceMetadataList[i].Description
+                };
+
+                initialDTOObjectsList.Add(tempDataDTO);
+            }
+
+            return initialDTOObjectsList;
         }
 
-        public async Task<List<Response>> ClearAllCascadeDelete(List<MetaDataResponseDTO> listDtoToBeDeleted)
+        public async Task<List<Response>> ClearAllCascadeDelete(List<BuilInitialDataObjectDTO> listDtoToBeDeleted)
         {
             List<Response> responces = new List<Response>();
             string url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
+            int retryCounter = 0;
 
             foreach (var deleteMetadata in listDtoToBeDeleted)
             {
                 CascadeDeleteDTO editMetaData = new CascadeDeleteDTO()
                 {
-                    Id = deleteMetadata.Id,
-                    Name = deleteMetadata.Name
+                    AlgoId = deleteMetadata.AlgoId,
+                    InstanceId = deleteMetadata.InstanceId
                 };
                 var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
+
+                // Currently we can not send cascade delete to kubernatees if he has not build the algo before that thorus not found and we leave data
+
+                while (responceCascadeDelete.Status.Equals(System.Net.HttpStatusCode.NotFound) && retryCounter <= 30)
+                {
+                    System.Threading.Thread.Sleep(10000);
+                    responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
+                    retryCounter++;
+                }
+
+                Assert.That(responceCascadeDelete.Status == System.Net.HttpStatusCode.NoContent);
 
                 responces.Add(responceCascadeDelete);               
             }

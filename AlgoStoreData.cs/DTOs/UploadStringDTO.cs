@@ -6,6 +6,7 @@ namespace AlgoStoreData.DTOs
 {
     public class UploadStringDTO
     {
+        public string AlgoId { get; set; }
         public string Data { get; set; }
     }
 

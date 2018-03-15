@@ -25,7 +25,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// <param name="state">Possible values include: 'InProcessOnchain',
         /// 'SettledOnchain', 'InProcessOffchain', 'SettledOffchain',
         /// 'SettledNoChain'</param>
-        public ApiTradeOperation(string id = default(string), string dateTime = default(string), string asset = default(string), double? volume = default(double?), string iconId = default(string), string blockChainHash = default(string), string addressFrom = default(string), string addressTo = default(string), bool? isSettled = default(bool?), string state = default(string), ApiMarketOrder marketOrder = default(ApiMarketOrder), string orderId = default(string), string limitOrderId = default(string), string marketOrderId = default(string), bool? isLimitTrade = default(bool?))
+        public ApiTradeOperation(string id = default(string), string dateTime = default(string), string asset = default(string), double? volume = default(double?), string iconId = default(string), string blockChainHash = default(string), string addressFrom = default(string), string addressTo = default(string), bool? isSettled = default(bool?), string state = default(string), ApiMarketOrder marketOrder = default(ApiMarketOrder), string orderId = default(string), string limitOrderId = default(string), string marketOrderId = default(string), bool? isLimitTrade = default(bool?), Fee fee = default(Fee))
         {
             Id = id;
             DateTime = dateTime;
@@ -42,6 +42,7 @@ namespace Lykke.Client.AutorestClient.Models
             LimitOrderId = limitOrderId;
             MarketOrderId = marketOrderId;
             IsLimitTrade = isLimitTrade;
+            Fee = fee;
             CustomInit();
         }
 
@@ -127,6 +128,11 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "IsLimitTrade")]
         public bool? IsLimitTrade { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "Fee")]
+        public Fee Fee { get; set; }
 
     }
 }

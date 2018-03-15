@@ -22,7 +22,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the ApiAssetModel class.
         /// </summary>
-        public ApiAssetModel(string id = default(string), string name = default(string), int? accuracy = default(int?), string symbol = default(string), bool? hideWithdraw = default(bool?), bool? hideDeposit = default(bool?), bool? kycNeeded = default(bool?), bool? bankCardsDepositEnabled = default(bool?), bool? swiftDepositEnabled = default(bool?), bool? blockchainDepositEnabled = default(bool?), string categoryId = default(string))
+        public ApiAssetModel(string id = default(string), string name = default(string), int? accuracy = default(int?), string symbol = default(string), bool? hideWithdraw = default(bool?), bool? hideDeposit = default(bool?), bool? kycNeeded = default(bool?), bool? bankCardsDepositEnabled = default(bool?), bool? swiftDepositEnabled = default(bool?), bool? blockchainDepositEnabled = default(bool?), bool? otherDepositOptionsEnabled = default(bool?), string categoryId = default(string))
         {
             Id = id;
             Name = name;
@@ -34,6 +34,7 @@ namespace Lykke.Client.AutorestClient.Models
             BankCardsDepositEnabled = bankCardsDepositEnabled;
             SwiftDepositEnabled = swiftDepositEnabled;
             BlockchainDepositEnabled = blockchainDepositEnabled;
+            OtherDepositOptionsEnabled = otherDepositOptionsEnabled;
             CategoryId = categoryId;
             CustomInit();
         }
@@ -92,6 +93,11 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "BlockchainDepositEnabled")]
         public bool? BlockchainDepositEnabled { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "OtherDepositOptionsEnabled")]
+        public bool? OtherDepositOptionsEnabled { get; set; }
 
         /// <summary>
         /// </summary>
