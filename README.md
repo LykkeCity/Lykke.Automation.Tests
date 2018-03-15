@@ -21,9 +21,12 @@ Set content to properties.json with the following settings for your Blockchain
   "AssetId": "ZEC", //AssetId of your Blockchain
   "BlockchainApi": "", //URL to your blockchain api
   "BlockchainSign": "", //URL to your blockchain sign-service api
-  "WalletAddress": "some-wallet-address", //Wallet with some crypto in your blockchain testnet
-  "WalletKey": "cRPW3spyP9riDJWniNpcbDkiBjpLrhneSh2qTs3uSZUbm4HZLEyB",//Key of your Wallet with some crypto
-  "HotWallet ": "" //hotWallet, that been created not in Lykke system
+  "DepositWalletAddress": "", // Wallet with some crypto
+  "DepositWalletKey": "", //key for DW 
+  "HotWallet": "", //HotWallet in blockchain
+  "HotWalletKey": "", key for this HW
+  "ExternalWalletAddress": "", //Wallet that been created not in lykke system
+  "ExternalWalletKey": "" // key
 }
 ```
 

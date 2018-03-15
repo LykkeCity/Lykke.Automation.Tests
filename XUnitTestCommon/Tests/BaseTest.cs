@@ -59,7 +59,7 @@ namespace XUnitTestCommon.Tests
 
             responses = new Dictionary<string, List<Response>>();
             schemesError = new List<string>();
-            TestContext.WriteLine("SetUp");
+            Console.WriteLine("SetUp");
         }
 
         [SetUp]
