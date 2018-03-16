@@ -20,7 +20,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetBalancesTest()
             {
-                var take = "1";
+                var take = "500";
 
                 blockchainApi.Balances.GetBalances(take, null).Validate.StatusCode(HttpStatusCode.OK);
 
