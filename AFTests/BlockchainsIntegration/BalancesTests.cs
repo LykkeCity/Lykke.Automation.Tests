@@ -20,7 +20,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetBalancesTest()
             {
-                var take = "1";
+                var take = "500";
 
                 blockchainApi.Balances.GetBalances(take, null).Validate.StatusCode(HttpStatusCode.OK);
 
@@ -160,8 +160,8 @@ namespace AFTests.BlockchainsIntegrationTests
                 sw.Start();
                 while (sw.Elapsed < TimeSpan.FromMinutes(10))
                 {
-                    if (int.Parse(request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance) <
-                        int.Parse(startBalance))
+                    if (long.Parse(request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_SINGLE_USE).Balance) <
+                        long.Parse(startBalance))
                     {
                         time = DateTime.Now.Ticks;
                         sw.Stop();

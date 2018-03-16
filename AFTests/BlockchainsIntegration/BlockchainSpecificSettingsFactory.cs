@@ -152,6 +152,8 @@ namespace AFTests.BlockchainsIntegration
             {
                 BlockchainApi = "http://stellar-api-schnidlo.lykke-service.svc.cluster.local/api";
                 BlockchainSign = "http://stellar-sign-service-schnidlo.lykke-service.svc.cluster.local/api";
+                HotWallet = "GCCWY6MNVWORHO7B3L6W5LULGFR337K5UAATA2Z3FSPQA5MYRW5X33ZP";
+                HotWalletKey = "SBBEPWMAINBQKQFW42L6GTWF73WPP5VRVG6KZHCWZVSVM4DUMWZESK2Z";
                 WalletsUrl = null;
                 DepositWalletKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
                 DepositWalletAddress = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
