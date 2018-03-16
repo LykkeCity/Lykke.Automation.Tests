@@ -1,109 +1,46 @@
 ﻿using Lykke.AlgoStore.CSharp.Algo.Core.Domain;
-using Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA;
 using System;
 
 namespace Lykke.AlgoStore.CSharp.Algo.Implemention.ExecutableClass
 {
     /// <summary>
-    /// Moving Average Cross Algorithm
+    /// REMARK: Just a dummy algo implementation for future reference.
+    /// We can and will remove this when first algo is implemented :)
     /// </summary>
-    public class MovingAverageCrossAlgo_Test : BaseAlgo
+    public class DummyAlgo : BaseAlgo
     {
-        public int ADXThreshold { get; set; }
-
-        private bool _crossSMAShortAbove;
-        private bool _crossSMAShortBelow;
-
-        private double _lastSMAShort;
-        private double _lastSMALong;
-        private double? _lastADXValue;
-
-        private double _currentSMAShort;
-        private double _currentSMALong;
-        private double? _currentADX;
-
-        private SmaFunction _smaShortPeriod;
-        private SmaFunction _smaLongPeriod;
-        private AdxFunction _adx;
+        private SmaFunction _shortSma;
+        private SmaFunction _longSma;
 
         public override void OnStartUp(IFunctionProvider functions)
         {
-            _smaShortPeriod = functions.GetFunction<SmaFunction>("SMA_Short");
-            _smaLongPeriod = functions.GetFunction<SmaFunction>("SMA_Long");
-            _adx = functions.GetFunction<AdxFunction>("ADX");
-
-		    _currentSMAShort = _smaShortPeriod.Value ?? 0;
-            _currentSMALong = _smaLongPeriod.Value ?? 0;
-            _currentADX = _adx.Value;
-
-            _lastSMALong = _currentSMALong;
-            _lastSMAShort = _currentSMAShort;
-            _lastADXValue = _currentADX;
+            _shortSma = functions.GetFunction<SmaFunction>("SMA_Short");
+            _longSma = functions.GetFunction<SmaFunction>("SMA_Long");
         }
 
-        public override void OnCandleReceived(ICandleContext contextCandle)
+        public override void OnQuoteReceived(IQuoteContext context)
         {
-		    contextCandle.Actions.Log($"Algo ADX Threshold {ADXThreshold}");
-            contextCandle.Actions.Log($"SMA_Short Asset Pair: {_smaShortPeriod.FunctionParameters.AssetPair}, " +
-                                      $"SMA_Long Asset Pair: {_smaLongPeriod.FunctionParameters.AssetPair}");
+            context.Actions.Log($"Volume value: {Volume}");
 
-		
-            _currentSMAShort = _smaShortPeriod.Value ?? 0;
-            _currentSMALong = _smaLongPeriod.Value ?? 0;
-            _currentADX = _adx.Value;
+            var quote = context.Data.Quote;
+            context.Actions.Log($"Receiving quote at {DateTime.UtcNow} " +
+                $"{{quote.Price: {quote.Price}}}, {{quote.Timestamp: {quote.Timestamp}}}, " +
+                $"{{quote.IsBuy: {quote.IsBuy}}}, {{quote.IsOnline: {quote.IsOnline}}}");
 
-            _crossSMAShortAbove = false;
-            _crossSMAShortBelow = false;
+            var smaShort = _shortSma.GetValue();
+            var smaLong = _longSma.GetValue();
+            context.Actions.Log($"Function values are: SMA_Short: {smaShort}, SMA_Long: {smaLong}");
 
-            contextCandle.Actions.Log($"Function values are: SMA_Short: {_currentSMAShort}, SMA_Long: {_currentSMALong}, ADX: {_currentADX}");
-
-
-            //we want to mark the cross and later check if there is adx
-            if (_lastSMAShort < _lastSMALong && _currentSMAShort > _currentSMALong)
+            if (quote.Price < 10000)
             {
-                contextCandle.Actions.Log($"Cross above of the SMA short period function => SMA_Short: {_currentSMAShort}, SMA_Long: {_currentSMALong}");
-                _crossSMAShortAbove = true;
+                context.Actions.Buy(Volume);
             }
 
-            if (_lastSMAShort > _lastSMALong && _currentSMAShort < _currentSMALong)
+            if (quote.Price > 8000)
             {
-                contextCandle.Actions.Log($"Cross below of the SMA short period function => SMA_Short: {_currentSMAShort}, SMA_Long: {_currentSMALong}");
-                _crossSMAShortBelow = true;
+                context.Actions.Sell(Volume);
             }
-
-            //if we have adx and cross we can buy/sell
-            //TODO we should set in parameter value for sell and buy if 
-            //it is one and the same we can use delegates for calling trading methods
-
-            if (_currentADX.HasValue && _currentADX > ADXThreshold )
-            {
-                if (_crossSMAShortAbove)
-                {
-                    contextCandle.Actions.Log($"Cross above and ADX occurred BUY => SMA_Short: {_currentSMAShort}," +
-                        $"                           SMA_Long: {_currentSMALong}");
-                    //context.Actions.BuyStraight(parameter.ValueToBuy);
-                }
-
-                if (_crossSMAShortBelow)
-                    contextCandle.Actions.Log($"Cross below and ADX occurred SELL => SMA_Short: {_currentSMAShort}, " +
-                        $"                          SMA_Long: {_currentSMALong}");
-                //context.Actions.SellStraight(parameter.ValueToSell);
-            }
-
-            _lastSMALong = _currentSMALong;
-            _lastSMAShort = _currentSMAShort;
-            _lastADXValue = _currentADX;
         }
-
-        public double GetSMAShortTerm() => _currentSMAShort;
-
-        public double GetSMALongTerm() => _currentSMALong;
-
-        public double? GetADX() => _currentADX;
-
-        public bool GetCrossSMAShortBelow() => _crossSMAShortBelow;
-
-        public bool GetCrossSMAShortAbove() => _crossSMAShortAbove;
     }
 }
