@@ -16,7 +16,6 @@ using AlgoStoreData.HelpersAlgoStore;
 namespace AFTests.AlgoStore
 {
     [Category("FullRegression")]
-    [Ignore("rewokr logic")]
     [Category("AlgoStore")]
     public partial class AlgoStoreTests : AlgoStoreTestDataFixture
     {
@@ -30,16 +29,16 @@ namespace AFTests.AlgoStore
 
 
             //rework logic new params
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = algoID,
-                HftApiKey = "key",
-                AssetPair = "BTCcoin",
-                TradedAsset = "USD",
-                Margin = "1",
-                Volume = "1",
-                WalletId = "2134"
-            };
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
+            //{
+            //    AlgoId = algoID,
+            //    HftApiKey = "key",
+            //    AssetPair = "BTCcoin",
+            //    TradedAsset = "USD",
+            //    Margin = "1",
+            //    Volume = "1",
+            //    WalletId = "2134"
+            //};
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -55,16 +54,16 @@ namespace AFTests.AlgoStore
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = algoID,
-                HftApiKey = "key",
-                AssetPair = "BTCUSD",
-                TradedAsset = "BTC",
-                Margin = "1",
-                Volume = "1",
-                WalletId = "2134"
-            };
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
+            //{
+            //    AlgoId = algoID,
+            //    HftApiKey = "key",
+            //    AssetPair = "BTCUSD",
+            //    TradedAsset = "BTC",
+            //    Margin = "1",
+            //    Volume = "1",
+            //    WalletId = "2134"
+            //};
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -77,16 +76,16 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task PostInvalidAlgoId()
         {
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = "Invalid Id",
-                HftApiKey = "key",
-                AssetPair = "BTCUSD",
-                TradedAsset = "USD",
-                Margin = "1",
-                Volume = "1",
-                WalletId = "2134"
-            };
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
+            //{
+            //    AlgoId = "Invalid Id",
+            //    HftApiKey = "key",
+            //    AssetPair = "BTCUSD",
+            //    TradedAsset = "USD",
+            //    Margin = "1",
+            //    Volume = "1",
+            //    WalletId = "2134"
+            //};
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -103,16 +102,16 @@ namespace AFTests.AlgoStore
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = algoID,
-                HftApiKey = "key",
-                AssetPair = "BTCUSD",
-                TradedAsset = "USD",
-                Margin = "-111",
-                Volume = "1",
-                WalletId = "2134"
-            };
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
+            //{
+            //    AlgoId = algoID,
+            //    HftApiKey = "key",
+            //    AssetPair = "BTCUSD",
+            //    TradedAsset = "USD",
+            //    Margin = "-111",
+            //    Volume = "1",
+            //    WalletId = "2134"
+            //};
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -129,16 +128,16 @@ namespace AFTests.AlgoStore
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = algoID,
-                HftApiKey = "key",
-                AssetPair = "BTCUSD",
-                TradedAsset = "USD",
-                Margin = "1",
-                Volume = "-333",
-                WalletId = "2134"
-            };
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
+            //{
+            //    AlgoId = algoID,
+            //    HftApiKey = "key",
+            //    AssetPair = "BTCUSD",
+            //    TradedAsset = "USD",
+            //    Margin = "1",
+            //    Volume = "-333",
+            //    WalletId = "2134"
+            //};
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -174,16 +173,16 @@ namespace AFTests.AlgoStore
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-            {
-                AlgoId = algoID,
-                HftApiKey = "key",
-                AssetPair = "BTCUSD",
-                TradedAsset = "USD",
-                Margin = "0",
-                Volume = "0",
-                WalletId = "2134"
-            };
+            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
+            //{
+            //    AlgoId = algoID,
+            //    HftApiKey = "key",
+            //    AssetPair = "BTCUSD",
+            //    TradedAsset = "USD",
+            //    Margin = "0",
+            //    Volume = "0",
+            //    WalletId = "2134"
+            //};
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 

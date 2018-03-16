@@ -8,6 +8,7 @@ namespace AlgoStoreData.DTOs
 {
     public class InstanceDataDTO
     {
+        public string InstanceId { get; set; }
         public string AlgoId { get; set; }
         public string AlgoClientId { get; set; }
         public string WalletId { get; set; }
@@ -90,7 +91,7 @@ namespace AlgoStoreData.DTOs
                         new AlgoMetaDataParameter()
                         {
                            Key = "CandleInterval",
-                           Value = "86400",
+                           Value = "60",
                            Type  ="CandleTimeInterval",
                            PredefinedValues = new List<PredefinedValues>()
                            {
@@ -176,16 +177,34 @@ namespace AlgoStoreData.DTOs
                                         Value = "10-05-2018",
                                         Type = "DateTime"
                                     },
+                                     new AlgoMetaDataParameter
+                                    {
+                                        Key = "Capacity",
+                                        Value = "5",
+                                        Type = "int"
+                                    },
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "FunctionInstanceIdentifier",
                                         Value = "SMA_Short",
                                         Type = "String"
                                     },
+                                     new AlgoMetaDataParameter()
+                                         {
+                                             Key = "AssetPair",
+                                             Value = "BTCEUR",
+                                             Type  ="String"
+                                         },
+                                    new AlgoMetaDataParameter()
+                                        {
+                                             Key = "TradedAsset",
+                                             Value = "EUR",
+                                            Type  ="String"
+                                        },
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "CandleTimeInterval",
-                                        Value = "86400",
+                                        Value = "60",
                                         Type = "CandleTimeInterval",
                                         PredefinedValues = new List<PredefinedValues>()
                                         {
@@ -306,10 +325,22 @@ namespace AlgoStoreData.DTOs
                                         Value = "10-05-2018",
                                         Type = "DateTime"
                                     },
+                                     new AlgoMetaDataParameter()
+                                    {
+                                        Key = "Capacity",
+                                        Value = "10",
+                                        Type = "int"
+                                    },
+                                      new AlgoMetaDataParameter()
+                                    {
+                                        Key = "AssetPair",
+                                        Value = "BTCEUR",
+                                        Type = "String"
+                                    },
                                     new AlgoMetaDataParameter()
                                     {
                                         Key = "CandleTimeInterval",
-                                        Value = "86400",
+                                        Value = "60",
                                         Type = "CandleTimeInterval",
                                         PredefinedValues = new List<PredefinedValues>()
                                         {
@@ -410,7 +441,114 @@ namespace AlgoStoreData.DTOs
                                         }
                                     }
                                 }
-                            }                      
+                            },
+                        new AlgoMetaDataFunction()
+                            {
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxFunction",
+                                Id = "ADX",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxParameters",
+                                Parameters = new List<AlgoMetaDataParameter>
+                                {
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "FunctionInstanceIdentifier",
+                                        Value = "ADX",
+                                        Type = "String"
+                                    },
+                                     new AlgoMetaDataParameter
+                                    {
+                                        Key = "AssetPair",
+                                        Value = "BTCEUR",
+                                        Type = "String"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "StartingDate",
+                                        Value = "10-02-2018",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "CandleTimeInterval",
+                                        Value = "60",
+                                        Type = "CandleTimeInterval",
+                                        PredefinedValues = new List<PredefinedValues>()
+                                        {
+                                            new PredefinedValues()
+                                                {
+                                                     Key = "Unspecified",
+                                                     Value = 0
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                     Key = "Second",
+                                                    Value = 1
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                    Key = "Minute",
+                                                    Value = 60
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                    Key = "5 Minutes",
+                                                    Value = 300
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                    Key = "15 Minutes",
+                                                   Value = 900
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                     Key = "30 Minutes",
+                                                     Value = 1800
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                    Key = "Hour",
+                                                    Value = 3600
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                    Key = "4 Hours",
+                                                    Value = 7200
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                    Key = "6 Hours",
+                                                    Value = 21600
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                    Key = "12 Hours",
+                                                    Value = 43200
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                    Key = "Day",
+                                                    Value = 86400
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                    Key = "Week",
+                                                    Value = 604800
+                                                },
+                                            new PredefinedValues()
+                                                {
+                                                    Key = "Month",
+                                                    Value = 3000000
+                                                },
+                                        }
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "AdxPeriod",
+                                        Value = "14",
+                                        Type = "int",                                       
+                                    },
+                                }
+                            },
                         }
                 }
             };
