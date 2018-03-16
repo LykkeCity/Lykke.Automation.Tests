@@ -27,7 +27,7 @@ namespace AlgoStoreData.Fixtures
         private OAuthConsumer User;
         private IContainer _container;
         public GenericRepository<MetaDataEntity, IMetaData> MetaDataRepository;
-        public GenericRepository<RuntimeDataEntity, IRuntimeData> RuntimeDataRepository;
+        public GenericRepository<RuntimeDataEntity, IStatistics> RuntimeDataRepository;
         public GenericRepository<ClientInstanceEntity, IClientInstance> ClientInstanceRepository;
         public List<BuilInitialDataObjectDTO> PreStoredMetadata;
         public AlgoBlobRepository BlobRepository;
@@ -67,7 +67,7 @@ namespace AlgoStoreData.Fixtures
             _container = builder.Build();
 
             this.MetaDataRepository = RepositoryUtils.ResolveGenericRepository<MetaDataEntity, IMetaData>(this._container);
-            this.RuntimeDataRepository = RepositoryUtils.ResolveGenericRepository<RuntimeDataEntity, IRuntimeData>(this._container);
+            this.RuntimeDataRepository = RepositoryUtils.ResolveGenericRepository<RuntimeDataEntity, IStatistics>(this._container);
             this.ClientInstanceRepository = RepositoryUtils.ResolveGenericRepository<ClientInstanceEntity, IClientInstance>(this._container);
             this.BlobRepository = new AlgoBlobRepository(_configBuilder.Config["MainConnectionString"], timespan);
     }

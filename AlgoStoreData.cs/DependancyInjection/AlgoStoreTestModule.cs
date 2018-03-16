@@ -30,10 +30,10 @@ namespace AlgoStoreData.DependancyInjection
                         _configBuilder.Config["MainConnectionString"], "AlgoMetaDataTable", null, timespan), "AlgoMetaDataTable"))
                 .As<IDictionaryRepository<IMetaData>>();
 
-            builder.Register(c => new GenericRepository<RuntimeDataEntity, IRuntimeData>(
+            builder.Register(c => new GenericRepository<RuntimeDataEntity, IStatistics>(
                     new AzureTableStorage<RuntimeDataEntity>(
                         _configBuilder.Config["MainConnectionString"], "AlgoRuntimeDataTable", null, timespan), "AlgoRuntimeDataTable"))
-                .As<IDictionaryRepository<IRuntimeData>>();
+                .As<IDictionaryRepository<IStatistics>>();
 
             builder.Register(c => new GenericRepository<ClientInstanceEntity, IClientInstance>(
                    new AzureTableStorage<ClientInstanceEntity>(

@@ -101,23 +101,6 @@ namespace AFTests.AlgoStore
         }   
 
         [Category("AlgoStore")]
-        [TestCase("")]
-        [TestCase("     ")]
-        [TestCase(null)]
-        public async Task GetLogBadRequest(string badId)
-        {
-            var url = ApiPaths.ALGO_STORE_ALGO_LOG;
-
-            Dictionary<string, string> algoIDLog = new Dictionary<string, string>()
-            {
-                { "AlgoId", badId }
-            };
-
-            var algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET);
-            Assert.That(algoIDLogResponse.Status , Is.EqualTo(HttpStatusCode.NotFound));
-        }
-
-        [Category("AlgoStore")]
         [TestCase("", "")]
         [TestCase("     ", "   ")]
         [TestCase(null, null)]
