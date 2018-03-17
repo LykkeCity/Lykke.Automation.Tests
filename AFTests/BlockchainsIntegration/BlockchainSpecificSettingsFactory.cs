@@ -161,6 +161,8 @@ namespace AFTests.BlockchainsIntegration
                 WalletSingleUseKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "XLM";
+                ExternalWalletAddress = "GDTCLM7L3RKSP324DBRROKRLTRU4WLSPLHDEVSC75LAVZFN6ZDQPK7LD";
+                ExternalWalletKey = "SCCSEPSZNHAIJXUVVHAN7ZHBSBSTBJY5Y2W7CJYIP3FALGAFEV5FEGMQ";
             }
         }
 
