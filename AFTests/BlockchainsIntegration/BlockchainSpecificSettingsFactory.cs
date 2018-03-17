@@ -150,6 +150,7 @@ namespace AFTests.BlockchainsIntegration
         {
             public StellarV2Settings()
             {
+                BlockchainIntegration = "Stellar";
                 BlockchainApi = "http://stellar-api-schnidlo.lykke-service.svc.cluster.local/api";
                 BlockchainSign = "http://stellar-sign-service-schnidlo.lykke-service.svc.cluster.local/api";
                 HotWallet = "GCCWY6MNVWORHO7B3L6W5LULGFR337K5UAATA2Z3FSPQA5MYRW5X33ZP";
