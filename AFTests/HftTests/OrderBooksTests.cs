@@ -45,8 +45,7 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void GetOrderBooksGetNewOrderTest()
             {
-                var assetPair = "BTCCHF";
-                var ordersBefore = hft.OrderBooks.GetOrderBooks(assetPair);
+                var ordersBefore = hft.OrderBooks.GetOrderBooks(AssetPair);
                 ordersBefore.Validate.StatusCode(HttpStatusCode.OK);
 
                 double price = default(double);
@@ -56,7 +55,7 @@ namespace AFTests.HftTests
                 do
                 {
                     price = double.Parse(TestData.GenerateNumbers(3)) / Math.Pow(10, 3);
-                    var request = new LimitOrderRequest() { Price = price, AssetPairId = assetPair, OrderAction = OrderAction.Buy, Volume = volume };
+                    var request = new LimitOrderRequest() { Price = price, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = volume };
 
                     var response = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
                     code = response.StatusCode;
@@ -68,7 +67,7 @@ namespace AFTests.HftTests
                 sw.Start();
                 while (sw.Elapsed < TimeSpan.FromMinutes(5))
                 {
-                    if (ordersBefore.GetResponseObject().FindAll(r => r.IsBuy == true).First().Timestamp != hft.OrderBooks.GetOrderBooks(assetPair).GetResponseObject().FindAll(r => r.IsBuy == true).First().Timestamp)
+                    if (ordersBefore.GetResponseObject().FindAll(r => r.IsBuy == true).First().Timestamp != hft.OrderBooks.GetOrderBooks(AssetPair).GetResponseObject().FindAll(r => r.IsBuy == true).First().Timestamp)
                         break;
                     System.Threading.Thread.Sleep(2);
                 }
@@ -77,7 +76,7 @@ namespace AFTests.HftTests
                 // check that it appear into ordersbook
                 Assert.That(() =>
                 {
-                    var order = hft.OrderBooks.GetOrderBooks(assetPair).GetResponseObject().FindAll(r => r.IsBuy == true).First();
+                    var order = hft.OrderBooks.GetOrderBooks(AssetPair).GetResponseObject().FindAll(r => r.IsBuy == true).First();
                     return order.Prices.Any(o => o.Price == price) && order.Prices.Any(o =>o.Volume == volume);
                 }, Is.True.After(5*60*1000, 2*1000), "Order does not appear in orderbook");
             }
