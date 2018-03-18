@@ -2,8 +2,11 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Text;
+using XUnitTestCommon.TestsData;
 
 namespace AFTests.HftTests
 {
@@ -18,7 +21,6 @@ namespace AFTests.HftTests
             {
                 var response = hft.OrderBooks.GetOrderBooks();
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().Count, Is.GreaterThan(10));
             }
         }
 
@@ -31,9 +33,53 @@ namespace AFTests.HftTests
                 var assets = hft.AssetPairs.GetAssetPairs();
                 assets.Validate.StatusCode(HttpStatusCode.OK);
 
-                var response = hft.OrderBooks.GetOrderBooks(assets.GetResponseObject()[0].Id);
+                var response = hft.OrderBooks.GetOrderBooks(assets.GetResponseObject().First().Id);
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject()[0].AssetPair, Is.EqualTo(assets.GetResponseObject()[0].Id));
+                Assert.That(response.GetResponseObject()[0].AssetPair, Is.EqualTo(assets.GetResponseObject().First().Id));
+            }
+        }
+
+        public class GetOrderBooksGetNewOrder : HftBaseTest
+        {
+            [Test]
+            [Category("HFT")]
+            public void GetOrderBooksGetNewOrderTest()
+            {
+                var assetPair = "BTCCHF";
+                var ordersBefore = hft.OrderBooks.GetOrderBooks(assetPair);
+                ordersBefore.Validate.StatusCode(HttpStatusCode.OK);
+
+                double price = default(double);
+                var volume = 1000;
+                int i = 0;
+                HttpStatusCode code = HttpStatusCode.BadRequest;
+                do
+                {
+                    price = double.Parse(TestData.GenerateNumbers(3)) / Math.Pow(10, 3);
+                    var request = new LimitOrderRequest() { Price = price, AssetPairId = assetPair, OrderAction = OrderAction.Buy, Volume = volume };
+
+                    var response = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
+                    code = response.StatusCode;
+                    i++;
+                }
+                while (i<5 && code!= HttpStatusCode.OK);              
+
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                while (sw.Elapsed < TimeSpan.FromMinutes(5))
+                {
+                    if (ordersBefore.GetResponseObject().FindAll(r => r.IsBuy == true).First().Timestamp != hft.OrderBooks.GetOrderBooks(assetPair).GetResponseObject().FindAll(r => r.IsBuy == true).First().Timestamp)
+                        break;
+                    System.Threading.Thread.Sleep(2);
+                }
+                sw.Stop();
+
+                // check that it appear into ordersbook
+                Assert.That(() =>
+                {
+                    var order = hft.OrderBooks.GetOrderBooks(assetPair).GetResponseObject().FindAll(r => r.IsBuy == true).First();
+                    return order.Prices.Any(o => o.Price == price) && order.Prices.Any(o =>o.Volume == volume);
+                }, Is.True.After(5*60*1000, 2*1000), "Order does not appear in orderbook");
             }
         }
 
