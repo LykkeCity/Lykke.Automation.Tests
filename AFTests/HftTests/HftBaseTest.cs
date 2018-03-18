@@ -14,14 +14,17 @@ namespace AFTests.HftTests
     class HftBaseTest : BaseTest
     {
         protected Hft hft = new Hft();
-        protected const string ApiKey = "3982d2d7-ae7b-4995-8074-d563707b986e";
+        protected string ApiKey = HFTSettings.GetHFTSettings().ApiKey;
+        protected string FirstAssetId = HFTSettings.GetHFTSettings().FirstAssetId;
+        protected string SecondAssetId = HFTSettings.GetHFTSettings().SecondAssetId;
+        protected string AssetPair = HFTSettings.GetHFTSettings().AssetPair;
     }
 
     [SetUpFixture]
     public class HFTAttributeClass 
     {
         protected Hft hft = new Hft();
-        protected const string ApiKey = "3982d2d7-ae7b-4995-8074-d563707b986e";
+        protected string ApiKey = HFTSettings.GetHFTSettings().ApiKey;
 
         [OneTimeTearDown]
         public void CancelAllOrders()

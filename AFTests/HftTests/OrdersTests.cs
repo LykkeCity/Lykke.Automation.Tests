@@ -44,7 +44,7 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void GetOrderByValidIdTest()
             {
-                var request = new LimitOrderRequest() { Price = 1.0, AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1 };
+                var request = new LimitOrderRequest() { Price = 1.0, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
                 var responseOrder = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
                 responseOrder.Validate.StatusCode(HttpStatusCode.OK);
@@ -61,13 +61,13 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void PostOrdersMarketTest()
             {
-                var request = new MarketOrderRequest() {Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = 0.2 };
+                var request = new MarketOrderRequest() {Asset = SecondAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = 0.2 };
 
                 var response = hft.Orders.PostOrdersMarket(request, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(response.GetResponseObject().Result, Is.Not.Null);
 
-                var requestSell = new MarketOrderRequest() { Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1 };
+                var requestSell = new MarketOrderRequest() { Asset = SecondAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
                 var responseSell = hft.Orders.PostOrdersMarket(requestSell, ApiKey);
             }
@@ -79,12 +79,12 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void PostOrdersMarketBuyTest()
             {
-                var request = new MarketOrderRequest() { Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = 0.2 };
+                var request = new MarketOrderRequest() { Asset = SecondAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = 0.2 };
 
                 var response = hft.Orders.PostOrdersMarket(request, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
 
-                var requestBuy = new MarketOrderRequest() { Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1};
+                var requestBuy = new MarketOrderRequest() { Asset = SecondAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.1};
 
                 var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, ApiKey);
                 responseBuy.Validate.StatusCode(HttpStatusCode.OK);
@@ -101,7 +101,7 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void PostOrdersMarketWrongAssetTest(string asset)
             {
-                var request = new MarketOrderRequest() { Asset = asset, AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = 0.5 };
+                var request = new MarketOrderRequest() { Asset = asset, AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = 0.5 };
 
                 var response = hft.Orders.PostOrdersMarket(request, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
@@ -117,7 +117,7 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void PostOrdersMarketWrongAssetPairTest(string assetPair)
             {
-                var request = new MarketOrderRequest() { Asset = "CHF", AssetPairId = assetPair, OrderAction = OrderAction.Sell, Volume = 0.5 };
+                var request = new MarketOrderRequest() { Asset = SecondAssetId, AssetPairId = assetPair, OrderAction = OrderAction.Sell, Volume = 0.5 };
 
                 var response = hft.Orders.PostOrdersMarket(request, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
@@ -132,7 +132,7 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void PostOrdersMarketWrongVolumeTest(double volume)
             {
-                var request = new MarketOrderRequest() { Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = volume };
+                var request = new MarketOrderRequest() { Asset = SecondAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = volume };
 
                 var response = hft.Orders.PostOrdersMarket(request, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
@@ -146,9 +146,9 @@ namespace AFTests.HftTests
             public void PostOrdersMarketNotFullRequestTest()
             {
                 var requests = new List<MarketOrderRequest>();
-                requests.Add(new MarketOrderRequest() { Asset = "CHF", AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell });
-                requests.Add(new MarketOrderRequest() { Asset = "CHF", OrderAction = OrderAction.Sell, Volume = 0.5 });
-                requests.Add(new MarketOrderRequest() { AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = 0.5 });
+                requests.Add(new MarketOrderRequest() { Asset = SecondAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Sell });
+                requests.Add(new MarketOrderRequest() { Asset = SecondAssetId, OrderAction = OrderAction.Sell, Volume = 0.5 });
+                requests.Add(new MarketOrderRequest() { AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = 0.5 });
                 Assert.Multiple(() => 
                 {
                     Assert.That(hft.Orders.PostOrdersMarket(requests[0], ApiKey).StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -164,7 +164,7 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void PostOrdersLimitBuyTest()
             {
-                var request = new LimitOrderRequest() {Price = 1.0, AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1 };
+                var request = new LimitOrderRequest() {Price = 1.0, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
                 var response = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
@@ -178,7 +178,7 @@ namespace AFTests.HftTests
             public void PostOrdersLimitSellTest()
             {
                 var request = new LimitOrderRequest()
-                { Price = 1.0, AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1 };
+                { Price = 1.0, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
                 var response = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
@@ -192,11 +192,11 @@ namespace AFTests.HftTests
             public void PostOrdersLimitNegativeTest()
             {
                 var request1 = new LimitOrderRequest()
-                { Price = 1.0, AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy };
+                { Price = 1.0, AssetPairId = AssetPair, OrderAction = OrderAction.Buy };
                 var request2 = new LimitOrderRequest()
                 { Price = 1.0, OrderAction = OrderAction.Buy, Volume = 0.1 };
                 var request3 = new LimitOrderRequest()
-                { AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1 };
+                { AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.1 };
                 var request4 = new LimitOrderRequest()
                 { };
 
@@ -216,7 +216,7 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void PostOrdersCancelLimitTest()
             {
-                var request = new LimitOrderRequest() { Price = 1.0, AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = 0.5 };
+                var request = new LimitOrderRequest() { Price = 1.0, AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = 0.5 };
 
                 var limit = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
 
@@ -267,7 +267,7 @@ namespace AFTests.HftTests
             public void GetOrderBooksInOrderBookStatusTest()
             {
                 var limitRequest = new LimitOrderRequest()
-                { Price = 1.0, AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1 };
+                { Price = 1.0, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
                 var limitResponse = hft.Orders.PostOrdersLimitOrder(limitRequest, ApiKey);
                 limitResponse.Validate.StatusCode(HttpStatusCode.OK);
@@ -287,7 +287,7 @@ namespace AFTests.HftTests
             public void GetOrderBooksNotEnoughFundsStatusTest()
             {
                 var limitRequest = new LimitOrderRequest()
-                { Price = 100000.0, AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.1 };
+                { Price = 100000.0, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
                 var limitResponse = hft.Orders.PostOrdersLimitOrder(limitRequest, ApiKey);
                 limitResponse.Validate.StatusCode(HttpStatusCode.BadRequest);
@@ -321,25 +321,11 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void GetOrderBooksLeadToNegativeSpreadStatusTest()
             {
-                //{
-                //                    "AssetPairId": "USDCHF",
-                //  "OrderAction": "Buy",
-                //  "Volume": 1,
-                //  "Price": 1.2
-                //}
-
-                //                {
-                //                    "AssetPairId": "USDCHF",
-                //  "OrderAction": "Sell",
-                //  "Volume": 1,
-                //  "Price": 0.8
-                //                }
-
                 var limitRequest1 = new LimitOrderRequest()
-                { Price = 1.2, AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.000001 };
+                { Price = 1.2, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.000001 };
 
                 var limitRequest2 = new LimitOrderRequest()
-                { Price = 0.8, AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = 0.000001 };
+                { Price = 0.8, AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = 0.000001 };
 
                 var limitResponse1 = hft.Orders.PostOrdersLimitOrder(limitRequest1, ApiKey);
                 var limitResponse2 = hft.Orders.PostOrdersLimitOrder(limitRequest2, ApiKey);
@@ -350,18 +336,6 @@ namespace AFTests.HftTests
                 var response = hft.Orders.GetOrderById(id, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(() => hft.Orders.GetOrderById(id, ApiKey).GetResponseObject().Status, Does.Contain(OrderStatus.LeadToNegativeSpread.ToString()).IgnoreCase.After(1*60*1000, 2*1000));
-
-
-                //var limitRequest = new LimitOrderRequest()
-                //{ Price = 1.0, AssetPairId = "BTCCHF", OrderAction = OrderAction.Sell, Volume = 0.0000001 };
-
-                //var limitResponse = hft.Orders.PostOrdersLimitOrder(limitRequest, ApiKey);
-                //limitResponse.Validate.StatusCode(HttpStatusCode.BadRequest);
-                //var id = limitResponse.JObject.Property("Result").Value.ToString();
-
-                //var response = hft.Orders.GetOrderById(id, ApiKey);
-                //response.Validate.StatusCode(HttpStatusCode.OK);
-                //Assert.That(response.GetResponseObject().Status, Does.Contain(OrderStatus.LeadToNegativeSpread.ToString()).IgnoreCase);
             }
         }
 
@@ -372,7 +346,7 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void GetOrderBooksCancelStatusTest()
             {
-                var request = new LimitOrderRequest() { Price = 0.01, AssetPairId = "BTCCHF", OrderAction = OrderAction.Buy, Volume = 0.5 };
+                var request = new LimitOrderRequest() { Price = 0.01, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.5 };
 
                 var limit = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
                 limit.Validate.StatusCode(HttpStatusCode.OK);
