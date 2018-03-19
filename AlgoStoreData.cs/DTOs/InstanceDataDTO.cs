@@ -52,7 +52,7 @@ namespace AlgoStoreData.DTOs
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "50531d18-fab8-489b-a54c-2529e8a7e61e",
+                WalletId = "9c2bf5d8-8d90-4921-8d6d-1f05dc969818",
                 InstanceName = Helpers.RandomString(13),
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {

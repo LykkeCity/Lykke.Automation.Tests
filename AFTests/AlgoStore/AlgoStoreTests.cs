@@ -132,43 +132,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Ignore("Ignore currently not implemented")]
-        [Category("AlgoStore")]
-        public async Task GetLog()
-        {
-            List<BuilInitialDataObjectDTO> metadataForUploadedBinaryList = await UploadSomeBaseMetaData(1);
-
-            BuilInitialDataObjectDTO metadataForUploadedBinary = metadataForUploadedBinaryList[metadataForUploadedBinaryList.Count-1];
-
-            string AlgoID = metadataForUploadedBinary.AlgoId;
-
-           
-            string url = ApiPaths.ALGO_STORE_ALGO_LOG;
-
-            Dictionary<string, string> algoIDLog = new Dictionary<string, string>()
-            {
-                 { "AlgoId", AlgoID },
-                { "InstanceId" , metadataForUploadedBinary.InstanceId }
-            };
-            int retryCounter = 0;
-
-            var algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET); ;
-
-            while (algoIDLogResponse.Status.Equals(System.Net.HttpStatusCode.NotFound) && retryCounter <= 30)
-            {
-                System.Threading.Thread.Sleep(10000);
-                algoIDLogResponse = await this.Consumer.ExecuteRequest(url, algoIDLog, null, Method.GET);
-                retryCounter++;
-            }
-
-            Assert.That(algoIDLogResponse.Status, Is.EqualTo(HttpStatusCode.OK));
-
-            LogResponseDTO LogObject = JsonUtils.DeserializeJson<LogResponseDTO>(algoIDLogResponse.ResponseJson);
-
-            Assert.NotNull(LogObject);
-        }
-
-        [Test]
         [Ignore("AL-266")]
         [Category("AlgoStore")]
         public async Task GetTailLog()
