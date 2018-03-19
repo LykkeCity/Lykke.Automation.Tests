@@ -132,7 +132,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test]
-        [Ignore("AL-266")]
         [Category("AlgoStore")]
         public async Task GetTailLog()
         {
@@ -554,7 +553,7 @@ namespace AFTests.AlgoStore
             Assert.That(postInstanceData.Description, Is.EqualTo(metadataForUploadedBinary.Description));
             Assert.That(postInstanceData.Date, Is.Not.Null);
             Assert.That(postInstanceData.Author, Is.Not.Null);
-            Assert.That(postInstanceData.Rating, Is.Not.Zero);
+            Assert.That(postInstanceData.Rating, Is.Zero);
             Assert.That(postInstanceData.UsersCount, Is.Not.Zero);
             Assert.That(postInstanceData.AlgoMetaDataInformation, Is.Null);
         }

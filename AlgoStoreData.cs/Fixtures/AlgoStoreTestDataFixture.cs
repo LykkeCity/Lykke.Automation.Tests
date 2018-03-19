@@ -22,10 +22,12 @@ namespace AlgoStoreData.Fixtures
     public partial class AlgoStoreTestDataFixture : BaseTest
     {
         private ConfigBuilder _configBuilder;
+        private ConfigBuilder _configBuilderDB;
         private TimeSpan timespan = TimeSpan.FromSeconds(120);
         public ApiConsumer Consumer;
         private OAuthConsumer User;
         private IContainer _container;
+        private IContainer _containerDB;
         public GenericRepository<MetaDataEntity, IMetaData> MetaDataRepository;
         public GenericRepository<RuntimeDataEntity, IStatistics> RuntimeDataRepository;
         public GenericRepository<ClientInstanceEntity, IClientInstance> ClientInstanceRepository;
@@ -64,6 +66,8 @@ namespace AlgoStoreData.Fixtures
         {
             _configBuilder = new ConfigBuilder("AlgoStore");
 
+            _configBuilderDB = new ConfigBuilder("AlgoApi", "Db");
+
             User = new OAuthConsumer(_configBuilder);
             Consumer = new ApiConsumer(_configBuilder, User);
 
@@ -77,23 +81,30 @@ namespace AlgoStoreData.Fixtures
             builder.RegisterModule(new AlgoStoreTestModule(_configBuilder));
             _container = builder.Build();
 
-            this.MetaDataRepository = RepositoryUtils.ResolveGenericRepository<MetaDataEntity, IMetaData>(this._container);
-            this.RuntimeDataRepository = RepositoryUtils.ResolveGenericRepository<RuntimeDataEntity, IStatistics>(this._container);
-            this.ClientInstanceRepository = RepositoryUtils.ResolveGenericRepository<ClientInstanceEntity, IClientInstance>(this._container);
+
+            var builderDB = new ContainerBuilder();
+            builderDB.RegisterModule(new AlgoStoreTestModule(_configBuilderDB));
+            _containerDB = builderDB.Build();
 
 
 
-            this.AlgoRatingsRepository = RepositoryUtils.ResolveGenericRepository<AlgoRatingsTableEntity, IAlgoRatingsTable>(this._container);
-            this.AlgoApiLogRepository = RepositoryUtils.ResolveGenericRepository<AlgoStoreApiLogEntity, IAlgoStoreApiLog>(this._container);
-            this.CSharpAlgoTemplateLogRepository = RepositoryUtils.ResolveGenericRepository<CSharpAlgoTemplateLogEntity, ICSharpAlgoTemplateLog>(this._container);
-            this.CSharpAlgoTemplateUserLogRepository = RepositoryUtils.ResolveGenericRepository<CSharpAlgoTemplateUserLogEntity, ICSharpAlgoTemplateUserLog>(this._container);
-            this.PublicAlgosRepository = RepositoryUtils.ResolveGenericRepository<PublicsAlgosTableEntity, IPublicAlgosTable>(this._container);
-            this.StatisticsRepository = RepositoryUtils.ResolveGenericRepository<StatisticsEntity, IStatisticss>(this._container);
+            this.MetaDataRepository = RepositoryUtils.ResolveGenericRepository<MetaDataEntity, IMetaData>(this._containerDB);
+            this.RuntimeDataRepository = RepositoryUtils.ResolveGenericRepository<RuntimeDataEntity, IStatistics>(this._containerDB);
+            this.ClientInstanceRepository = RepositoryUtils.ResolveGenericRepository<ClientInstanceEntity, IClientInstance>(this._containerDB);
+
+
+
+            this.AlgoRatingsRepository = RepositoryUtils.ResolveGenericRepository<AlgoRatingsTableEntity, IAlgoRatingsTable>(this._containerDB);
+            this.AlgoApiLogRepository = RepositoryUtils.ResolveGenericRepository<AlgoStoreApiLogEntity, IAlgoStoreApiLog>(this._containerDB);
+            this.CSharpAlgoTemplateLogRepository = RepositoryUtils.ResolveGenericRepository<CSharpAlgoTemplateLogEntity, ICSharpAlgoTemplateLog>(this._containerDB);
+            this.CSharpAlgoTemplateUserLogRepository = RepositoryUtils.ResolveGenericRepository<CSharpAlgoTemplateUserLogEntity, ICSharpAlgoTemplateUserLog>(this._containerDB);
+            this.PublicAlgosRepository = RepositoryUtils.ResolveGenericRepository<PublicsAlgosTableEntity, IPublicAlgosTable>(this._containerDB);
+            this.StatisticsRepository = RepositoryUtils.ResolveGenericRepository<StatisticsEntity, IStatisticss>(this._containerDB);
 
 
 
 
-            this.BlobRepository = new AlgoBlobRepository(_configBuilder.Config["MainConnectionString"], timespan);
+            this.BlobRepository = new AlgoBlobRepository(_configBuilderDB.Config["TableStorageConnectionString"], timespan);
     }
 
         private async Task PrepareTestData()
