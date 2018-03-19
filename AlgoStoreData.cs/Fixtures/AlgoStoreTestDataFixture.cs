@@ -29,6 +29,17 @@ namespace AlgoStoreData.Fixtures
         public GenericRepository<MetaDataEntity, IMetaData> MetaDataRepository;
         public GenericRepository<RuntimeDataEntity, IStatistics> RuntimeDataRepository;
         public GenericRepository<ClientInstanceEntity, IClientInstance> ClientInstanceRepository;
+
+
+        public GenericRepository<AlgoRatingsTableEntity, IAlgoRatingsTable> AlgoRatingsRepository;
+        public GenericRepository<AlgoStoreApiLogEntity, IAlgoStoreApiLog> AlgoApiLogRepository;
+        public GenericRepository<CSharpAlgoTemplateLogEntity, ICSharpAlgoTemplateLog> CSharpAlgoTemplateLogRepository;
+        public GenericRepository<CSharpAlgoTemplateUserLogEntity, ICSharpAlgoTemplateUserLog> CSharpAlgoTemplateUserLogRepository;
+        public GenericRepository<PublicsAlgosTableEntity, IPublicAlgosTable> PublicAlgosRepository;
+        public GenericRepository<StatisticsEntity, IStatisticss> StatisticsRepository;
+
+
+
         public List<BuilInitialDataObjectDTO> PreStoredMetadata;
         public AlgoBlobRepository BlobRepository;
         // currently not used only c# algo support
@@ -69,6 +80,19 @@ namespace AlgoStoreData.Fixtures
             this.MetaDataRepository = RepositoryUtils.ResolveGenericRepository<MetaDataEntity, IMetaData>(this._container);
             this.RuntimeDataRepository = RepositoryUtils.ResolveGenericRepository<RuntimeDataEntity, IStatistics>(this._container);
             this.ClientInstanceRepository = RepositoryUtils.ResolveGenericRepository<ClientInstanceEntity, IClientInstance>(this._container);
+
+
+
+            this.AlgoRatingsRepository = RepositoryUtils.ResolveGenericRepository<AlgoRatingsTableEntity, IAlgoRatingsTable>(this._container);
+            this.AlgoApiLogRepository = RepositoryUtils.ResolveGenericRepository<AlgoStoreApiLogEntity, IAlgoStoreApiLog>(this._container);
+            this.CSharpAlgoTemplateLogRepository = RepositoryUtils.ResolveGenericRepository<CSharpAlgoTemplateLogEntity, ICSharpAlgoTemplateLog>(this._container);
+            this.CSharpAlgoTemplateUserLogRepository = RepositoryUtils.ResolveGenericRepository<CSharpAlgoTemplateUserLogEntity, ICSharpAlgoTemplateUserLog>(this._container);
+            this.PublicAlgosRepository = RepositoryUtils.ResolveGenericRepository<PublicsAlgosTableEntity, IPublicAlgosTable>(this._container);
+            this.StatisticsRepository = RepositoryUtils.ResolveGenericRepository<StatisticsEntity, IStatisticss>(this._container);
+
+
+
+
             this.BlobRepository = new AlgoBlobRepository(_configBuilder.Config["MainConnectionString"], timespan);
     }
 

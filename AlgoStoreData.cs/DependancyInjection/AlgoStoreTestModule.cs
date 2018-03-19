@@ -40,6 +40,51 @@ namespace AlgoStoreData.DependancyInjection
                        _configBuilder.Config["MainConnectionString"], "AlgoClientInstanceTable", null, timespan), "AlgoClientInstanceTable"))
                .As<IDictionaryRepository<IClientInstance>>();
 
+
+
+
+
+
+            builder.Register(c => new GenericRepository<AlgoRatingsTableEntity, IAlgoRatingsTable>(
+                   new AzureTableStorage<AlgoRatingsTableEntity>(
+                       _configBuilder.Config["MainConnectionString"], "AlgoRatingsTable", null, timespan), "AlgoRatingsTable"))
+               .As<IDictionaryRepository<IAlgoRatingsTable>>();
+
+            builder.Register(c => new GenericRepository<AlgoStoreApiLogEntity, IAlgoStoreApiLog>(
+                   new AzureTableStorage<AlgoStoreApiLogEntity>(
+                       _configBuilder.Config["MainConnectionString"], "AlgoStoreApiLog", null, timespan), "AlgoStoreApiLog"))
+               .As<IDictionaryRepository<IAlgoStoreApiLog>>();
+
+            builder.Register(c => new GenericRepository<CSharpAlgoTemplateLogEntity, ICSharpAlgoTemplateLog>(
+                  new AzureTableStorage<CSharpAlgoTemplateLogEntity>(
+                      _configBuilder.Config["MainConnectionString"], "CSharpAlgoTemplateLog", null, timespan), "CSharpAlgoTemplateLog"))
+              .As<IDictionaryRepository<ICSharpAlgoTemplateLog>>();
+
+            builder.Register(c => new GenericRepository<CSharpAlgoTemplateUserLogEntity, ICSharpAlgoTemplateUserLog>(
+                 new AzureTableStorage<CSharpAlgoTemplateUserLogEntity>(
+                     _configBuilder.Config["MainConnectionString"], "CSharpAlgoTemplateUserLog", null, timespan), "CSharpAlgoTemplateUserLog"))
+             .As<IDictionaryRepository<ICSharpAlgoTemplateUserLog>>();
+
+            builder.Register(c => new GenericRepository<PublicsAlgosTableEntity, IPublicAlgosTable>(
+                 new AzureTableStorage<PublicsAlgosTableEntity>(
+                     _configBuilder.Config["MainConnectionString"], "PublicAlgosTable", null, timespan), "PublicAlgosTable"))
+             .As<IDictionaryRepository<IPublicAlgosTable>>();
+
+            builder.Register(c => new GenericRepository<StatisticsEntity, IStatisticss>(
+                new AzureTableStorage<StatisticsEntity>(
+                    _configBuilder.Config["MainConnectionString"], "Statistics", null, timespan), "Statistics"))
+            .As<IDictionaryRepository<IStatisticss>>();
+
+
+
+
+
+
+
+
+
+
+
         }
     }
 }
