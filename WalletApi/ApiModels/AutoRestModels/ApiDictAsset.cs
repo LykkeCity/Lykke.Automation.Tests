@@ -26,7 +26,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// 'Erc20Token'</param>
         /// <param name="blockchain">Possible values include: 'None',
         /// 'Bitcoin', 'Ethereum'</param>
-        public ApiDictAsset(string id = default(string), string blockchainId = default(string), string name = default(string), string symbol = default(string), string idIssuer = default(string), int? accuracy = default(int?), bool? hideWithdraw = default(bool?), bool? hideDeposit = default(bool?), int? defaultOrder = default(int?), bool? kycNeeded = default(bool?), string categoryId = default(string), bool? visaDeposit = default(bool?), bool? swiftDeposit = default(bool?), bool? blockchainDeposit = default(bool?), bool? buyScreen = default(bool?), bool? sellScreen = default(bool?), bool? blockchainWithdrawal = default(bool?), bool? swiftWithdrawal = default(bool?), bool? forwardWithdrawal = default(bool?), bool? crosschainWithdrawal = default(bool?), string bcnDepositAddress = default(string), string forwardBaseAsset = default(string), int? forwardFrozenDays = default(int?), string forwardMemoUrl = default(string), string assetType = default(string), string iconUrl = default(string), string displayId = default(string), string blockchain = default(string), AssetDescriptionModel description = default(AssetDescriptionModel), bool? isTrusted = default(bool?))
+        public ApiDictAsset(string id = default(string), string blockchainId = default(string), string name = default(string), string symbol = default(string), string idIssuer = default(string), int? accuracy = default(int?), bool? hideWithdraw = default(bool?), bool? hideDeposit = default(bool?), int? defaultOrder = default(int?), bool? kycNeeded = default(bool?), string categoryId = default(string), bool? visaDeposit = default(bool?), bool? swiftDeposit = default(bool?), bool? blockchainDeposit = default(bool?), bool? otherDeposit = default(bool?), bool? buyScreen = default(bool?), bool? sellScreen = default(bool?), bool? blockchainWithdrawal = default(bool?), bool? swiftWithdrawal = default(bool?), bool? forwardWithdrawal = default(bool?), bool? crosschainWithdrawal = default(bool?), string bcnDepositAddress = default(string), string forwardBaseAsset = default(string), int? forwardFrozenDays = default(int?), string forwardMemoUrl = default(string), string assetType = default(string), string iconUrl = default(string), string displayId = default(string), string blockchain = default(string), AssetDescriptionModel description = default(AssetDescriptionModel), bool? isTrusted = default(bool?), bool? privateWalletsEnabled = default(bool?))
         {
             Id = id;
             BlockchainId = blockchainId;
@@ -42,6 +42,7 @@ namespace Lykke.Client.AutorestClient.Models
             VisaDeposit = visaDeposit;
             SwiftDeposit = swiftDeposit;
             BlockchainDeposit = blockchainDeposit;
+            OtherDeposit = otherDeposit;
             BuyScreen = buyScreen;
             SellScreen = sellScreen;
             BlockchainWithdrawal = blockchainWithdrawal;
@@ -58,6 +59,7 @@ namespace Lykke.Client.AutorestClient.Models
             Blockchain = blockchain;
             Description = description;
             IsTrusted = isTrusted;
+            PrivateWalletsEnabled = privateWalletsEnabled;
             CustomInit();
         }
 
@@ -135,6 +137,11 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "BlockchainDeposit")]
         public bool? BlockchainDeposit { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "OtherDeposit")]
+        public bool? OtherDeposit { get; set; }
 
         /// <summary>
         /// </summary>
@@ -217,6 +224,11 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "IsTrusted")]
         public bool? IsTrusted { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "PrivateWalletsEnabled")]
+        public bool? PrivateWalletsEnabled { get; set; }
 
     }
 }

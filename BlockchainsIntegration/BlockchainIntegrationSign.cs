@@ -15,17 +15,17 @@ namespace BlockchainsIntegration.Sign
 
         public IResponse<IsAliveResponse> GetIsAlive()
         {
-            return Request.Get("/IsAlive").Build().Execute<IsAliveResponse>();
+            return Request.Get("/isalive").Build().Execute<IsAliveResponse>();
         }
 
         public IResponse<SignOkTransactionResponce> PostSign(SignRequest model)
         {
-            return Request.Post("/Sign").AddJsonBody(model).Build().Execute<SignOkTransactionResponce>();
+            return Request.Post("/sign").AddJsonBody(model).Build().Execute<SignOkTransactionResponce>();
         }
 
         public IResponse<WalletCreationResponse> PostWallet()
         {
-            return Request.Post("/Wallets").Build().Execute<WalletCreationResponse>();
+            return Request.Post("/wallets").Build().Execute<WalletCreationResponse>();
         }
     }
 }
