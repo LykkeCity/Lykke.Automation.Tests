@@ -148,6 +148,7 @@ namespace AFTests.AlgoStore
             {
                 { "AlgoId", AlgoID },
                 { "InstanceId" , metadataForUploadedBinary.InstanceId },
+                {"AlgoClientId" , "e658abfc-1779-427c-8316-041a2deb1db8"  },
                 {"Tail" , "60" }
             };
             int retryCounter = 0;
@@ -259,18 +260,11 @@ namespace AFTests.AlgoStore
 
             InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
 
-            //check
+            Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
+            Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
+            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
+            Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
 
-            //Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
-            //Assert.That(postInstanceData.AssetPair, Is.EqualTo(instanceForAlgo.AssetPair));
-            //Assert.That(postInstanceData.HftApiKey, Is.EqualTo(instanceForAlgo.HftApiKey));
-            //Assert.That(postInstanceData.TradedAsset, Is.EqualTo(instanceForAlgo.TradedAsset));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(instanceForAlgo.Volume));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(instanceForAlgo.Margin));
-            Assert.NotNull(postInstanceData.InstanceId);
-
-
-            // possibli rewirte te entity
             ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
             Assert.NotNull(instanceDataEntityExists);
 
@@ -301,7 +295,7 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task PostInstanceDataForAlgo()
         {
-            // will need to check the response
+
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
 
             string algoID = metadataForUploadedBinary.AlgoId;
@@ -318,12 +312,11 @@ namespace AFTests.AlgoStore
             InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
 
             Assert.That(postInstanceData.AlgoId, Is.EqualTo((instanceForAlgo.AlgoId)));
-            //Assert.That(postInstanceData.AssetPair, Is.EqualTo((instanceForAlgo.AssetPair)));
-            //Assert.That(postInstanceData.HftApiKey, Is.EqualTo((instanceForAlgo.HftApiKey)));
-            //Assert.That(postInstanceData.TradedAsset, Is.EqualTo((instanceForAlgo.TradedAsset)));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume) , (int)Convert.ToDouble(instanceForAlgo.Volume));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin) , (int)Convert.ToDouble(instanceForAlgo.Margin));
-            Assert.NotNull(postInstanceData.InstanceId);
+            Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
+            Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
+            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
+            Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
+
 
             ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
             Assert.NotNull(instanceDataEntityExists);
@@ -332,7 +325,7 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetInstanceDataForAlgo()
         {
-            //check the instance retirn data
+
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
 
             string algoID = metadataForUploadedBinary.AlgoId;
@@ -358,20 +351,17 @@ namespace AFTests.AlgoStore
             Assert.That(getInstanceDataResponse.Status == HttpStatusCode.OK);
             InstanceDataDTO getInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(getInstanceDataResponse.ResponseJson);
 
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo((getInstanceData.AlgoId)));
-            //Assert.That(postInstanceData.AssetPair, Is.EqualTo((getInstanceData.AssetPair)));
-            //Assert.That(postInstanceData.HftApiKey, Is.EqualTo((getInstanceData.HftApiKey)));
-            //Assert.That(postInstanceData.TradedAsset, Is.EqualTo((getInstanceData.TradedAsset)));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(getInstanceData.Volume));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(getInstanceData.Margin));
-            Assert.That(postInstanceData.InstanceId, Is.EqualTo((getInstanceData.InstanceId)));
+            Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
+            Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
+            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
+            Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
         }
 
         [Test]
         [Category("AlgoStore")]
         public async Task EditInstanceDataForAlgo()
         {
-            // edition logic is changed nee rewrite
+
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
@@ -386,38 +376,24 @@ namespace AFTests.AlgoStore
 
             InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
 
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo((instanceForAlgo.AlgoId)));
-            //Assert.That(postInstanceData.AssetPair, Is.EqualTo((instanceForAlgo.AssetPair)));
-            //Assert.That(postInstanceData.HftApiKey, Is.EqualTo((instanceForAlgo.HftApiKey)));
-            //Assert.That(postInstanceData.TradedAsset, Is.EqualTo((instanceForAlgo.TradedAsset)));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(instanceForAlgo.Volume));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(instanceForAlgo.Margin));
-            Assert.NotNull(postInstanceData.InstanceId);
+            Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
+            Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
+            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
+            Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
 
             ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
             Assert.NotNull(instanceDataEntityExists);
-            InstanceDataDTO instanceForAlgoEdit = new InstanceDataDTO();
-            //{
-            //    InstanceId = postInstanceData.InstanceId,
-            //    AlgoId = algoID,
-            //    HftApiKey = "key",
-            //    AssetPair = "BTCEUR",
-            //    TradedAsset = "EUR",
-            //    Margin = "2",
-            //    Volume = "2",
-            //    WalletId = "2134"
-            //};
+            InstanceDataDTO instanceForAlgoEdit = postInstanceData;
+            postInstanceData.InstanceName = "EditedTest";
+
             var postInstanceDataResponseEdit = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgoEdit), Method.POST);
 
             Assert.That(postInstanceDataResponseEdit.Status , Is.EqualTo(HttpStatusCode.OK));
             InstanceDataDTO postInstanceDataEdit = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponseEdit.ResponseJson);
-            Assert.That(postInstanceDataEdit.AlgoId, Is.EqualTo((instanceForAlgoEdit.AlgoId)));
-            //Assert.That(postInstanceDataEdit.AssetPair, Is.EqualTo((instanceForAlgoEdit.AssetPair)));
-            //Assert.That(postInstanceDataEdit.HftApiKey, Is.EqualTo((instanceForAlgoEdit.HftApiKey)));
-            //Assert.That(postInstanceDataEdit.TradedAsset, Is.EqualTo((instanceForAlgoEdit.TradedAsset)));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceDataEdit.Volume), (int)Convert.ToDouble(instanceForAlgoEdit.Volume));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceDataEdit.Margin), (int)Convert.ToDouble(instanceForAlgoEdit.Margin));
-            Assert.That(postInstanceDataEdit.InstanceId, Is.EqualTo((postInstanceData.InstanceId)));
+            Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
+            Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
+            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
+            Assert.That(postInstanceData.InstanceName, Is.EqualTo("EditedTest"));
 
             ClientInstanceEntity instanceDataEntityExistsEdit = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceDataEdit.InstanceId) as ClientInstanceEntity;
             Assert.NotNull(instanceDataEntityExistsEdit);
@@ -427,8 +403,6 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task GetInstanceData()
         {
-
-            // check the returned data
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
 
             string algoID = metadataForUploadedBinary.AlgoId;
@@ -444,13 +418,10 @@ namespace AFTests.AlgoStore
 
             InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
 
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo((instanceForAlgo.AlgoId)));
-            //Assert.That(postInstanceData.AssetPair, Is.EqualTo((instanceForAlgo.AssetPair)));
-            //Assert.That(postInstanceData.HftApiKey, Is.EqualTo((instanceForAlgo.HftApiKey)));
-            //Assert.That(postInstanceData.TradedAsset, Is.EqualTo((instanceForAlgo.TradedAsset)));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(instanceForAlgo.Volume));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(instanceForAlgo.Margin));
-            Assert.NotNull(postInstanceData.InstanceId);
+            Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
+            Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
+            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
+            Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
 
             ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
             Assert.NotNull(instanceDataEntityExists);
@@ -466,13 +437,10 @@ namespace AFTests.AlgoStore
 
             InstanceDataDTO returnedClinetInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(instanceDataResponse.ResponseJson);
 
-            Assert.That(returnedClinetInstanceData.AlgoId, Is.EqualTo((postInstanceData.AlgoId)));
-            //Assert.That(returnedClinetInstanceData.AssetPair, Is.EqualTo((postInstanceData.AssetPair)));
-            //Assert.That(returnedClinetInstanceData.HftApiKey, Is.EqualTo((postInstanceData.HftApiKey)));
-            //Assert.That(returnedClinetInstanceData.TradedAsset, Is.EqualTo((postInstanceData.TradedAsset)));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Volume), (int)Convert.ToDouble(postInstanceData.Volume));
-            //Assert.AreEqual((int)Convert.ToDouble(postInstanceData.Margin), (int)Convert.ToDouble(postInstanceData.Margin));
-            Assert.That(returnedClinetInstanceData.InstanceId, Is.EqualTo((postInstanceData.InstanceId)));
+            Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
+            Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
+            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
+            Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
         }
 
         [Test]
@@ -509,7 +477,7 @@ namespace AFTests.AlgoStore
             Assert.That(algoID, Is.EqualTo(AlgoIdFromGettAllAlgos));
             foreach (AlgoDTO algo in listAllAlgos)
             {
-                Assert.NotZero(expectedAlgoDTO.Rating);
+                Assert.Zero(expectedAlgoDTO.Rating);
                 Assert.NotZero(expectedAlgoDTO.UsersCount);
                 Assert.NotNull(expectedAlgoDTO.Id);
                 Assert.NotNull(expectedAlgoDTO.Name);
@@ -583,8 +551,6 @@ namespace AFTests.AlgoStore
             var responsetemp = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
             Assert.True(responsetemp.Status == System.Net.HttpStatusCode.NoContent);
 
-
-
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
             InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId);
@@ -606,7 +572,29 @@ namespace AFTests.AlgoStore
 
             var deployBynaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
             Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
-        }
+
+            url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
+            int retryCounter = 0;
+
+            CascadeDeleteDTO editMetaData = new CascadeDeleteDTO()
+                {
+                    AlgoId = postInstanceData.AlgoId,
+                    InstanceId = postInstanceData.InstanceId
+                };
+            var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
+
+           // Currently we can not send cascade delete to kubernatees if he has not build the algo before that thorus not found and we leave data
+
+           while (responceCascadeDelete.Status.Equals(System.Net.HttpStatusCode.NotFound) && retryCounter <= 30)
+                {
+                    System.Threading.Thread.Sleep(10000);
+                    responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
+                    retryCounter++;
+                }
+
+           Assert.That(responceCascadeDelete.Status == System.Net.HttpStatusCode.NoContent);
+
+            }
 
         private async Task<UploadStringDTO> UploadStringAlgo()
         {

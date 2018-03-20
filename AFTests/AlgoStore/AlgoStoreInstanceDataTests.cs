@@ -20,29 +20,23 @@ namespace AFTests.AlgoStore
     public partial class AlgoStoreTests : AlgoStoreTestDataFixture
     {
         [Test]
+        [Ignore("rewokr logic")]
         [Category("AlgoStore")]
         public async Task PostInvalidInstanceAssetPair()
         {
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-
             string algoID = metadataForUploadedBinary.AlgoId;
 
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            //rework logic new params
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
-            //{
-            //    AlgoId = algoID,
-            //    HftApiKey = "key",
-            //    AssetPair = "BTCcoin",
-            //    TradedAsset = "USD",
-            //    Margin = "1",
-            //    Volume = "1",
-            //    WalletId = "2134"
-            //};
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
+
+            // set custrom data here for the metadata asset pair
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+
             Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
         }
         [Test]
@@ -51,45 +45,36 @@ namespace AFTests.AlgoStore
         public async Task PostInvalidInstanceTradedAsset()
         {
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
-            //{
-            //    AlgoId = algoID,
-            //    HftApiKey = "key",
-            //    AssetPair = "BTCUSD",
-            //    TradedAsset = "BTC",
-            //    Margin = "1",
-            //    Volume = "1",
-            //    WalletId = "2134"
-            //};
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
+
+            // set custrom data here for the metadata traded data
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.BadRequest);
+
+            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
 
         }
         [Test]
-        [Ignore("rewokr logic")]
         [Category("AlgoStore")]
         public async Task PostInvalidAlgoId()
         {
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
-            //{
-            //    AlgoId = "Invalid Id",
-            //    HftApiKey = "key",
-            //    AssetPair = "BTCUSD",
-            //    TradedAsset = "USD",
-            //    Margin = "1",
-            //    Volume = "1",
-            //    WalletId = "2134"
-            //};
+            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
+            string algoID = metadataForUploadedBinary.AlgoId;
+
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO("123 invalid algo id");
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+
             Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
 
         }
@@ -99,24 +84,19 @@ namespace AFTests.AlgoStore
         public async Task PostInvalidMargin()
         {
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
-            //{
-            //    AlgoId = algoID,
-            //    HftApiKey = "key",
-            //    AssetPair = "BTCUSD",
-            //    TradedAsset = "USD",
-            //    Margin = "-111",
-            //    Volume = "1",
-            //    WalletId = "2134"
-            //};
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
+
+            // set custrom data here for the metadata margin data
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.BadRequest);
+
+            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
 
         }
         [Test]
@@ -125,28 +105,22 @@ namespace AFTests.AlgoStore
         public async Task PostInvalidVolume()
         {
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
-            //{
-            //    AlgoId = algoID,
-            //    HftApiKey = "key",
-            //    AssetPair = "BTCUSD",
-            //    TradedAsset = "USD",
-            //    Margin = "1",
-            //    Volume = "-333",
-            //    WalletId = "2134"
-            //};
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
+
+            // set custrom data here for the metadata volume data
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.BadRequest);
+
+            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
         }
 
         [Test]
-        [Ignore("rewokr logic")]
         [Category("AlgoStore")]
         public async Task PostInstanceDataOnlyWithMetadata()
         {
@@ -170,24 +144,19 @@ namespace AFTests.AlgoStore
         public async Task PostInstanceDataOnlyWithZeroMArginZeroVolume()
         {
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            InstanceDataDTO instanceForAlgo = new InstanceDataDTO();
-            //{
-            //    AlgoId = algoID,
-            //    HftApiKey = "key",
-            //    AssetPair = "BTCUSD",
-            //    TradedAsset = "USD",
-            //    Margin = "0",
-            //    Volume = "0",
-            //    WalletId = "2134"
-            //};
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
+
+            // set custrom data here for the metadata traded 0 margin 0 volume
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.BadRequest);
+
+            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
         }
 
     }

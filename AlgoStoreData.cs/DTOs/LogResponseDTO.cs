@@ -6,6 +6,6 @@ namespace AlgoStoreData.DTOs
 {
     public class LogResponseDTO
     {
-        public string Log { get; set; }
+        public List<string> Log { get; set; }
     }
 }
