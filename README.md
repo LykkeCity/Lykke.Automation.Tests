@@ -25,6 +25,8 @@ Set content to properties.json with the following settings for your Blockchain
   "DepositWalletKey": "", //key for DW 
   "HotWallet": "", //HotWallet in blockchain
   "HotWalletKey": "", key for this HW
+  "WalletSingleUse": "", //Another Deposit Wallet address, use in special test.
+  "WalletSingleUseKey":"", // Key for WalletSingleUse
   "ExternalWalletAddress": "", //Wallet that been created not in lykke system
   "ExternalWalletKey": "" // key
 }
