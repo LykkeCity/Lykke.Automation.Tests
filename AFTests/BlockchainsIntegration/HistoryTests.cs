@@ -29,7 +29,9 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetHistoryFromTest()
             {
-                var response = blockchainApi.Operations.GetTransactionHistorFromAddress(WALLET_ADDRESS, "1");
+                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+
+                var response = blockchainApi.Operations.GetTransactionHistorFromAddress(newWallet, "1");
                 response.Validate.StatusCode(HttpStatusCode.OK);
             }
         }
@@ -40,7 +42,9 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetHistoryToTest()
             {
-                var response = blockchainApi.Operations.GetTransactionHistorToAddress(WALLET_ADDRESS, "10");
+                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+
+                var response = blockchainApi.Operations.GetTransactionHistorToAddress(newWallet, "10");
                 response.Validate.StatusCode(HttpStatusCode.OK);
 
                 var empty = JsonConvert.DeserializeObject<TransactionHistory[]>("[]");
@@ -55,8 +59,10 @@ namespace AFTests.BlockchainsIntegrationTests
             public void PostHistoryToConflictTest()
             {
                 //enabled if disabled
-                blockchainApi.Operations.PostHistoryFromToAddress("to", WALLET_ADDRESS);
-                var response = blockchainApi.Operations.PostHistoryFromToAddress("to", WALLET_ADDRESS);
+                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+
+                blockchainApi.Operations.PostHistoryFromToAddress("to", newWallet);
+                var response = blockchainApi.Operations.PostHistoryFromToAddress("to", newWallet);
                 response.Validate.StatusCode(HttpStatusCode.Conflict);
             }
         }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetsData", "AssetsData\AssetsData.csproj", "{35B1F900-A39F-48EA-9ACA-F6A67A5CB1FC}"
 EndProject
@@ -28,9 +28,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrivateServices", "PrivateS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LykkePay", "LykkePay\LykkePay.csproj", "{AC07F691-0353-4092-85E8-E8B192E1AE72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainsIntegration", "BlockchainsIntegration\BlockchainsIntegration.csproj", "{64F458CD-B61E-47B0-A7A1-F32D6A4C84D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainsIntegration", "BlockchainsIntegration\BlockchainsIntegration.csproj", "{64F458CD-B61E-47B0-A7A1-F32D6A4C84D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgoStoreData", "AlgoStoreData.cs\AlgoStoreData.csproj", "{A6F2482B-5EDE-401F-8152-DFF88A8B4B26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlgoStoreData", "AlgoStoreData.cs\AlgoStoreData.csproj", "{A6F2482B-5EDE-401F-8152-DFF88A8B4B26}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HFT", "HFT\HFT.csproj", "{17F9D45E-1F90-4C9F-99F9-4F70E91C6A30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIX", "FIX\FIX.csproj", "{06034EFE-6690-4A3A-96AF-1C2B966A041C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,6 +94,14 @@ Global
 		{A6F2482B-5EDE-401F-8152-DFF88A8B4B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6F2482B-5EDE-401F-8152-DFF88A8B4B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6F2482B-5EDE-401F-8152-DFF88A8B4B26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17F9D45E-1F90-4C9F-99F9-4F70E91C6A30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17F9D45E-1F90-4C9F-99F9-4F70E91C6A30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17F9D45E-1F90-4C9F-99F9-4F70E91C6A30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17F9D45E-1F90-4C9F-99F9-4F70E91C6A30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06034EFE-6690-4A3A-96AF-1C2B966A041C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06034EFE-6690-4A3A-96AF-1C2B966A041C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06034EFE-6690-4A3A-96AF-1C2B966A041C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06034EFE-6690-4A3A-96AF-1C2B966A041C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

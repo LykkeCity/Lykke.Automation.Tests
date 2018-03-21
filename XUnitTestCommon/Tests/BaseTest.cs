@@ -41,12 +41,13 @@ namespace XUnitTestCommon.Tests
             }
         }
 
-        public static void AreEqualByJson(object expected, object actual)
+        public static void AreEqualByJson(object expected, object actual, string message = "")
         {
 
             var expectedJson = JsonConvert.SerializeObject(expected);
             var actualJson = JsonConvert.SerializeObject(actual);
-            Assert.That(expectedJson, Is.EqualTo(actualJson), "Objects are not equals");
+            var errorMessage = string.IsNullOrEmpty(message) ? "Objects are not equals" : message;
+            Assert.That(expectedJson, Is.EqualTo(actualJson), errorMessage);
         }
         #endregion
 
