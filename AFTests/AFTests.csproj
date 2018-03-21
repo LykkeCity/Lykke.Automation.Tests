@@ -53,6 +53,7 @@
 
   <ItemGroup>
     <Folder Include="AlgoStore\TestData\" />
+    <Folder Include="FIX\" />
   </ItemGroup>
 
 </Project>
