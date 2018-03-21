@@ -155,9 +155,9 @@ namespace AFTests.AlgoStore
 
             var algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
 
-            while (algoIDTailLogResponse.Status.Equals(System.Net.HttpStatusCode.NotFound) && retryCounter <= 30)
+            while ((algoIDTailLogResponse.Status.Equals(System.Net.HttpStatusCode.InternalServerError) || algoIDTailLogResponse.Status.Equals(System.Net.HttpStatusCode.NotFound)) && retryCounter <= 30)
             {
-                System.Threading.Thread.Sleep(10000);
+                System.Threading.Thread.Sleep(100000);
                 algoIDTailLogResponse = await this.Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
                 retryCounter++;
             }
@@ -262,7 +262,6 @@ namespace AFTests.AlgoStore
 
             Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
             Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
-            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
             Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
 
             ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
@@ -314,7 +313,6 @@ namespace AFTests.AlgoStore
             Assert.That(postInstanceData.AlgoId, Is.EqualTo((instanceForAlgo.AlgoId)));
             Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
             Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
-            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
             Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
 
 
@@ -353,7 +351,6 @@ namespace AFTests.AlgoStore
 
             Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
             Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
-            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
             Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
         }
 
@@ -378,7 +375,6 @@ namespace AFTests.AlgoStore
 
             Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
             Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
-            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
             Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
 
             ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
@@ -390,10 +386,10 @@ namespace AFTests.AlgoStore
 
             Assert.That(postInstanceDataResponseEdit.Status , Is.EqualTo(HttpStatusCode.OK));
             InstanceDataDTO postInstanceDataEdit = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponseEdit.ResponseJson);
-            Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
-            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
-            Assert.That(postInstanceData.InstanceName, Is.EqualTo("EditedTest"));
+            Assert.That(postInstanceDataEdit.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
+            Assert.That(postInstanceDataEdit.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
+            Assert.That(postInstanceDataEdit.InstanceId, Is.EqualTo(instanceDataEntityExists.Id));
+            Assert.That(postInstanceDataEdit.InstanceName, Is.EqualTo("EditedTest"));
 
             ClientInstanceEntity instanceDataEntityExistsEdit = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceDataEdit.InstanceId) as ClientInstanceEntity;
             Assert.NotNull(instanceDataEntityExistsEdit);
@@ -420,7 +416,6 @@ namespace AFTests.AlgoStore
 
             Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
             Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
-            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
             Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
 
             ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
@@ -439,7 +434,6 @@ namespace AFTests.AlgoStore
 
             Assert.That(postInstanceData.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
             Assert.That(postInstanceData.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
-            Assert.That(postInstanceData.InstanceId, Is.EqualTo(instanceForAlgo.InstanceId));
             Assert.That(postInstanceData.InstanceName, Is.EqualTo(instanceForAlgo.InstanceName));
         }
 
