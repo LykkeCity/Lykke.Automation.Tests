@@ -61,9 +61,6 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static string WALLET_ADDRESS = _currentSettings.Value.DepositWalletAddress;
         protected static string PKey = _currentSettings.Value.DepositWalletKey;
 
-        protected static string WALLET_SINGLE_USE = _currentSettings.Value.WalletSingleUse;
-        protected static string KEY_WALLET_SINGLE_USE = _currentSettings.Value.WalletSingleUseKey;
-
         protected static string CLIENT_ID = _currentSettings.Value.ClientId;
         protected static string ASSET_ID = _currentSettings.Value.AssetId;
 
