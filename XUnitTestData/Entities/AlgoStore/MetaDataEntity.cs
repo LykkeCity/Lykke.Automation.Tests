@@ -12,5 +12,8 @@ namespace XUnitTestData.Entities.AlgoStore
         public string Description { get; set; }
 
         public string Id => this.RowKey;
+
+        public string Author { get; set; }
+        public dynamic AlgoMetaDataInformationJSON { get; set; }
     }
 }

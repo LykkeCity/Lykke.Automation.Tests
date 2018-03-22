@@ -8,5 +8,7 @@ namespace XUnitTestData.Domains.AlgoStore
     {
          string Name { get; set; }
          string Description { get; set; }
+         string Author { get; set; }
+         dynamic AlgoMetaDataInformationJSON { get; set; }
     }
 }

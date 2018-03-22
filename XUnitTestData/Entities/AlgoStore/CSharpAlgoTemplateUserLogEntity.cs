@@ -6,10 +6,11 @@ using XUnitTestData.Domains.AlgoStore;
 
 namespace XUnitTestData.Entities.AlgoStore
 {
-    public class RuntimeDataEntity : TableEntity , IStatistics
+    public class CSharpAlgoTemplateUserLogEntity : TableEntity, ICSharpAlgoTemplateUserLog
     {
         public string Id => this.RowKey;
-        public int BuildImageId { get; set; }
-        public long ImageId { get; set; }
+
+        public string DateTime { get; set; }
+        public string Message { get ; set ; }
     }
 }

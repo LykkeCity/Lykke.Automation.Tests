@@ -6,10 +6,8 @@ using XUnitTestData.Domains.AlgoStore;
 
 namespace XUnitTestData.Entities.AlgoStore
 {
-    public class RuntimeDataEntity : TableEntity , IStatistics
+    public class PublicsAlgosTableEntity : TableEntity, IPublicAlgosTable
     {
         public string Id => this.RowKey;
-        public int BuildImageId { get; set; }
-        public long ImageId { get; set; }
     }
 }
