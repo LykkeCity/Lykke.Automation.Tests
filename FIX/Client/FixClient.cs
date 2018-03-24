@@ -13,7 +13,7 @@ using Message = QuickFix.Message;
 
 namespace FIX.Client
 {
-    internal class FixClient : IApplication, IStartable, IStopable
+    public class FixClient : IApplication, IStartable, IStopable
     {
         private readonly SocketInitiator _socketInitiator;
         private SessionID _sessionId;
@@ -34,7 +34,7 @@ namespace FIX.Client
                     "ConnectionType=initiator",
                     "ReconnectInterval=60",
                     "BeginString=FIX.4.4",
-                    @"DataDictionary=ClientFIX44.xml",
+                    @"DataDictionary=FIX/ClientFIX44.xml",
                     "SSLEnable=N",
                     @"SSLProtocols=Tls",
                     "SSLValidateCertificates=N",
