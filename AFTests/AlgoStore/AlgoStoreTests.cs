@@ -590,6 +590,86 @@ namespace AFTests.AlgoStore
 
             }
 
+        [Test]
+        [Category("AlgoStore")]
+        public async Task StopAlgo()
+        {
+            string url = ApiPaths.ALGO_STORE_METADATA;
+
+            MetaDataDTO metadata = new MetaDataDTO()
+            {
+                Name = Helpers.RandomString(13),
+                Description = Helpers.RandomString(13)
+            };
+
+            var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
+
+            url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
+
+            UploadStringDTO stringDTO = new UploadStringDTO()
+            {
+                AlgoId = responceMetaData.Id,
+                Data = this.CSharpAlgoString
+            };
+
+            var responsetemp = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
+            Assert.True(responsetemp.Status == System.Net.HttpStatusCode.NoContent);
+
+            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId);
+
+            url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
+
+            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
+
+            InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
+
+            url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
+
+            DeployBinaryDTO deploy = new DeployBinaryDTO()
+            {
+                AlgoId = stringDTO.AlgoId,
+                InstanceId = postInstanceData.InstanceId,
+            };
+
+            var deployBynaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
+            Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
+
+            url = ApiPaths.ALGO_STORE_ALGO_STOP;
+            int retryCounter = 0;
+
+            StopBinaryDTO stopAlgo = new StopBinaryDTO()
+            {
+                AlgoId = postInstanceData.AlgoId,
+                InstanceId = postInstanceData.InstanceId
+            };
+            var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
+
+            StopBinaryResponseDTO stopAlgoResponce = JsonUtils.DeserializeJson<StopBinaryResponseDTO>(responceCascadeDelete.ResponseJson); ;
+
+            while ((stopAlgoResponce.Status.Equals("Deploying") || stopAlgoResponce.Status.Equals("Started")) && retryCounter <= 30)
+            {
+                System.Threading.Thread.Sleep(10000);
+                responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stopAlgo), Method.POST);
+
+                stopAlgoResponce = JsonUtils.DeserializeJson<StopBinaryResponseDTO>(responceCascadeDelete.ResponseJson);
+
+                retryCounter++;
+            }
+
+            Assert.That(responceCascadeDelete.Status == System.Net.HttpStatusCode.OK);
+
+            Assert.That(stopAlgoResponce.Status, Is.EqualTo("Stopped"));
+
+            ClientInstanceEntity algoInstanceEntitiy = await ClientInstanceRepository.TryGetAsync(t => t.PartitionKey == "algo_"+stringDTO.AlgoId) as ClientInstanceEntity;
+
+            Assert.That(algoInstanceEntitiy.AlgoInstanceStatusValue, Is.EqualTo("Stopped"));
+
+        }
+
         private async Task<UploadStringDTO> UploadStringAlgo()
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
