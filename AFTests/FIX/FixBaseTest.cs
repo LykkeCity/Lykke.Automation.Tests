@@ -12,6 +12,8 @@ namespace AFTests.FIX
     public class FixBaseTest : BaseTest
     {
         protected FixClient fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+        protected WalletApi.Api.WalletApi walletApi = new WalletApi.Api.WalletApi();
+
 
         [OneTimeSetUp]
         public void SetUp()

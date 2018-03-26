@@ -14,7 +14,7 @@ namespace Lykke.Client.AutorestClient.Models
                 Email = TestData.GenerateEmail(),
                 FullName = TestData.FullName(),
                 Password = "654321",
-                ContactPhone = "+71234567",
+                ContactPhone = TestData.GeneratePhone(9),
                 Hint = "Holmes",
                 ClientInfo = "<android>;Model:<LENOVO S860>;Os:<android>;Screen:<720x1184>",
                 PartnerId = partnerId
