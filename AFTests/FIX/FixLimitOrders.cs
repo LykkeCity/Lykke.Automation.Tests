@@ -265,8 +265,9 @@ namespace AFTests.FIX
                     Assert.That(response, Is.TypeOf<ExecutionReport>());
 
                     var ex = (ExecutionReport)response;
-                    Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.PENDING_NEW));
-                    Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.PENDING_NEW));
+                    Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.PENDING_NEW), $"unexpected response status for assetPair {assetPair}");
+                    Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.PENDING_NEW), $"unexpected response type for assetPair {assetPair}");
+
                     // clean myself
                     var cancelRequest = new OrderCancelRequest
                     {
@@ -279,15 +280,15 @@ namespace AFTests.FIX
                     response = fixClient.GetResponse<Message>();
 
                     Assert.That(response, Is.Not.Null);
-                    Assert.That(response, Is.TypeOf<ExecutionReport>());
+                    Assert.That(response, Is.TypeOf<ExecutionReport>(), $"unexpected response type for assetPair {assetPair}");
 
                     ex = (ExecutionReport)response;
                     if (ex.OrdStatus.Obj != OrdStatus.CANCELED)
                         response = fixClient.GetResponse<Message>();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    Assert.Fail($"An error occured with assetPair {assetPair}. Error stacktrace: {e.StackTrace}");
+                    Assert.Fail($"An error occured with assetPair {assetPair}. ");
                 }
             }
         }
