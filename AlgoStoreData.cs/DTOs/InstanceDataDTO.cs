@@ -52,7 +52,7 @@ namespace AlgoStoreData.DTOs
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "9c2bf5d8-8d90-4921-8d6d-1f05dc969818",
+                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
                 InstanceName = Helpers.RandomString(13),
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
@@ -565,7 +565,7 @@ namespace AlgoStoreData.DTOs
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "9c2bf5d8-8d90-4921-8d6d-1f05dc969818",
+                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
                 InstanceName = Helpers.RandomString(13),
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
@@ -1078,7 +1078,7 @@ namespace AlgoStoreData.DTOs
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "9c2bf5d8-8d90-4921-8d6d-1f05dc969818",
+                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
                 InstanceName = Helpers.RandomString(13),
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
@@ -1590,7 +1590,7 @@ namespace AlgoStoreData.DTOs
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "9c2bf5d8-8d90-4921-8d6d-1f05dc969818",
+                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
                 InstanceName = Helpers.RandomString(13),
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
@@ -2103,7 +2103,7 @@ namespace AlgoStoreData.DTOs
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "9c2bf5d8-8d90-4921-8d6d-1f05dc969818",
+                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
                 InstanceName = Helpers.RandomString(13),
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {

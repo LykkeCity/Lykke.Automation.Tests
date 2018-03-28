@@ -36,9 +36,9 @@ namespace AFTests.AlgoStore
 
             AlgoErrorDTO postInstanceDataResponseDTO = JsonUtils.DeserializeJson<AlgoErrorDTO>(postInstanceDataResponse.ResponseJson);
 
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.InternalServerError);
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.InternalServerError), "responce should equals internal server erorr");
 
-            Assert.True(postInstanceDataResponseDTO.ErrorMessage.Contains("NotFound from asset service calling AssetPairGetWithHttpMessagesAsync"));
+            Assert.That(postInstanceDataResponseDTO.ErrorMessage, Does.Contain("NotFound from asset service calling AssetPairGetWithHttpMessagesAsync"), "we should receive erorr for not found asset pair");
 
  
         }
@@ -59,9 +59,9 @@ namespace AFTests.AlgoStore
 
             AlgoErrorDTO postInstanceDataResponseDTO = JsonUtils.DeserializeJson<AlgoErrorDTO>(postInstanceDataResponse.ResponseJson);
 
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.BadRequest);
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.BadRequest), "should be bad response erorr code");
 
-            Assert.True(postInstanceDataResponseDTO.ErrorMessage.Contains("ValidationError Message:Asset <USD> is not valid for asset pair <BTCEUR>"));
+            Assert.That(postInstanceDataResponseDTO.ErrorMessage, Does.Contain("ValidationError Message:Asset <USD> is not valid for asset pair <BTCEUR>"), "we should receive erorr for the invalid traded asset");
 
         }
         [Test]
@@ -79,7 +79,7 @@ namespace AFTests.AlgoStore
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
 
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
+            Assert.That(postInstanceDataResponse.Status , Is.EqualTo(HttpStatusCode.NotFound), "we should receive not found response code");
 
         }
         [Test]
@@ -99,9 +99,9 @@ namespace AFTests.AlgoStore
 
             AlgoErrorDTO postInstanceDataResponseDTO = JsonUtils.DeserializeJson<AlgoErrorDTO>(postInstanceDataResponse.ResponseJson);
 
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.BadRequest);
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.BadRequest), "we should receive bad request response code");
 
-            Assert.True(postInstanceDataResponseDTO.ErrorMessage.Contains("Code:1000-ValidationError Message"));
+            Assert.That(postInstanceDataResponseDTO.ErrorMessage, Does.Contain("Code:1000-ValidationError Message"), "we should receive validation erorr for invalid volume");
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK), "we shoudl recieve ok responce" );
         }
         [Test]
         [Category("AlgoStore")]
@@ -138,9 +138,9 @@ namespace AFTests.AlgoStore
 
             AlgoErrorDTO postInstanceDataResponseDTO = JsonUtils.DeserializeJson<AlgoErrorDTO>(postInstanceDataResponse.ResponseJson);
 
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.BadRequest);
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.BadRequest), "we should receive bad request response code");
 
-            Assert.True(postInstanceDataResponseDTO.ErrorMessage.Contains("Code:1000-ValidationError Message"));
+            Assert.That(postInstanceDataResponseDTO.ErrorMessage, Does.Contain("Code:1000-ValidationError Message"), "we should receive validation erorr for invalid volume");
         }
 
     }
