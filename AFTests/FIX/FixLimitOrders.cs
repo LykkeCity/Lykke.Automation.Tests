@@ -232,16 +232,20 @@ namespace AFTests.FIX
         //test all assetPairs
         public class OnlyAssetsThatEnabledAreAvailableInFix : FixBaseTest
         {
+            static int i = default(int);
+
             [Test]
             [Category("FIX")]
             public void OnlyAssetsThatEnabledAreAvailableInFixTest()
             {
-                var user = new AccountRegistrationModel().GetTestModel();
-                var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
-                var assetPairs = walletApi.AssetPairs.GetAssetPairs(registeredClient.GetResponseObject().Result.Token).GetResponseObject();
+                ////var user = new AccountRegistrationModel().GetTestModel();
+                ////var registeredClient = walletApi.Registration.PostRegistrationResponse(user);
+                ////var assetPairs = walletApi.AssetPairs.GetAssetPairs(registeredClient.GetResponseObject().Result.Token).GetResponseObject();
+
+                var assetPairs = privateApi.Assets.GetAssetPairs().GetResponseObject().FindAll(a => a.IsDisabled == false);
 
                 Assert.Multiple(() =>
-                assetPairs.Result.AssetPairs.ToList().ForEach(a =>
+                assetPairs.ToList().ForEach(a =>
                 {
                     CreateLimitOrderWithAssetPair(a.Id);
                 })
@@ -288,7 +292,7 @@ namespace AFTests.FIX
                 }
                 catch (Exception)
                 {
-                    Assert.Fail($"An error occured with assetPair {assetPair}. ");
+                    Assert.Fail($"An error occured with assetPair {assetPair}. Number of Exceptions {i++}");
                 }
             }
         }

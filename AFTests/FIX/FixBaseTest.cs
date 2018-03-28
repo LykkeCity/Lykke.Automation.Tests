@@ -1,4 +1,5 @@
 ﻿using FIX.Client;
+using LykkeAutomationPrivate.Api;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using System;
@@ -13,6 +14,7 @@ namespace AFTests.FIX
     {
         protected FixClient fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
         protected WalletApi.Api.WalletApi walletApi = new WalletApi.Api.WalletApi();
+        protected LykkeApi privateApi = new LykkeApi();
 
 
         [OneTimeSetUp]
