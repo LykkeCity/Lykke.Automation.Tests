@@ -15,5 +15,10 @@ namespace BlockchainsIntegration.LiteCoin.Api
         {
             return Request.Get($"/addresses/{address}/validity").Build().Execute<AddressValidationResponse>();
         }
+
+        public IResponse<string[]> GetAddressExplorerUrl(string address)
+        {
+            return Request.Get($"addresses/{address}/explorer-url").Build().Execute<string[]>();
+        }
     }
 }

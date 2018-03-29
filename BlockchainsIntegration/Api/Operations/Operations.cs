@@ -17,6 +17,11 @@ namespace BlockchainsIntegration.LiteCoin.Api
             return Request.Post("/transactions/single").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
         }
 
+        public IResponse<BuildSingleReceiveTransactionResponse> PostTranstactionSingleRecieve(BuildSingleReceiveTransactionRequest model)
+        {
+            return Request.Post("/transactions/single/recieve").AddJsonBody(model).Build().Execute<BuildSingleReceiveTransactionResponse>();
+        }
+
         public IResponse PostTransactionsBroadcast(BroadcastTransactionRequest model)
         {
             return Request.Post("/transactions/broadcast").AddJsonBody(model).Build().Execute();
