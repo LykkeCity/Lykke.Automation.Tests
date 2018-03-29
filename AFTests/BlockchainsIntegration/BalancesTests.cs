@@ -22,6 +22,10 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var take = "500";
 
+                var newWallet = blockchainSign.PostWallet().GetResponseObject();
+
+                AddCyptoToBalanceFromExternal(newWallet.PublicAddress);
+
                 blockchainApi.Balances.GetBalances(take, null).Validate.StatusCode(HttpStatusCode.OK);
 
                 if (blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS))
@@ -32,7 +36,6 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 //enable observation
                 var pResponse = blockchainApi.Balances.PostBalances(WALLET_ADDRESS);
-
 
                 Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS), 
                     Is.True.After(5*60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 10 minutes");
@@ -105,24 +108,28 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 // enable observation
 
-                var pResponse = blockchainApi.Balances.PostBalances(WALLET_ADDRESS);
+                var newWallet = blockchainSign.PostWallet().GetResponseObject();
+
+                var pResponse = blockchainApi.Balances.PostBalances(newWallet.PublicAddress);
+                AddCyptoToBalanceFromExternal(newWallet.PublicAddress);
+
                 blockchainApi.Balances.GetBalances("500", null).Validate.StatusCode(HttpStatusCode.OK);
 
-                Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS),
-                    Is.True.After(5 * 60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 10 minutes");
+                Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == newWallet.PublicAddress),
+                    Is.True.After(5 * 60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 5 minutes");
                 
                 //create transaction and broadcast it
 
                 long time1 = 0;
                 long time2 = 0;
                 
-                var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_ADDRESS).Balance;
+                var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Balance;
 
                 var model = new BuildSingleTransactionRequest()
                 {
                     Amount = "100002",
                     AssetId = ASSET_ID,
-                    FromAddress = WALLET_ADDRESS,
+                    FromAddress = newWallet.PublicAddress,
                     IncludeFee = true,
                     OperationId = Guid.NewGuid(),
                     ToAddress = HOT_WALLET
@@ -137,7 +144,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 Parallel.Invoke(() =>
                 {
-                    GetBalanceDissapearingTime(startBalance, out time1);             
+                    GetBalanceDissapearingTime(newWallet.PublicAddress, startBalance, out time1);             
                 }, () =>
                 {
                     GetTransactionCompleteStatusTime(operationId, out time2);
@@ -148,11 +155,11 @@ namespace AFTests.BlockchainsIntegrationTests
                 Assert.Multiple(() => 
                 {
                     Assert.That(time1, Is.LessThanOrEqualTo(time2), $"Time in Ticks. Time of balance changing is not less than Status became complete");
-                    Assert.That(long.Parse(startBalance) - 100002, Is.EqualTo(long.Parse(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_ADDRESS).Balance)), "New balance is not as expected");
+                    Assert.That(long.Parse(startBalance) - 100002, Is.EqualTo(long.Parse(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Balance)), "New balance is not as expected");
                 });
             }
 
-            static void GetBalanceDissapearingTime(string startBalance, out long time)
+            static void GetBalanceDissapearingTime(string wallet, string startBalance, out long time)
             {
                 var sw = new Stopwatch();
                 time = 0;
@@ -160,7 +167,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 sw.Start();
                 while (sw.Elapsed < TimeSpan.FromMinutes(10))
                 {
-                    if (int.Parse(request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == WALLET_ADDRESS).Balance) <
+                    if (int.Parse(request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet).Balance) <
                         int.Parse(startBalance))
                     {
                         time = DateTime.Now.Ticks;

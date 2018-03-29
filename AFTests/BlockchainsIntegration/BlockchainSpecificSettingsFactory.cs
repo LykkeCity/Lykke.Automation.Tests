@@ -171,6 +171,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "keep_keys_private";
                 ClientId = "";
                 AssetId = "1.3.0";
+                ExternalWallerAddressContext = "TEST8KjhgAyMv8KRU4MBqUWnxHUP4SXVp6n9Bo2CKS9kgyFnbY348K";//"5KJBVnJaiYhVq7x3mF47f5xd6RUisnqjWCdc5fx9uhWSDdrd1MR";
             }
         }
 
@@ -198,5 +199,6 @@ namespace AFTests.BlockchainsIntegration
         public string AssetId { get; set; }
         public string ExternalWalletAddress { get; set; }
         public string ExternalWalletKey { get; set; }
+        public string ExternalWallerAddressContext { get; set; }
     }
 }

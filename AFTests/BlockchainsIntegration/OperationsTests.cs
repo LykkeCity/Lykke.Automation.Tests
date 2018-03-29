@@ -495,5 +495,49 @@ namespace AFTests.BlockchainsIntegrationTests
                 Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
             }
         }
+
+        public class DWHWTransfer : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            [Description("Transfer all balance from DW to EW")]
+            public void DWHWTransferTest()
+            {
+                Assert.That(HOT_WALLET, Is.Not.Null.Or.Empty, "Hot wallet address and key are empty!");
+
+                //create DW and set balance, enable observation
+
+                var newWallet = blockchainSign.PostWallet().GetResponseObject();
+                blockchainApi.Balances.PostBalances(newWallet.PublicAddress);
+                AddCyptoToBalanceFromExternal(newWallet.PublicAddress);
+                var take = "500";
+
+                var currentBalance = blockchainApi.Balances.GetBalances(take, "0").GetResponseObject().Items.First(w => w.Address == newWallet.PublicAddress).Balance;
+
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = currentBalance,
+                    AssetId = ASSET_ID,
+                    FromAddress = newWallet.PublicAddress,
+                    IncludeFee = true,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString();
+
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { newWallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+                var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+                var getResponse = blockchainApi.Operations.GetOperationId(operationId);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+                Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
+
+                //validate balance is 0
+                Assert.That(() => blockchainApi.Balances.GetBalances(take, "0").GetResponseObject().Items.First(w => w.Address == newWallet.PublicAddress).Balance, Is.EqualTo("0").After(5*60*1000, 2*1000), "Unexpected balance");
+            }
+        }
     }
 }
