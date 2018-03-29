@@ -46,21 +46,15 @@ namespace AlgoStoreData.Fixtures
                 UploadStringDTO stringDTO = new UploadStringDTO()
                 {
                     AlgoId = responceMetadataList[i].Id,
-                    Data = "package com.lykke.algos;\n public class Algo \n { \n public void run() throws InterruptedException \n { \n for (int i = 100000; i > 0; i--) \n { \n java.lang.Thread.sleep(1000); \n System.out.println(\"Demo Algo Fil VS\" + i); \n } \n } \n }"             
+                    Data = this.CSharpAlgoString
                 };
 
                 var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
                 Assert.True(response.Status == System.Net.HttpStatusCode.NoContent);
 
-                InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
-                {
-                    AlgoId = stringDTO.AlgoId,
-                    HftApiKey = "key",
-                    AssetPair = "BTCUSD",
-                    TradedAsset = "USD",
-                    Margin = "1",
-                    Volume = "1"
-                };
+                GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
+
+                InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId);
 
                 url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 

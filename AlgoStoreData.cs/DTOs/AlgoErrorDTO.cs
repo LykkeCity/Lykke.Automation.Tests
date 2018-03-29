@@ -4,8 +4,8 @@ using System.Text;
 
 namespace AlgoStoreData.DTOs
 {
-    public class LogResponseDTO
+    public class AlgoErrorDTO
     {
-        public List<string> Log { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }
