@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApiV2Data.DTOs;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -46,13 +47,13 @@ namespace AlgoStoreData.DTOs
 
     public class GetPopulatedInstanceDataDTO
     {
-        public InstanceDataDTO returnInstanceDataDTO(string AlgoId)
+        public InstanceDataDTO returnInstanceDataDTO(string AlgoId, WalletDTO waletDTO)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
+                WalletId = waletDTO.Id,
                 InstanceName = Helpers.RandomString(13),
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
@@ -559,13 +560,13 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public InstanceDataDTO returnInstanceDataDTOInvalidAssetPair(string AlgoId)
+        public InstanceDataDTO returnInstanceDataDTOInvalidAssetPair(string AlgoId, WalletDTO waletDTO)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
+                WalletId = waletDTO.Id,
                 InstanceName = Helpers.RandomString(13),
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
@@ -1072,13 +1073,13 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public InstanceDataDTO returnInstanceDataDTOInvalidTradedAsset(string AlgoId)
+        public InstanceDataDTO returnInstanceDataDTOInvalidTradedAsset(string AlgoId, WalletDTO waletDTO)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
+                WalletId = waletDTO.Id,
                 InstanceName = Helpers.RandomString(13),
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
@@ -1584,13 +1585,13 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public InstanceDataDTO returnInstanceDataDTOInvalidVolume(string AlgoId)
+        public InstanceDataDTO returnInstanceDataDTOInvalidVolume(string AlgoId, WalletDTO waletDTO)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
+                WalletId = waletDTO.Id,
                 InstanceName = Helpers.RandomString(13),
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
@@ -2097,13 +2098,13 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public InstanceDataDTO returnInstanceDataDTONegativeVolume(string AlgoId)
+        public InstanceDataDTO returnInstanceDataDTONegativeVolume(string AlgoId, WalletDTO waletDTO)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
+                WalletId = waletDTO.Id,
                 InstanceName = Helpers.RandomString(13),
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {

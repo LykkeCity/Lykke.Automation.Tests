@@ -12,6 +12,7 @@ using AlgoStoreData.DTOs;
 using XUnitTestData.Entities.AlgoStore;
 using System.IO;
 using AlgoStoreData.HelpersAlgoStore;
+using ApiV2Data.DTOs;
 
 namespace AFTests.AlgoStore
 {
@@ -251,7 +252,9 @@ namespace AFTests.AlgoStore
 
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
+            WalletDTO walet = await CreateTestWallet();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID, walet);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -301,7 +304,9 @@ namespace AFTests.AlgoStore
 
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
+            WalletDTO walet = await CreateTestWallet();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID, walet);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -330,7 +335,9 @@ namespace AFTests.AlgoStore
 
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
+            WalletDTO walet = await CreateTestWallet();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID, walet);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -364,7 +371,9 @@ namespace AFTests.AlgoStore
 
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
+            WalletDTO walet = await CreateTestWallet();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID, walet);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -405,7 +414,9 @@ namespace AFTests.AlgoStore
 
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
+            WalletDTO walet = await CreateTestWallet();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID, walet);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -547,7 +558,9 @@ namespace AFTests.AlgoStore
 
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId);
+            WalletDTO walet = await CreateTestWallet();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId, walet);
 
             url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -618,7 +631,9 @@ namespace AFTests.AlgoStore
 
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId);
+            WalletDTO walet = await CreateTestWallet();
+
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId, walet);
 
             url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 

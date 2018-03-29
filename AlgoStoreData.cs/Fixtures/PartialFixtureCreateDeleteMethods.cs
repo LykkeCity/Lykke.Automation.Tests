@@ -1,8 +1,10 @@
 ﻿using AlgoStoreData.DTOs;
+using ApiV2Data.DTOs;
 using NUnit.Framework;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using XUnitTestCommon;
@@ -54,7 +56,9 @@ namespace AlgoStoreData.Fixtures
 
                 GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-                InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId);
+                WalletDTO walet = await CreateTestWallet();
+
+                InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId, walet);
 
                 url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -118,6 +122,51 @@ namespace AlgoStoreData.Fixtures
             }
 
             return responces;
+        }
+
+        public async Task<WalletDTO> CreateTestWallet()
+        {
+
+            string url = ApiPaths.WALLETS_BASE_PATH + "/hft";
+
+            WalletCreateDTO newWallet = new WalletCreateDTO()
+            {
+                Name = Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest,
+                Description = Guid.NewGuid().ToString() + Helpers.Random.Next(1000, 9999).ToString() + GlobalConstants.AutoTest
+            };
+            string createParam = JsonUtils.SerializeObject(newWallet);
+
+            string endpoint = "https://apiv2-dev.lykkex.net";
+
+            var response = await Consumer.ExecuteRequestCustromEndpoint(endpoint + url, Helpers.EmptyDictionary, createParam, Method.POST);
+            if (response.Status != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            WalletDTO returnModel = new WalletDTO();
+
+            WalletCreateHFTDTO createdDTO = JsonUtils.DeserializeJson<WalletCreateHFTDTO>(response.ResponseJson);
+            returnModel.Id = createdDTO.WalletId;
+            returnModel.ApiKey = createdDTO.ApiKey;
+            returnModel.Name = newWallet.Name;
+            returnModel.Description = newWallet.Description;
+            
+            AddOneTimeCleanupAction(async () => await DeleteTestWallet(returnModel.Id));
+            return returnModel;
+        }
+
+        public async Task<bool> DeleteTestWallet(string id)
+        {
+            string url = ApiPaths.WALLETS_BASE_PATH + "/" + id;
+            string endpoint = "https://apiv2-dev.lykkex.net";
+            var response = await Consumer.ExecuteRequestCustromEndpoint(endpoint + url, Helpers.EmptyDictionary, null, Method.DELETE);
+
+            if (response.Status != HttpStatusCode.OK)
+            {
+                return false;
+            }
+            return true;
         }
 
     }
