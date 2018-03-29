@@ -20,7 +20,6 @@ namespace AFTests.AlgoStore
     public partial class AlgoStoreTests : AlgoStoreTestDataFixture
     {
         [Test]
-        [Ignore("rewokr logic")]
         [Category("AlgoStore")]
         public async Task PostInvalidInstanceAssetPair()
         {
@@ -29,18 +28,21 @@ namespace AFTests.AlgoStore
 
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
-
-            // set custrom data here for the metadata asset pair
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTOInvalidAssetPair(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
 
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
+            AlgoErrorDTO postInstanceDataResponseDTO = JsonUtils.DeserializeJson<AlgoErrorDTO>(postInstanceDataResponse.ResponseJson);
+
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.InternalServerError), "responce should equals internal server erorr");
+
+            Assert.That(postInstanceDataResponseDTO.ErrorMessage, Does.Contain("NotFound from asset service calling AssetPairGetWithHttpMessagesAsync"), "we should receive erorr for not found asset pair");
+
+ 
         }
         [Test]
-        [Ignore("rewokr logic")]
         [Category("AlgoStore")]
         public async Task PostInvalidInstanceTradedAsset()
         {
@@ -49,15 +51,17 @@ namespace AFTests.AlgoStore
 
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
-
-            // set custrom data here for the metadata traded data
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTOInvalidTradedAsset(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
 
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
+            AlgoErrorDTO postInstanceDataResponseDTO = JsonUtils.DeserializeJson<AlgoErrorDTO>(postInstanceDataResponse.ResponseJson);
+
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.BadRequest), "should be bad response erorr code");
+
+            Assert.That(postInstanceDataResponseDTO.ErrorMessage, Does.Contain("ValidationError Message:Asset <USD> is not valid for asset pair <BTCEUR>"), "we should receive erorr for the invalid traded asset");
 
         }
         [Test]
@@ -75,32 +79,10 @@ namespace AFTests.AlgoStore
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
 
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
+            Assert.That(postInstanceDataResponse.Status , Is.EqualTo(HttpStatusCode.NotFound), "we should receive not found response code");
 
         }
         [Test]
-        [Ignore("Bug AL-274")]
-        [Category("AlgoStore")]
-        public async Task PostInvalidMargin()
-        {
-            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-            string algoID = metadataForUploadedBinary.AlgoId;
-
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
-
-            // set custrom data here for the metadata margin data
-
-            string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
-
-            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
-
-        }
-        [Test]
-        [Ignore("rewokr logic")]
         [Category("AlgoStore")]
         public async Task PostInvalidVolume()
         {
@@ -109,15 +91,17 @@ namespace AFTests.AlgoStore
 
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
-
-            // set custrom data here for the metadata volume data
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTONegativeVolume(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
 
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
+            AlgoErrorDTO postInstanceDataResponseDTO = JsonUtils.DeserializeJson<AlgoErrorDTO>(postInstanceDataResponse.ResponseJson);
+
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.BadRequest), "we should receive bad request response code");
+
+            Assert.That(postInstanceDataResponseDTO.ErrorMessage, Does.Contain("Code:1000-ValidationError Message"), "we should receive validation erorr for invalid volume");
         }
 
         [Test]
@@ -135,28 +119,28 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK), "we shoudl recieve ok responce" );
         }
-
         [Test]
-        [Ignore("rewokr logic")]
         [Category("AlgoStore")]
-        public async Task PostInstanceDataOnlyWithZeroMArginZeroVolume()
+        public async Task PostInstanceDataOnlyWithZeroVolume()
         {
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
             GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
 
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
-
-            // set custrom data here for the metadata traded 0 margin 0 volume
+            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTOInvalidVolume(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
             var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
 
-            Assert.That(postInstanceDataResponse.Status == HttpStatusCode.NotFound);
+            AlgoErrorDTO postInstanceDataResponseDTO = JsonUtils.DeserializeJson<AlgoErrorDTO>(postInstanceDataResponse.ResponseJson);
+
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.BadRequest), "we should receive bad request response code");
+
+            Assert.That(postInstanceDataResponseDTO.ErrorMessage, Does.Contain("Code:1000-ValidationError Message"), "we should receive validation erorr for invalid volume");
         }
 
     }
