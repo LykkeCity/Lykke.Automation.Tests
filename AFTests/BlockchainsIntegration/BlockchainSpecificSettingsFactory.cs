@@ -161,17 +161,17 @@ namespace AFTests.BlockchainsIntegration
             {
                 BlockchainIntegration = "Bitshares";
                 BlockchainApi = "http://lykke-service-bitshares-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://lykke-service-bitshares-sign.lykke-service.svc.cluster.local/api";
+                BlockchainSign = "http://lykke-service-bitshares-sign.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
                 DepositWalletKey = "keep_keys_private";
                 DepositWalletAddress = "1.2.20477:::23088da2-9a5f-42de-bdd6-fe5ee259c8cd";
                 HotWallet = "1.2.20477:::e91757da-6a69-43f4-8283-b2612703af59";
                 HotWalletKey = "keep_keys_private";
                 ExternalWalletAddress = "1.2.20407:::06eea045-43ee-4cca-a19d-1356abc2b70e";
-                ExternalWalletKey = "keep_keys_private";
+                ExternalWalletKey = "5JonSsFtX5XD15rBzFCnx46DQMmhWYmSjgJPMPuZGwY9ne86xJ6";
                 ClientId = "";
                 AssetId = "1.3.0";
-                ExternalWallerAddressContext = "TEST8KjhgAyMv8KRU4MBqUWnxHUP4SXVp6n9Bo2CKS9kgyFnbY348K";//"5KJBVnJaiYhVq7x3mF47f5xd6RUisnqjWCdc5fx9uhWSDdrd1MR";
+                ExternalWallerAddressContext = "5KJBVnJaiYhVq7x3mF47f5xd6RUisnqjWCdc5fx9uhWSDdrd1MR";
             }
         }
 

@@ -119,7 +119,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 };
 
                 var responseTransaction = api.Operations.PostTransactions(model).GetResponseObject();
-                string operationId = model.OperationId.ToString("N");
+                string operationId = model.OperationId.ToString();// should be identical as in response. do not change
 
                 var signResponse = sign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { EXTERNAL_WALLET_KEY }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
@@ -130,6 +130,5 @@ namespace AFTests.BlockchainsIntegrationTests
                 Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
             }
         }
-
     }  
 }
