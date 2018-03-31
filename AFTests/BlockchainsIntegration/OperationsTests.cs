@@ -512,6 +512,12 @@ namespace AFTests.BlockchainsIntegrationTests
                 AddCyptoToBalanceFromExternal(newWallet.PublicAddress);
                 var take = "500";
 
+                int i = 60;
+                while(i-->0 && !blockchainApi.Balances.GetBalances(take, "0").GetResponseObject().Items.Any(w => w.Address == newWallet.PublicAddress))
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+                }
+
                 var currentBalance = blockchainApi.Balances.GetBalances(take, "0").GetResponseObject().Items.First(w => w.Address == newWallet.PublicAddress).Balance;
 
                 var model = new BuildSingleTransactionRequest()
