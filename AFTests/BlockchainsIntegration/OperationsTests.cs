@@ -496,6 +496,41 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
+        public class SameOperationIdFoDifferentTransactions : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void SameOperationIdFoDifferentTransactionsTest()
+            {
+                var operationId = Guid.NewGuid();
+
+                var model1 = new BuildSingleTransactionRequest()
+                {
+                    Amount = "100001",
+                    AssetId = ASSET_ID,
+                    FromAddress = WALLET_ADDRESS,
+                    IncludeFee = true,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var model2 = new BuildSingleTransactionRequest()
+                {
+                    Amount = "100002",
+                    AssetId = ASSET_ID,
+                    FromAddress = WALLET_ADDRESS,
+                    IncludeFee = true,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model1).GetResponseObject();
+                var secondResponseTransaction  = blockchainApi.Operations.PostTransactions(model2).GetResponseObject();
+
+                Assert.That(responseTransaction.TransactionContext, Is.EqualTo(secondResponseTransaction), $"TransactionsContext not equal for different transactions with the same operationId: {operationId}");
+            }
+        }
+
         public class DWHWTransfer : BlockchainsIntegrationBaseTest
         {
             [Test]
