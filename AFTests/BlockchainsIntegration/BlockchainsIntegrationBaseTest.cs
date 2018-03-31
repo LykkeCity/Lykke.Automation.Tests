@@ -109,7 +109,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 api.Balances.PostBalances(walletAddress);
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = "20000001",//"100001", this done for stellar. may got some problems with other
                     AssetId = ASSET_ID,
                     FromAddress = EXTERNAL_WALLET,
                     IncludeFee = false,

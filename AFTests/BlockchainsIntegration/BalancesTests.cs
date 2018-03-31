@@ -99,12 +99,11 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class CheckBalanceIsZeroBeforeGetBalance : BlockchainsIntegrationBaseTest
+        public class CheckBlockNumberIncreasedAfterTransaction : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]
-            [Description("Test will faill if at same time two or more treads will run it.")]
-            public void CheckBalanceIsZeroBeforeGetBalanceTest()
+            public void CheckBlockNumberIncreasedAfterTransactionTest()
             {
                 // enable observation
 
@@ -137,7 +136,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
-                string operationId = model.OperationId.ToString("N");
+                string operationId = model.OperationId.ToString();
 
                 var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
