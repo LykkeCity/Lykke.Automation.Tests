@@ -127,7 +127,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100002",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
                     FromAddress = newWallet.PublicAddress,
                     IncludeFee = true,
@@ -144,14 +144,6 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 newBlock = GetTransactionCompleteStatusTime(operationId, newWallet.PublicAddress);
 
-                //Parallel.Invoke(() =>
-                //{
-                //    GetBalanceDissapearingTime(newWallet.PublicAddress, startBalance, out time1);             
-                //}, () =>
-                //{
-                //    GetTransactionCompleteStatusTime(operationId, out time2);
-                //});
-
                 TestContext.Out.WriteLine($"old block: {startBlock} \n new block: {newBlock}");
 
                 Assert.Multiple(() => 
@@ -160,28 +152,6 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.That(long.Parse(startBalance) - 100002, Is.EqualTo(long.Parse(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Balance)), "New balance is not as expected");
                 });
             }
-
-            //static long GetBlockBalanceDissapearingTime(string wallet, string startBalance, out long time)
-            //{
-            //    long block = -1;
-            //    var sw = new Stopwatch();
-            //    time = 0;
-            //    var request = new BlockchainApi(BlockchainApi);
-            //    sw.Start();
-            //    while (sw.Elapsed < TimeSpan.FromMinutes(10))
-            //    {
-            //        if (int.Parse(request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet).Balance) <
-            //            int.Parse(startBalance))
-            //        {
-            //            time = DateTime.Now.Ticks;
-            //            block = request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet).Block;
-            //            break;
-            //        }
-            //    }
-            //    sw.Stop();
-
-            //    return block;
-            //}
 
             static long GetTransactionCompleteStatusTime(string operationId, string wallet)
             {

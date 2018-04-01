@@ -33,8 +33,8 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "stellar-v2";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
-       }
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "stellar-v2";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+        }
 
         protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
         protected BlockchainApi blockchainApi = new BlockchainApi(BlockchainApi);
@@ -71,6 +71,7 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static string EXTERNAL_WALLET = _currentSettings.Value.ExternalWalletAddress;
         protected static string EXTERNAL_WALLET_KEY = _currentSettings.Value.ExternalWalletKey;
         protected static string EXTERNAL_WALLET_ADDRESS_CONTEXT = _currentSettings.Value.ExternalWallerAddressContext;
+        protected static string AMOUNT = "20000001";
 
 
 
@@ -101,7 +102,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 api.Balances.PostBalances(EXTERNAL_WALLET);
                 api.Balances.PostBalances(walletAddress);
-                TestingTransferRequest request = new TestingTransferRequest() { amount = "100001", assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = walletAddress };
+                TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUNT, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = walletAddress };
                 var response = api.Testing.PostTestingTransfer(request);
             }
             else
@@ -109,7 +110,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 api.Balances.PostBalances(walletAddress);
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "20000001",//"100001", this done for stellar. may got some problems with other
+                    Amount = AMOUNT,//"100001", this done for stellar. may got some problems with other
                     AssetId = ASSET_ID,
                     FromAddress = EXTERNAL_WALLET,
                     IncludeFee = false,
@@ -126,8 +127,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 var response = api.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
                 var getResponse = api.Operations.GetOperationId(operationId);
-               // response.Validate.StatusCode(HttpStatusCode.OK, "Could not update Balance from external wallet");
-                //Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
             }
         }
     }  

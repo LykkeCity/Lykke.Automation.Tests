@@ -23,7 +23,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = false,
@@ -104,7 +104,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100002",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = true,
@@ -113,7 +113,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
-                string operationId = model.OperationId.ToString("N");
+                string operationId = model.OperationId.ToString();
 
                 var signResponse = blockchainSign.PostSign(new SignRequest() {PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
@@ -147,7 +147,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = false,
@@ -215,7 +215,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = false,
@@ -228,7 +228,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     AssetId = ASSET_ID,
                     OperationId = model.OperationId,
                     FromAddress = WALLET_ADDRESS,
-                    Outputs = new List<TransactionOutputContract>() { new TransactionOutputContract() { Amount = "100001", ToAddress = HOT_WALLET } }
+                    Outputs = new List<TransactionOutputContract>() { new TransactionOutputContract() { Amount = AMOUNT, ToAddress = HOT_WALLET } }
                 };
 
                 var response = blockchainApi.Operations.PostTransactionsManyOutputs(request);
@@ -275,7 +275,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = false,
@@ -288,7 +288,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     AssetId = ASSET_ID,
                     OperationId = model.OperationId,
                     ToAddress = HOT_WALLET,
-                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract() { Amount = "100001", FromAddress = WALLET_ADDRESS } }
+                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract() { Amount = AMOUNT, FromAddress = WALLET_ADDRESS } }
                 };
 
                 var response = blockchainApi.Operations.PostTransactionsManyInputs(request);
@@ -325,7 +325,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     AssetId = ASSET_ID,
                     OperationId = Guid.NewGuid(),
                     ToAddress = HOT_WALLET,
-                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract() { Amount = "100001", FromAddress = WALLET_ADDRESS } }
+                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract() { Amount = AMOUNT, FromAddress = WALLET_ADDRESS } }
                 };
 
                 var json = JsonConvert.SerializeObject(request);
@@ -434,7 +434,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     blockchainApi.Balances.PostBalances(EXTERNAL_WALLET);
                     var balanceBefore = blockchainApi.Balances.GetBalances("1000", null).GetResponseObject().
                         Items.First(w => w.Address == EXTERNAL_WALLET).Balance;
-                    TestingTransferRequest request = new TestingTransferRequest() { amount = "100001", assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = WALLET_ADDRESS };
+                    TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUNT, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = WALLET_ADDRESS };
                     var response = blockchainApi.Testing.PostTestingTransfer(request);
                     Assert.That(() => long.Parse(blockchainApi.Balances.GetBalances("1000", null).GetResponseObject().
                         Items.First(w => w.Address == EXTERNAL_WALLET).Balance), Is.GreaterThan(long.Parse(balanceBefore)).After(5*60*1000, 1*1000), "Balance after 5 minute after transaction not greater then berfore transaction");
@@ -443,7 +443,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 {
                     var model = new BuildSingleTransactionRequest()
                     {
-                        Amount = "100001",
+                        Amount = AMOUNT,
                         AssetId = ASSET_ID,
                         FromAddress = EXTERNAL_WALLET,
                         IncludeFee = false,
@@ -475,7 +475,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
                     FromAddress = HOT_WALLET,
                     IncludeFee = false,
@@ -506,7 +506,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var model1 = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = true,
