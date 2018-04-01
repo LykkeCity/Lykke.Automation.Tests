@@ -138,7 +138,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString();
 
-                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { newWallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 

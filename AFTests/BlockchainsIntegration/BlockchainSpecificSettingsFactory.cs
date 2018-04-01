@@ -60,6 +60,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "bitshares")
                 _settings = new BitsharesSettings();
 
+            if (blockchain == "raiblocks")
+                _settings = new RaiBlocksSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -174,6 +177,26 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWallerAddressContext = "5KJBVnJaiYhVq7x3mF47f5xd6RUisnqjWCdc5fx9uhWSDdrd1MR";
             }
         }
+
+        public class RaiBlocksSettings : BlockchainSpecificModel
+        {
+            public RaiBlocksSettings()
+            {
+                BlockchainIntegration = "RaiBlocks";
+                BlockchainApi = "http://raiblocks-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://raiblocks-sign.autotests-service.svc.cluster.local/api";
+                DepositWalletAddress = "xrb_1inxr89m1dgdyrwcktb5ho5p8fto1zn499n6ofpm33qc3skw6qu7ae8ue9gf";
+                DepositWalletKey = "42B05779B54815AEFDB3CCB942E98F8262228B13608E8D8C00F4336D25250513";
+                HotWallet = "xrb_1ygmfkg4x394rnhpyhafs1qgwpdyiru1f393osig37qzoeiqqhpdxfa7w6kk";
+                HotWalletKey = "14DA575835310081121A8F7AA656377E5CBDBB96D8CE8672A564AF902F128FCB";
+                ExternalWalletAddress = "xrb_1e9pi3r7qa9qpsas68go55rmu7m8ku9np5pw3roeekx671joz7b1eiu1i8zk";
+                ExternalWalletKey = "4CF23CABA08F2C105DE9B80AA5CEBE37CAA3285E015258513F84E41100BDE2A9";
+                ExternalWallerAddressContext = "";
+                ClientId = "";
+                AssetId = "XRB";
+            }
+        }
+
 
         public class LocalConfig : BlockchainSpecificModel
         {

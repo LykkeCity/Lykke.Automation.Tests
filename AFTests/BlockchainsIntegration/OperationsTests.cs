@@ -527,7 +527,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model1).GetResponseObject();
                 var secondResponseTransaction  = blockchainApi.Operations.PostTransactions(model2).GetResponseObject();
 
-                Assert.That(responseTransaction.TransactionContext, Is.EqualTo(secondResponseTransaction), $"TransactionsContext not equal for different transactions with the same operationId: {operationId}");
+                Assert.That(responseTransaction.TransactionContext, Is.EqualTo(secondResponseTransaction.TransactionContext), $"TransactionsContext not equal for different transactions with the same operationId: {operationId}");
             }
         }
 
