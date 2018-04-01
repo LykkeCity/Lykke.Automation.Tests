@@ -510,7 +510,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     AssetId = ASSET_ID,
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = true,
-                    OperationId = Guid.NewGuid(),
+                    OperationId = operationId,
                     ToAddress = HOT_WALLET
                 };
 
@@ -520,7 +520,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     AssetId = ASSET_ID,
                     FromAddress = WALLET_ADDRESS,
                     IncludeFee = true,
-                    OperationId = Guid.NewGuid(),
+                    OperationId = operationId,
                     ToAddress = HOT_WALLET
                 };
 
@@ -548,12 +548,12 @@ namespace AFTests.BlockchainsIntegrationTests
                 var take = "500";
 
                 int i = 60;
-                while(i-->0 && !blockchainApi.Balances.GetBalances(take, "0").GetResponseObject().Items.Any(w => w.Address == newWallet.PublicAddress))
+                while(i-->0 && !blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.Any(w => w.Address == newWallet.PublicAddress))
                 {
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
                 }
 
-                var currentBalance = blockchainApi.Balances.GetBalances(take, "0").GetResponseObject().Items.First(w => w.Address == newWallet.PublicAddress).Balance;
+                var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.First(w => w.Address == newWallet.PublicAddress).Balance;
 
                 var model = new BuildSingleTransactionRequest()
                 {
@@ -577,7 +577,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
 
                 //validate balance is 0
-                Assert.That(() => blockchainApi.Balances.GetBalances(take, "0").GetResponseObject().Items.First(w => w.Address == newWallet.PublicAddress).Balance, Is.EqualTo("0").After(5*60*1000, 2*1000), "Unexpected balance");
+                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.First(w => w.Address == newWallet.PublicAddress).Balance, Is.EqualTo("0").After(5*60*1000, 2*1000), "Unexpected balance");
             }
         }
     }
