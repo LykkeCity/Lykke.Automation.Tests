@@ -119,7 +119,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 
                 //create transaction and broadcast it
 
-                long newBlock = 0;
+                long? newBlock = 0;
                 
                 var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Balance;
                 var startBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Block;
@@ -143,20 +143,18 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 newBlock = GetTransactionCompleteStatusTime(operationId, newWallet.PublicAddress);
 
+                Assert.That(()=> blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State, Is.EqualTo(BroadcastedTransactionState.Completed), $"Request doesnt have Complete status after 10 minutes and still in a {blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State}");
+
                 TestContext.Out.WriteLine($"old block: {startBlock} \n new block: {newBlock}");
 
-                Assert.Multiple(() => 
-                {
-                    Assert.That(newBlock, Is.GreaterThan(startBlock), $"New block is not greater than start block");
-                    Assert.That(long.Parse(startBalance) - 100002, Is.EqualTo(long.Parse(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().FirstOrDefault(a => a.Address == newWallet.PublicAddress)?.Balance)), "New balance is not as expected");
-                });
+                Assert.That(newBlock.Value, Is.GreaterThan(startBlock), $"New block is not greater than start block");
             }
 
-            static long GetTransactionCompleteStatusTime(string operationId, string wallet)
+            static long? GetTransactionCompleteStatusTime(string operationId, string wallet)
             {
                 var sw = new Stopwatch();
                 var request = new BlockchainApi(BlockchainApi);
-                long block = -1;
+                long? block = -1;
                 sw.Start();
                 while (sw.Elapsed < TimeSpan.FromMinutes(10))
                 {
@@ -165,7 +163,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     {
                         if (r.GetResponseObject().State == BroadcastedTransactionState.Failed)
                             Assert.Fail("Operation got 'Failed status'");
-                        block = request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet).Block;
+                        block = request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().FirstOrDefault(a => a.Address == wallet)?.Block;
                         break;
                     }                  
                 }
