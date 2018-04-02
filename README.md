@@ -26,7 +26,8 @@ Set content to properties.json with the following settings for your Blockchain
   "HotWallet": "", //HotWallet in blockchain
   "HotWalletKey": "", key for this HW
   "ExternalWalletAddress": "", //Wallet that been created not in lykke system
-  "ExternalWalletKey": "" // key
+  "ExternalWalletKey": "", // key
+  "ExternalWallerAddressContext": ""// address context for EW 
 }
 ```
 

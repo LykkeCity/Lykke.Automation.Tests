@@ -24,7 +24,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// Initializes a new instance of the BuildSingleTransactionRequest
         /// class.
         /// </summary>
-        public BuildSingleTransactionRequest(System.Guid operationId, bool includeFee, string fromAddress = default(string), string toAddress = default(string), string assetId = default(string), string amount = default(string))
+        public BuildSingleTransactionRequest(System.Guid operationId, bool includeFee, string fromAddress = default(string), string toAddress = default(string), string assetId = default(string), string amount = default(string), string fromAddressContext = default(string))
         {
             OperationId = operationId;
             FromAddress = fromAddress;
@@ -32,6 +32,7 @@ namespace Lykke.Client.AutorestClient.Models
             AssetId = assetId;
             Amount = amount;
             IncludeFee = includeFee;
+            FromAddressContext = fromAddressContext;
             CustomInit();
         }
 
@@ -69,6 +70,11 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "includeFee")]
         public bool IncludeFee { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "fromAddressContext")]
+        public string FromAddressContext { get; set; }
 
         /// <summary>
         /// Validate the object.

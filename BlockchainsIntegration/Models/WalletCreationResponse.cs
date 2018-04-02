@@ -22,7 +22,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the WalletCreationResponse class.
         /// </summary>
-        public WalletCreationResponse(string publicAddress = default(string), string privateKey = default(string))
+        public WalletCreationResponse(string publicAddress = default(string), string privateKey = default(string), string addressContext = default(string))
         {
             PublicAddress = publicAddress;
             PrivateKey = privateKey;
@@ -44,5 +44,9 @@ namespace Lykke.Client.AutorestClient.Models
         [JsonProperty(PropertyName = "privateKey")]
         public string PrivateKey { get; set; }
 
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "addressContext")]
+        public string AddressContext { get; set; }
     }
 }
