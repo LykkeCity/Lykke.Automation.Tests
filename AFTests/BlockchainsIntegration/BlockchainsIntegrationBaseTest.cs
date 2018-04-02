@@ -97,8 +97,8 @@ namespace AFTests.BlockchainsIntegrationTests
             var api = new BlockchainApi(BlockchainApi);
             var sign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
 
-            bool transferSupported = api.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
-            if (transferSupported)
+            var transferSupported = api.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
+            if (transferSupported != null && transferSupported.Value)
             {
                 api.Balances.PostBalances(EXTERNAL_WALLET);
                 api.Balances.PostBalances(walletAddress);

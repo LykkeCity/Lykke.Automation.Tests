@@ -146,15 +146,15 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainIntegration = "Stellar";
                 BlockchainApi = "http://stellar-api-schnidlo.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://stellar-sign-service-schnidlo.autotests-service.svc.cluster.local/api";
-                HotWallet = "GA5HEUPYURAMMC2UG4OSJSJOZFOXDXKMQV7ZBW3PWDRAXWTB2XX7ZNXW";
-                HotWalletKey = "SBC6CX6TPTJI4FYWBSKXTXFRSV3CQ25JTFO3WUNZ3EKPHB3BRDXHIGEK";
+                HotWallet = "GC4QXOYMYXM3PR5UPAJCVUCLVTQVB2OAKF24NFGBU7PERHIB6C4Y4CFR";
+                HotWalletKey = "SDV6L7P7OZFKH3JCEBFKFIDKQCPTOMEO2S7V7JBOZB66RTA644I6LQME";
                 WalletsUrl = null;
-                DepositWalletKey = "SD2ZSDJ3UBFAODIGLCGZ2UXN4UAG2GIC373ODZW6LXHEQMOF2FIX445O";
-                DepositWalletAddress = "GBJX3AUFR6UXYELGUM7UKMDGDRQQPGSTRCSIPK5C36BI356X7JE3ZY6B";
+                DepositWalletKey = "GDF5BLMAZWORE6JROOP6CBI45AA74UEDM6J4PP3XHWNOLIXDUY5UJB5V";
+                DepositWalletAddress = "SBBULFX24MDPUIOKHTH4JGHYOTVN3DT3GQEAO4TVMHMNHWF65TJK3YYF";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "XLM";
-                ExternalWalletAddress = "GCR2K4LSPO7VQWCQI6E42XZT2ZHRGXLDGA5JYALTUS2K7CFUPWW2EMF6";
-                ExternalWalletKey = "SCKJ4LM5YJTPSMQFRZ2U7YOXTXZB2MXEBXJKGBRUCRBPWWY3HHUXYZJ4";
+                ExternalWalletAddress = "GCKJYIJQSYDO4AOY2TMTDVKFMHTCDNXVGMBKMC3E2LNDT7KQ4WUJVFX4";
+                ExternalWalletKey = "SARHAWQ3DKJJDHGDXHJIZLKR4QSF2WQBZ6BQZLSFHQADU6MROB6X57B4";
             }
         }
 

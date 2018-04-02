@@ -24,7 +24,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         public CapabilitiesResponse(bool isTransactionsRebuildingSupported, bool? areManyInputsSupported = default(bool?),
             bool? areManyOutputsSupported = default(bool?), string contractVersion = default(string), bool isTestingTransfersSupported = default(bool),
-            bool isPublicAddressExtensionRequired = default(bool), bool isReceiveTransactionRequired = default(bool), bool canReturnExplorerUrl = default(bool))
+            bool? isPublicAddressExtensionRequired = default(bool?), bool? isReceiveTransactionRequired = default(bool?), bool? canReturnExplorerUrl = default(bool?))
         {
             ContractVersion = contractVersion;
             IsTransactionsRebuildingSupported = isTransactionsRebuildingSupported;
@@ -50,7 +50,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "isTransactionsRebuildingSupported")]
-        public bool IsTransactionsRebuildingSupported { get; set; }
+        public bool? IsTransactionsRebuildingSupported { get; set; }
 
         /// <summary>
         /// </summary>
@@ -65,22 +65,22 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "isTestingTransfersSupported")]
-        public bool IsTestingTransfersSupported { get; set; }
+        public bool? IsTestingTransfersSupported { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "isPublicAddressExtensionRequired")]
-        public bool IsPublicAddressExtensionRequired { get; set; }
+        public bool? IsPublicAddressExtensionRequired { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "isReceiveTransactionRequired")]
-        public bool IsReceiveTransactionRequired { get; set; }
+        public bool? IsReceiveTransactionRequired { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "canReturnExplorerUrl")]
-        public bool CanReturnExplorerUrl { get; set; }
+        public bool? CanReturnExplorerUrl { get; set; }
         /// <summary>
         /// Validate the object.
         /// </summary>

@@ -120,7 +120,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 //create transaction and broadcast it
 
                 long newBlock = 0;
-                long time2 = 0;
                 
                 var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Balance;
                 var startBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Block;
@@ -149,7 +148,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 Assert.Multiple(() => 
                 {
                     Assert.That(newBlock, Is.GreaterThan(startBlock), $"New block is not greater than start block");
-                    Assert.That(long.Parse(startBalance) - 100002, Is.EqualTo(long.Parse(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Balance)), "New balance is not as expected");
+                    Assert.That(long.Parse(startBalance) - 100002, Is.EqualTo(long.Parse(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().FirstOrDefault(a => a.Address == newWallet.PublicAddress)?.Balance)), "New balance is not as expected");
                 });
             }
 

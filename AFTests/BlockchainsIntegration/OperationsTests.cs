@@ -196,7 +196,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyOutputsSupported;
                 if (!run.Value)
-                    Assert.Ignore("Many outputs are not supported by blockachain");
+                    Assert.Ignore("Many outputs are not supported by blockchain");
 
                 var response = blockchainApi.Operations.GetTransactionsManyOutputs(operationId);
                 Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest }, Does.Contain(response.StatusCode));
@@ -211,7 +211,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyOutputsSupported;
                 if (!run.Value)
-                    Assert.Ignore("Many outputs are not supported by blockachain");
+                    Assert.Ignore("Many outputs are not supported by blockchain");
 
                 var model = new BuildSingleTransactionRequest()
                 {
@@ -256,7 +256,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyInputsSupported;
                 if (!run.Value)
-                    Assert.Ignore("Many inputs not supported by blockachain");
+                    Assert.Ignore("Many inputs not supported by blockchain");
 
                 var response = blockchainApi.Operations.GetTransactionsManyInputs(operationId);
                 Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest, HttpStatusCode.NotFound }, Has.Member(response.StatusCode));
@@ -271,7 +271,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyInputsSupported;
                 if (!run.Value)
-                    Assert.Ignore("Many inputs are not supported by blockachain");
+                    Assert.Ignore("Many inputs are not supported by blockchain");
 
                 var model = new BuildSingleTransactionRequest()
                 {
@@ -318,7 +318,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyInputsSupported;
                 if (!run.Value)
-                    Assert.Ignore("Many inputs not supported by blockachain");
+                    Assert.Ignore("Many inputs not supported by blockchain");
 
                 var request = new BuildTransactionWithManyInputsRequest()
                 {
@@ -428,8 +428,8 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 Assert.That(EXTERNAL_WALLET, Is.Not.Null.Or.Empty, "External wallet address and key are empty!");
 
-                bool transferSupported = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
-                if (transferSupported)
+                var transferSupported = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
+                if (transferSupported!= null && transferSupported.Value)
                 {
                     blockchainApi.Balances.PostBalances(EXTERNAL_WALLET);
                     var balanceBefore = blockchainApi.Balances.GetBalances("1000", null).GetResponseObject().
@@ -577,7 +577,8 @@ namespace AFTests.BlockchainsIntegrationTests
                 Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
 
                 //validate balance is 0
-                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.First(w => w.Address == newWallet.PublicAddress).Balance, Is.EqualTo("0").After(5*60*1000, 2*1000), "Unexpected balance");
+                var a = blockchainApi.Balances.GetBalances(take, null).GetResponseObject();
+                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == newWallet.PublicAddress)?.Balance, Is.EqualTo("0").After(5*60*1000, 2*1000), "Unexpected balance");
             }
         }
     }
