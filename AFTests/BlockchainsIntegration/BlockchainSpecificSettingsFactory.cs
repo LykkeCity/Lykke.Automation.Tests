@@ -223,5 +223,6 @@ namespace AFTests.BlockchainsIntegration
         public string ExternalWalletAddress { get; set; }
         public string ExternalWalletKey { get; set; }
         public string ExternalWallerAddressContext { get; set; }
+        public long? BlockchainMiningTime { get; set; }
     }
 }

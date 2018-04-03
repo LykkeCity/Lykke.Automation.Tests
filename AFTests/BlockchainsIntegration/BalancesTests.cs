@@ -156,7 +156,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 var request = new BlockchainApi(BlockchainApi);
                 long? block = -1;
                 sw.Start();
-                while (sw.Elapsed < TimeSpan.FromMinutes(10))
+                while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
                 {
                     var r = request.Operations.GetOperationId(operationId);
                     if(r.GetResponseObject().State != BroadcastedTransactionState.InProgress)

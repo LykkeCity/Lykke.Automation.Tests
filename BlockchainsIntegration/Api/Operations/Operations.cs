@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using XUnitTestCommon.RestRequests.Interfaces;
 
-namespace BlockchainsIntegration.LiteCoin.Api
+namespace BlockchainsIntegration.Api
 {
     public class Operations : ApiBase
     {
