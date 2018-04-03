@@ -145,7 +145,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 Assert.That(()=> blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State, Is.EqualTo(BroadcastedTransactionState.Completed), $"Request doesnt have Complete status after 10 minutes and still in a {blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State}");
 
-                TestContext.Out.WriteLine($"old block: {startBlock} \n new block: {newBlock}");
+                TestContext.Progress.WriteLine($"old block: {startBlock} \n new block: {newBlock}");
 
                 Assert.That(newBlock.Value, Is.GreaterThan(startBlock), $"New block is not greater than start block");
             }
