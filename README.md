@@ -28,7 +28,7 @@ Set content to properties.json with the following settings for your Blockchain
   "ExternalWalletAddress": "", //Wallet that been created not in lykke system
   "ExternalWalletKey": "", // key
   "ExternalWallerAddressContext": "", // address context for EW 
-  "BlockchainMiningTime": 10 // blockchain mining time, time to change transaction state from inProgress to Complete 
+  "BlockchainMiningTime": 10 // blockchain mining time(in minutes), time to change transaction state from inProgress to Complete 
 }
 ```
 
