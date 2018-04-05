@@ -21,5 +21,6 @@ namespace BlockchainsIntegration.Api
         public Operations Operations => new Operations(BaseUrl);
         public Capabilities Capabilities => new Capabilities(BaseUrl);
         public Testing Testing => new Testing(BaseUrl);
+        public Constants Constants => new Constants(BaseUrl);
     }
 }
