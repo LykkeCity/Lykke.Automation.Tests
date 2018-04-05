@@ -118,8 +118,8 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://ripple-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://ripple-sign-service.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletKey = "sndT9kLXjNv7L1HWfr6Lo5N6pmEvU";
-                DepositWalletAddress = "rJ2zMCyShMsjHf7tHptVy7qCWt6dYv8B7r+2851998444";
+                //DepositWalletKey = "sndT9kLXjNv7L1HWfr6Lo5N6pmEvU";
+                //DepositWalletAddress = "rJ2zMCyShMsjHf7tHptVy7qCWt6dYv8B7r+2851998444";
                 HotWallet = "rJ2zMCyShMsjHf7tHptVy7qCWt6dYv8B7r";
                 HotWalletKey = "sndT9kLXjNv7L1HWfr6Lo5N6pmEvU";
                 ExternalWalletAddress = "rG1Zu2dm2Ty9pQrnGJux1RuKZA6qhjWwMc";
