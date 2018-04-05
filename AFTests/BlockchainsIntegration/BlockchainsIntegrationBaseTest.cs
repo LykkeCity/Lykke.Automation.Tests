@@ -33,7 +33,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitshares";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Ripple";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
@@ -101,7 +101,6 @@ namespace AFTests.BlockchainsIntegrationTests
             var transferSupported = api.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
             if (transferSupported != null && transferSupported.Value)
             {
-                api.Balances.PostBalances(EXTERNAL_WALLET);
                 api.Balances.PostBalances(walletAddress);
                 TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUNT, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = walletAddress };
                 var response = api.Testing.PostTestingTransfer(request);
@@ -111,7 +110,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 api.Balances.PostBalances(walletAddress);
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = AMOUNT,//"100001", this done for stellar. may got some problems with other
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
                     FromAddress = EXTERNAL_WALLET,
                     IncludeFee = false,
@@ -121,7 +120,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 };
 
                 var responseTransaction = api.Operations.PostTransactions(model).GetResponseObject();
-                string operationId = model.OperationId.ToString();// should be identical as in response. do not change
+                string operationId = model.OperationId.ToString();
 
                 var signResponse = sign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { EXTERNAL_WALLET_KEY }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 

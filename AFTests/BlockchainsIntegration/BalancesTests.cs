@@ -28,22 +28,13 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 blockchainApi.Balances.GetBalances(take, null).Validate.StatusCode(HttpStatusCode.OK);
 
-                if (blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS))
-                {
-                    blockchainApi.Balances.DeleteBalances(WALLET_ADDRESS);
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
-                }
-
-                //enable observation
-                var pResponse = blockchainApi.Balances.PostBalances(WALLET_ADDRESS);
-
-                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS), 
-                    Is.True.After(5*60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 10 minutes");
+                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == newWallet.PublicAddress),
+                    Is.True.After(5 * 60 * 1000, 1 * 1000),  $"Wallet {newWallet.PublicAddress} is not present in Get Balances after 10 minutes");
 
                 //disable
-                var dResponse = blockchainApi.Balances.DeleteBalances(WALLET_ADDRESS);
+                var dResponse = blockchainApi.Balances.DeleteBalances(newWallet.PublicAddress);
 
-                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == WALLET_ADDRESS),
+                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == newWallet.PublicAddress),
                     Is.False.After(1 * 60 * 1000, 1 * 1000), "Wallet still present in Get Balances after Delete");
             }
         }
