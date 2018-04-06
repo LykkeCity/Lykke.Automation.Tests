@@ -145,11 +145,14 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DeleteOperationIdTest()
             {
+                var newWallet = blockchainSign.PostWallet().GetResponseObject();
+                AddCyptoToBalanceFromExternal(newWallet.PublicAddress);
+
                 var model = new BuildSingleTransactionRequest()
                 {
                     Amount = AMOUNT,
                     AssetId = ASSET_ID,
-                    FromAddress = WALLET_ADDRESS,
+                    FromAddress = newWallet.PublicAddress,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
                     ToAddress = HOT_WALLET
@@ -158,14 +161,14 @@ namespace AFTests.BlockchainsIntegrationTests
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString();
 
-                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { newWallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
                 response.Validate.StatusCode(HttpStatusCode.OK);
 
                 var responseDelete = blockchainApi.Operations.DeleteOperationId(operationId);
-                response.Validate.StatusCode(HttpStatusCode.OK);
+                responseDelete.Validate.StatusCode(HttpStatusCode.OK);
             }
         }
 
@@ -180,7 +183,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void DeleteOperationIdInvalidOIdTest(string operationId)
             {
                 var response = blockchainApi.Operations.DeleteOperationId(operationId);
-                Assert.That(new object[] { HttpStatusCode.BadRequest, HttpStatusCode.NoContent, HttpStatusCode.NotFound}, Has.Member(response.StatusCode));
+                Assert.That(response.StatusCode, Is.AnyOf(new object[] { HttpStatusCode.BadRequest, HttpStatusCode.NoContent, HttpStatusCode.NotFound, HttpStatusCode.MethodNotAllowed }));
             }
         }
 
