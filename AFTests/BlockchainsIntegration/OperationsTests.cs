@@ -102,11 +102,15 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostTransactionsBroadcastTest()
             {
+                var newWallet = blockchainSign.PostWallet().GetResponseObject();
+
+                AddCyptoToBalanceFromExternal(newWallet.PublicAddress);
+
                 var model = new BuildSingleTransactionRequest()
                 {
                     Amount = AMOUNT,
                     AssetId = ASSET_ID,
-                    FromAddress = WALLET_ADDRESS,
+                    FromAddress = newWallet.PublicAddress,
                     IncludeFee = true,
                     OperationId = Guid.NewGuid(),
                     ToAddress = HOT_WALLET
@@ -115,7 +119,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString();
 
-                var signResponse = blockchainSign.PostSign(new SignRequest() {PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = blockchainSign.PostSign(new SignRequest() {PrivateKeys = new List<string>() { newWallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
@@ -262,7 +266,11 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore("Many inputs not supported by blockchain");
 
                 var response = blockchainApi.Operations.GetTransactionsManyInputs(operationId);
-                Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest, HttpStatusCode.NotFound }, Has.Member(response.StatusCode));
+                Assert.That(response.StatusCode, Is.AnyOf(new object[]
+                {
+                    HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest, HttpStatusCode.NotFound, HttpStatusCode.MethodNotAllowed
+
+                }));
             }
         }
 
