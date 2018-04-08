@@ -70,7 +70,7 @@ namespace FIX.Client
 
         public void ToApp(Message message, SessionID sessionId)
         {
-            _log.WriteInfo("FixClient", "ToApp", "");
+           // _log.WriteInfo("FixClient", "ToApp", "");
         }
 
         public void FromApp(Message message, SessionID sessionID)
