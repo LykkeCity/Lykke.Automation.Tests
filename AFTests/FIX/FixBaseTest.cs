@@ -1,6 +1,7 @@
 ﻿using FIX.Client;
 using LykkeAutomationPrivate.Api;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,13 @@ namespace AFTests.FIX
         public void TearDown()
         {
             fixClient.Stop();
+        }
+
+        protected static string JsonRepresentation(QuickFix.FIX44.Message message)
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore};
+            var json = JsonConvert.SerializeObject(message, settings);
+            return json;
         }
     }
 

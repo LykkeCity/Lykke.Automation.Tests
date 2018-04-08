@@ -14,7 +14,7 @@ namespace AFTests.FIX
     {
         public class SetLimitOrderSell : FixBaseTest
         {
-            string orderId = Guid.NewGuid().ToString("N");
+            string orderId = Guid.NewGuid().ToString();
 
             [Test]
             [Category("FIX")]
@@ -54,7 +54,7 @@ namespace AFTests.FIX
 
                 var response = fixClient.GetResponse<Message>();
 
-                Assert.That(response, Is.Not.Null, $"order id {orderId} seems to be not cancelled");
+                Assert.That(response, Is.Not.Null, $"order id {orderId} seems to be not cancelled.  response: {JsonRepresentation(response)}");
             }
         }
 
@@ -76,7 +76,7 @@ namespace AFTests.FIX
                 var response = fixClient.GetResponse<Message>();
 
                 Assert.That(response, Is.Not.Null);
-                Assert.That(response, Is.TypeOf<ExecutionReport>());
+                Assert.That(response, Is.TypeOf<ExecutionReport>(), $" response: {JsonRepresentation(response)}");
 
                 var ex = (ExecutionReport)response;
                 Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.PENDING_NEW));
@@ -100,7 +100,7 @@ namespace AFTests.FIX
 
                 var response = fixClient.GetResponse<Message>();
 
-                Assert.That(response, Is.Not.Null, $"order id {orderId} seems to be not cancelled");
+                Assert.That(response, Is.Not.Null, $"order id {orderId} seems to be not cancelled.  response: {JsonRepresentation(response)}");
             }
         }
 
@@ -137,7 +137,7 @@ namespace AFTests.FIX
 
                 response = fixClient.GetResponse<Message>();
 
-                Assert.That(response, Is.Not.Null);
+                Assert.That(response, Is.Not.Null, $"unexpected response: {JsonRepresentation(response)}");
                 Assert.That(response, Is.TypeOf<ExecutionReport>());
 
                 ex = (ExecutionReport)response;
@@ -168,8 +168,8 @@ namespace AFTests.FIX
 
                 var response = fixClient.GetResponse<Message>();
 
-                Assert.That(response, Is.Not.Null, "unexpected response");
-                Assert.That(response, Is.TypeOf<ExecutionReport>(), "unexpected response type");
+                Assert.That(response, Is.Not.Null, $"unexpected response: {JsonRepresentation(response)}");
+                Assert.That(response, Is.TypeOf<ExecutionReport>(), $"unexpected response type. response: {JsonRepresentation(response)}");
 
                 var ex = (ExecutionReport)response;
                 Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.REJECTED));
@@ -194,8 +194,8 @@ namespace AFTests.FIX
 
                 var response = fixClient.GetResponse<Message>();
 
-                Assert.That(response, Is.Not.Null, "unexpected response");
-                Assert.That(response, Is.TypeOf<ExecutionReport>(), "unexpected response type");
+                Assert.That(response, Is.Not.Null, $"unexpected response: {JsonRepresentation(response)}");
+                Assert.That(response, Is.TypeOf<ExecutionReport>(), $"unexpected response type. response: {JsonRepresentation(response)}");
 
                 var ex = (ExecutionReport)response;
                 Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.REJECTED));
@@ -220,8 +220,8 @@ namespace AFTests.FIX
 
                 var response = fixClient.GetResponse<Message>();
 
-                Assert.That(response, Is.Not.Null, "unexpected response");
-                Assert.That(response, Is.TypeOf<ExecutionReport>(), "unexpected response type");
+                Assert.That(response, Is.Not.Null, $"unexpected response: {JsonRepresentation(response)}");
+                Assert.That(response, Is.TypeOf<ExecutionReport>(), $"unexpected response type response: {JsonRepresentation(response)}");
 
                 var ex = (ExecutionReport)response;
                 Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.REJECTED));
@@ -266,8 +266,8 @@ namespace AFTests.FIX
                     Assert.That(response, Is.TypeOf<ExecutionReport>());
 
                     var ex = (ExecutionReport)response;
-                    Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.PENDING_NEW), $"unexpected response status for assetPair {assetPair}.");
-                    Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.PENDING_NEW), $"unexpected response type for assetPair {assetPair}");
+                    Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.PENDING_NEW), $"unexpected response status for assetPair {assetPair}. response: {JsonRepresentation(response)}");
+                    Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.PENDING_NEW), $"unexpected response type for assetPair {assetPair}. response: {JsonRepresentation(response)}");
 
                     // clean myself
                     var cancelRequest = new OrderCancelRequest
@@ -281,7 +281,7 @@ namespace AFTests.FIX
                     response = fixClient.GetResponse<Message>();
 
                     Assert.That(response, Is.Not.Null);
-                    Assert.That(response, Is.TypeOf<ExecutionReport>(), $"unexpected response type for assetPair {assetPair}");
+                    Assert.That(response, Is.TypeOf<ExecutionReport>(), $"unexpected response type for assetPair {assetPair}. response: {JsonRepresentation(response)}");
 
                     ex = (ExecutionReport)response;
                     if (ex.OrdStatus.Obj != OrdStatus.CANCELED)
