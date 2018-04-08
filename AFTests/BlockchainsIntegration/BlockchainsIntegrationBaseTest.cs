@@ -33,7 +33,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "RaiBlocks"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitshares"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
@@ -104,7 +104,7 @@ namespace AFTests.BlockchainsIntegrationTests
             if (transferSupported != null && transferSupported.Value)
             {
                 api.Balances.PostBalances(walletAddress);
-                TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUNT, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = walletAddress };
+                TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUT_WITH_FEE, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = walletAddress };
                 var response = api.Testing.PostTestingTransfer(request);
             }
             else if (BlockChainName == "RaiBlocks" || ( recieveSupport != null && recieveSupport.Value)) //raiblocks - temp. will be removed after capablities enabled
@@ -117,7 +117,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 api.Balances.PostBalances(walletAddress);
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = AMOUNT,
+                    Amount = AMOUT_WITH_FEE,
                     AssetId = ASSET_ID,
                     FromAddress = EXTERNAL_WALLET,
                     IncludeFee = false,
@@ -146,7 +146,7 @@ namespace AFTests.BlockchainsIntegrationTests
             api.Balances.PostBalances(walletAddress);
             var model = new BuildSingleTransactionRequest()
             {
-                Amount = AMOUNT,
+                Amount = AMOUT_WITH_FEE,
                 AssetId = ASSET_ID,
                 FromAddress = EXTERNAL_WALLET,
                 IncludeFee = false,
