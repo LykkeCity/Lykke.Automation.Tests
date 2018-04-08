@@ -77,16 +77,16 @@ namespace BlockchainsIntegration.Api
             return Request.Delete($"/transactions/history/to/{address}/observation").Build().Execute();
         }
 
-        public IResponse<GetTransactionsHistoryFromToResponse> GetTransactionHistorFromAddress(string address, string take, string afterHash = null)
+        public IResponse<TransactionHistory[]> GetTransactionHistorFromAddress(string address, string take, string afterHash = null)
         {
             return Request.Get($"/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
-                .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<GetTransactionsHistoryFromToResponse>();
+                .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<TransactionHistory[]>();
         }
 
-        public IResponse<GetTransactionsHistoryFromToResponse> GetTransactionHistorToAddress(string address, string take, string afterHash = null)
+        public IResponse<TransactionHistory[]> GetTransactionHistorToAddress(string address, string take, string afterHash = null)
         {
             return Request.Get($"/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
-                .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<GetTransactionsHistoryFromToResponse>();
+                .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<TransactionHistory[]>();
         }
 
         public IResponse PostHistoryFromToAddress(string fromTo, string address)

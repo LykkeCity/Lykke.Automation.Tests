@@ -24,7 +24,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var newWallet = blockchainSign.PostWallet().GetResponseObject();
 
-                AddCyptoToBalanceFromExternal(newWallet.PublicAddress);
+                AddCyptoToBalanceFromExternal(newWallet.PublicAddress, newWallet.PrivateKey);
 
                 blockchainApi.Balances.GetBalances(take, null).Validate.StatusCode(HttpStatusCode.OK);
 
@@ -101,7 +101,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 var newWallet = blockchainSign.PostWallet().GetResponseObject();
 
                 var pResponse = blockchainApi.Balances.PostBalances(newWallet.PublicAddress);
-                AddCyptoToBalanceFromExternal(newWallet.PublicAddress);
+                AddCyptoToBalanceFromExternal(newWallet.PublicAddress, newWallet.PrivateKey);
 
                 blockchainApi.Balances.GetBalances("500", null).Validate.StatusCode(HttpStatusCode.OK);
 

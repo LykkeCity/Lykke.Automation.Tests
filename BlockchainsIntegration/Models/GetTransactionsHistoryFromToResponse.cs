@@ -5,11 +5,6 @@ using System.Text;
 
 namespace Lykke.Client.AutorestClient.Models
 {
-    [JsonArray]
-    public class GetTransactionsHistoryFromToResponse
-    {    
-        public TransactionHistory[] TransactionHistoryFrom { get; set; }
-    }
     public class TransactionHistory
     {
         public string timestamp { get; set; }

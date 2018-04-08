@@ -18,7 +18,8 @@ namespace AFTests.BlockchainsIntegrationTests
             [Description("take is requered!")]
             public void GetHistoryFromTakeIsRequiredTest()
             {
-                var response = blockchainApi.Operations.GetTransactionHistorFromAddress(WALLET_ADDRESS, null);
+                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                var response = blockchainApi.Operations.GetTransactionHistorFromAddress(newWallet, null);
                 response.Validate.StatusCode(HttpStatusCode.BadRequest, "Take is required, Should be BadRequest");
             }
         }
@@ -86,10 +87,12 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostHistoryFromConflictTest()
             {
+                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+
                 //enable if disabled
-                blockchainApi.Operations.PostHistoryFromToAddress("from", WALLET_ADDRESS);
-                var response = blockchainApi.Operations.PostHistoryFromToAddress("from", WALLET_ADDRESS);
-                response.Validate.StatusCode(HttpStatusCode.Conflict);
+                blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet);
+                var response = blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet);
+                Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.Conflict, HttpStatusCode.OK));
             }
         }
 

@@ -201,7 +201,6 @@ namespace AFTests.BlockchainsIntegration
             }
         }
 
-
         public class LocalConfig : BlockchainSpecificModel
         {
             public static BlockchainSpecificModel LocalConfigModel()
