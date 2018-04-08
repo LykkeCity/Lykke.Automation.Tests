@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using XUnitTestCommon.Tests;
 
@@ -43,6 +44,9 @@ namespace AFTests.FIX
     {
         public static IConfigurationRoot LocalConfig()
         {
+            if (!File.Exists(Path.Combine(TestContext.CurrentContext.WorkDirectory, "FIX/appsettings.json")))
+                File.WriteAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "FIX/appsettings.json"), Environment.GetEnvironmentVariable("fixappjson"));
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(TestContext.CurrentContext.WorkDirectory)
                 .AddJsonFile("FIX/appsettings.json", optional: false, reloadOnChange: true);
