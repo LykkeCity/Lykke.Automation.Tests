@@ -1,12 +1,14 @@
 ﻿using FIX.Client;
 using LykkeAutomationPrivate.Api;
 using Microsoft.Extensions.Configuration;
+using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using XUnitTestCommon.AzureUtils;
 using XUnitTestCommon.Tests;
 
 namespace AFTests.FIX
@@ -36,6 +38,14 @@ namespace AFTests.FIX
             JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore};
             var json = JsonConvert.SerializeObject(message, settings);
             return json;
+        }
+
+        public static List<EntityProperty> GetValueFromAzure(string message)
+        {
+           return new AzureUtils(Init.LocalConfig().GetSection("AzureConnectionString").Value)
+                    .GetCloudTable("FixGatewayMessagesLog")
+                    .GetSearchResult("Message", message)
+                    .GetCellsByKnownCellName("Message");
         }
     }
 

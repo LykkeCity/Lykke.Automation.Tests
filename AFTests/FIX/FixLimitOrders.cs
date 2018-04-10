@@ -150,6 +150,52 @@ namespace AFTests.FIX
             }
         }
 
+        public class CancelLimitSell : FixBaseTest
+        {
+            [Test]
+            [Category("FIX")]
+            public void CancelLimitSellTest()
+            {
+                var orderId = Guid.NewGuid().ToString();
+                var price = 0.01m;
+                var quantity = 0.01m;
+                var marketOrder = FixHelpers.CreateNewOrder(orderId, isMarket: false, isBuy: false, qty: quantity, price: price);
+
+                fixClient.Send(marketOrder);
+
+                var response = fixClient.GetResponse<Message>();
+
+                Assert.That(response, Is.Not.Null);
+                Assert.That(response, Is.TypeOf<ExecutionReport>());
+
+                var ex = (ExecutionReport)response;
+                Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.PENDING_NEW));
+                Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.PENDING_NEW));
+
+                var cancelRequest = new OrderCancelRequest
+                {
+                    ClOrdID = new ClOrdID(Guid.NewGuid().ToString()),
+                    OrigClOrdID = new OrigClOrdID(orderId),
+                    TransactTime = new TransactTime(DateTime.UtcNow)
+                };
+
+                fixClient.Send(cancelRequest);
+
+                response = fixClient.GetResponse<Message>();
+
+                Assert.That(response, Is.Not.Null, $"unexpected response: {JsonRepresentation(response)}");
+                Assert.That(response, Is.TypeOf<ExecutionReport>());
+
+                ex = (ExecutionReport)response;
+                if (ex.OrdStatus.Obj != OrdStatus.CANCELED)
+                    response = fixClient.GetResponse<Message>();
+
+                ex = (ExecutionReport)response;
+                Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.CANCELED), "Unexpected order status");
+                Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.CANCELED), "Unexpected exectype status");
+            }
+        }
+
         public class LimitOrderWrongAssetPair : FixBaseTest
         {
             [TestCase("")]
@@ -291,6 +337,66 @@ namespace AFTests.FIX
                 {
                     //Assert.Fail($"An error occured with assetPair {assetPair}. Number of Exceptions {i++}");
                 }
+            }
+        }
+
+        // azure storage
+
+        public class AllMEssagesStoredInAzure : FixBaseTest
+        {
+            string orderId = Guid.NewGuid().ToString();
+
+            [Test]
+            [Category("FIX")]
+            public void AllMEssagesStoredInAzureTest()
+            {
+                var price = 0.01m;
+                var quantity = 0.01m;
+                var marketOrder = FixHelpers.CreateNewOrder(orderId, isMarket: false, isBuy: true, qty: quantity, price: price);
+
+                fixClient.Send(marketOrder);
+
+                var jss = marketOrder.ToString();
+                var messageStringRepresentation = jss.Replace("\u0001", "|");
+
+                var response = fixClient.GetResponse<Message>();
+
+                Assert.That(response, Is.Not.Null);
+                Assert.That(response, Is.TypeOf<ExecutionReport>(), $" response: {JsonRepresentation(response)}");
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(10));
+
+                //because message has timestamp and seems to be uniq - use First.
+                var azureMessage = GetValueFromAzure(messageStringRepresentation);
+
+                Assert.That(azureMessage.Count, Is.GreaterThan(0), $"Unexpected azure message count. Expected azure message '{messageStringRepresentation}'");
+                Assert.That(azureMessage.First().StringValue, Is.EqualTo(messageStringRepresentation), "Unexpected Azure value");
+
+                var responseStringRepresentation = response.ToString().Replace("\u0001", "|");
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(10));
+
+                var responseFromAzure = GetValueFromAzure(responseStringRepresentation);
+
+                Assert.That(responseFromAzure.Count, Is.GreaterThan(0), $"Unexpected azure message count. Expected azure message '{responseStringRepresentation}'");
+                Assert.That(responseFromAzure.First().StringValue, Is.EqualTo(responseStringRepresentation), "Unexpected Azure value");
+
+            }
+
+            [TearDown]
+            public void CancelRequest()
+            {
+                var cancelRequest = new OrderCancelRequest
+                {
+                    ClOrdID = new ClOrdID(Guid.NewGuid().ToString()),
+                    OrigClOrdID = new OrigClOrdID(orderId),
+                    TransactTime = new TransactTime(DateTime.UtcNow)
+                };
+
+                fixClient.Send(cancelRequest);
+
+                var response = fixClient.GetResponse<Message>();
+
+                Assert.That(response, Is.Not.Null, $"order id {orderId} seems to be not cancelled.  response: {JsonRepresentation(response)}");
             }
         }
     }
