@@ -115,6 +115,7 @@ namespace AFTests.BlockchainsIntegration
         {
             public RippleSettings()
             {
+                BlockchainIntegration = "Ripple";
                 BlockchainApi = "http://ripple-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://ripple-sign-service.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;

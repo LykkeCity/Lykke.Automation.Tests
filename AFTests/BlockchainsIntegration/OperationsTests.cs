@@ -60,7 +60,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var response = blockchainApi.Operations.GetOperationId(operationId);
 
-                Assert.That(new ArrayList() { HttpStatusCode.BadRequest, HttpStatusCode.NotFound }, Has.Member(response.StatusCode));
+                Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.BadRequest, HttpStatusCode.NotFound, HttpStatusCode.MethodNotAllowed));
             }
         }
 
@@ -407,7 +407,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var address = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
                 var response = blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(address);
-                response.Validate.StatusCode(HttpStatusCode.NoContent);
+                Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.OK, HttpStatusCode.NoContent), "Unexpected status code");
             }
         }
 
@@ -558,9 +558,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 var operationId = Guid.NewGuid();
 
                 var wallet1 = blockchainSign.PostWallet().GetResponseObject();
-                var wallet2 = blockchainSign.PostWallet().GetResponseObject();
-                blockchainApi.Balances.PostBalances(wallet1.PublicAddress);
-                blockchainApi.Balances.PostBalances(wallet2.PublicAddress);
 
                 AddCyptoToBalanceFromExternal(wallet1.PublicAddress, wallet1.PrivateKey);
 
@@ -571,19 +568,16 @@ namespace AFTests.BlockchainsIntegrationTests
                     FromAddress = wallet1.PublicAddress,
                     IncludeFee = true,
                     OperationId = operationId,
-                    ToAddress = wallet2.PublicAddress
+                    ToAddress = HOT_WALLET
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model1);
                 var secondResponseTransaction = blockchainApi.Operations.PostTransactions(model1);
 
                 responseTransaction.Validate.StatusCode(HttpStatusCode.OK);
-                secondResponseTransaction.Validate.StatusCode(HttpStatusCode.OK);
 
                 Assert.That(responseTransaction.GetResponseObject().TransactionContext, Is.Not.Null.Or.Empty, "Transaction Context is null");
                 Assert.That(secondResponseTransaction.GetResponseObject().TransactionContext, Is.Not.Null.Or.Empty, "Transaction Context is null");
-                //if (responseTransaction.GetResponseObject().TransactionContext != (secondResponseTransaction.GetResponseObject().TransactionContext))
-                //    Assert.Warn("Transaction context are not full same");
             }
         }
 
