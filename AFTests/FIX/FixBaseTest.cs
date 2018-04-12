@@ -60,6 +60,9 @@ namespace AFTests.FIX
             var builder = new ConfigurationBuilder()
                 .SetBasePath(TestContext.CurrentContext.WorkDirectory)
                 .AddJsonFile("FIX/appsettings.json", optional: false, reloadOnChange: true);
+
+            TestContext.Progress.WriteLine($"current appsettings.json file: {File.ReadAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "FIX/appsettings.json"))}");
+
            return builder.Build();       
         }
     }
