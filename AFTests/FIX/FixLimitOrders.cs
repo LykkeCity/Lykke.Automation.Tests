@@ -202,6 +202,7 @@ namespace AFTests.FIX
             [TestCase("!@%()")]
             [TestCase("-1234")]
             [TestCase("wrongAssetPair")]
+            [TestCase("AUDEUR")]
             [Category("FIX")]
             public void LimitOrderWrongAssetPairTest(string assetPair)
             {
@@ -289,6 +290,7 @@ namespace AFTests.FIX
                 Assert.Multiple(() =>
                 assetPairs.ToList().ForEach(a =>
                 {
+                    if(!a.Id.EndsWith("cy"))
                     CreateLimitOrderWithAssetPair(a.Id, (decimal)a.MinVolume);
                 })
                 );

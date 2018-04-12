@@ -1,24 +1,32 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Text;
 using System.Threading;
 using Autofac;
 using Common;
 using Common.Log;
+using FIX.Client;
+//using Lykke.Logging;
+//using Lykke.Service.FixGateway.Core.Services;
+//using Lykke.Service.FixGateway.Core.Settings.ServiceSettings;
 using QuickFix;
 using QuickFix.Fields;
 using QuickFix.FIX44;
 using QuickFix.Lykke;
 using QuickFix.Transport;
+using XUnitTestCommon.TestsCore;
 using Message = QuickFix.Message;
 
 
 namespace FIX.Client
 {
-    public class FixClient : IApplication, IStartable, IStopable
+    public class FixClient : IApplication,/* ISupportInit,*/ IStopable
     {
         private readonly SocketInitiator _socketInitiator;
         private SessionID _sessionId;
         private readonly LogToConsole _log;
-        private Message _response;
+        private readonly BlockingCollection<Message> _appMessages = new BlockingCollection<Message>(1);
+        private readonly BlockingCollection<Message> _adminMessages = new BlockingCollection<Message>(1);
 
         public FixClient(string targetCompId = Const.TargetCompId, string senderCompId = Const.SenderCompId, string uri = Const.Uri, int port = Const.Port)
         {
@@ -66,6 +74,11 @@ namespace FIX.Client
         public void FromAdmin(Message message, SessionID sessionID)
         {
             _log.WriteInfo("FixClient", "FromAdmin", "");
+            if (message is TestRequest || message is Heartbeat)
+            {
+                return;
+            }
+            _adminMessages.Add(message);
         }
 
         public void ToApp(Message message, SessionID sessionId)
@@ -75,8 +88,8 @@ namespace FIX.Client
 
         public void FromApp(Message message, SessionID sessionID)
         {
-            _log.WriteInfo("FixClient", "FromApp", "");
-            _response = message;
+            //_log.WriteInfo("FixClient", "FromApp", "");
+            _appMessages.Add(message);
         }
 
         public void OnCreate(SessionID sessionID)
@@ -100,6 +113,7 @@ namespace FIX.Client
             var header = message.Header;
             header.SetField(new SenderCompID(_sessionId.SenderCompID));
             header.SetField(new TargetCompID(_sessionId.TargetCompID));
+            Log(message);
 
             var result = QuickFix.Session.SendToTarget(message);
             if (!result)
@@ -110,20 +124,19 @@ namespace FIX.Client
 
         public T GetResponse<T>(int timeout = 20000) where T : Message
         {
-            for (var i = 0; i < timeout; i++)
-            {
-                if (_response != null)
-                {
-                    var copy = _response;
-                    _response = null;
-                    return (T)copy;
-                }
-                Thread.Sleep(1);
-            }
-            return null;
+            _appMessages.TryTake(out var message, TimeSpan.FromMilliseconds(timeout));
+            Log(message, "Recieving");
+
+            return (T)message;
         }
 
-        public void Start()
+        public T GetAdminResponse<T>(int timeout = 2000) where T : Message
+        {
+            _adminMessages.TryTake(out var message, TimeSpan.FromMilliseconds(timeout));
+            return (T)message;
+        }
+
+        public void Init()
         {
             _socketInitiator.Start();
             for (var i = 0; i < 1000; i++)
@@ -153,5 +166,21 @@ namespace FIX.Client
                 Thread.Sleep(500);
             }
         }
+
+        #region allure report region
+        private void Log(Message message, string send = "Sending")
+        {
+            string attachName = $"{send} message";
+            var attachContext = new StringBuilder();
+            attachContext.AppendLine(send);
+            if (message != null)
+            {
+                attachContext.AppendLine(message.ToString().Replace("\u0001", "|"));
+            }
+            Allure2Helper.AttachJson(attachName, attachContext.ToString());
+        }
+
+        #endregion
+
     }
 }

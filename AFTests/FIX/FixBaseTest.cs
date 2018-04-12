@@ -24,7 +24,7 @@ namespace AFTests.FIX
         [OneTimeSetUp]
         public void SetUp()
         {
-            fixClient.Start();
+            fixClient.Init();
         }
 
         [OneTimeTearDown]
