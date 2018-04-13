@@ -695,9 +695,14 @@ namespace AFTests.AlgoStore
                 { "instanceId", postInstanceData.InstanceId}
             };
 
-            // Get actual values from statistics endpoint
-            Wait.ForPredefinedTime(2000); // Wait for two secodns so that so trade can be done
-            var statisticsResponse = await this.Consumer.ExecuteRequest(statisticsPath, statisticsQueryParams, null, Method.GET);
+            // Get actual values from statistics endpoint several times
+            Response statisticsResponse = null;
+            for (int i = 1; i < 10; i++)
+            {
+                Wait.ForPredefinedTime(2000); // Wait for two secodns so that so trades can be done
+                statisticsResponse = await this.Consumer.ExecuteRequest(statisticsPath, statisticsQueryParams, null, Method.GET);
+                Assert.That(statisticsResponse.Status, Is.EqualTo(HttpStatusCode.OK));
+            }
             StatisticsDTO statistics = JsonUtils.DeserializeJson<StatisticsDTO>(statisticsResponse.ResponseJson);
 
             Assert.That(algoInstanceStatisticsEntity.InstanceId, Is.EqualTo(statistics.InstanceId));

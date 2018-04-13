@@ -20,6 +20,7 @@ namespace AlgoStoreData.Fixtures
         public async Task<List<BuilInitialDataObjectDTO>> UploadSomeBaseMetaData(int nuberDto)
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
+            string message;
             List <MetaDataDTO> metadataList = new List<MetaDataDTO>();
             List<MetaDataResponseDTO> responceMetadataList = new List<MetaDataResponseDTO>();
 
@@ -36,6 +37,9 @@ namespace AlgoStoreData.Fixtures
             foreach (var metadata in metadataList)
             {
                 var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+                message = $"{url} returned status: {response.Status} and response: {response.ResponseJson}. Expected: {HttpStatusCode.OK}";
+                Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK), message);
+
                 MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
                 responceMetadataList.Add(responceMetaData);
             }
@@ -58,7 +62,7 @@ namespace AlgoStoreData.Fixtures
                 url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
                 var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-                string message = $"{url} returned status: {postInstanceDataResponse.Status} and response: {postInstanceDataResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
+                message = $"{url} returned status: {postInstanceDataResponse.Status} and response: {postInstanceDataResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
                 Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK), message);
 
                 postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
@@ -106,7 +110,7 @@ namespace AlgoStoreData.Fixtures
 
                 // Currently we can not send cascade delete to kubernatees if he has not build the algo before that thorus not found and we leave data
 
-                while (responceCascadeDelete.Status.Equals(System.Net.HttpStatusCode.NotFound) && retryCounter <= 30)
+                while (responceCascadeDelete.Status.Equals(HttpStatusCode.NotFound) && retryCounter <= 30)
                 {
                     System.Threading.Thread.Sleep(10000);
                     responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
