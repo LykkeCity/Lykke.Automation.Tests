@@ -46,7 +46,7 @@ namespace AlgoStoreData.DTOs
 
     public class GetPopulatedInstanceDataDTO
     {
-        public InstanceDataDTO returnInstanceDataDTO(string AlgoId)
+        public static InstanceDataDTO returnInstanceDataDTO(string AlgoId)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -559,7 +559,7 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public InstanceDataDTO returnInstanceDataDTOInvalidAssetPair(string AlgoId)
+        public static InstanceDataDTO returnInstanceDataDTOInvalidAssetPair(string AlgoId)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -1072,7 +1072,7 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public InstanceDataDTO returnInstanceDataDTOInvalidTradedAsset(string AlgoId)
+        public static InstanceDataDTO returnInstanceDataDTOInvalidTradedAsset(string AlgoId)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -1584,7 +1584,7 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public InstanceDataDTO returnInstanceDataDTOInvalidVolume(string AlgoId)
+        public static InstanceDataDTO returnInstanceDataDTOInvalidVolume(string AlgoId)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -2097,7 +2097,7 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public InstanceDataDTO returnInstanceDataDTONegativeVolume(string AlgoId)
+        public static InstanceDataDTO returnInstanceDataDTONegativeVolume(string AlgoId)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
