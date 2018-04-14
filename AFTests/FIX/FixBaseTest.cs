@@ -16,18 +16,19 @@ namespace AFTests.FIX
     [NonParallelizable]
     public class FixBaseTest : BaseTest
     {
-        protected FixClient fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+        protected FixClient fixClient;
         protected WalletApi.Api.WalletApi walletApi = new WalletApi.Api.WalletApi();
         protected LykkeApi privateApi = new LykkeApi();
 
 
-        [OneTimeSetUp]
+        [SetUp]
         public void SetUp()
         {
+            fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
             fixClient.Init();
         }
 
-        [OneTimeTearDown]
+        [TearDown]
         public void TearDown()
         {
             fixClient.Stop();
@@ -48,7 +49,6 @@ namespace AFTests.FIX
                     .GetCellsByKnownCellName("Message");
         }
     }
-
 
     public class Init
     {

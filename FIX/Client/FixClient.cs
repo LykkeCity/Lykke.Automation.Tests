@@ -58,7 +58,7 @@ namespace FIX.Client
             _log = new LogToConsole();
             var settings = new SessionSettings(s.GetFixConfigAsReader());
             var storeFactory = new MemoryStoreFactory();
-            var logFactory = new LykkeLogFactory(_log, false, false, false);
+            var logFactory = new LykkeLogFactory(_log, true, true, true);
             _socketInitiator = new SocketInitiator(this, storeFactory, settings, logFactory);
         }
 
@@ -125,6 +125,12 @@ namespace FIX.Client
         public T GetResponse<T>(int timeout = 20000) where T : Message
         {
             _appMessages.TryTake(out var message, TimeSpan.FromMilliseconds(timeout));
+            if ((T)message == null)
+            {
+                var admMessage = GetAdminResponse<T>();
+                Log(admMessage, "Recieving adming message");
+            }
+                
             Log(message, "Recieving");
 
             return (T)message;
