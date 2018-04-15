@@ -67,7 +67,7 @@ namespace FIX.Client
             _log.WriteInfo("FixClient", "ToAdmin", "");
             if (message is Logon logon)
             {
-                logon.Password = new Password(Const.Password);
+                logon.Password = new Password(Environment.GetEnvironmentVariable("FIXWrongPassword")??  Const.Password);
             }
         }
 
