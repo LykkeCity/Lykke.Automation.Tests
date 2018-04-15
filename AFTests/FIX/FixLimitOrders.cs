@@ -15,6 +15,14 @@ namespace AFTests.FIX
         public class SetLimitOrderSell : FixBaseTest
         {
             string orderId = Guid.NewGuid().ToString();
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
 
             [Test]
             [Category("FIX")]
@@ -55,12 +63,21 @@ namespace AFTests.FIX
                 var response = fixClient.GetResponse<Message>();
 
                 Assert.That(response, Is.Not.Null, $"order id {orderId} seems to be not cancelled.  response: {JsonRepresentation(response)}");
+                fixClient.Stop();
             }
         }
 
         public class SetLimitOrderBuy : FixBaseTest
         {
             string orderId = Guid.NewGuid().ToString();
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
 
             [Test]
             [Category("FIX")]
@@ -69,9 +86,9 @@ namespace AFTests.FIX
                 
                 var price = 0.01m;
                 var quantity = 0.01m;
-                var marketOrder = FixHelpers.CreateNewOrder(orderId, isMarket: false, isBuy: true, qty: quantity, price: price);
+                var limitOrder = FixHelpers.CreateNewOrder(orderId, isMarket: false, isBuy: true, qty: quantity, price: price);
 
-                fixClient.Send(marketOrder);
+                fixClient.Send(limitOrder);
 
                 var response = fixClient.GetResponse<Message>();
 
@@ -101,11 +118,22 @@ namespace AFTests.FIX
                 var response = fixClient.GetResponse<Message>();
 
                 Assert.That(response, Is.Not.Null, $"order id {orderId} seems to be not cancelled.  response: {JsonRepresentation(response)}");
+
+                fixClient.Stop();
             }
         }
 
         public class CancelLimitOrderBuy : FixBaseTest
         {
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
             [Test]
             [Category("FIX")]
             public void CancelLimitOrderBuyTest()
@@ -148,10 +176,25 @@ namespace AFTests.FIX
                 Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.CANCELED), "Unexpected order status");
                 Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.CANCELED), "Unexpected exectype status");             
             }
+
+            [TearDown]
+            public void TearDown()
+            {
+                fixClient.Stop();
+            }
         }
 
         public class CancelLimitSell : FixBaseTest
         {
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
             [Test]
             [Category("FIX")]
             public void CancelLimitSellTest()
@@ -194,15 +237,28 @@ namespace AFTests.FIX
                 Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.CANCELED), "Unexpected order status");
                 Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.CANCELED), "Unexpected exectype status");
             }
+
+            [TearDown]
+            public void TearDown()
+            {
+                fixClient.Stop();
+            }
         }
 
         public class LimitOrderWrongAssetPair : FixBaseTest
         {
-            [TestCase("")]
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
             [TestCase("!@%()")]
             [TestCase("-1234")]
             [TestCase("wrongAssetPair")]
-            [TestCase("AUDEUR")]
             [Category("FIX")]
             public void LimitOrderWrongAssetPairTest(string assetPair)
             {
@@ -222,10 +278,25 @@ namespace AFTests.FIX
                 Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.REJECTED));
                 Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.REJECTED));
             }
+
+            [TearDown]
+            public void TearDown()
+            {
+                fixClient.Stop();
+            }
         }
 
         public class LimitOrderWrongQuantity : FixBaseTest
         {
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
             [TestCase(-1)]
             [TestCase(0)]
             [TestCase(9999999999999999)]
@@ -248,10 +319,25 @@ namespace AFTests.FIX
                 Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.REJECTED));
                 Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.REJECTED));
             }
+
+            [TearDown]
+            public void TearDown()
+            {
+                fixClient.Stop();
+            }
         }
 
         public class LimitOrderWrongPrice : FixBaseTest
         {
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
             [TestCase(-1)]
             [TestCase(0)]
             [TestCase(9999999999999999)]
@@ -274,12 +360,32 @@ namespace AFTests.FIX
                 Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.REJECTED));
                 Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.REJECTED));
             }
+
+            [TearDown]
+            public void TearDown()
+            {
+                fixClient.Stop();
+            }
         }
 
         //test all assetPairs
         public class OnlyAssetsThatEnabledAreAvailableInFix : FixBaseTest
         {
             static int i = default(int);
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                fixClient.Stop();
+            }
 
             [Test]
             [Category("FIX")]
@@ -347,6 +453,15 @@ namespace AFTests.FIX
         public class AllMEssagesStoredInAzure : FixBaseTest
         {
             string orderId = Guid.NewGuid().ToString();
+            protected FixClient fixClient;
+
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
 
             [Test]
             [Category("FIX")]
@@ -365,7 +480,7 @@ namespace AFTests.FIX
 
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response, Is.TypeOf<ExecutionReport>(), $" response: {JsonRepresentation(response)}");
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(10));
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(15));
 
                 //because message has timestamp and seems to be uniq - use First.
                 var azureMessage = GetValueFromAzure(messageStringRepresentation);
@@ -375,7 +490,7 @@ namespace AFTests.FIX
 
                 var responseStringRepresentation = response.ToString().Replace("\u0001", "|");
 
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(10));
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(15));
 
                 var responseFromAzure = GetValueFromAzure(responseStringRepresentation);
 
@@ -399,6 +514,8 @@ namespace AFTests.FIX
                 var response = fixClient.GetResponse<Message>();
 
                 Assert.That(response, Is.Not.Null, $"order id {orderId} seems to be not cancelled.  response: {JsonRepresentation(response)}");
+
+                fixClient.Stop();
             }
         }
     }

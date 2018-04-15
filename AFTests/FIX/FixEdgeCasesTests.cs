@@ -18,7 +18,27 @@ namespace AFTests.FIX
 
         public class TwoClientsInParrallel : FixBaseTest
         {
-            [Test]
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                try
+                {
+                    fixClient.Dispose();
+                    fixClient.Stop();
+                }
+                catch (Exception) { }
+            }
+
+            //[Test]
             [Category("FIX")]
             public void TwoClientsInParrallelTest()
             {
@@ -39,10 +59,14 @@ namespace AFTests.FIX
                 {
                     //Pass
                 }
+                finally
+                {
+                    fixClient2.Stop();
+                }
             }
         }
 
-        public class WrongCredentials : BaseTest
+        public class WrongCredentials : FixBaseTest
         {    
             [Test]
             [Category("FIX")]
@@ -64,7 +88,7 @@ namespace AFTests.FIX
                     fixClient2.Send(marketOrder);
                     Assert.Fail("First instance on FIXClient has not been disconnected after second has been created");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     fixClient2.GetResponse<Message>();
                 }

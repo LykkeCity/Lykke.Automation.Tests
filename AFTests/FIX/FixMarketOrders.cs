@@ -10,9 +10,17 @@ namespace AFTests.FIX
 {
     class FixMarketOrders
     {
-
         public class SetMarketBuyOrder : FixBaseTest
         {
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
             [Test]
             [Category("FIX")]
             public void SetMarketBuyOrderTest()
@@ -43,10 +51,25 @@ namespace AFTests.FIX
                 Assert.That(ex.LastQty.Obj, Is.EqualTo(marketOrder.OrderQty.Obj));
                 Assert.That(ex.LastPx.Obj, Is.GreaterThan(0));
             }
+
+            [TearDown]
+            public void TearDown()
+            {
+                fixClient.Stop();
+            }
         }
 
         public class SetMarketSellOrder : FixBaseTest
         {
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
             [Test]
             [Category("FIX")]
             public void SetMarketSellOrderTest()
@@ -77,10 +100,31 @@ namespace AFTests.FIX
                 Assert.That(ex.LastQty.Obj, Is.EqualTo(marketOrder.OrderQty.Obj));
                 Assert.That(ex.LastPx.Obj, Is.GreaterThan(0));
             }
+
+            [TearDown]
+            public void TearDown()
+            {
+                fixClient.Stop();
+            }
         }
 
         public class SetMarketSellOrderWrongAssetPair : FixBaseTest
         {
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                fixClient.Stop();
+            }
+
             [Test]
             [Category("FIX")]
             public void SetMarketSellOrderWrongAssetPairTest()

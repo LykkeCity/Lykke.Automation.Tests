@@ -16,23 +16,9 @@ namespace AFTests.FIX
     [NonParallelizable]
     public class FixBaseTest : BaseTest
     {
-        protected FixClient fixClient;
         protected WalletApi.Api.WalletApi walletApi = new WalletApi.Api.WalletApi();
         protected LykkeApi privateApi = new LykkeApi();
 
-
-        [SetUp]
-        public void SetUp()
-        {
-            fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
-            fixClient.Init();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            fixClient.Stop();
-        }
 
         protected static string JsonRepresentation(QuickFix.FIX44.Message message)
         {
