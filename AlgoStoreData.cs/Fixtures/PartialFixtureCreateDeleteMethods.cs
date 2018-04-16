@@ -3,6 +3,7 @@ using NUnit.Framework;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using XUnitTestCommon;
@@ -19,6 +20,7 @@ namespace AlgoStoreData.Fixtures
         public async Task<List<BuilInitialDataObjectDTO>> UploadSomeBaseMetaData(int nuberDto)
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
+            string message;
             List <MetaDataDTO> metadataList = new List<MetaDataDTO>();
             List<MetaDataResponseDTO> responceMetadataList = new List<MetaDataResponseDTO>();
 
@@ -35,6 +37,9 @@ namespace AlgoStoreData.Fixtures
             foreach (var metadata in metadataList)
             {
                 var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+                message = $"{url} returned status: {response.Status} and response: {response.ResponseJson}. Expected: {HttpStatusCode.OK}";
+                Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK), message);
+
                 MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
                 responceMetadataList.Add(responceMetaData);
             }
@@ -50,18 +55,17 @@ namespace AlgoStoreData.Fixtures
                 };
 
                 var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
-                Assert.True(response.Status == System.Net.HttpStatusCode.NoContent);
+                Assert.That(response.Status, Is.EqualTo(HttpStatusCode.NoContent));
 
-                GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-                InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(stringDTO.AlgoId);
+                instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(stringDTO.AlgoId);
 
                 url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
                 var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-                Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
+                message = $"{url} returned status: {postInstanceDataResponse.Status} and response: {postInstanceDataResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
+                Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK), message);
 
-                InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
+                postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
 
                 url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
@@ -72,7 +76,8 @@ namespace AlgoStoreData.Fixtures
                 };
 
                 var deployBynaryResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
-                Assert.That(postInstanceDataResponse.Status == System.Net.HttpStatusCode.OK);
+                message = $"{url} returned status: {deployBynaryResponse.Status} and response: {deployBynaryResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
+                Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
                 BuilInitialDataObjectDTO tempDataDTO = new BuilInitialDataObjectDTO()
                 {
@@ -105,14 +110,14 @@ namespace AlgoStoreData.Fixtures
 
                 // Currently we can not send cascade delete to kubernatees if he has not build the algo before that thorus not found and we leave data
 
-                while (responceCascadeDelete.Status.Equals(System.Net.HttpStatusCode.NotFound) && retryCounter <= 30)
+                while (responceCascadeDelete.Status.Equals(HttpStatusCode.NotFound) && retryCounter <= 30)
                 {
                     System.Threading.Thread.Sleep(10000);
                     responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
                     retryCounter++;
                 }
 
-                Assert.That(responceCascadeDelete.Status == System.Net.HttpStatusCode.NoContent);
+                Assert.That(responceCascadeDelete.Status, Is.EqualTo(HttpStatusCode.NoContent));
 
                 responces.Add(responceCascadeDelete);               
             }

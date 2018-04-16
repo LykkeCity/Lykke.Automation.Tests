@@ -26,9 +26,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTOInvalidAssetPair(algoID);
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTOInvalidAssetPair(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -49,9 +47,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTOInvalidTradedAsset(algoID);
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTOInvalidTradedAsset(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -71,9 +67,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO("123 invalid algo id");
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO("123 invalid algo id");
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -89,9 +83,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTONegativeVolume(algoID);
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTONegativeVolume(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -112,9 +104,7 @@ namespace AFTests.AlgoStore
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID);
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -128,9 +118,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTOInvalidVolume(algoID);
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTOInvalidVolume(algoID);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
