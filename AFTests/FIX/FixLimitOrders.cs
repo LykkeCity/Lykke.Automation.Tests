@@ -374,16 +374,10 @@ namespace AFTests.FIX
             static int i = default(int);
             protected FixClient fixClient;
 
-            [SetUp]
-            public void SetUp()
-            {
-                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
-                fixClient.Init();
-            }
-
             [TearDown]
             public void TearDown()
             {
+
                 fixClient.Stop();
             }
 
@@ -392,6 +386,9 @@ namespace AFTests.FIX
             public void OnlyAssetsThatEnabledAreAvailableInFixTest()
             {
                 var assetPairs = privateApi.Assets.GetAssetPairs().GetResponseObject().FindAll(a => a.IsDisabled == false);
+
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
 
                 Assert.Multiple(() =>
                 assetPairs.ToList().ForEach(a =>
@@ -406,7 +403,6 @@ namespace AFTests.FIX
             {
                 try
                 {
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
                     var orderId = Guid.NewGuid().ToString();
                     var price = 0.01m;
                     var quantity = volume + 0.5m;
@@ -448,13 +444,10 @@ namespace AFTests.FIX
             }
         }
 
-        // azure storage
-
         public class AllMEssagesStoredInAzure : FixBaseTest
         {
             string orderId = Guid.NewGuid().ToString();
             protected FixClient fixClient;
-
 
             [SetUp]
             public void SetUp()
@@ -480,23 +473,48 @@ namespace AFTests.FIX
 
                 Assert.That(response, Is.Not.Null);
                 Assert.That(response, Is.TypeOf<ExecutionReport>(), $" response: {JsonRepresentation(response)}");
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(15));
 
                 //because message has timestamp and seems to be uniq - use First.
                 var azureMessage = GetValueFromAzure(messageStringRepresentation);
 
+                int timer = 60;
+                while(timer > 0)
+                {
+                    if (azureMessage.Count == 0)
+                    {
+                        System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+                        azureMessage = GetValueFromAzure(messageStringRepresentation);
+                    }
+                    else
+                    {
+                        timer = 60;
+                        break;
+                    }
+                }
+                
                 Assert.That(azureMessage.Count, Is.GreaterThan(0), $"Unexpected azure message count. Expected azure message '{messageStringRepresentation}'");
                 Assert.That(azureMessage.First().StringValue, Is.EqualTo(messageStringRepresentation), "Unexpected Azure value");
 
                 var responseStringRepresentation = response.ToString().Replace("\u0001", "|");
 
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(15));
-
                 var responseFromAzure = GetValueFromAzure(responseStringRepresentation);
+
+                while (timer > 0)
+                {
+                    if (responseFromAzure.Count == 0)
+                    {
+                        System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+                        responseFromAzure = GetValueFromAzure(responseStringRepresentation);
+                    }
+                    else
+                    {
+                        timer = 60;
+                        break;
+                    }
+                }
 
                 Assert.That(responseFromAzure.Count, Is.GreaterThan(0), $"Unexpected azure message count. Expected azure message '{responseStringRepresentation}'");
                 Assert.That(responseFromAzure.First().StringValue, Is.EqualTo(responseStringRepresentation), "Unexpected Azure value");
-
             }
 
             [TearDown]
