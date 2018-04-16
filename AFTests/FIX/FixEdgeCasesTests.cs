@@ -13,7 +13,7 @@ using XUnitTestCommon.Tests;
 
 namespace AFTests.FIX
 {
-    class FixEdgeCasesTests
+    partial class FixTests
     {
 
         public class TwoClientsInParrallel : FixBaseTest
@@ -32,8 +32,8 @@ namespace AFTests.FIX
             {
                 try
                 {
-                    fixClient.Dispose();
                     fixClient.Stop();
+                    fixClient.Dispose();
                 }
                 catch (Exception) { }
             }

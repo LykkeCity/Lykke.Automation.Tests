@@ -8,7 +8,7 @@ using System.Text;
 
 namespace AFTests.FIX
 {
-    class FixMarketOrders
+    partial class FixTests
     {
         public class SetMarketBuyOrder : FixBaseTest
         {
@@ -56,6 +56,7 @@ namespace AFTests.FIX
             public void TearDown()
             {
                 fixClient.Stop();
+                fixClient.Dispose();
             }
         }
 
@@ -105,6 +106,7 @@ namespace AFTests.FIX
             public void TearDown()
             {
                 fixClient.Stop();
+                fixClient.Dispose();
             }
         }
 
@@ -123,6 +125,7 @@ namespace AFTests.FIX
             public void TearDown()
             {
                 fixClient.Stop();
+                fixClient.Dispose();
             }
 
             [Test]

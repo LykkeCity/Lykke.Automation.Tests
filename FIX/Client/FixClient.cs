@@ -144,6 +144,7 @@ namespace FIX.Client
 
         public void Init()
         {
+
             _socketInitiator.Start();
             for (var i = 0; i < 1000; i++)
             {
@@ -162,6 +163,7 @@ namespace FIX.Client
 
         public void Stop()
         {
+
             _socketInitiator.Stop();
             for (var i = 0; i < 10; i++)
             {
