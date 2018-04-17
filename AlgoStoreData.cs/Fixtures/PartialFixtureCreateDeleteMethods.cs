@@ -109,15 +109,22 @@ namespace AlgoStoreData.Fixtures
                 var responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
 
                 // Currently we can not send cascade delete to kubernatees if he has not build the algo before that thorus not found and we leave data
-
-                while (responceCascadeDelete.Status.Equals(HttpStatusCode.NotFound) && retryCounter <= 30)
+                bool isPodMissing = !responceCascadeDelete.ResponseJson.Contains($"Code:504-PodNotFound Message:Pod is not found for {deleteMetadata.InstanceId}");
+                while (responceCascadeDelete.Status.Equals(HttpStatusCode.NotFound) && isPodMissing && retryCounter <= 30)
                 {
                     System.Threading.Thread.Sleep(10000);
                     responceCascadeDelete = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
+                    isPodMissing = !responceCascadeDelete.ResponseJson.Contains($"Code:504-PodNotFound Message:Pod is not found for {deleteMetadata.InstanceId}");
                     retryCounter++;
                 }
 
-                Assert.That(responceCascadeDelete.Status, Is.EqualTo(HttpStatusCode.NoContent));
+                if (isPodMissing)
+                {
+                    Assert.That(responceCascadeDelete.Status, Is.EqualTo(HttpStatusCode.NoContent));
+                } else
+                {
+                    Assert.That(responceCascadeDelete.Status, Is.EqualTo(HttpStatusCode.NotFound));
+                }
 
                 responces.Add(responceCascadeDelete);               
             }
