@@ -90,80 +90,6 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class CheckBlockNumberIncreasedAfterDWEWTransaction : BlockchainsIntegrationBaseTest
-        {
-            [Test]
-            [Category("BlockchainIntegration")]
-            public void CheckBlockNumberIncreasedAfterDWEWTransactionTest()
-            {
-                // enable observation
-
-                var newWallet = blockchainSign.PostWallet().GetResponseObject();
-
-                var pResponse = blockchainApi.Balances.PostBalances(newWallet.PublicAddress);
-                AddCyptoToBalanceFromExternal(newWallet.PublicAddress, newWallet.PrivateKey);
-
-                blockchainApi.Balances.GetBalances("500", null).Validate.StatusCode(HttpStatusCode.OK);
-
-                Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == newWallet.PublicAddress),
-                    Is.True.After(5 * 60 * 1000, 1 * 1000), "Wallet is not present in Get Balances after 5 minutes");
-
-                //create transaction and broadcast it
-
-                long? newBlock = 0;
-
-                var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Balance;
-                var startBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Block;
-
-                var model = new BuildSingleTransactionRequest()
-                {
-                    Amount = AMOUNT,
-                    AssetId = ASSET_ID,
-                    FromAddress = newWallet.PublicAddress,
-                    IncludeFee = true,
-                    OperationId = Guid.NewGuid(),
-                    ToAddress = EXTERNAL_WALLET
-                };
-
-                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
-                string operationId = model.OperationId.ToString();
-
-                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { newWallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
-
-                var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
-
-                newBlock = GetTransactionCompleteStatusTime(operationId, newWallet.PublicAddress);
-
-                Assert.That(() => blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State, Is.EqualTo(BroadcastedTransactionState.Completed), $"Request doesnt have Complete status after 10 minutes and still in a {blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State}");
-
-                TestContext.Progress.WriteLine($"old block: {startBlock} \n new block: {newBlock}");
-
-                Assert.That(newBlock.Value, Is.GreaterThan(startBlock), $"New block is not greater than start block");
-            }
-
-            static long? GetTransactionCompleteStatusTime(string operationId, string wallet)
-            {
-                var sw = new Stopwatch();
-                var request = new BlockchainApi(BlockchainApi);
-                long? block = -1;
-                sw.Start();
-                while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
-                {
-                    var r = request.Operations.GetOperationId(operationId);
-                    if (r.GetResponseObject().State != BroadcastedTransactionState.InProgress)
-                    {
-                        if (r.GetResponseObject().State == BroadcastedTransactionState.Failed)
-                            Assert.Fail("Operation got 'Failed status'");
-                        block = request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().FirstOrDefault(a => a.Address == wallet)?.Block;
-                        break;
-                    }
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
-                }
-                sw.Stop();
-                return block;
-            }
-        }
-
         public class DeleteBalancesInvalidAddress : BlockchainsIntegrationBaseTest
         {
             [TestCase("testAddress")]
@@ -177,13 +103,12 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class DWHWTransactionWillNotProduceIncreasOfBlockNumber : BlockchainsIntegrationBaseTest
+        public class DWHWTransactionWillProduceIncreasOfBlockNumber : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]
-            public void DWHWTransactionWillNotProduceIncreasOfBlockNumberTest()
+            public void DWHWTransactionWillProduceIncreasOfBlockNumberTest()
             {
-
                 // enable observation
 
                 var newWallet = blockchainSign.PostWallet().GetResponseObject();
@@ -198,14 +123,14 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 //create transaction and broadcast it
 
-                long? newBlock = 0;
+                long? newBlock = null;
 
                 var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Balance;
                 var startBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Block;
 
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = AMOUNT,
+                    Amount = AMOUT_WITH_FEE,
                     AssetId = ASSET_ID,
                     FromAddress = newWallet.PublicAddress,
                     IncludeFee = true,
@@ -221,12 +146,43 @@ namespace AFTests.BlockchainsIntegrationTests
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
                 newBlock = GetTransactionCompleteStatusTime(operationId, newWallet.PublicAddress);
+                if (newBlock == null)
+                {
+                    Assert.Pass("Transaction got Complete status and wallet dissapear from GET /balances request");
+                }
+                else
+                {
+                    Assert.That(() => blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State, Is.EqualTo(BroadcastedTransactionState.Completed), $"Request doesnt have Complete status after 10 minutes and still in a {blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State}");
 
-                Assert.That(() => blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State, Is.EqualTo(BroadcastedTransactionState.Completed), $"Request doesnt have Complete status after 10 minutes and still in a {blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State}");
+                    var transactionBlock = blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().Block;
 
-                TestContext.Progress.WriteLine($"old block: {startBlock} \n new block: {newBlock}");
+                    TestContext.Progress.WriteLine($"old block: {startBlock} \n new block: {newBlock}");
 
-                Assert.That(newBlock.Value, Is.EqualTo(startBlock), $"New block is not the same");
+                    Assert.That(newBlock.Value, Is.GreaterThan(startBlock), $"New balance block is not greater than previous");
+
+
+                    // new part 
+
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
+                    while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
+                    {
+                        var balances = blockchainApi.Balances.GetBalances("500", null).GetResponseObject();
+
+                        if (balances.Items.ToList().Any(a => a.Address == newWallet.PublicAddress))
+                        {
+                            Assert.That(balances.Items.ToList().Find(w => w.Address == newWallet.PublicAddress).Block, Is.LessThan(transactionBlock), "Transaction block is not greater than balance block");
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    sw.Stop();
+
+                    Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == newWallet.PublicAddress),
+                        Is.False, $"Wallet is present in Get Balances after {BLOCKCHAIN_MINING_TIME} minutes");
+                }
             }
 
             static long? GetTransactionCompleteStatusTime(string operationId, string wallet)

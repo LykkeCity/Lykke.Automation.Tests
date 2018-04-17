@@ -370,12 +370,14 @@ namespace AFTests.BlockchainsIntegrationTests
                 if (!run.Value)
                     Assert.Ignore("Many inputs not supported by blockchain");
 
+                var wallet = blockchainSign.PostWallet().GetResponseObject();
+
                 var request = new BuildTransactionWithManyInputsRequest()
                 {
                     AssetId = ASSET_ID,
                     OperationId = Guid.NewGuid(),
                     ToAddress = HOT_WALLET,
-                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract() { Amount = AMOUNT, FromAddress = WALLET_ADDRESS } }
+                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract() { Amount = AMOUNT, FromAddress = wallet.PublicAddress } }
                 };
 
                 var json = JsonConvert.SerializeObject(request);
@@ -636,19 +638,6 @@ namespace AFTests.BlockchainsIntegrationTests
                     //validate balance is 0 or null
                     Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == newWallet.PublicAddress)?.Balance, Is.EqualTo("0").Or.Null.After(5 * 60 * 1000, 2 * 1000), $"Unexpected balance for wallet {newWallet.PublicAddress}");
                 }   
-            }
-        }
-
-        public class RefillEWRailblocks : BlockchainsIntegrationBaseTest
-        {
-            [Test]
-            public void RefillEWRailblocksTest()
-            {
-                EXTERNAL_WALLET = "xrb_3kdbxitaj7f6mrir6miiwtw4muhcc58e6tn5st6rfaxsdnb7gr4roudwn951";
-                EXTERNAL_WALLET_KEY = "0000000000000000000000000000000000000000000000000000000000000001";
-                WALLET_ADDRESS = "xrb_1e9pi3r7qa9qpsas68go55rmu7m8ku9np5pw3roeekx671joz7b1eiu1i8zk";
-                PKey = "4CF23CABA08F2C105DE9B80AA5CEBE37CAA3285E015258513F84E41100BDE2A9";
-                AddCryptoToWalletWithRecieveTransaction(WALLET_ADDRESS, PKey);
             }
         }
     }
