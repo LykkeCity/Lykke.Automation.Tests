@@ -21,5 +21,9 @@ namespace XUnitTestData.Entities.AlgoStore
         public double Price { get; set; }
         public double Amount { get; set; }
         public string InstanceId { get; set; }
+        public double InitialTradedAssetBalance { get; set; }
+        public double InitialAssetTwoBalance { get; set; }
+        public double LastTradedAssetBalance { get; set; }
+        public double LastAssetTwoBalance { get; set; }
     }
 }

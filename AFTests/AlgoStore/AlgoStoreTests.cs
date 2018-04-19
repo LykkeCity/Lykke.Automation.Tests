@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using AlgoStoreData.Fixtures;
 using NUnit.Framework;
@@ -10,8 +9,8 @@ using XUnitTestCommon;
 using XUnitTestCommon.Utils;
 using AlgoStoreData.DTOs;
 using XUnitTestData.Entities.AlgoStore;
-using System.IO;
 using AlgoStoreData.HelpersAlgoStore;
+using AlgoStoreData;
 
 namespace AFTests.AlgoStore
 {
@@ -26,7 +25,6 @@ namespace AFTests.AlgoStore
         private String uploadStringPath = ApiPaths.ALGO_STORE_UPLOAD_STRING;
         private String algoInstanceDataPath = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
         private String algoGetAllInstanceDataPath = ApiPaths.ALGO_STORE_ALGO_GET_ALL_INSTANCE_DATA;
-        private String statisticsPath = ApiPaths.ALGO_STORE_STATISTICS;
 
         #endregion
 
@@ -34,7 +32,7 @@ namespace AFTests.AlgoStore
         [Category("AlgoStore")]
         public async Task CheckIfServiceIsAlive()
         {
-            var response = await this.Consumer.ExecuteRequest(isAlivePath, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await Consumer.ExecuteRequest(isAlivePath, Helpers.EmptyDictionary, null, Method.GET);
 
             Assert.That(response.Status , Is.EqualTo(HttpStatusCode.OK));
             var baseDate = JsonUtils.DeserializeJson<IsAliveDTO>(response.ResponseJson).Name;
@@ -663,9 +661,51 @@ namespace AFTests.AlgoStore
             return stringDTO;
         }
 
-        [Test]
+        [Test, Description("AL-363")]
         [Category("AlgoStore")]
         public async Task CheckWalletBalanceCalculatedBasedOnBestPrice()
+        {
+            Dictionary<string, string> queryParmas = new Dictionary<string, string>()
+            {
+                { "algoId" , postInstanceData.AlgoId },
+                { "instanceId", postInstanceData.InstanceId}
+            };
+
+            var instanceDataResponse = await this.Consumer.ExecuteRequest(algoInstanceDataPath, queryParmas, null, Method.GET);
+            Assert.That(instanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
+
+            // Get expected values from Azure
+            AlgoInstanceStatisticsEntity algoInstanceStatisticsEntity = await AlgoInstanceStaticsticsRepository.TryGetAsync(t => t.InstanceId == postInstanceData.InstanceId && t.Id == "Summary") as AlgoInstanceStatisticsEntity;
+
+            // Wait up to 3 minutes for the algo to be started
+            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+
+            Dictionary<string, string> statisticsQueryParams = new Dictionary<string, string>()
+            {
+                { "instanceId", postInstanceData.InstanceId}
+            };
+
+            // Get actual values from statistics endpoint 6 times within 1 minute
+            StatisticsDTO statistics = null;
+            for (int i = 0; i < 6; i++)
+            {
+                statistics = await AlgoStoreCommonSteps.GetStatisticsResponseAsync(Consumer, postInstanceData);
+            }
+
+            Assert.That(algoInstanceStatisticsEntity.InstanceId, Is.EqualTo(statistics.InstanceId));
+            Assert.That(algoInstanceStatisticsEntity.TotalNumberOfTrades, Is.LessThanOrEqualTo(statistics.TotalNumberOfTrades));
+            Assert.That(algoInstanceStatisticsEntity.TotalNumberOfStarts, Is.LessThanOrEqualTo(statistics.TotalNumberOfStarts));
+            Assert.That(algoInstanceStatisticsEntity.InitialWalletBalance, Is.EqualTo(statistics.InitialWalletBalance));
+            Assert.That(algoInstanceStatisticsEntity.LastWalletBalance, Is.Not.EqualTo(statistics.LastWalletBalance));
+            Assert.That(algoInstanceStatisticsEntity.AssetOneBalance, Is.EqualTo(statistics.AssetOneBalance));
+            Assert.That(algoInstanceStatisticsEntity.AssetTwoBalance, Is.EqualTo(statistics.AssetTwoBalance));
+            Assert.That(algoInstanceStatisticsEntity.UserCurrencyBaseAssetId, Is.EqualTo(statistics.UserCurrencyBaseAssetId));
+            //Assert.That(statistics.NetProfit, Is.EqualTo(statistics.LastWalletBalance - algoInstanceStatisticsEntity.InitialWalletBalance));
+        }
+
+        [Test, Description("AL-357")]
+        [Category("AlgoStore")]
+        public async Task CheckSummaryRowUpdatedWhenAlogIsStopped()
         {
             ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
             Assert.NotNull(instanceDataEntityExists);
@@ -679,41 +719,95 @@ namespace AFTests.AlgoStore
             var instanceDataResponse = await this.Consumer.ExecuteRequest(algoInstanceDataPath, queryParmas, null, Method.GET);
             Assert.That(instanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
-            // Get expected values from Azure
-            AlgoInstanceStatisticsEntity algoInstanceStatisticsEntity = await AlgoInstanceStaticsticsRepository.TryGetAsync(t => t.InstanceId == postInstanceData.InstanceId && t.Id == "Summary") as AlgoInstanceStatisticsEntity;
+            // Get initial statistics values from Azure
+            AlgoInstanceStatisticsEntity initialAlgoInstanceStatisticsEntity = await AlgoInstanceStaticsticsRepository.TryGetAsync(t => t.InstanceId == postInstanceData.InstanceId && t.Id == "Summary") as AlgoInstanceStatisticsEntity;
 
-            int count = 45;
-            while (instanceDataEntityExists.AlgoInstanceStatusValue != "Started" && count > 1) // TODO: Update when a health check endpoint is created
+            // Assert LastTradedAssetBalance and LastAssetTwoBalance equal InitialTradedAssetBalance and InitialAssetTwoBalance
+            // Before an algo is started, LastTradedAssetBalance and LastAssetTwoBalance should be equal to InitialTradedAssetBalance and InitialAssetTwoBalance
+            Assert.That(initialAlgoInstanceStatisticsEntity.InitialTradedAssetBalance, Is.EqualTo(initialAlgoInstanceStatisticsEntity.LastTradedAssetBalance));
+            Assert.That(initialAlgoInstanceStatisticsEntity.InitialAssetTwoBalance, Is.EqualTo(initialAlgoInstanceStatisticsEntity.LastAssetTwoBalance));
+
+            // Wait up to 3 minutes for the algo to be started
+            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+
+            // Get actual values from statistics endpoint 6 times within 1 minute
+            StatisticsDTO statistics;
+            for (int i = 0; i < 6; i++)
             {
-                Wait.ForPredefinedTime(5000); // Wait for five secodns before getting the algo instance data again
-                instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
-                count--;
+                statistics = await AlgoStoreCommonSteps.GetStatisticsResponseAsync(Consumer, postInstanceData);
             }
 
-            Dictionary<string, string> statisticsQueryParams = new Dictionary<string, string>()
+            // Wait for 5 seconds before getting statistics values from Azure
+            Wait.ForPredefinedTime(5000);
+
+            // Get updated statistics values from Azure
+            AlgoInstanceStatisticsEntity updatedAlgoInstanceStatisticsEntity = await AlgoInstanceStaticsticsRepository.TryGetAsync(t => t.InstanceId == postInstanceData.InstanceId && t.Id == "Summary") as AlgoInstanceStatisticsEntity;
+
+            // Assert updated LastTradedAssetBalance and LastAssetTwoBalance does not equal InitialTradedAssetBalance and InitialAssetTwoBalance
+            // In algo is not stopped, invoking statistics endpoint should update LastTradedAssetBalance and LastAssetTwoBalance
+            Assert.That(updatedAlgoInstanceStatisticsEntity.LastTradedAssetBalance, Is.Not.EqualTo(updatedAlgoInstanceStatisticsEntity.InitialTradedAssetBalance));
+            Assert.That(updatedAlgoInstanceStatisticsEntity.LastAssetTwoBalance, Is.Not.EqualTo(updatedAlgoInstanceStatisticsEntity.InitialAssetTwoBalance));
+            // Assert InitialTradedAssetBalance and InitialAssetTwoBalance are not updated after invoking statistics endpoint
+            Assert.That(updatedAlgoInstanceStatisticsEntity.InitialTradedAssetBalance, Is.EqualTo(initialAlgoInstanceStatisticsEntity.InitialTradedAssetBalance));
+            Assert.That(updatedAlgoInstanceStatisticsEntity.InitialAssetTwoBalance, Is.EqualTo(initialAlgoInstanceStatisticsEntity.InitialAssetTwoBalance));
+
+            // Stop the algo instance
+            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+
+            // Get statistics values from Azure after the algo is stopped and before calling statistics endpoint
+            AlgoInstanceStatisticsEntity afterStoppingAlgoInstanceStatisticsEntity = await AlgoInstanceStaticsticsRepository.TryGetAsync(t => t.InstanceId == postInstanceData.InstanceId && t.Id == "Summary") as AlgoInstanceStatisticsEntity;
+
+            // Assert after stopping LastTradedAssetBalance and LastAssetTwoBalance does not equal updated LastTradedAssetBalance and LastAssetTwoBalance
+            // After stopping an algo, statistics should be updated with the current values
+            Assert.That(afterStoppingAlgoInstanceStatisticsEntity.LastTradedAssetBalance, Is.Not.EqualTo(updatedAlgoInstanceStatisticsEntity.LastTradedAssetBalance));
+            Assert.That(afterStoppingAlgoInstanceStatisticsEntity.LastAssetTwoBalance, Is.Not.EqualTo(updatedAlgoInstanceStatisticsEntity.LastAssetTwoBalance));
+            // Assert InitialTradedAssetBalance and InitialAssetTwoBalance are not updated after stoppong the algo
+            Assert.That(afterStoppingAlgoInstanceStatisticsEntity.InitialTradedAssetBalance, Is.EqualTo(initialAlgoInstanceStatisticsEntity.InitialTradedAssetBalance));
+            Assert.That(afterStoppingAlgoInstanceStatisticsEntity.InitialAssetTwoBalance, Is.EqualTo(initialAlgoInstanceStatisticsEntity.InitialAssetTwoBalance));
+
+            // Wait for a minute and invoke statistics endpoint again
+            statistics = await AlgoStoreCommonSteps.GetStatisticsResponseAsync(Consumer, postInstanceData, 60000);
+
+            // Wait for 5 seconds before getting statistics values from Azure
+            Wait.ForPredefinedTime(5000);
+
+            // Get statistics values from Azure after calling statistics endpoint
+            AlgoInstanceStatisticsEntity finalAlgoInstanceStatisticsEntity = await AlgoInstanceStaticsticsRepository.TryGetAsync(t => t.InstanceId == postInstanceData.InstanceId && t.Id == "Summary") as AlgoInstanceStatisticsEntity;
+
+            // Assert final LastTradedAssetBalance and LastAssetTwoBalance equal LastTradedAssetBalance and LastAssetTwoBalance from after stopping the algo
+            // After stopping an algo, invoking statistics endpoint should not update LastTradedAssetBalance and LastAssetTwoBalance
+            Assert.That(finalAlgoInstanceStatisticsEntity.LastTradedAssetBalance, Is.EqualTo(afterStoppingAlgoInstanceStatisticsEntity.LastTradedAssetBalance));
+            Assert.That(finalAlgoInstanceStatisticsEntity.LastAssetTwoBalance, Is.EqualTo(afterStoppingAlgoInstanceStatisticsEntity.LastAssetTwoBalance));
+            // Assert InitialTradedAssetBalance and InitialAssetTwoBalance are not updated after stoppong the algo
+            Assert.That(finalAlgoInstanceStatisticsEntity.InitialTradedAssetBalance, Is.EqualTo(initialAlgoInstanceStatisticsEntity.InitialTradedAssetBalance));
+            Assert.That(finalAlgoInstanceStatisticsEntity.InitialAssetTwoBalance, Is.EqualTo(initialAlgoInstanceStatisticsEntity.InitialAssetTwoBalance));
+        }
+
+        [Test, Description("AL-379")]
+        [Category("AlgoStore")]
+        public async Task CheckStatisticsReturnsTradedAssetAndAssetTwoNames()
+        {
+            Dictionary<string, string> queryParams = new Dictionary<string, string>()
             {
+                { "algoId" , postInstanceData.AlgoId },
                 { "instanceId", postInstanceData.InstanceId}
             };
 
-            // Get actual values from statistics endpoint several times
-            Response statisticsResponse = null;
-            for (int i = 1; i < 10; i++)
-            {
-                Wait.ForPredefinedTime(2000); // Wait for two secodns so that so trades can be done
-                statisticsResponse = await this.Consumer.ExecuteRequest(statisticsPath, statisticsQueryParams, null, Method.GET);
-                Assert.That(statisticsResponse.Status, Is.EqualTo(HttpStatusCode.OK));
-            }
-            StatisticsDTO statistics = JsonUtils.DeserializeJson<StatisticsDTO>(statisticsResponse.ResponseJson);
+            var instanceDataResponse = await Consumer.ExecuteRequest(algoInstanceDataPath, queryParams, null, Method.GET);
+            Assert.That(instanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
-            Assert.That(algoInstanceStatisticsEntity.InstanceId, Is.EqualTo(statistics.InstanceId));
-            Assert.That(algoInstanceStatisticsEntity.TotalNumberOfTrades, Is.LessThanOrEqualTo(statistics.TotalNumberOfTrades));
-            Assert.That(algoInstanceStatisticsEntity.TotalNumberOfStarts, Is.LessThanOrEqualTo(statistics.TotalNumberOfStarts));
-            Assert.That(algoInstanceStatisticsEntity.InitialWalletBalance, Is.EqualTo(statistics.InitialWalletBalance));
-            Assert.That(algoInstanceStatisticsEntity.LastWalletBalance, Is.Not.EqualTo(statistics.LastWalletBalance));
-            Assert.That(algoInstanceStatisticsEntity.AssetOneBalance, Is.EqualTo(statistics.AssetOneBalance));
-            Assert.That(algoInstanceStatisticsEntity.AssetTwoBalance, Is.EqualTo(statistics.AssetTwoBalance));
-            Assert.That(algoInstanceStatisticsEntity.UserCurrencyBaseAssetId, Is.EqualTo(statistics.UserCurrencyBaseAssetId));
-            //Assert.That(statistics.NetProfit, Is.EqualTo(statistics.LastWalletBalance - algoInstanceStatisticsEntity.InitialWalletBalance));
+            // Wait up to 3 minutes for the algo to be started
+            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+
+            StatisticsDTO statistics = await AlgoStoreCommonSteps.GetStatisticsResponseAsync(Consumer, postInstanceData);
+
+            // TODO: Update the test to use dynamic TradedAsset and AssetTwo
+            // Assert statistics endpoint returns "TradedAssetName" and "AssetTwoName"
+            Assert.That(statistics.TradedAssetName, Is.EqualTo("EUR"));
+            Assert.That(statistics.AssetTwoName, Is.EqualTo("BTC"));
+
+            // Stop the algo instance
+            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
         }
     }
 }

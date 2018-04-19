@@ -98,7 +98,7 @@ namespace AlgoStoreData.Fixtures
         [OneTimeTearDown]
         public void Cleanup()
         {
-            System.Threading.Thread.Sleep(100000);
+            Wait.ForPredefinedTime(100000);
             ClearTestData().Wait(1000000);
             GC.SuppressFinalize(this);
         }
