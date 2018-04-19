@@ -10,6 +10,8 @@ using QuickFix.FIX44;
 using QuickFix.Lykke;
 using XUnitTestCommon.TestsData;
 using XUnitTestCommon.Tests;
+using QuickFix.FIX44;
+using System.Linq;
 
 namespace AFTests.FIX
 {
@@ -96,6 +98,59 @@ namespace AFTests.FIX
                 {
                     Environment.SetEnvironmentVariable("FIXWrongPassword", null);
                 }
+            }
+        }
+
+        public class SecirutyLisasast : FixBaseTest
+        {
+            FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient(uri: Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value);
+                fixClient.Init();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                fixClient.Stop();
+                fixClient.Dispose();
+            }
+
+            [Test]
+            [Category("FIX")]
+            public void SecirutyListTest()
+            {
+                var assetPairs = privateApi.Assets.GetAssetPairs().GetResponseObject().FindAll(a => a.IsDisabled == false);
+                var validAssets = privateApi.Assets.GetAssets(false).GetResponseObject().
+                    FindAll(a => a.IsDisabled == false).FindAll(a => a.IsTradable == true);
+
+                assetPairs = assetPairs.FindAll(a =>
+                    a.IsDisabled == false
+                ).FindAll(a =>
+                     validAssets.Any(va => va.Id == a.BaseAssetId)
+                ).FindAll(a =>
+                     validAssets.Any(va => va.Id == a.QuotingAssetId)
+                );
+
+                var m = new SecurityListRequest
+                {
+                    SecurityReqID = new SecurityReqID("42"),
+                    SecurityListRequestType = new SecurityListRequestType(SecurityListRequestType.SYMBOL)
+                };
+                fixClient.Send(m);
+
+                var response = fixClient.GetResponse<SecurityList>();
+                Assert.That(response, Is.Not.Null);
+
+                var sList = response.ToString();
+
+                Assert.Multiple(() => 
+                {
+                    assetPairs.ForEach(a => Assert.That(sList, Does.Contain(a.Id), $"Security list does not contain asset pair {a.Id}"));
+                });
             }
         }
     }

@@ -16,5 +16,9 @@ namespace PrivateServices.Resources.Assets
             return Requests.For(BaseUrl).Get("/asset-pairs").Build().Execute<List<AssetPair>>();
         }
 
+        public IResponse<List<Asset>> GetAssets(bool includeNonTradable = true)
+        {
+            return Requests.For(BaseUrl).Get("/assets").AddQueryParameter("includeNonTradable", includeNonTradable).Build().Execute<List<Asset>>();
+        }
     }
 }

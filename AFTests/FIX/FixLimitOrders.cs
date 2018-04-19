@@ -303,7 +303,7 @@ namespace AFTests.FIX
 
             [TestCase(-1)]
             [TestCase(0)]
-            [TestCase(9999999999999999)]
+           // [TestCase(9999999999999999)] why??
             [Category("FIX")]
             public void LimitOrderWrongQuantityTest(object q)
             {
@@ -345,7 +345,7 @@ namespace AFTests.FIX
 
             [TestCase(-1)]
             [TestCase(0)]
-            [TestCase(9999999999999999)]
+           // [TestCase(9999999999999999)] why?
             [Category("FIX")]
             public void LimitOrderWrongPriceTest(object p)
             {
@@ -392,6 +392,16 @@ namespace AFTests.FIX
             public void OnlyAssetsThatEnabledAreAvailableInFixTest()
             {
                 var assetPairs = privateApi.Assets.GetAssetPairs().GetResponseObject().FindAll(a => a.IsDisabled == false);
+                var validAssets = privateApi.Assets.GetAssets(false).GetResponseObject().
+                    FindAll(a => a.IsDisabled == false).FindAll(a => a.IsTradable == true);
+
+                assetPairs = assetPairs.FindAll(a =>
+                    a.IsDisabled == false
+                ).FindAll(a =>
+                     validAssets.Any(va => va.Id == a.BaseAssetId)
+                ).FindAll(a =>
+                     validAssets.Any(va => va.Id == a.QuotingAssetId)
+                );
 
                 fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
                 fixClient.Init();
@@ -440,8 +450,21 @@ namespace AFTests.FIX
                     Assert.That(response, Is.TypeOf<ExecutionReport>(), $"unexpected response type for assetPair {assetPair}. response: {response.ToString().Replace("\u0001", "|")}");
 
                     ex = (ExecutionReport)response;
-                    if (ex.OrdStatus.Obj != OrdStatus.CANCELED)
-                        response = fixClient.GetResponse<Message>();
+
+                    //Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.PENDING_CANCEL), $"unexpected response status for assetPair {assetPair}. response: {response.ToString().Replace("\u0001", "|")}");
+                    //Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.PENDING_CANCEL), $"unexpected response type for assetPair {assetPair}. response: {response.ToString().Replace("\u0001", "|")}");
+
+                    int time = 120;
+                    while (time-- > 0)
+                    {
+                        if (ex.OrdStatus.Obj != OrdStatus.CANCELED)
+                        {
+                            response = fixClient.GetResponse<Message>();
+                            ex = (ExecutionReport)response;
+                            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+                        }
+                        else { break; }
+                    }    
                 }
                 catch (Exception)
                 {
