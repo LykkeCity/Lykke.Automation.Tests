@@ -428,6 +428,15 @@ namespace AFTests.FIX
 
                     var response = fixClient.GetResponse<Message>();
 
+                    int aa = 60;
+                    while (aa-- > 0)
+                    {
+                        if (((ExecutionReport)response).ClOrdID.Obj.ToString() == orderId)
+                            break;
+                        response = fixClient.GetResponse<Message>();
+                        System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+                    }
+
                     Assert.That(response, Is.Not.Null);
                     Assert.That(response, Is.TypeOf<ExecutionReport>());
 
@@ -445,6 +454,15 @@ namespace AFTests.FIX
 
                     fixClient.Send(cancelRequest);
                     response = fixClient.GetResponse<Message>();
+
+                    int a = 60;
+                    while (a-- > 0)
+                    {
+                        if (((ExecutionReport)response).ClOrdID.Obj.ToString() == cancelRequest.ClOrdID.Obj.ToString())
+                            break;
+                        response = fixClient.GetResponse<Message>();
+                        System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+                    }
 
                     Assert.That(response, Is.Not.Null);
                     Assert.That(response, Is.TypeOf<ExecutionReport>(), $"unexpected response type for assetPair {assetPair}. response: {response.ToString().Replace("\u0001", "|")}");
