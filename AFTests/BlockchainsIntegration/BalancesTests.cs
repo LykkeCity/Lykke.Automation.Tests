@@ -16,25 +16,37 @@ namespace AFTests.BlockchainsIntegrationTests
     {
         public class GetBalances : BlockchainsIntegrationBaseTest
         {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
             [Test]
             [Category("BlockchainIntegration")]
             public void GetBalancesTest()
             {
                 var take = "500";
 
-                var newWallet = blockchainSign.PostWallet().GetResponseObject();
-
-                AddCyptoToBalanceFromExternal(newWallet.PublicAddress, newWallet.PrivateKey);
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
 
                 blockchainApi.Balances.GetBalances(take, null).Validate.StatusCode(HttpStatusCode.OK);
 
-                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == newWallet.PublicAddress),
-                    Is.True.After(5 * 60 * 1000, 1 * 1000), $"Wallet {newWallet.PublicAddress} is not present in Get Balances after 10 minutes");
+                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == wallet.PublicAddress),
+                    Is.True.After(5 * 60 * 1000, 1 * 1000), $"Wallet {wallet.PublicAddress} is not present in Get Balances after 10 minutes");
 
                 //disable
-                var dResponse = blockchainApi.Balances.DeleteBalances(newWallet.PublicAddress);
+                var dResponse = blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
 
-                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == newWallet.PublicAddress),
+                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == wallet.PublicAddress),
                     Is.False.After(1 * 60 * 1000, 1 * 1000), "Wallet still present in Get Balances after Delete");
             }
         }
@@ -105,34 +117,46 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public class DWHWTransactionWillProduceIncreasOfBlockNumber : BlockchainsIntegrationBaseTest
         {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
             [Test]
             [Category("BlockchainIntegration")]
             public void DWHWTransactionWillProduceIncreasOfBlockNumberTest()
             {
                 // enable observation
 
-                var newWallet = blockchainSign.PostWallet().GetResponseObject();
-
-                var pResponse = blockchainApi.Balances.PostBalances(newWallet.PublicAddress);
-                AddCyptoToBalanceFromExternal(newWallet.PublicAddress, newWallet.PrivateKey);
+                var pResponse = blockchainApi.Balances.PostBalances(wallet.PublicAddress);
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
 
                 blockchainApi.Balances.GetBalances("500", null).Validate.StatusCode(HttpStatusCode.OK);
 
-                Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == newWallet.PublicAddress),
+                Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == wallet.PublicAddress),
                     Is.True.After(5 * 60 * 1000, 2 * 1000), "Wallet is not present in Get Balances after 5 minutes");
 
                 //create transaction and broadcast it
 
                 long? newBlock = null;
 
-                var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Balance;
-                var startBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == newWallet.PublicAddress).Block;
+                var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Balance;
+                var startBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Block;
 
                 var model = new BuildSingleTransactionRequest()
                 {
                     Amount = AMOUT_WITH_FEE,
                     AssetId = ASSET_ID,
-                    FromAddress = newWallet.PublicAddress,
+                    FromAddress = wallet.PublicAddress,
                     IncludeFee = true,
                     OperationId = Guid.NewGuid(),
                     ToAddress = HOT_WALLET
@@ -141,11 +165,11 @@ namespace AFTests.BlockchainsIntegrationTests
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString();
 
-                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { newWallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { wallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
-                newBlock = GetTransactionCompleteStatusTime(operationId, newWallet.PublicAddress);
+                newBlock = GetTransactionCompleteStatusTime(operationId, wallet.PublicAddress);
                 if (newBlock == null)
                 {
                     Assert.Pass("Transaction got Complete status and wallet dissapear from GET /balances request");
@@ -169,9 +193,9 @@ namespace AFTests.BlockchainsIntegrationTests
                     {
                         var balances = blockchainApi.Balances.GetBalances("500", null).GetResponseObject();
 
-                        if (balances.Items.ToList().Any(a => a.Address == newWallet.PublicAddress))
+                        if (balances.Items.ToList().Any(a => a.Address == wallet.PublicAddress))
                         {
-                            Assert.That(balances.Items.ToList().Find(w => w.Address == newWallet.PublicAddress).Block, Is.LessThan(transactionBlock), "Transaction block is not greater than balance block");
+                            Assert.That(balances.Items.ToList().Find(w => w.Address == wallet.PublicAddress).Block, Is.LessThan(transactionBlock), "Transaction block is not greater than balance block");
                         }
                         else
                         {
@@ -180,7 +204,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     }
                     sw.Stop();
 
-                    Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == newWallet.PublicAddress),
+                    Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == wallet.PublicAddress),
                         Is.False, $"Wallet is present in Get Balances after {BLOCKCHAIN_MINING_TIME} minutes");
                 }
             }

@@ -76,8 +76,6 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://litecoin-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://litecoin-sign.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletAddress = "msvNWBpFNDQ6JxiEcTFU3xXbSnDir4EqCk";
-                DepositWalletKey = "cRTB3eAajJchgNuybhH5SwC9L5PFoTwxXBjgB8vRNJeJ4EpcXmAP";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "LTC";
             }
@@ -90,8 +88,6 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://dash-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://dash-sign.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletAddress = "yUDQmubM2HtBFmkvbSK1rER1t57M5Mcvng";
-                DepositWalletKey = "cPX3K2xfuzoakmXMaJG5HrdFKuACxegcax5eq55SMHJ8YxvmttZz";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "DASH";
             }
@@ -104,8 +100,6 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://zcash-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://zcash-sign-service.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletAddress = "tmQjumT79zunETQgFxNTEMUKz8D841fMCf1";
-                DepositWalletKey = "cRPW3spyP9riDJWniNpcbDkiBjpLrhneSh2qTs3uSZUbm4HZLEyB";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "ZEC";
             }
@@ -119,8 +113,6 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://ripple-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://ripple-sign-service.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletKey = "sndT9kLXjNv7L1HWfr6Lo5N6pmEvU";
-                DepositWalletAddress = "rJ2zMCyShMsjHf7tHptVy7qCWt6dYv8B7r+2851998444";
                 HotWallet = "rJ2zMCyShMsjHf7tHptVy7qCWt6dYv8B7r";
                 HotWalletKey = "sndT9kLXjNv7L1HWfr6Lo5N6pmEvU";
                 ExternalWalletAddress = "rG1Zu2dm2Ty9pQrnGJux1RuKZA6qhjWwMc";
@@ -137,8 +129,6 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://stellar-api.lykke-service.svc.cluster.local/api";
                 BlockchainSign = "http://stellar-sign-service.lykke-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
-                DepositWalletAddress = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "XLM";
             }
@@ -154,8 +144,6 @@ namespace AFTests.BlockchainsIntegration
                 HotWallet = "GCCWY6MNVWORHO7B3L6W5LULGFR337K5UAATA2Z3FSPQA5MYRW5X33ZP";
                 HotWalletKey = "SBBEPWMAINBQKQFW42L6GTWF73WPP5VRVG6KZHCWZVSVM4DUMWZESK2Z";
                 WalletsUrl = null;
-                DepositWalletKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
-                DepositWalletAddress = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "XLM";
                 ExternalWalletAddress = "GDTCLM7L3RKSP324DBRROKRLTRU4WLSPLHDEVSC75LAVZFN6ZDQPK7LD";
@@ -171,8 +159,6 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://lykke-service-bitshares-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://lykke-service-bitshares-sign.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletKey = "keep_keys_private";
-                DepositWalletAddress = "1.2.20477:23088da2-9a5f-42de-bdd6-fe5ee259c8cd";
                 HotWallet = "1.2.20477:e91757da-6a69-43f4-8283-b2612703af59";
                 HotWalletKey = "keep_keys_private";
                 ExternalWalletAddress = "1.2.20407:06eea045-43ee-4cca-a19d-1356abc2b70e";
@@ -190,8 +176,6 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainIntegration = "RaiBlocks";
                 BlockchainApi = "http://raiblocks-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://raiblocks-sign.autotests-service.svc.cluster.local/api";
-                DepositWalletAddress = "xrb_1inxr89m1dgdyrwcktb5ho5p8fto1zn499n6ofpm33qc3skw6qu7ae8ue9gf";
-                DepositWalletKey = "42B05779B54815AEFDB3CCB942E98F8262228B13608E8D8C00F4336D25250513";
                 HotWallet = "xrb_1ygmfkg4x394rnhpyhafs1qgwpdyiru1f393osig37qzoeiqqhpdxfa7w6kk";
                 HotWalletKey = "14DA575835310081121A8F7AA656377E5CBDBB96D8CE8672A564AF902F128FCB";
                 ExternalWalletAddress = "xrb_1e9pi3r7qa9qpsas68go55rmu7m8ku9np5pw3roeekx671joz7b1eiu1i8zk";
@@ -220,8 +204,6 @@ namespace AFTests.BlockchainsIntegration
         public string HotWallet { get; set; }
         public string HotWalletKey { get; set; }
         public string WalletsUrl { get; set; }
-        public string DepositWalletAddress { get; set; }
-        public string DepositWalletKey { get; set; }
         public string ClientId { get; set; }
         public string AssetId { get; set; }
         public string ExternalWalletAddress { get; set; }
