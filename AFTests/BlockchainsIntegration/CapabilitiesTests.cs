@@ -28,7 +28,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void GetReturnExplorerURLTest()
             {
                 var canReturnExplorerUrl = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().CanReturnExplorerUrl;
-                if (canReturnExplorerUrl == null || !canReturnExplorerUrl.HasValue)
+                if (canReturnExplorerUrl == null || !canReturnExplorerUrl.Value)
                     Assert.Ignore($"Blockchain {BlockChainName} does not support canReturnExplorerUrl");
 
                 var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
@@ -47,7 +47,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void GetPubicAddressExtensionTest()
             {
                 var canReturnExplorerUrl = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsPublicAddressExtensionRequired;
-                if (canReturnExplorerUrl == null || !canReturnExplorerUrl.HasValue)
+                if (canReturnExplorerUrl == null || !canReturnExplorerUrl.Value)
                     Assert.Ignore($"Blockchain {BlockChainName} does not support public address extension");
 
                 var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
