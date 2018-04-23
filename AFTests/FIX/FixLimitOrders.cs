@@ -115,10 +115,6 @@ namespace AFTests.FIX
 
                 fixClient.Send(cancelRequest);
 
-                //var response = fixClient.GetResponse<Message>();
-
-               // Assert.That(response, Is.Not.Null, $"order id {orderId} seems to be not cancelled.  response: {JsonRepresentation(response)}");
-
                 fixClient.Stop();
                 fixClient.Dispose();
             }
@@ -580,6 +576,118 @@ namespace AFTests.FIX
 
                // Assert.That(response, Is.Not.Null, $"order id {orderId} seems to be not cancelled.  response: {JsonRepresentation(response)}");
 
+                fixClient.Stop();
+                fixClient.Dispose();
+            }
+        }
+
+        // fix wrong Volume
+
+        public class LimitOrderVolumeLessThenMinAssetVolume : FixBaseTest
+        {
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
+            [Test]
+            [Category("FIX")]
+            public void LimitOrderVolumeLessThenMinAssetVolumeTest()
+            {
+                var assetPairs = privateApi.Assets.GetAssetPairs().GetResponseObject().FindAll(a => a.IsDisabled == false);
+                var validAssets = privateApi.Assets.GetAssets(false).GetResponseObject().
+                    FindAll(a => a.IsDisabled == false).FindAll(a => a.IsTradable == true);
+
+                assetPairs = assetPairs.FindAll(a =>
+                    a.IsDisabled == false
+                ).FindAll(a =>
+                     validAssets.Any(va => va.Id == a.BaseAssetId)
+                ).FindAll(a =>
+                     validAssets.Any(va => va.Id == a.QuotingAssetId)
+                );
+
+                var assetPair = assetPairs.Find(a => a.MinVolume > 0);
+
+                var orderId = Guid.NewGuid().ToString();
+                var price = 0.01m;
+                var quantity = 0.01m;
+
+                var marketOrder = FixHelpers.CreateNewOrder(orderId, isMarket: false, isBuy: true, qty: (decimal)(assetPair.MinVolume / 2), price: price, assetPairId: assetPair.Id);
+
+                fixClient.Send(marketOrder);
+
+                var response = fixClient.GetResponse<Message>();
+
+                Assert.That(response, Is.Not.Null, $"unexpected response: {response.ToString().Replace("\u0001", "|")}");
+                Assert.That(response, Is.TypeOf<ExecutionReport>(), $"unexpected response type response: {response.ToString().Replace("\u0001", "|")}");
+
+                var ex = (ExecutionReport)response;
+                Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.REJECTED));
+                Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.REJECTED));
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                fixClient.Stop();
+                fixClient.Dispose();
+            }
+        }
+
+        public class LimitOrderPriceLessThenMinPriceVolume : FixBaseTest
+        {
+            protected FixClient fixClient;
+
+            [SetUp]
+            public void SetUp()
+            {
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient.Init();
+            }
+
+            [Test]
+            [Category("FIX")]
+            public void LimitOrderPriceLessThenMinAssetPriceTest()
+            {
+                var assetPairs = privateApi.Assets.GetAssetPairs().GetResponseObject().FindAll(a => a.IsDisabled == false);
+                var validAssets = privateApi.Assets.GetAssets(false).GetResponseObject().
+                    FindAll(a => a.IsDisabled == false).FindAll(a => a.IsTradable == true);
+
+                assetPairs = assetPairs.FindAll(a =>
+                    a.IsDisabled == false
+                ).FindAll(a =>
+                     validAssets.Any(va => va.Id == a.BaseAssetId)
+                ).FindAll(a =>
+                     validAssets.Any(va => va.Id == a.QuotingAssetId)
+                );
+
+                var assetPair = assetPairs.Find(a => a.MinVolume > 0);
+
+                var orderId = Guid.NewGuid().ToString();
+                var price = 0.01m;
+                var quantity = 0.01m;
+
+                var marketOrder = FixHelpers.CreateNewOrder(orderId, isMarket: false, isBuy: true, qty: (decimal)(assetPair.MinVolume), price: (decimal)(assetPair.MinVolume / (2 * Math.Pow(10, assetPair.Accuracy))), assetPairId: assetPair.Id);
+
+                fixClient.Send(marketOrder);
+
+                var response = fixClient.GetResponse<Message>();
+
+                Assert.That(response, Is.Not.Null, $"unexpected response: {response.ToString().Replace("\u0001", "|")}");
+                Assert.That(response, Is.TypeOf<ExecutionReport>(), $"unexpected response type response: {response.ToString().Replace("\u0001", "|")}");
+
+                var ex = (ExecutionReport)response;
+                Assert.That(ex.OrdStatus.Obj, Is.EqualTo(OrdStatus.REJECTED));
+                Assert.That(ex.ExecType.Obj, Is.EqualTo(ExecType.REJECTED));
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
                 fixClient.Stop();
                 fixClient.Dispose();
             }

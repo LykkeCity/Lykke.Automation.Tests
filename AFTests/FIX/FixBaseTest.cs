@@ -19,7 +19,6 @@ namespace AFTests.FIX
         protected WalletApi.Api.WalletApi walletApi = new WalletApi.Api.WalletApi();
         protected LykkeApi privateApi = new LykkeApi();
 
-
         protected static string JsonRepresentation(QuickFix.FIX44.Message message)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore};
