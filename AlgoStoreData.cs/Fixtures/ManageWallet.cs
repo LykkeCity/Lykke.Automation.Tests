@@ -20,7 +20,7 @@ namespace AlgoStoreData.Fixtures
 
         public async Task<WalletDTO> GetExistingWallet()
         {
-            var response = await Consumer.ExecuteRequestCustromEndpoint($"{BaseUrl.ApiV2BaseUrl}{walletPath}", Helpers.EmptyDictionary, null, Method.GET);
+            var response = await Consumer.ExecuteRequestCustomEndpoint($"{BaseUrl.ApiV2BaseUrl}{walletPath}", Helpers.EmptyDictionary, null, Method.GET);
             List<WalletDTO> walletDTOs = JsonUtils.DeserializeJson<List<WalletDTO>>(response.ResponseJson);
 
             walletDTOs.RemoveAll(x => x.Name == "Trading");
@@ -52,7 +52,7 @@ namespace AlgoStoreData.Fixtures
 
             string createParam = JsonUtils.SerializeObject(newWallet);    
 
-            var response = await Consumer.ExecuteRequestCustromEndpoint(BaseUrl.ApiV2BaseUrl + createWalletPath, Helpers.EmptyDictionary, createParam, Method.POST);
+            var response = await Consumer.ExecuteRequestCustomEndpoint(BaseUrl.ApiV2BaseUrl + createWalletPath, Helpers.EmptyDictionary, createParam, Method.POST);
             if (response.Status != HttpStatusCode.OK)
             {
                 return null;
@@ -79,7 +79,7 @@ namespace AlgoStoreData.Fixtures
         public async Task<bool> DeleteTestWallet(string id)
         {
             string deleteWalletPath = $"{ApiPaths.WALLETS_BASE_PATH}/{id}";
-            var response = await Consumer.ExecuteRequestCustromEndpoint(BaseUrl.ApiV2BaseUrl + deleteWalletPath, Helpers.EmptyDictionary, null, Method.DELETE);
+            var response = await Consumer.ExecuteRequestCustomEndpoint(BaseUrl.ApiV2BaseUrl + deleteWalletPath, Helpers.EmptyDictionary, null, Method.DELETE);
 
             if (response.Status != HttpStatusCode.OK)
             {
@@ -91,7 +91,7 @@ namespace AlgoStoreData.Fixtures
         public async Task<double> GetWalletBalanceByAssetId(string walletId, string assetId)
         {
             string path = $"/api/wallets/{walletId}/balances/{assetId}";
-            var response = await Consumer.ExecuteRequestCustromEndpoint(BaseUrl.ApiV2BaseUrl + path, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await Consumer.ExecuteRequestCustomEndpoint(BaseUrl.ApiV2BaseUrl + path, Helpers.EmptyDictionary, null, Method.GET);
             double balance;
             switch(response.Status)
             {
@@ -120,7 +120,7 @@ namespace AlgoStoreData.Fixtures
                 String clientId = await GetClientIdByEmail(User.AuthUser.Email);
                 ManualCashInDTO manualCashInDTO = new ManualCashInDTO(clientId, walletId, assetId, amount);
                 var requestBody = JsonUtils.SerializeObject(manualCashInDTO);
-                var response = await Consumer.ExecuteRequestCustromEndpoint($"{exchangeOperationsURL}{path}", Helpers.EmptyDictionary, requestBody, Method.POST);
+                var response = await Consumer.ExecuteRequestCustomEndpoint($"{exchangeOperationsURL}{path}", Helpers.EmptyDictionary, requestBody, Method.POST);
                 Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK), $"Cannot add fund for Asset: {assetId} for WalletId: {walletId}. Response: {response.ResponseJson}");
 
                 // Wait up to twenty seconds after adding funds throught the API in order for the funds to appear in the wallet
@@ -138,7 +138,7 @@ namespace AlgoStoreData.Fixtures
         {
             var clientAccountUrl = BaseUrl.ClientAccountApiBaseUrl;
             var getClientDetailsPath = $"/api/ClientAccountInformation/getClientsByEmail/{email}";
-            var response = await Consumer.ExecuteRequestCustromEndpoint($"{clientAccountUrl}{getClientDetailsPath}", Helpers.EmptyDictionary, null, Method.GET);
+            var response = await Consumer.ExecuteRequestCustomEndpoint($"{clientAccountUrl}{getClientDetailsPath}", Helpers.EmptyDictionary, null, Method.GET);
             List<ClientAccount> clients = JsonUtils.DeserializeJson<List<ClientAccount>>(response.ResponseJson);
 
             if (clients.Count > 0)

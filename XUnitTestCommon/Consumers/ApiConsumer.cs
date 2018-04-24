@@ -78,7 +78,7 @@ namespace XUnitTestCommon.Consumers
             return new Response(response.StatusCode, response.Content);
         }
 
-        public async Task<Response> ExecuteRequestCustromEndpoint(string url, Dictionary<string, string> queryParams, string body, Method method)
+        public async Task<Response> ExecuteRequestCustomEndpoint(string url, Dictionary<string, string> queryParams, string body, Method method)
         {
             _client = new RestClient(url);
             _request = new RestRequest(method);
