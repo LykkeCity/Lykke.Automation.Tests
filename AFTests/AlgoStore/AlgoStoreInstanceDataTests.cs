@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AlgoStoreData.DTOs;
 using AlgoStoreData.Fixtures;
 using NUnit.Framework;
 using RestSharp;
+using System.Net;
+using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
-using AlgoStoreData.DTOs;
-using XUnitTestData.Entities.AlgoStore;
-using System.IO;
-using AlgoStoreData.HelpersAlgoStore;
-using ApiV2Data.DTOs;
 
 namespace AFTests.AlgoStore
 {
@@ -27,11 +20,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            WalletDTO walet = await CreateTestWallet();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTOInvalidAssetPair(algoID, walet);
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTOInvalidAssetPair(algoID, await GetExistingWallet());
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -52,11 +41,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            WalletDTO walet = await CreateTestWallet();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTOInvalidTradedAsset(algoID, walet);
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTOInvalidTradedAsset(algoID, await GetExistingWallet());
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -76,11 +61,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            WalletDTO walet = await CreateTestWallet();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO("123 invalid algo id", walet);
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO("123 invalid algo id", await GetExistingWallet());
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -96,11 +77,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            WalletDTO walet = await CreateTestWallet();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTONegativeVolume(algoID, walet);
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTONegativeVolume(algoID, await GetExistingWallet());
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -121,11 +98,7 @@ namespace AFTests.AlgoStore
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            WalletDTO walet = await CreateTestWallet();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTO(algoID, walet);
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(algoID, await GetExistingWallet());
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -139,11 +112,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            GetPopulatedInstanceDataDTO getinstanceAlgo = new GetPopulatedInstanceDataDTO();
-
-            WalletDTO walet = await CreateTestWallet();
-
-            InstanceDataDTO instanceForAlgo = getinstanceAlgo.returnInstanceDataDTOInvalidVolume(algoID, walet);
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTOInvalidVolume(algoID, await GetExistingWallet());
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 

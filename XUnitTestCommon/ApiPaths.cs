@@ -11,6 +11,7 @@ namespace XUnitTestCommon
         public static readonly string WALLETS_BASE_PATH = "/api/wallets";
         public static readonly string WALLETS_BALANCES_PATH = "/api/wallets/balances";
         public static readonly string WALLETS_TRADING_BALANCES_PATH = "/api/wallets/trading/balances";
+        private static readonly string walletBalanceByAssetID = "/api/wallets/{0}/balances/{1}";
 
         public static readonly string OPERATIONS_BASE_PATH = "/api/operations";
         public static readonly string OPERATIONS_DETAILS_PATH = "/api/operationsDetails";
@@ -93,5 +94,11 @@ namespace XUnitTestCommon
         public static readonly string ALGO_STORE_ALGO_INSTANCE_DATA = "/api/v1/clientData/instanceData";
         public static readonly string ALGO_STORE_CLIENT_DATA_GET_ALL_ALGOS = "/api/v1/clientData/getAllAlgos";
         public static readonly string ALGO_STORE_ADD_TO_PUBLIC = "/api/v1/clientData/addToPublic";
-    }    
+        public static readonly string ALGO_STORE_STATISTICS = "/api/v1/statistics";
+
+        public static String WALLET_BALANCE_BY_ASSET_ID(string walletId, string assetId)
+        {
+            return String.Format(walletBalanceByAssetID, walletId, assetId);
+        }
+    }
 }

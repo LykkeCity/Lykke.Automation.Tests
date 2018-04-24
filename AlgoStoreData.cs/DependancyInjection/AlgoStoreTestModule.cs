@@ -69,6 +69,11 @@ namespace AlgoStoreData.DependancyInjection
                 new AzureTableStorage<StatisticsEntity>(
                     _configBuilder.Config["TableStorageConnectionString"], "Statistics", null, timespan), "Statistics"))
             .As<IDictionaryRepository<IStatisticss>>();
+
+            builder.Register(c => new GenericRepository<AlgoInstanceStatisticsEntity, IAlgoInstanceStatistics>(
+                new AzureTableStorage<AlgoInstanceStatisticsEntity>(
+                    _configBuilder.Config["TableStorageConnectionString"], "AlgoInstanceStatistics", null, timespan), "AlgoInstanceStatistics"))
+            .As<IDictionaryRepository<IAlgoInstanceStatistics>>();
         }
     }
 }

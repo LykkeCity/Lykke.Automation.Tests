@@ -19,7 +19,7 @@ namespace XUnitTestCommon.Utils
 
         public static string SerializeObject(object model)
         {
-            return JsonConvert.SerializeObject(model);
+            return JsonConvert.SerializeObject(model, Formatting.Indented);
         }
     }
 }

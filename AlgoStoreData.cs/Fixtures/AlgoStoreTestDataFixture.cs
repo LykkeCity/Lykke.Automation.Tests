@@ -37,10 +37,13 @@ namespace AlgoStoreData.Fixtures
         public GenericRepository<CSharpAlgoTemplateUserLogEntity, ICSharpAlgoTemplateUserLog> CSharpAlgoTemplateUserLogRepository;
         public GenericRepository<PublicsAlgosTableEntity, IPublicAlgosTable> PublicAlgosRepository;
         public GenericRepository<StatisticsEntity, IStatisticss> StatisticsRepository;
+        public GenericRepository<AlgoInstanceStatisticsEntity, IAlgoInstanceStatistics> AlgoInstanceStaticsticsRepository;
         public List<BuilInitialDataObjectDTO> PreStoredMetadata;
         public AlgoBlobRepository BlobRepository;
         public static string CSharpAlgoStringFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "DummyAlgo.txt");
         public string CSharpAlgoString = File.ReadAllText(CSharpAlgoStringFile);
+        protected InstanceDataDTO instanceForAlgo;
+        protected InstanceDataDTO postInstanceData;
 
 
         [OneTimeSetUp]
@@ -78,7 +81,8 @@ namespace AlgoStoreData.Fixtures
             this.PublicAlgosRepository = RepositoryUtils.ResolveGenericRepository<PublicsAlgosTableEntity, IPublicAlgosTable>(this._containerDB);
             this.StatisticsRepository = RepositoryUtils.ResolveGenericRepository<StatisticsEntity, IStatisticss>(this._containerDB);
             this.BlobRepository = new AlgoBlobRepository(_configBuilderDB.Config["TableStorageConnectionString"], timespan);
-    }
+            this.AlgoInstanceStaticsticsRepository = RepositoryUtils.ResolveGenericRepository<AlgoInstanceStatisticsEntity, IAlgoInstanceStatistics>(this._containerDB);
+        }
 
         private async Task PrepareTestData()
         {
@@ -94,7 +98,7 @@ namespace AlgoStoreData.Fixtures
         [OneTimeTearDown]
         public void Cleanup()
         {
-            System.Threading.Thread.Sleep(100000);
+            Wait.ForPredefinedTime(100000);
             ClearTestData().Wait(1000000);
             GC.SuppressFinalize(this);
         }
