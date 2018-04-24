@@ -27,8 +27,8 @@ namespace AlgoStoreData.Fixtures
             {
                 MetaDataDTO metadata = new MetaDataDTO()
                 {
-                    Name = Helpers.RandomString(13),
-                    Description = Helpers.RandomString(13)
+                    Name = $"{ GlobalConstants.AutoTest }_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()}",
+                    Description = $"{ GlobalConstants.AutoTest }_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()} - Description"
                 };
                 metadataList.Add(metadata);
             }

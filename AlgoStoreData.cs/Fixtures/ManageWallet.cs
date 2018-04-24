@@ -16,12 +16,11 @@ namespace AlgoStoreData.Fixtures
 {
     public partial class AlgoStoreTestDataFixture : BaseTest
     {
-        private string endpoint = "https://apiv2-dev.lykkex.net";
         private string walletPath = ApiPaths.WALLETS_BASE_PATH;
 
         public async Task<WalletDTO> GetExistingWallet()
         {
-            var response = await Consumer.ExecuteRequestCustromEndpoint($"{endpoint}{walletPath}", Helpers.EmptyDictionary, null, Method.GET);
+            var response = await Consumer.ExecuteRequestCustromEndpoint($"{BaseUrl.ApiV2BaseUrl}{walletPath}", Helpers.EmptyDictionary, null, Method.GET);
             List<WalletDTO> walletDTOs = JsonUtils.DeserializeJson<List<WalletDTO>>(response.ResponseJson);
 
             walletDTOs.RemoveAll(x => x.Name == "Trading");
@@ -42,7 +41,7 @@ namespace AlgoStoreData.Fixtures
 
         public async Task<WalletDTO> CreateTestWallet()
         {
-            string createWalletPath = $"{endpoint}{walletPath}/hft";
+            string createWalletPath = $"{BaseUrl.ApiV2BaseUrl}{walletPath}/hft";
 
             string utcTimestamp = DateTime.UtcNow.ToString("s");
             WalletCreateDTO newWallet = new WalletCreateDTO
@@ -53,7 +52,7 @@ namespace AlgoStoreData.Fixtures
 
             string createParam = JsonUtils.SerializeObject(newWallet);    
 
-            var response = await Consumer.ExecuteRequestCustromEndpoint(endpoint + createWalletPath, Helpers.EmptyDictionary, createParam, Method.POST);
+            var response = await Consumer.ExecuteRequestCustromEndpoint(BaseUrl.ApiV2BaseUrl + createWalletPath, Helpers.EmptyDictionary, createParam, Method.POST);
             if (response.Status != HttpStatusCode.OK)
             {
                 return null;
@@ -80,7 +79,7 @@ namespace AlgoStoreData.Fixtures
         public async Task<bool> DeleteTestWallet(string id)
         {
             string deleteWalletPath = $"{ApiPaths.WALLETS_BASE_PATH}/{id}";
-            var response = await Consumer.ExecuteRequestCustromEndpoint(endpoint + deleteWalletPath, Helpers.EmptyDictionary, null, Method.DELETE);
+            var response = await Consumer.ExecuteRequestCustromEndpoint(BaseUrl.ApiV2BaseUrl + deleteWalletPath, Helpers.EmptyDictionary, null, Method.DELETE);
 
             if (response.Status != HttpStatusCode.OK)
             {
@@ -92,7 +91,7 @@ namespace AlgoStoreData.Fixtures
         public async Task<double> GetWalletBalanceByAssetId(string walletId, string assetId)
         {
             string path = $"/api/wallets/{walletId}/balances/{assetId}";
-            var response = await Consumer.ExecuteRequestCustromEndpoint(endpoint + path, Helpers.EmptyDictionary, null, Method.GET);
+            var response = await Consumer.ExecuteRequestCustromEndpoint(BaseUrl.ApiV2BaseUrl + path, Helpers.EmptyDictionary, null, Method.GET);
             double balance;
             switch(response.Status)
             {
@@ -116,7 +115,7 @@ namespace AlgoStoreData.Fixtures
             var walletBalance = await GetWalletBalanceByAssetId(walletId, assetId);
             if (walletBalance < 10)
             {
-                var exchangeOperationsURL = "http://exchange-operations.lykke-service.svc.cluster.local";
+                var exchangeOperationsURL = BaseUrl.ExchangeOperationsBaseUrl;
                 string path = "/api/ExchangeOperations/ManualCashIn";
                 String clientId = await GetClientIdByEmail(User.AuthUser.Email);
                 ManualCashInDTO manualCashInDTO = new ManualCashInDTO(clientId, walletId, assetId, amount);
@@ -126,9 +125,10 @@ namespace AlgoStoreData.Fixtures
 
                 // Wait up to twenty seconds after adding funds throught the API in order for the funds to appear in the wallet
                 int retries = 10;
-                while (await GetWalletBalanceByAssetId(walletId, assetId) == 0 && retries > 0)
+                while (walletBalance == 0 && retries > 0)
                 {
                     Wait.ForPredefinedTime(2000);
+                    walletBalance = await GetWalletBalanceByAssetId(walletId, assetId);
                     retries--;
                 }
             }
@@ -136,7 +136,7 @@ namespace AlgoStoreData.Fixtures
 
         public async Task<String> GetClientIdByEmail(string email)
         {
-            var clientAccountUrl = "http://client-account.lykke-service.svc.cluster.local";
+            var clientAccountUrl = BaseUrl.ClientAccountApiBaseUrl;
             var getClientDetailsPath = $"/api/ClientAccountInformation/getClientsByEmail/{email}";
             var response = await Consumer.ExecuteRequestCustromEndpoint($"{clientAccountUrl}{getClientDetailsPath}", Helpers.EmptyDictionary, null, Method.GET);
             List<ClientAccount> clients = JsonUtils.DeserializeJson<List<ClientAccount>>(response.ResponseJson);

@@ -56,7 +56,7 @@ namespace AlgoStoreData.DTOs
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
                 WalletId = walletDTO.Id,
-                InstanceName = Helpers.RandomString(13),
+                InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
                     Parameters = new List<AlgoMetaDataParameter>()
@@ -64,7 +64,7 @@ namespace AlgoStoreData.DTOs
                         new AlgoMetaDataParameter()
                         {
                            Key = "StartFrom",
-                           Value = "10-02-2018",
+                           Value = "01-04-2018",
                            Type  ="DateTime"
                         },
                         new AlgoMetaDataParameter()
@@ -177,7 +177,7 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "01-04-2018",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter
@@ -193,17 +193,17 @@ namespace AlgoStoreData.DTOs
                                         Type = "String"
                                     },
                                      new AlgoMetaDataParameter()
-                                         {
-                                             Key = "AssetPair",
-                                             Value = "BTCEUR",
-                                             Type  ="String"
-                                         },
+                                    {
+                                        Key = "AssetPair",
+                                        Value = "BTCEUR",
+                                        Type  ="String"
+                                    },
                                     new AlgoMetaDataParameter()
-                                        {
-                                             Key = "TradedAsset",
-                                             Value = "EUR",
-                                            Type  ="String"
-                                        },
+                                    {
+                                        Key = "TradedAsset",
+                                        Value = "EUR",
+                                        Type  ="String"
+                                    },
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "CandleTimeInterval",
@@ -325,7 +325,7 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter()
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "01-04-2018",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter()
@@ -467,7 +467,7 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-02-2018",
+                                        Value = "01-04-2018",
                                         Type = "DateTime"
                                     },
                                     new AlgoMetaDataParameter
@@ -569,7 +569,7 @@ namespace AlgoStoreData.DTOs
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
                 WalletId = walletDTO.Id,
-                InstanceName = Helpers.RandomString(13),
+                InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
                     Parameters = new List<AlgoMetaDataParameter>()
@@ -1082,7 +1082,7 @@ namespace AlgoStoreData.DTOs
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
                 WalletId = walletDTO.Id,
-                InstanceName = Helpers.RandomString(13),
+                InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
                     Parameters = new List<AlgoMetaDataParameter>()
@@ -1594,7 +1594,7 @@ namespace AlgoStoreData.DTOs
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
                 WalletId = walletDTO.Id,
-                InstanceName = Helpers.RandomString(13),
+                InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
                     Parameters = new List<AlgoMetaDataParameter>()
@@ -2107,7 +2107,7 @@ namespace AlgoStoreData.DTOs
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
                 WalletId = walletDTO.Id,
-                InstanceName = Helpers.RandomString(13),
+                InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
                     Parameters = new List<AlgoMetaDataParameter>()

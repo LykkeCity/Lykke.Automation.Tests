@@ -10,8 +10,6 @@ using XUnitTestCommon.Utils;
 using AlgoStoreData.DTOs;
 using XUnitTestData.Entities.AlgoStore;
 using AlgoStoreData.HelpersAlgoStore;
-using ApiV2Data.DTOs;
-using AlgoStoreData;
 
 namespace AFTests.AlgoStore
 {

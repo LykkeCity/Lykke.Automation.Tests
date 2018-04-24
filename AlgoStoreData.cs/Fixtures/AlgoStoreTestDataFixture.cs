@@ -5,7 +5,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
@@ -23,9 +22,11 @@ namespace AlgoStoreData.Fixtures
     {
         private ConfigBuilder _configBuilder;
         private ConfigBuilder _configBuilderDB;
+        private ConfigBuilder _configBuilderBaseUrls;
         private TimeSpan timespan = TimeSpan.FromSeconds(120);
         public ApiConsumer Consumer;
         private OAuthConsumer User;
+        public BaseUrls BaseUrl;
         private IContainer _container;
         private IContainer _containerDB;
         public GenericRepository<MetaDataEntity, IMetaData> MetaDataRepository;
@@ -50,11 +51,12 @@ namespace AlgoStoreData.Fixtures
         public void Initialize()
         {
             _configBuilder = new ConfigBuilder("AlgoStore");
-
             _configBuilderDB = new ConfigBuilder("AlgoApi", "Db");
+            _configBuilderBaseUrls = new ConfigBuilder("Services");
 
             User = new OAuthConsumer(_configBuilder);
             Consumer = new ApiConsumer(_configBuilder, User);
+            BaseUrl = new BaseUrls(_configBuilderBaseUrls);
 
             PrepareDependencyContainer();
             PrepareTestData().Wait();
