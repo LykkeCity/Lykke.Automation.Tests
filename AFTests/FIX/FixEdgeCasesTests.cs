@@ -26,7 +26,7 @@ namespace AFTests.FIX
             {
                 Environment.SetEnvironmentVariable("FIXWrongPassword", TestData.GenerateString(6));
 
-                var fixClient2 = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                var fixClient2 = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig()["TestClient"]["ServiceUrl"].ToString(), 12357);
                 
                 fixClient2.Init();
 
@@ -58,7 +58,7 @@ namespace AFTests.FIX
             [SetUp]
             public void SetUp()
             {
-                fixClient = new FixClient(uri: Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value);
+                fixClient = new FixClient(uri: Init.LocalConfig()["TestClient"]["ServiceUrl"].ToString());
                 fixClient.Init();
             }
 

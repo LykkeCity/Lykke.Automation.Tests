@@ -3,7 +3,9 @@ using LykkeAutomationPrivate.Api;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,7 +30,7 @@ namespace AFTests.FIX
 
         public static List<EntityProperty> GetValueFromAzure(string message)
         {
-           return new AzureUtils(Init.LocalConfig().GetSection("AzureConnectionString").Value)
+           return new AzureUtils(Init.LocalConfig()["AzureConnectionString"].ToString())
                     .GetCloudTable("FixGatewayMessagesLog")
                     .GetSearchResult("Message", message)
                     .GetCellsByKnownCellName("Message");
@@ -37,18 +39,26 @@ namespace AFTests.FIX
 
     public class Init
     {
-        public static IConfigurationRoot LocalConfig()
+        private static Lazy<JToken> lazy = new Lazy<JToken>(isThreadSafe: true);
+
+        public static JToken LocalConfig()
         {
-            if (!File.Exists(Path.Combine(TestContext.CurrentContext.WorkDirectory, "FIX/appsettings.json")))
-                File.WriteAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "FIX/appsettings.json"), Environment.GetEnvironmentVariable("fixappjson"));
+            if (lazy.IsValueCreated)
+                return lazy.Value;
 
-            var builder = new ConfigurationBuilder()
+            var localConfig = new ConfigurationBuilder()
                 .SetBasePath(TestContext.CurrentContext.WorkDirectory)
-                .AddJsonFile("FIX/appsettings.json", optional: false, reloadOnChange: true);
+                .AddJsonFile("config.json", optional: false, reloadOnChange: true).Build();
 
-            TestContext.Progress.WriteLine($"current appsettings.json file: {File.ReadAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "FIX/appsettings.json"))}");
+            var request = new RestRequest(localConfig.GetSection("SettingsServiceAccessToken").Value, Method.GET);
+            var client = new RestClient(localConfig.GetSection("SettingsServiceURL").Value);
 
-           return builder.Build();       
+            var settings = JObject.Parse(client.Execute(request).Content);
+            lazy = new Lazy<JToken>(() => settings["AutomatedFunctionalTests"]["FIX"], true);
+
+            TestContext.Progress.WriteLine($"current appsettings.json file: {lazy.Value}");
+
+            return lazy.Value;
         }
     }
 }

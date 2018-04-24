@@ -17,7 +17,7 @@ namespace AFTests.FIX
             [SetUp]
             public void SetUp()
             {
-                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig()["TestClient"]["ServiceUrl"].ToString(), 12357);
                 fixClient.Init();
             }
 
@@ -67,7 +67,7 @@ namespace AFTests.FIX
             [SetUp]
             public void SetUp()
             {
-                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig()["TestClient"]["ServiceUrl"].ToString(), 12357);
                 fixClient.Init();
             }
 
@@ -117,7 +117,7 @@ namespace AFTests.FIX
             [SetUp]
             public void SetUp()
             {
-                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig().GetSection("TestClient:ServiceUrl").Value, 12357);
+                fixClient = new FixClient("LYKKE_T", "SENDER_T", Init.LocalConfig()["TestClient"]["ServiceUrl"].ToString(), 12357);
                 fixClient.Init();
             }
 
