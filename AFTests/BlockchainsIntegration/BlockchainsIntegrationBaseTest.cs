@@ -33,7 +33,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitshares"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "ripple"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
@@ -130,7 +130,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 var response = api.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
                 var getResponse = api.Operations.GetOperationId(operationId);
-                
+                WaitForOperationGotCompleteStatus(operationId);
             }
             WaitForBalance(walletAddress);
         }
@@ -181,11 +181,29 @@ namespace AFTests.BlockchainsIntegrationTests
             WaitForBalance(walletAddress);
         }
 
-        public static void WaitForBalance(string wallet)
+        public static void WaitForOperationGotCompleteStatus(string operationId)
         {
             int i = 0;
             var api = new BlockchainApi(BlockchainApi);
             while (i++ < 60)
+            {
+                var currentState = api.Operations.GetOperationId(operationId).GetResponseObject().State;
+                if (currentState != BroadcastedTransactionState.Completed)
+                {
+                    if(currentState == BroadcastedTransactionState.Failed)
+                        break;
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+                }
+                else
+                    break;
+            }
+        }
+
+        public static void WaitForBalance(string wallet)
+        {
+            int i = 0;
+            var api = new BlockchainApi(BlockchainApi);
+            while (i++ < 40)
             {
                 if (!api.Balances.GetBalances("500", null).GetResponseObject().Items.Any(w => w.Address == wallet))
                 {

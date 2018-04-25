@@ -74,6 +74,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 var take = "1";
                 var continuation = TestData.GenerateString();
                 var response = blockchainApi.Balances.GetBalances(take, continuation);
+                Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.BadRequest, HttpStatusCode.OK));
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
             }
         }
