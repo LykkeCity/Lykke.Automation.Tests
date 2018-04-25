@@ -63,6 +63,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "raiblocks")
                 _settings = new RaiBlocksSettings();
 
+            if(blockchain == "waves")
+                _settings = new WavesSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -183,6 +186,24 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWallerAddressContext = "";
                 ClientId = "";
                 AssetId = "XRB";
+            }
+        }
+
+        public class WavesSettings : BlockchainSpecificModel
+        {
+            public WavesSettings()
+            {
+                BlockchainIntegration = "Waves";
+
+                BlockchainApi = "http://lykke-service-waves-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://lykke-service-waves-sign.autotests-service.svc.cluster.local/api";
+                HotWallet = "3N8FLCfGbzyPFZE2NPjXTpgLPXJy4KvnbdL";
+                HotWalletKey = "5sh7zcP4W3jnhTmF7ZnhKVsnpmLDkLn1KUVa94ZwF7Ka";
+                ExternalWalletAddress = "3NBQgiFAYGUAhwsP4iAFBqm9oKdv1ZEvjq2";
+                ExternalWalletKey = "5MGbbqvUvPWLbBLdfQKyvRwFWLktG1P7nC5UtpzahA4i";
+                ExternalWallerAddressContext = "";
+                ClientId = "";
+                AssetId = "WAVES";
             }
         }
 
