@@ -1,7 +1,10 @@
-﻿using System;
+﻿using AlgoStoreData.HelpersAlgoStore;
+using ApiV2Data.DTOs;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using XUnitTestCommon;
 
 namespace AlgoStoreData.DTOs
@@ -46,14 +49,14 @@ namespace AlgoStoreData.DTOs
 
     public class GetPopulatedInstanceDataDTO
     {
-        public static InstanceDataDTO returnInstanceDataDTO(string AlgoId)
+        public static InstanceDataDTO returnInstanceDataDTO(string AlgoId, WalletDTO walletDTO)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
-                InstanceName = Helpers.RandomString(13),
+                WalletId = walletDTO.Id,
+                InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
                     Parameters = new List<AlgoMetaDataParameter>()
@@ -61,7 +64,7 @@ namespace AlgoStoreData.DTOs
                         new AlgoMetaDataParameter()
                         {
                            Key = "StartFrom",
-                           Value = "10-02-2018",
+                           Value = "01-04-2018",
                            Type  ="DateTime"
                         },
                         new AlgoMetaDataParameter()
@@ -174,7 +177,7 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "01-04-2018",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter
@@ -190,17 +193,17 @@ namespace AlgoStoreData.DTOs
                                         Type = "String"
                                     },
                                      new AlgoMetaDataParameter()
-                                         {
-                                             Key = "AssetPair",
-                                             Value = "BTCEUR",
-                                             Type  ="String"
-                                         },
+                                    {
+                                        Key = "AssetPair",
+                                        Value = "BTCEUR",
+                                        Type  ="String"
+                                    },
                                     new AlgoMetaDataParameter()
-                                        {
-                                             Key = "TradedAsset",
-                                             Value = "EUR",
-                                            Type  ="String"
-                                        },
+                                    {
+                                        Key = "TradedAsset",
+                                        Value = "EUR",
+                                        Type  ="String"
+                                    },
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "CandleTimeInterval",
@@ -322,7 +325,7 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter()
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "01-04-2018",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter()
@@ -464,7 +467,7 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-02-2018",
+                                        Value = "01-04-2018",
                                         Type = "DateTime"
                                     },
                                     new AlgoMetaDataParameter
@@ -559,14 +562,14 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public static InstanceDataDTO returnInstanceDataDTOInvalidAssetPair(string AlgoId)
+        public static InstanceDataDTO returnInstanceDataDTOInvalidAssetPair(string AlgoId, WalletDTO walletDTO)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
-                InstanceName = Helpers.RandomString(13),
+                WalletId = walletDTO.Id,
+                InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
                     Parameters = new List<AlgoMetaDataParameter>()
@@ -1072,14 +1075,14 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public static InstanceDataDTO returnInstanceDataDTOInvalidTradedAsset(string AlgoId)
+        public static InstanceDataDTO returnInstanceDataDTOInvalidTradedAsset(string AlgoId, WalletDTO walletDTO)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
-                InstanceName = Helpers.RandomString(13),
+                WalletId = walletDTO.Id,
+                InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
                     Parameters = new List<AlgoMetaDataParameter>()
@@ -1584,14 +1587,14 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public static InstanceDataDTO returnInstanceDataDTOInvalidVolume(string AlgoId)
+        public static InstanceDataDTO returnInstanceDataDTOInvalidVolume(string AlgoId, WalletDTO walletDTO)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
-                InstanceName = Helpers.RandomString(13),
+                WalletId = walletDTO.Id,
+                InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
                     Parameters = new List<AlgoMetaDataParameter>()
@@ -2097,14 +2100,14 @@ namespace AlgoStoreData.DTOs
 
 
 
-        public static InstanceDataDTO returnInstanceDataDTONegativeVolume(string AlgoId)
+        public static InstanceDataDTO returnInstanceDataDTONegativeVolume(string AlgoId, WalletDTO walletDTO)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = "b44d1957-1a88-4c7b-ad0f-ba8e24005ae5",
-                InstanceName = Helpers.RandomString(13),
+                WalletId = walletDTO.Id,
+                InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
                     Parameters = new List<AlgoMetaDataParameter>()

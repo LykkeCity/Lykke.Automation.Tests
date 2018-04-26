@@ -21,5 +21,15 @@ namespace XUnitTestCommon
             var now = DateTime.Now;
             return string.Format("{0}-{1}-{2}_{3}-{4}", now.Year, now.Month, now.Day, now.Hour, now.Minute);
         }
+
+        public static string GetFullTimestamp()
+        {
+            return DateTime.Now.ToString("s");
+        }
+
+        public static string GetFullUtcTimestamp()
+        {
+            return DateTime.UtcNow.ToString("s");
+        }
     }
 }
