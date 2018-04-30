@@ -223,9 +223,9 @@ namespace AFTests.BlockchainsIntegrationTests
         public void AfterTests()
         {
             var context = TestContext.CurrentContext;
-            Environment.SetEnvironmentVariable("failedTests", context.Result.FailCount.ToString());
-            Environment.SetEnvironmentVariable("passedTests", context.Result.PassCount.ToString());
-            Environment.SetEnvironmentVariable("skippedTests", context.Result.SkipCount.ToString());
+            File.WriteAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "passed.txt"), context.Result.PassCount.ToString());
+            File.WriteAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "failed.txt"), context.Result.FailCount.ToString());
+            File.WriteAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "skipped.txt"), context.Result.SkipCount.ToString());
         }
     }
 }
