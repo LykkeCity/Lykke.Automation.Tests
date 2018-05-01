@@ -164,7 +164,7 @@ namespace AFTests.BlockchainsIntegration
                 WalletsUrl = null;
                 HotWallet = "1.2.20477:e91757da-6a69-43f4-8283-b2612703af59";
                 HotWalletKey = "keep_keys_private";
-                ExternalWalletAddress = "1.2.22396:::06eea045-43ee-4cca-a19d-1356abc2b70e";
+                ExternalWalletAddress = "1.2.22396:06eea045-43ee-4cca-a19d-1356abc2b70e";
                 ExternalWalletKey = "P5JjofmjPvvEt9iu7o3DneEqcMCzBesjcybJfGHHHGRtK";
                 ClientId = "";
                 AssetId = "1.3.0";
