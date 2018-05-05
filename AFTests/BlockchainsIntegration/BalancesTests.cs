@@ -173,6 +173,8 @@ namespace AFTests.BlockchainsIntegrationTests
                 newBlock = GetTransactionCompleteStatusTime(operationId, wallet.PublicAddress);
                 if (newBlock == null)
                 {
+                    var completeBlock = blockchainApi.Operations.GetOperationId(model.OperationId.ToString()).GetResponseObject();
+                     Assert.That(completeBlock.Block, Is.GreaterThan(startBlock), "Block when operation got complete status is not greater than block with start balance");
                     Assert.Pass("Transaction got Complete status and wallet dissapear from GET /balances request");
                 }
                 else
