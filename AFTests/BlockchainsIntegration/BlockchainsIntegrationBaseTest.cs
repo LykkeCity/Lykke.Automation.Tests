@@ -214,18 +214,4 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
     }
-
-    // move that and get work into BaseTest
-    [SetUpFixture]
-    public class HelperClass
-    {
-        [OneTimeTearDown]
-        public void AfterTests()
-        {
-            var context = TestContext.CurrentContext;
-            File.WriteAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "passed.txt"), context.Result.PassCount.ToString());
-            File.WriteAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "failed.txt"), context.Result.FailCount.ToString());
-            File.WriteAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "skipped.txt"), context.Result.SkipCount.ToString());
-        }
-    }
 }
