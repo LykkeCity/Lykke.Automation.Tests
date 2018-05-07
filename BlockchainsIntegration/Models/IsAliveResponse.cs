@@ -51,7 +51,7 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "env")]
+        [JsonProperty(PropertyName = "env", NullValueHandling = NullValueHandling.Ignore)]
         public string Env { get; set; }
 
         /// <summary>

@@ -8,6 +8,10 @@ namespace BlockchainsIntegration.Api
 {
     public class Constants: ApiBase
     {
+        public Constants(string URL) : base(URL)
+        {
+        }
+
         public IResponse<ConstantsResponse> GetConstants()
         {
             return Request.Get("/constants").Build().Execute<ConstantsResponse>();
