@@ -60,6 +60,12 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "bitshares")
                 _settings = new BitsharesSettings();
 
+            if (blockchain == "raiblocks")
+                _settings = new RaiBlocksSettings();
+
+            if(blockchain == "waves")
+                _settings = new WavesSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -73,10 +79,6 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://litecoin-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://litecoin-sign.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletAddress = "msvNWBpFNDQ6JxiEcTFU3xXbSnDir4EqCk";
-                DepositWalletKey = "cRTB3eAajJchgNuybhH5SwC9L5PFoTwxXBjgB8vRNJeJ4EpcXmAP";
-                WalletSingleUse = "mvErcbPuL4T4kxbJYejk6xLbv8pfBiiSPu";
-                WalletSingleUseKey = "cNn38kw6LSfAS6WvJJbFTqWRewa1GgfwczftXrBcyAmygM1V7qKr";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "LTC";
             }
@@ -89,10 +91,6 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://dash-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://dash-sign.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletAddress = "yUDQmubM2HtBFmkvbSK1rER1t57M5Mcvng";
-                DepositWalletKey = "cPX3K2xfuzoakmXMaJG5HrdFKuACxegcax5eq55SMHJ8YxvmttZz";
-                WalletSingleUse = "yiH2MLsx6bVZFgQ9qQNj5QeetGft8xDacC";
-                WalletSingleUseKey = "cQinitZ5SkZdARZPuXicFgGkKepWcjpB5fTx5WKHdvkMTdnB1yrq";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "DASH";
             }
@@ -105,10 +103,6 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://zcash-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://zcash-sign-service.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletAddress = "tmQjumT79zunETQgFxNTEMUKz8D841fMCf1";
-                DepositWalletKey = "cRPW3spyP9riDJWniNpcbDkiBjpLrhneSh2qTs3uSZUbm4HZLEyB";
-                WalletSingleUse = "tmCiRyHFZYeRyXV1wqyiqZad2Zf9ifdR9H5";
-                WalletSingleUseKey = "cVhrfsddvvhJhEEoqocSpdwZjJrTdQmHdWRKyvSqhyYvBDFD4die";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "ZEC";
             }
@@ -118,13 +112,14 @@ namespace AFTests.BlockchainsIntegration
         {
             public RippleSettings()
             {
+                BlockchainIntegration = "Ripple";
                 BlockchainApi = "http://ripple-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://ripple-sign-service.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletKey = "snfFfwhb7tobJcamWtH6GhvvhM6pi";
-                DepositWalletAddress = "rwAC8DbqubkRcYKuQQaqSBYppHD4JU84Pa";
-                WalletSingleUse = "rwAC8DbqubkRcYKuQQaqSBYppHD4JU84Pa";
-                WalletSingleUseKey = "snfFfwhb7tobJcamWtH6GhvvhM6pi";
+                HotWallet = "rJ2zMCyShMsjHf7tHptVy7qCWt6dYv8B7r";
+                HotWalletKey = "sndT9kLXjNv7L1HWfr6Lo5N6pmEvU";
+                ExternalWalletAddress = "rG1Zu2dm2Ty9pQrnGJux1RuKZA6qhjWwMc";
+                ExternalWalletKey = "ss91FvLcTaKNBAMtyfN2X3izKhNux";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "XRP";
             }
@@ -137,10 +132,6 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://stellar-api.lykke-service.svc.cluster.local/api";
                 BlockchainSign = "http://stellar-sign-service.lykke-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
-                DepositWalletAddress = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
-                WalletSingleUse = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
-                WalletSingleUseKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "XLM";
             }
@@ -150,15 +141,16 @@ namespace AFTests.BlockchainsIntegration
         {
             public StellarV2Settings()
             {
-                BlockchainApi = "http://stellar-api-schnidlo.lykke-service.svc.cluster.local/api";
-                BlockchainSign = "http://stellar-sign-service-schnidlo.lykke-service.svc.cluster.local/api";
+                BlockchainIntegration = "Stellar";
+                BlockchainApi = "http://stellar-api-schnidlo.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://stellar-sign-service-schnidlo.autotests-service.svc.cluster.local/api";
+                HotWallet = "GCCWY6MNVWORHO7B3L6W5LULGFR337K5UAATA2Z3FSPQA5MYRW5X33ZP";
+                HotWalletKey = "SBBEPWMAINBQKQFW42L6GTWF73WPP5VRVG6KZHCWZVSVM4DUMWZESK2Z";
                 WalletsUrl = null;
-                DepositWalletKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
-                DepositWalletAddress = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
-                WalletSingleUse = "GDGZG75SP7UVW6RRDNMFGCFFC5D5RZTXLAWYWUKYCHJ6SBJ2FTXFLXHA";
-                WalletSingleUseKey = "SA7W5C7CQOOJF2AGFL2B2LC7VM6WMAONYTAWVITGAKOJM757YDG4VOQG";
                 ClientId = "b623b171-a307-4485-897c-f3a70b763217";
                 AssetId = "XLM";
+                ExternalWalletAddress = "GDTCLM7L3RKSP324DBRROKRLTRU4WLSPLHDEVSC75LAVZFN6ZDQPK7LD";
+                ExternalWalletKey = "SCCSEPSZNHAIJXUVVHAN7ZHBSBSTBJY5Y2W7CJYIP3FALGAFEV5FEGMQ";
             }
         }
 
@@ -168,18 +160,50 @@ namespace AFTests.BlockchainsIntegration
             {
                 BlockchainIntegration = "Bitshares";
                 BlockchainApi = "http://lykke-service-bitshares-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://lykke-service-bitshares-sign.lykke-service.svc.cluster.local/api";
+                BlockchainSign = "http://lykke-service-bitshares-sign.autotests-service.svc.cluster.local/api";
                 WalletsUrl = null;
-                DepositWalletKey = "keep_keys_private";
-                DepositWalletAddress = "1.2.20477:::23088da2-9a5f-42de-bdd6-fe5ee259c8cd";
-                HotWallet = "1.2.20477:::e91757da-6a69-43f4-8283-b2612703af59";
+                HotWallet = "1.2.20477:e91757da-6a69-43f4-8283-b2612703af59";
                 HotWalletKey = "keep_keys_private";
-                ExternalWalletAddress = "1.2.20407:::06eea045-43ee-4cca-a19d-1356abc2b70e";
-                ExternalWalletKey = "keep_keys_private";
-                WalletSingleUse = "";
-                WalletSingleUseKey = "";
+                ExternalWalletAddress = "1.2.22396:06eea045-43ee-4cca-a19d-1356abc2b70e";
+                ExternalWalletKey = "5J5sD5KNh4ArR1VdJNyge2oiE9vSMs2A7VYaJQULUagHrMBXfcj";
                 ClientId = "";
                 AssetId = "1.3.0";
+                ExternalWallerAddressContext = "5KJBVnJaiYhVq7x3mF47f5xd6RUisnqjWCdc5fx9uhWSDdrd1MR";
+            }
+        }
+
+        public class RaiBlocksSettings : BlockchainSpecificModel
+        {
+            public RaiBlocksSettings()
+            {
+                BlockchainIntegration = "RaiBlocks";
+                BlockchainApi = "http://raiblocks-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://raiblocks-sign.autotests-service.svc.cluster.local/api";
+                HotWallet = "xrb_1ygmfkg4x394rnhpyhafs1qgwpdyiru1f393osig37qzoeiqqhpdxfa7w6kk";
+                HotWalletKey = "14DA575835310081121A8F7AA656377E5CBDBB96D8CE8672A564AF902F128FCB";
+                ExternalWalletAddress = "xrb_1e9pi3r7qa9qpsas68go55rmu7m8ku9np5pw3roeekx671joz7b1eiu1i8zk";
+                ExternalWalletKey = "4CF23CABA08F2C105DE9B80AA5CEBE37CAA3285E015258513F84E41100BDE2A9";
+                ExternalWallerAddressContext = "";
+                ClientId = "";
+                AssetId = "XRB";
+            }
+        }
+
+        public class WavesSettings : BlockchainSpecificModel
+        {
+            public WavesSettings()
+            {
+                BlockchainIntegration = "Waves";
+
+                BlockchainApi = "http://lykke-service-waves-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://lykke-service-waves-sign.autotests-service.svc.cluster.local/api";
+                HotWallet = "3N8FLCfGbzyPFZE2NPjXTpgLPXJy4KvnbdL";
+                HotWalletKey = "5sh7zcP4W3jnhTmF7ZnhKVsnpmLDkLn1KUVa94ZwF7Ka";
+                ExternalWalletAddress = "3NBQgiFAYGUAhwsP4iAFBqm9oKdv1ZEvjq2";
+                ExternalWalletKey = "5MGbbqvUvPWLbBLdfQKyvRwFWLktG1P7nC5UtpzahA4i";
+                ExternalWallerAddressContext = "";
+                ClientId = "";
+                AssetId = "WAVES";
             }
         }
 
@@ -201,13 +225,11 @@ namespace AFTests.BlockchainsIntegration
         public string HotWallet { get; set; }
         public string HotWalletKey { get; set; }
         public string WalletsUrl { get; set; }
-        public string DepositWalletAddress { get; set; }
-        public string DepositWalletKey { get; set; }
-        public string WalletSingleUse { get; set; }
-        public string WalletSingleUseKey { get; set; }
         public string ClientId { get; set; }
         public string AssetId { get; set; }
         public string ExternalWalletAddress { get; set; }
         public string ExternalWalletKey { get; set; }
+        public string ExternalWallerAddressContext { get; set; }
+        public long? BlockchainMiningTime { get; set; }
     }
 }

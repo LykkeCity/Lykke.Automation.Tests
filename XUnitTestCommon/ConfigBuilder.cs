@@ -30,6 +30,17 @@ namespace XUnitTestCommon
                TestItemName
                ).Build());
         }
+        public ConfigBuilder(string RootItem, string TestItemName)
+        {
+            this.lazyLocal = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().AddJsonFile("Config.json").Build());
+            this.lazy = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder()
+           .AddHttpJsonConfig(
+               LocalConfig["SettingsServiceURL"],
+               LocalConfig["SettingsServiceAccessToken"],
+               RootItem,
+               TestItemName
+               ).Build());
+        }
 
     }
 }

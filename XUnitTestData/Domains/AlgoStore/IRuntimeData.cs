@@ -4,7 +4,7 @@ using System.Text;
 
 namespace XUnitTestData.Domains.AlgoStore
 {
-    public interface IRuntimeData : IDictionaryItem
+    public interface IStatistics : IDictionaryItem
     {
          int BuildImageId { get; set; }
          long ImageId { get; set; }

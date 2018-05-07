@@ -15,5 +15,13 @@ namespace XUnitTestData.Entities.AlgoStore
         public int Volume { get; set; }
 
         public string Id => this.RowKey;
+
+        public string AlgoId { get; set; }
+        public dynamic AlgoMetaDataInformation { get; set; }
+        public string ClientId { get; set; }
+        public string InstanceName { get; set; }
+        public string WalletId { get; set; }
+        public string AlgoInstanceStatusValue { get; set; }
+        public string AlgoInstanceTypeValue { get; set; }
     }
 }

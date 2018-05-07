@@ -24,13 +24,13 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the IsAliveResponse class.
         /// </summary>
-        public IsAliveResponse(bool isDebug, string name = default(string), string version = default(string), string env = default(string), IList<IssueIndicator> issueIndicators = default(IList<IssueIndicator>))
+        public IsAliveResponse(bool isDebug, string name = default(string), string version = default(string), string env = default(string), string contractVersion = default(string))
         {
             Name = name;
             Version = version;
             Env = env;
             IsDebug = isDebug;
-            IssueIndicators = issueIndicators;
+            ContractVersion = contractVersion;
             CustomInit();
         }
 
@@ -51,7 +51,7 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "env")]
+        [JsonProperty(PropertyName = "env", NullValueHandling = NullValueHandling.Ignore)]
         public string Env { get; set; }
 
         /// <summary>
@@ -61,8 +61,8 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "issueIndicators")]
-        public IList<IssueIndicator> IssueIndicators { get; set; }
+        [JsonProperty(PropertyName = "contractVersion")]
+        public string ContractVersion { get; set; }
 
         /// <summary>
         /// Validate the object.

@@ -110,7 +110,7 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
             var requestBody = response.Request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
 
             var requestHeaders = response.Request.Parameters.FindAll(p => p.Type == ParameterType.HttpHeader);
-            string attachName = $"{response.Request.Method} {response.Request.Resource}";
+            string attachName = $"{DateTime.UtcNow.ToString("s")}(UTC) {response.Request.Method} {response.Request.Resource}";
             var attachContext = new StringBuilder();
             attachContext.AppendLine($"Executing {response.Request.Method} {response.ResponseUri}");
             if (requestBody != null)

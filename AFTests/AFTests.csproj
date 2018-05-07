@@ -46,6 +46,9 @@
 	</ItemGroup>
 
   <ItemGroup>
+    <None Update="AlgoStore\TestData\DummyAlgo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Dockerfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -53,6 +56,7 @@
 
   <ItemGroup>
     <Folder Include="AlgoStore\TestData\" />
+    <Folder Include="FIX\" />
   </ItemGroup>
 
 </Project>
