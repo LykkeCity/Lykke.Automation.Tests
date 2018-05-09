@@ -10,7 +10,7 @@ namespace PrivateServices.Resources.CandlesHistory
 {
     public class CandlesHistory
     {
-        private IRequestBuilder Request = Requests.For("http://candles-history.lykke-service.svc.cluster.local/api");
+        private IRequestBuilder Request = Requests.For("http://candles-history.prices.svc.cluster.local/api");// Requests.For("http://candles-history.lykke-service.svc.cluster.local/api");
 
         public IResponse<List<string>> GetAvailableAssetsPairs()
         {

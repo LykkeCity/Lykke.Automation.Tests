@@ -7,9 +7,10 @@
 namespace Lykke.Client.AutorestClient.Models
 {
     using Newtonsoft.Json;
+    using System;
     using System.Linq;
 
-    public partial class VolumePrice
+    public partial class VolumePrice : IComparable
     {
         /// <summary>
         /// Initializes a new instance of the VolumePrice class.
@@ -53,6 +54,12 @@ namespace Lykke.Client.AutorestClient.Models
         public virtual void Validate()
         {
             //Nothing to validate
+        }
+
+        public int CompareTo(object obj)
+        {
+            var volume1 = (VolumePrice)obj;
+            return (this.Price - volume1.Price) > 0 ? 1 : (this.Price - volume1.Price) == 0? 0 : -1;
         }
     }
 }
