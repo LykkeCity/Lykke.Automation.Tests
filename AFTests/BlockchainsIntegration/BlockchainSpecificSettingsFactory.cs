@@ -66,6 +66,9 @@ namespace AFTests.BlockchainsIntegration
             if(blockchain == "waves")
                 _settings = new WavesSettings();
 
+            if(blockchain == "bitcoincash")
+                _settings = new BitcoinCashSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -204,6 +207,24 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWallerAddressContext = "";
                 ClientId = "";
                 AssetId = "WAVES";
+            }
+        }
+
+        public class BitcoinCashSettings : BlockchainSpecificModel
+        {
+            public BitcoinCashSettings()
+            {
+                BlockchainIntegration = "BitcoinCash";
+
+                BlockchainApi = "http://bitcoincash-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://bitcoincash-sign.autotests-service.svc.cluster.local/api";
+                HotWallet = "mnKfRMF5R5x3qY2sNkUymhaj5WSNNHB9EF";
+                HotWalletKey = "cUXBjJxK5KNf8xvx3UYKZi1WASGPYqZLjBsat7spFY48QHezJRmR";
+                ExternalWalletAddress = "mnXmzoZEN8jc3xn5WJXwWV9jc4P9xeLi2C";
+                ExternalWalletKey = "cMmDCGs1TKLf3VUBSiULr7Pj4xsiWyNUnMpUMdxrTZtb174fLfaS";
+                ExternalWallerAddressContext = "";
+                ClientId = "";
+                AssetId = "BCH";
             }
         }
 
