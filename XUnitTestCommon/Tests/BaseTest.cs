@@ -164,4 +164,17 @@ namespace XUnitTestCommon.Tests
         #endregion
 
     }
+
+    [SetUpFixture]
+    public class HelperClass
+    {
+        [OneTimeTearDown]
+        public void AfterTests()
+        {
+            var context = TestContext.CurrentContext;
+            Environment.SetEnvironmentVariable("failedTests", context.Result.FailCount.ToString());
+            Environment.SetEnvironmentVariable("passedTests", context.Result.PassCount.ToString());
+            Environment.SetEnvironmentVariable("skippedTests", context.Result.SkipCount.ToString());
+        }
+    }
 }
