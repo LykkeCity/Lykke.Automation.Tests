@@ -33,7 +33,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitshares"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitcoingold"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
@@ -59,10 +59,11 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
         protected static string HOT_WALLET_KEY = _currentSettings.Value.HotWalletKey;
+        protected static string HOT_WALLET_CONTEXT = _currentSettings.Value.HotWalletAddressContext;
+
 
         protected static string BlockChainName = _currentSettings.Value.BlockchainIntegration;
 
-        protected static string CLIENT_ID = _currentSettings.Value.ClientId;
         protected static string ASSET_ID = _currentSettings.Value.AssetId;
 
         protected static string EXTERNAL_WALLET = _currentSettings.Value.ExternalWalletAddress;

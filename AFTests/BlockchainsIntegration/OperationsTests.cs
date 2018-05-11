@@ -636,6 +636,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     Amount = AMOUNT,
                     AssetId = ASSET_ID,
                     FromAddress = HOT_WALLET,
+                    FromAddressContext = HOT_WALLET_CONTEXT,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
                     ToAddress = EXTERNAL_WALLET
