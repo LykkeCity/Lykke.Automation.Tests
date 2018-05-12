@@ -66,10 +66,10 @@ namespace AFTests.CandlexHistory
 
                 // accuracy = 5
 
-                maxBuyPrice = ((maxBuyPrice * Math.Pow(10, 5)) % Math.Pow(10, 5) ) / Math.Pow(10, 5);
-                minSellPrice = ((minSellPrice * Math.Pow(10, 5)) % Math.Pow(10, 5)) / Math.Pow(10, 5);
+                maxBuyPrice = Make5numberAfterDot(maxBuyPrice);
+                minSellPrice = Make5numberAfterDot(minSellPrice);
 
-                fromMoment = DateTime.Now.AddSeconds(-3).ToUniversalTime();
+                fromMoment = DateTime.Now.ToUniversalTime();
 
                 var limitOrderRequestBuy = new LimitOrderRequest() { Price = maxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
@@ -130,8 +130,8 @@ namespace AFTests.CandlexHistory
                 var newMinSellPrice = minSellPrice - (minSellPrice - middle ) / 2;
                 var newMaxBuyPrice = maxBuyPrice + (middle - maxBuyPrice) / 2;
 
-                newMinSellPrice = (Math.Floor((newMinSellPrice * Math.Pow(10, 5)) % Math.Pow(10, 5))) / Math.Pow(10, 5);
-                newMaxBuyPrice = (Math.Floor((newMaxBuyPrice * Math.Pow(10, 5)) % Math.Pow(10, 5))) / Math.Pow(10, 5);
+                newMinSellPrice = Make5numberAfterDot(newMinSellPrice);
+                newMaxBuyPrice = Make5numberAfterDot(newMaxBuyPrice);
 
                 var request = new LimitOrderRequest() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
@@ -152,9 +152,24 @@ namespace AFTests.CandlexHistory
 
                 var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
 
+                var candlesMid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Mid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var expectedCloseMid = (candlesAsk.History.First().Close + candlesBid.History.First().Close) / 2;
+                var expectedOpenMid = (candlesAsk.History.First().Open + candlesBid.History.First().Open) /2;
+                var expectedLowMid = (candlesAsk.History.First().Low + candlesBid.History.First().Low) /2;
+
+                expectedLowMid = Make5numberAfterDot(expectedLowMid);
+                expectedOpenMid = Make5numberAfterDot(expectedOpenMid);
+                expectedCloseMid = Make5numberAfterDot(expectedCloseMid);
+
+
                 Assert.That(candlesAsk.History.Any(c => { return c.Close == newMinSellPrice; }), Is.True, $"Sell price {newMinSellPrice} is not present in Candles");
                 Assert.That(candlesBid.History.Any(c => { return c.Close == newMaxBuyPrice; }), Is.True, $"Buy price {newMaxBuyPrice} is not present in Candles");
-           }
+
+                Assert.That(candlesMid.History.First().Open, Is.EqualTo(expectedOpenMid), "Unexpected mid value");
+                Assert.That(candlesMid.History.First().Close, Is.EqualTo(expectedCloseMid), "Unexpected mid value");
+                Assert.That(candlesMid.History.First().Low, Is.EqualTo(expectedLowMid), "Unexpected mid value");
+            }
         }
 
         public class CandleHistoryDifferentPeriod : CandlesHistoryBaseTest
@@ -211,8 +226,8 @@ namespace AFTests.CandlexHistory
 
                 // accuracy = 5
 
-                maxBuyPrice = ((maxBuyPrice * Math.Pow(10, 5)) % Math.Pow(10, 5)) / Math.Pow(10, 5);
-                minSellPrice = ((minSellPrice * Math.Pow(10, 5)) % Math.Pow(10, 5)) / Math.Pow(10, 5);
+                maxBuyPrice = Make5numberAfterDot(maxBuyPrice);
+                minSellPrice = Make5numberAfterDot(minSellPrice);
 
                 fromMoment = DateTime.Now.ToUniversalTime();
 
@@ -275,8 +290,9 @@ namespace AFTests.CandlexHistory
                 var newMinSellPrice = minSellPrice - (minSellPrice - middle) / 2;
                 var newMaxBuyPrice = maxBuyPrice + (middle - maxBuyPrice) / 2;
 
-                newMinSellPrice = (Math.Floor((newMinSellPrice * Math.Pow(10, 5)) % Math.Pow(10, 5))) / Math.Pow(10, 5);
-                newMaxBuyPrice = (Math.Floor((newMaxBuyPrice * Math.Pow(10, 5)) % Math.Pow(10, 5))) / Math.Pow(10, 5);
+                newMinSellPrice = Make5numberAfterDot(newMinSellPrice);
+
+                newMaxBuyPrice = Make5numberAfterDot(newMaxBuyPrice);
 
                 var request = new LimitOrderRequest() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
@@ -314,6 +330,11 @@ namespace AFTests.CandlexHistory
 
                 // 
             }
+        }
+
+        static double Make5numberAfterDot(double input)
+        {
+            return (Math.Floor((input * Math.Pow(10, 5)) % Math.Pow(10, 5))) / Math.Pow(10, 5);
         }
     }
 }
