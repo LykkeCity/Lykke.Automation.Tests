@@ -332,6 +332,179 @@ namespace AFTests.CandlexHistory
             }
         }
 
+
+        // two trade wallet
+        public class CandleHistoryTradeType : CandlesHistoryBaseTest
+        {
+            string ApiKey = "92ca97e5-93ff-4847-ae6e-aee488c3ca35";
+            string SecondWalletApiKey = "1606b4dd-fe22-4425-92ea-dccd5fffcce8";
+            string AssetPairId = "chfDEB";
+            string SecondAssetId = "DEB";
+            DateTime fromMoment;
+            double tradingVolume = 0.1;
+
+            /// <summary>
+            /// set sell and buy prices to test candles
+            /// </summary>
+            [SetUp]
+            public void SetUp()
+            {
+                //to start from the minute
+                if (DateTime.Now.Second > 10)
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(60 - DateTime.Now.Second));
+
+                var orderBooks = hft.OrderBooks.GetOrderBooks(AssetPairId).GetResponseObject();
+
+                var minSellPrice = Double.MaxValue;
+                var maxBuyPrice = Double.MinValue;
+
+                orderBooks.FindAll(o => o.IsBuy == true).ForEach(o =>
+                {
+                    o.Prices.ToList().ForEach(p =>
+                    {
+                        if (p.Price > maxBuyPrice)
+                            maxBuyPrice = p.Price;
+                    });
+                });
+
+                orderBooks.FindAll(o => o.IsBuy == false).ForEach(o =>
+                {
+                    o.Prices.ToList().ForEach(p =>
+                    {
+                        if (p.Price < minSellPrice)
+                            minSellPrice = p.Price;
+                    });
+                });
+
+                if (maxBuyPrice == double.MinValue && minSellPrice != double.MaxValue)
+                    maxBuyPrice = 0.9 * minSellPrice;
+
+                if (minSellPrice == double.MaxValue && maxBuyPrice != double.MinValue)
+                    minSellPrice = 1.1 * maxBuyPrice;
+
+                if (minSellPrice == double.MaxValue && maxBuyPrice == double.MinValue)
+                {
+                    maxBuyPrice = 1.0;
+                    minSellPrice = 1.3;
+                }
+
+                // accuracy = 5
+
+                maxBuyPrice = Make5numberAfterDot(maxBuyPrice);
+                minSellPrice = Make5numberAfterDot(minSellPrice);
+
+                fromMoment = DateTime.Now.ToUniversalTime();
+
+                var limitOrderRequestBuy = new LimitOrderRequest() { Price = maxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+
+                var response = hft.Orders.PostOrdersLimitOrder(limitOrderRequestBuy, ApiKey);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                var limitOrderRequestSell = new LimitOrderRequest() { Price = minSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+
+                var response1 = hft.Orders.PostOrdersLimitOrder(limitOrderRequestSell, ApiKey);
+                response1.Validate.StatusCode(HttpStatusCode.OK);
+
+                //wait to appear in orderbook
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                var take = "100";
+                var skip = "0";
+
+                var response = hft.Orders.GetOrders(OrderStatus.InOrderBook, skip, take, ApiKey);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                response.GetResponseObject().ForEach(o => hft.Orders.PostOrdersCancelOrder(o.Id.ToString(), ApiKey));
+            }
+
+            [Test]
+            [Category("CandleHistory")]
+            public void CandleHistoryTradeTypeTest()
+            {
+                var orderBooks = hft.OrderBooks.GetOrderBooks(AssetPairId).GetResponseObject();
+
+                var minSellPrice = Double.MaxValue;
+                var maxBuyPrice = Double.MinValue;
+
+                orderBooks.FindAll(o => o.IsBuy == true).ForEach(o =>
+                {
+                    o.Prices.ToList().ForEach(p =>
+                    {
+                        if (p.Price > maxBuyPrice)
+                            maxBuyPrice = p.Price;
+                    });
+                });
+
+                orderBooks.FindAll(o => o.IsBuy == false).ForEach(o =>
+                {
+                    o.Prices.ToList().ForEach(p =>
+                    {
+                        if (p.Price < minSellPrice)
+                            minSellPrice = p.Price;
+                    });
+                });
+
+                var middle = (maxBuyPrice + minSellPrice) / 2;
+
+                //move sell price down and buy price up
+                var newMinSellPrice = minSellPrice - (minSellPrice - middle) / 2;
+                var newMaxBuyPrice = maxBuyPrice + (middle - maxBuyPrice) / 2;
+
+                newMinSellPrice = Make5numberAfterDot(newMinSellPrice);
+                newMaxBuyPrice = Make5numberAfterDot(newMaxBuyPrice);
+
+                var request = new LimitOrderRequest() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+
+                var response = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                var request1 = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+
+                var response1 = hft.Orders.PostOrdersLimitOrder(request1, ApiKey);
+                response1.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                //check order in Candles
+
+                //check candles
+                var candlesAsk = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.That(candlesTrades.History.Count, Is.EqualTo(0), "There were trades in test period. Unexpected");
+
+                //make trades
+                var requestSecondWallet = new LimitOrderRequest() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+
+                var responseSecondWallet = hft.Orders.PostOrdersLimitOrder(requestSecondWallet, SecondWalletApiKey);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                var request1SecondWallet = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+
+                var response1SecondWallet = hft.Orders.PostOrdersLimitOrder(request1SecondWallet, SecondWalletApiKey);
+                response1.Validate.StatusCode(HttpStatusCode.OK);
+
+                // validate trade candle
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+
+                candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.That(candlesTrades.History.First().Low, Is.EqualTo(newMaxBuyPrice), "Low value is not expected");
+                Assert.That(candlesTrades.History.First().High, Is.EqualTo(newMinSellPrice), "High value is not expected");
+                Assert.That(candlesTrades.History.First().TradingVolume, Is.EqualTo(tradingVolume *2), "Unexpected trading volume value");
+            }
+        }
+
+
+
         static double Make5numberAfterDot(double input)
         {
             return (Math.Floor((input * Math.Pow(10, 5)) % Math.Pow(10, 5))) / Math.Pow(10, 5);
