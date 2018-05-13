@@ -72,6 +72,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "bitcoingold")
                 _settings = new BitcoinGoldSettings();
 
+            if (blockchain == "monero")
+                _settings = new MoneroSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -228,6 +231,24 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "cUqJUTKQayhJb5VfHhyNnw6Xb8vGrn9ccbP6goMPyEVv2j1maeXo";
                 ExternalWallerAddressContext = "{\"PubKey\":\"0373d33c98cf7c2259e62194eb4937e5fcbf92f911e667320cd1741c86267087f8\"}";
                 AssetId = "BTG";
+            }
+        }
+
+        public class MoneroSettings : BlockchainSpecificModel
+        {
+            public MoneroSettings()
+            {
+                BlockchainIntegration = "Monero";
+                BlockchainApi = "http://monero-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://monero-sign.autotests-service.svc.cluster.local/api";
+                HotWallet = "A7gZHjpJUZd3Jvy5AvwkMSeQvocaWzjDTammvDZBLmb24KvkCyxoxAbMvJ8zrqGvMDjkJSjMCGtKJMFHzcVRmJMGaRayME9yxkbGovmcAz";
+                HotWalletKey = "ea7581947da5c6f27203531322830fd40f2e89ebc6729ca7a4ffda2b029e6708";
+                HotWalletAddressContext = "";
+                ExternalWalletAddress = "A7gZHjpJUZd3Jvy5AvwkMSeQvocaWzjDTammvDZBLmb24KvkCyxoxAbMvJ8zrqGvMDjkJSjMCGtKJMFHzcVRmJMGaPgyy3kH9TiRykHhGN";
+                ExternalWalletKey = "ea7581947da5c6f27203531322830fd40f2e89ebc6729ca7a4ffda2b029e6708";
+                ExternalWallerAddressContext = "";
+                AssetId = "XMR";
+                BlockchainMiningTime = 3;
             }
         }
 
