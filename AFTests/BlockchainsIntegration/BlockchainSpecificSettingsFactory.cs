@@ -248,7 +248,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "ea7581947da5c6f27203531322830fd40f2e89ebc6729ca7a4ffda2b029e6708";
                 ExternalWallerAddressContext = "";
                 AssetId = "XMR";
-                BlockchainMiningTime = 3;
+                BlockchainMiningTime = 7;
             }
         }
 

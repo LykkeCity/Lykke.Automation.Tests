@@ -9,6 +9,7 @@ using System.Text;
 using XUnitTestCommon.TestsData;
 using System.Linq;
 using System.Collections;
+using System.Diagnostics;
 
 namespace AFTests.BlockchainsIntegrationTests
 {
@@ -55,7 +56,9 @@ namespace AFTests.BlockchainsIntegrationTests
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
                 var getResponse = blockchainApi.Operations.GetOperationId(operationId);
-                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                Assert.That(() => blockchainApi.Operations.GetOperationId(operationId).StatusCode, Is.EqualTo(HttpStatusCode.OK).After(60*1000, 1*1000));
+
                 Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
             }
         }
@@ -726,11 +729,14 @@ namespace AFTests.BlockchainsIntegrationTests
                 AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
                 var take = "500";
 
-                int i = 60;
-                while(i-->0 && !blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.Any(w => w.Address == wallet.PublicAddress))
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+
+                while(sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME) && !blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.Any(w => w.Address == wallet.PublicAddress))
                 {
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
                 }
+                sw.Stop();
 
                 var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
 

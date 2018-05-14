@@ -14,6 +14,9 @@ using System.Linq;
 using BlockchainsIntegration.Models;
 using Lykke.Client.AutorestClient.Models;
 using System.Net;
+using XUnitTestCommon.ServiceSettings;
+using Newtonsoft.Json.Linq;
+using System.Diagnostics;
 
 namespace AFTests.BlockchainsIntegrationTests
 {
@@ -35,6 +38,8 @@ namespace AFTests.BlockchainsIntegrationTests
        {
             return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
+
+        
 
         protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
         protected BlockchainApi blockchainApi = new BlockchainApi(BlockchainApi);
@@ -202,9 +207,10 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public static void WaitForBalance(string wallet)
         {
-            int i = 0;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             var api = new BlockchainApi(BlockchainApi);
-            while (i++ < 40)
+            while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
             {
                 if (!api.Balances.GetBalances("500", null).GetResponseObject().Items.Any(w => w.Address == wallet))
                 {
@@ -213,6 +219,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 else
                     break;
             }
+            sw.Stop();
         }
     }
 }
