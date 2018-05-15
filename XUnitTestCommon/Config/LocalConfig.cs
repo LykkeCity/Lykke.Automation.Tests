@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,12 @@ namespace XUnitTestCommon.Config
         {
             var json = File.ReadAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Config.json"));
             return JsonConvert.DeserializeObject<LocalConfig>(json);
+        }
+
+        public static JObject GetLocalConfigJobject()
+        {
+            var json = File.ReadAllText(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Config.json"));
+            return JObject.Parse(json); 
         }
     }
 }
