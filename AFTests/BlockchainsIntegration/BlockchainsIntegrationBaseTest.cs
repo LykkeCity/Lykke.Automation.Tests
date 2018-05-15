@@ -207,10 +207,9 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public static void WaitForBalance(string wallet)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            int i = 60;
             var api = new BlockchainApi(BlockchainApi);
-            while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
+            while (i-->0)
             {
                 if (!api.Balances.GetBalances("500", null).GetResponseObject().Items.Any(w => w.Address == wallet))
                 {
@@ -219,7 +218,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 else
                     break;
             }
-            sw.Stop();
         }
     }
 }
