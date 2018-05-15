@@ -286,7 +286,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore("Many outputs are not supported by blockchain");
 
                 var response = blockchainApi.Operations.GetTransactionsManyOutputs(operationId);
-                Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest }, Does.Contain(response.StatusCode));
+                Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest, HttpStatusCode.MethodNotAllowed }, Does.Contain(response.StatusCode));
             }
         }
 
