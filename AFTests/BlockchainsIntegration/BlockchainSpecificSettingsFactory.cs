@@ -105,9 +105,14 @@ namespace AFTests.BlockchainsIntegration
         {
             public ZcashSettings()
             {
+                BlockchainIntegration = "Zcash";
                 BlockchainApi = "http://zcash-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://zcash-sign-service.autotests-service.svc.cluster.local/api";
                 AssetId = "ZEC";
+                HotWallet = "tmCd9qu9ffg2LX1Hsc87gNBFHrQH1F994aF";
+                HotWalletKey = "cU5b5pAnSBE4DoUtTVMQx5U8RTd3SaXjmVPSN8afDXCvGNayYKqa";
+                ExternalWalletAddress = "tmL4JCMEFQW2YtxQptLbBJtH6dzowHouyxw";
+                ExternalWalletKey = "cVWdihupzUy3GyP5bha15Dk1W1ejbETBngMV51xATMJzr4Z6fnRk";
             }
         }
 
