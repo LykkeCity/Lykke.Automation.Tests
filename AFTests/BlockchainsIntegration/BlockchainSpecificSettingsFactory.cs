@@ -88,6 +88,10 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://litecoin-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://litecoin-sign.autotests-service.svc.cluster.local/api";
                 AssetId = "LTC";
+                ExternalWalletAddress = "QiKk2wXBuVEARMUkGqKQFyjm1nJayAU8ZC";
+                ExternalWalletKey = "cSARwquJjL3wcaSZhke5u48UkLF7zDJChrHWaLYnWegpQXjER1fZ";
+                ExternalWallerAddressContext ="{\"PubKey\":\"02d02b90654309b5c12abf0789fbc8a113fdd238f863b5692ac9c7b3fa909be34c\"}";
+
             }
         }
 
