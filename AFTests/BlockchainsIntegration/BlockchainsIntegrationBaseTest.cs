@@ -73,9 +73,6 @@ namespace AFTests.BlockchainsIntegrationTests
             return result;
         }
 
-            //
-        
-
         protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
         protected BlockchainApi blockchainApi = new BlockchainApi(BlockchainApi);
         protected BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);

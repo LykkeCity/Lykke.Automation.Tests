@@ -39,13 +39,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 blockchainApi.Balances.GetBalances(take, null).Validate.StatusCode(HttpStatusCode.OK);
 
                 Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == wallet.PublicAddress),
-                    Is.True.After(5 * 60 * 1000, 1 * 1000), $"Wallet {wallet.PublicAddress} is not present in Get Balances after 10 minutes");
-
-                //disable
-                var dResponse = blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
-
-                Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == wallet.PublicAddress),
-                    Is.False.After(1 * 60 * 1000, 1 * 1000), "Wallet still present in Get Balances after Delete");
+                    Is.True.After(5 * 60 * 1000, 1 * 1000), $"Wallet {wallet.PublicAddress} is not present in Get Balances after 10 minutes");        
             }
         }
 
@@ -157,7 +151,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     FromAddress = wallet.PublicAddress,
                     IncludeFee = true,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
@@ -183,9 +178,6 @@ namespace AFTests.BlockchainsIntegrationTests
                     TestContext.Progress.WriteLine($"old block: {startBlock} \n new block: {newBlock}");
 
                     Assert.That(newBlock.Value, Is.GreaterThan(startBlock), $"New balance block is not greater than previous");
-
-
-                    // new part 
 
                     Stopwatch sw = new Stopwatch();
                     sw.Start();

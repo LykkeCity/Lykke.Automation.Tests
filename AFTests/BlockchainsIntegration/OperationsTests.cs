@@ -675,7 +675,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     FromAddress = wallet.PublicAddress,
                     IncludeFee = true,
                     OperationId = operationId,
-                    ToAddress = HOT_WALLET
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model);
@@ -734,7 +735,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     FromAddress = wallet.PublicAddress,
                     IncludeFee = true,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
@@ -796,7 +798,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     FromAddress = wallet.PublicAddress,
                     IncludeFee = true,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
@@ -842,7 +845,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     FromAddress = HOT_WALLET,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = EXTERNAL_WALLET
+                    ToAddress = EXTERNAL_WALLET,
+                    FromAddressContext = HOT_WALLET_CONTEXT
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
@@ -900,7 +904,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     FromAddress = wallet.PublicAddress,
                     IncludeFee = true,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
