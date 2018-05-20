@@ -21,7 +21,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -35,8 +35,6 @@ namespace AFTests.BlockchainsIntegrationTests
             public void GetBalancesTest()
             {
                 var take = "500";
-
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
 
                 blockchainApi.Balances.GetBalances(take, null).Validate.StatusCode(HttpStatusCode.OK);
 
@@ -123,7 +121,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -139,7 +137,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 // enable observation
 
                 var pResponse = blockchainApi.Balances.PostBalances(wallet.PublicAddress);
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
 
                 blockchainApi.Balances.GetBalances("500", null).Validate.StatusCode(HttpStatusCode.OK);
 

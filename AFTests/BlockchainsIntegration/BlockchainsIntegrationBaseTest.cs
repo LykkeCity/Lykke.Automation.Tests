@@ -24,6 +24,7 @@ namespace AFTests.BlockchainsIntegrationTests
     class BlockchainsIntegrationBaseTest : BaseTest
     {
         private static object _lock = new object();
+        private static Queue<WalletCreationResponse> result = null;
 
         private static Lazy<BlockchainSpecificModel> _currentSettings
         {
@@ -36,9 +37,43 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitshares"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
+       //wallets
+
+        //partial static WalletCreationResponse
+
+        protected static Queue<WalletCreationResponse> Wallets()
+        {
+            lock (_lock)
+            {
+                if (result == null)
+                {
+                    result = new Queue<WalletCreationResponse>();
+                    BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
+                    for (var i = 0; i < 19; i++)
+                    {
+                        var wallet = blockchainSign.PostWallet();
+                        if (wallet.StatusCode != HttpStatusCode.OK)
+                            throw new Exception($"Cant create wallet. Got: {wallet.StatusCode}.  {wallet.Content}");
+                        result.Enqueue(wallet.GetResponseObject());
+
+                        AddCyptoToBalanceFromExternal(wallet.GetResponseObject().PublicAddress, wallet.GetResponseObject().PrivateKey, false);
+                    }
+
+                    var lastWallet = blockchainSign.PostWallet();
+                    if (lastWallet.StatusCode != HttpStatusCode.OK)
+                        throw new Exception($"Cant create wallet. Got: {lastWallet.StatusCode}.  {lastWallet.Content}");
+                    result.Enqueue(lastWallet.GetResponseObject());
+
+                    AddCyptoToBalanceFromExternal(lastWallet.GetResponseObject().PublicAddress, lastWallet.GetResponseObject().PrivateKey);
+                }
+            }
+            return result;
+        }
+
+            //
         
 
         protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
@@ -46,23 +81,8 @@ namespace AFTests.BlockchainsIntegrationTests
         protected BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
         protected BlockchainWallets blockchainWallets = new BlockchainWallets();
 
-        protected static string HOT_WALLET
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    if (string.IsNullOrEmpty(_currentSettings.Value.HotWallet))
-                    {
-                        var wallet = new BlockchainSign(_currentSettings.Value.BlockchainSign).PostWallet().GetResponseObject();
-                        _currentSettings.Value.HotWallet = wallet.PublicAddress;
-                        _currentSettings.Value.HotWalletKey = wallet.PrivateKey;
-                    }
-                }
+        protected static string HOT_WALLET = _currentSettings.Value.HotWallet;
 
-                return _currentSettings.Value.HotWallet;
-            }
-        }
         protected static string HOT_WALLET_KEY = _currentSettings.Value.HotWalletKey;
         protected static string HOT_WALLET_CONTEXT = _currentSettings.Value.HotWalletAddressContext;
 
@@ -97,7 +117,7 @@ namespace AFTests.BlockchainsIntegrationTests
             new Allure2Report().CreateEnvFile();
         }
 
-        protected static void AddCyptoToBalanceFromExternal(string walletAddress, string walletKey = null)
+        protected static void AddCyptoToBalanceFromExternal(string walletAddress, string walletKey = null, bool wait = true)
         {
             var api = new BlockchainApi(BlockchainApi);
             var sign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
@@ -112,7 +132,7 @@ namespace AFTests.BlockchainsIntegrationTests
             }
             else if (BlockChainName == "RaiBlocks" || ( recieveSupport != null && recieveSupport.Value)) //raiblocks - temp. will be removed after capablities enabled
             {
-                AddCryptoToWalletWithRecieveTransaction(walletAddress, walletKey);
+                AddCryptoToWalletWithRecieveTransaction(walletAddress, walletKey, wait);
             }
             else
             {
@@ -136,12 +156,15 @@ namespace AFTests.BlockchainsIntegrationTests
                 var response = api.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
                 var getResponse = api.Operations.GetOperationId(operationId);
-                WaitForOperationGotCompleteStatus(operationId);
+
+                if(wait)
+                    WaitForOperationGotCompleteStatus(operationId);
             }
-            WaitForBalance(walletAddress);
+            if (wait)
+                WaitForBalance(walletAddress);
         }
 
-        protected static void AddCryptoToWalletWithRecieveTransaction(string walletAddress, string walletKey)
+        protected static void AddCryptoToWalletWithRecieveTransaction(string walletAddress, string walletKey, bool wait = true)
         {
             var api = new BlockchainApi(BlockchainApi);
             var sign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
@@ -184,14 +207,17 @@ namespace AFTests.BlockchainsIntegrationTests
             var signReciveResponse = sign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { walletKey }, TransactionContext = recieve.transactionContext}).GetResponseObject();
 
             var responseRecieve = api.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = reciveModel.operationId, SignedTransaction = signReciveResponse.SignedTransaction });
-            WaitForBalance(walletAddress);
+
+            if (wait)
+                WaitForBalance(walletAddress);
         }
 
         public static void WaitForOperationGotCompleteStatus(string operationId)
         {
-            int i = 0;
             var api = new BlockchainApi(BlockchainApi);
-            while (i++ < 60)
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
             {
                 var currentState = api.Operations.GetOperationId(operationId).GetResponseObject().State;
                 if (currentState != BroadcastedTransactionState.Completed)
@@ -203,6 +229,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 else
                     break;
             }
+            sw.Stop();
         }
 
         public static void WaitForBalance(string wallet)

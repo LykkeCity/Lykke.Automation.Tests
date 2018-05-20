@@ -22,7 +22,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -35,8 +35,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetOperationIdTest()
             {
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
-
                 var model = new BuildSingleTransactionRequest()
                 {
                     Amount = AMOUNT,
@@ -122,7 +120,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -135,8 +133,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostTransactionsBroadcastTest()
             {
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
-
                 var model = new BuildSingleTransactionRequest()
                 {
                     Amount = AMOUNT,
@@ -166,7 +162,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -179,8 +175,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostTransactionsBroadcastInvalidTransactionTest()
             {
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
-
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
                     
                 var model = new BuildSingleTransactionRequest()
@@ -215,7 +209,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -228,8 +222,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DeleteOperationIdTest()
             {
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
-
                 Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.Any(w => w.Address == wallet.PublicAddress), Is.True.After(2*60*1000, 2*1000), "");
 
                 var model = new BuildSingleTransactionRequest()
@@ -297,7 +289,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -313,8 +305,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyOutputsSupported;
                 if (!run.Value)
                     Assert.Ignore("Many outputs are not supported by blockchain");
-
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
 
                 var model = new BuildSingleTransactionRequest()
                 {
@@ -377,7 +367,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -393,8 +383,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyInputsSupported;
                 if (!run.Value)
                     Assert.Ignore("Many inputs are not supported by blockchain");
-
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
 
                 var model = new BuildSingleTransactionRequest()
                 {
@@ -441,7 +429,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -576,7 +564,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -665,7 +653,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -679,8 +667,6 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SameOperationIdFoDifferentTransactionsTest()
             {
                 var operationId = Guid.NewGuid();
-
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
 
                 var model = new BuildSingleTransactionRequest()
                 {
@@ -709,7 +695,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -726,7 +712,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 Assert.That(HOT_WALLET, Is.Not.Null.Or.Empty, "Hot wallet address and key are empty!");
 
                 blockchainApi.Balances.PostBalances(wallet.PublicAddress);
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
                 var take = "500";
 
                 Stopwatch sw = new Stopwatch();
@@ -782,7 +767,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -795,8 +780,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DWHWTransferDoubleBroadcastTest()
             {
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
-
                 string take = "500";
                 int i = 60;
                 while (i-- > 0 && !blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.Any(w => w.Address == wallet.PublicAddress))
@@ -839,7 +822,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -885,7 +868,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [SetUp]
             public void SetUp()
             {
-                wallet = blockchainSign.PostWallet().GetResponseObject();
+                wallet = Wallets().Dequeue();
             }
 
             [TearDown]
@@ -898,7 +881,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DWHWPartialTransferDoubleBroadcastTest()
             {
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
 
                 string take = "500";
                 int i = 60;
