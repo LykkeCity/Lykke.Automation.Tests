@@ -95,6 +95,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWallet = "QX8BHEUPhKhPgo26QrrvY84FUzpKuhX1Uq";
                 HotWalletKey = "cSS6VUdFTuKfr4uFPT9Vy6CCU5SHsTEKRDNrzEaHQZRrVb3eQUi3";
                 HotWalletAddressContext = "{\"PubKey\":\"03584f2d9dac279c2a85e58e97f67fc6559a60d950ba30cc4cee544c2ef8457ba1\"}";
+                BlockchainMiningTime = 20;
             }
         }
 
