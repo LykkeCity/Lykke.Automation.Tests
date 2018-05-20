@@ -92,6 +92,9 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "cSARwquJjL3wcaSZhke5u48UkLF7zDJChrHWaLYnWegpQXjER1fZ";
                 ExternalWallerAddressContext ="{\"PubKey\":\"02d02b90654309b5c12abf0789fbc8a113fdd238f863b5692ac9c7b3fa909be34c\"}";
 
+                HotWallet = "QX8BHEUPhKhPgo26QrrvY84FUzpKuhX1Uq";
+                HotWalletKey = "cSS6VUdFTuKfr4uFPT9Vy6CCU5SHsTEKRDNrzEaHQZRrVb3eQUi3";
+                HotWalletAddressContext = "{\"PubKey\":\"03584f2d9dac279c2a85e58e97f67fc6559a60d950ba30cc4cee544c2ef8457ba1\"}";
             }
         }
 
