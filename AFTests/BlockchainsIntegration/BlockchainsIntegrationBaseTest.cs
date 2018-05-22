@@ -37,7 +37,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Zcash"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitshares"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         protected static Queue<WalletCreationResponse> Wallets()
@@ -74,7 +74,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
             List<TransactionOutputContract> transactions = new List<TransactionOutputContract>();
 
-            wallets.ForEach(w => transactions.Add(new TransactionOutputContract() {Amount = AMOUNT, ToAddress = w.PublicAddress }));
+            wallets.ForEach(w => transactions.Add(new TransactionOutputContract() {Amount = AMOUT_WITH_FEE, ToAddress = w.PublicAddress }));
             var request = new BuildTransactionWithManyOutputsRequest()
             {
                 AssetId = ASSET_ID,
@@ -182,6 +182,31 @@ namespace AFTests.BlockchainsIntegrationTests
             }
             if (wait)
                 WaitForBalance(walletAddress);
+        }
+
+        protected static void ReturnMoneyToEW()
+        {
+            var api = new BlockchainApi(BlockchainApi);
+            var sign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
+
+            var model = new BuildSingleTransactionRequest()
+            {
+                Amount = AMOUNT,
+                AssetId = ASSET_ID,
+                FromAddress = HOT_WALLET,
+                IncludeFee = false,
+                OperationId = Guid.NewGuid(),
+                ToAddress = EXTERNAL_WALLET,
+                FromAddressContext = HOT_WALLET_CONTEXT
+            };
+
+            var responseTransaction = api.Operations.PostTransactions(model).GetResponseObject();
+            string operationId = model.OperationId.ToString();
+
+            var signResponse = sign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { HOT_WALLET_KEY }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+            var response = api.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
         }
 
         protected static void AddCryptoToWalletWithRecieveTransaction(string walletAddress, string walletKey, bool wait = true)

@@ -27,6 +27,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -39,7 +40,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 blockchainApi.Balances.GetBalances(take, null).Validate.StatusCode(HttpStatusCode.OK);
 
                 Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == wallet.PublicAddress),
-                    Is.True.After(5 * 60 * 1000, 1 * 1000), $"Wallet {wallet.PublicAddress} is not present in Get Balances after 10 minutes");        
+                    Is.True.After((int)BLOCKCHAIN_MINING_TIME * 60 * 1000, 1 * 1000), $"Wallet {wallet.PublicAddress} is not present in Get Balances after {BLOCKCHAIN_MINING_TIME} minutes");        
             }
         }
 
@@ -121,6 +122,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 

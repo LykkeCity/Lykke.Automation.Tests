@@ -28,6 +28,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -126,6 +127,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -168,6 +170,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -215,6 +218,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -295,6 +299,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -373,6 +378,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -435,6 +441,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -570,6 +577,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -659,6 +667,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -702,6 +711,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -775,6 +785,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -831,6 +842,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -878,6 +890,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 

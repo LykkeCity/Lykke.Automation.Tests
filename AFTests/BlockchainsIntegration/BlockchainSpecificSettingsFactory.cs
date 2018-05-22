@@ -51,9 +51,6 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "ripple")
                 _settings = new RippleSettings();
 
-            if (blockchain == "stellar")
-                _settings = new StellarSettings();
-
             if (blockchain == "stellar-v2")
                 _settings = new StellarV2Settings();
 
@@ -136,16 +133,6 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletAddress = "rG1Zu2dm2Ty9pQrnGJux1RuKZA6qhjWwMc";
                 ExternalWalletKey = "ss91FvLcTaKNBAMtyfN2X3izKhNux";
                 AssetId = "XRP";
-            }
-        }
-
-        class StellarSettings : BlockchainSpecificModel
-        {
-            public StellarSettings()
-            {
-                BlockchainApi = "http://stellar-api.lykke-service.svc.cluster.local/api";
-                BlockchainSign = "http://stellar-sign-service.lykke-service.svc.cluster.local/api";
-                AssetId = "XLM";
             }
         }
 
@@ -244,6 +231,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "cUqJUTKQayhJb5VfHhyNnw6Xb8vGrn9ccbP6goMPyEVv2j1maeXo";
                 ExternalWallerAddressContext = "{\"PubKey\":\"0373d33c98cf7c2259e62194eb4937e5fcbf92f911e667320cd1741c86267087f8\"}";
                 AssetId = "BTG";
+                BlockchainMiningTime = 20;
             }
         }
 
