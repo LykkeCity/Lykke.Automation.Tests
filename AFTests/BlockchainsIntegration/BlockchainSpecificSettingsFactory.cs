@@ -118,6 +118,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWalletKey = "cU5b5pAnSBE4DoUtTVMQx5U8RTd3SaXjmVPSN8afDXCvGNayYKqa";
                 ExternalWalletAddress = "tmL4JCMEFQW2YtxQptLbBJtH6dzowHouyxw";
                 ExternalWalletKey = "cVWdihupzUy3GyP5bha15Dk1W1ejbETBngMV51xATMJzr4Z6fnRk";
+                BlockchainMiningTime = 20;
             }
         }
 
@@ -231,7 +232,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "cUqJUTKQayhJb5VfHhyNnw6Xb8vGrn9ccbP6goMPyEVv2j1maeXo";
                 ExternalWallerAddressContext = "{\"PubKey\":\"0373d33c98cf7c2259e62194eb4937e5fcbf92f911e667320cd1741c86267087f8\"}";
                 AssetId = "BTG";
-                BlockchainMiningTime = 20;
+                BlockchainMiningTime = 40;
             }
         }
 

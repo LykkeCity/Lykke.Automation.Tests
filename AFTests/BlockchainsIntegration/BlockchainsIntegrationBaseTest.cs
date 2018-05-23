@@ -62,7 +62,12 @@ namespace AFTests.BlockchainsIntegrationTests
                         result.ToList().ForEach(w => WaitForBalance(w.PublicAddress));
                     }
                 }
+                result.ToList().ForEach(w => 
+                {
+                    TestContext.Out.WriteLine($"wallet {w.PublicAddress} balance: { new BlockchainApi(_currentSettings.Value.BlockchainApi).Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(wallet => wallet.Address == w.PublicAddress)?.Balance}");
+                });
             }
+            
             return result;
         }
 
@@ -186,6 +191,8 @@ namespace AFTests.BlockchainsIntegrationTests
 
         protected static void ReturnMoneyToEW()
         {
+            return;
+            //do nothing right now
             var api = new BlockchainApi(BlockchainApi);
             var sign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
 

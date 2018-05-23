@@ -23,6 +23,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -56,7 +57,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var getResponse = blockchainApi.Operations.GetOperationId(operationId);
 
-                Assert.That(() => blockchainApi.Operations.GetOperationId(operationId).StatusCode, Is.EqualTo(HttpStatusCode.OK).After(60*1000, 1*1000));
+                Assert.That(() => blockchainApi.Operations.GetOperationId(operationId).StatusCode, Is.EqualTo(HttpStatusCode.OK).After((int)BLOCKCHAIN_MINING_TIME * 60*1000, 1*1000));
 
                 Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
             }
@@ -122,6 +123,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -165,6 +167,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -213,6 +216,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -294,6 +298,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -373,6 +378,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -436,6 +442,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -572,6 +579,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -662,6 +670,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -706,6 +715,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -761,12 +771,12 @@ namespace AFTests.BlockchainsIntegrationTests
                 Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
                 if(getResponse.GetResponseObject().State == BroadcastedTransactionState.Completed)
                 {
-                    Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.EqualTo("0").Or.Null.After( 60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
+                    Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.EqualTo("0").Or.Null.After((int)BLOCKCHAIN_MINING_TIME*60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
                 }
                 else
                 {
                     //validate balance is 0 or null
-                    Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.EqualTo("0").Or.Null.After(5 * 60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
+                    Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.EqualTo("0").Or.Null.After((int)BLOCKCHAIN_MINING_TIME * 60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
                 }   
             }
         }
@@ -780,6 +790,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -837,6 +848,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -885,6 +897,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -938,7 +951,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 var balanceAfterTransaction = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
 
                 Assert.That(balanceAfterTransaction, Is.EqualTo(Math.Round(long.Parse(currentBalance) * 0.1).ToString()), "Unexpected Balance after partial transaction");
-
             }
         }
     }

@@ -22,6 +22,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -117,6 +118,7 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
             }
 
             [TearDown]
@@ -173,7 +175,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 }
                 else
                 {
-                    Assert.That(() => blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State, Is.EqualTo(BroadcastedTransactionState.Completed), $"Request doesnt have Complete status after 10 minutes and still in a {blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State}");
+                    Assert.That(() => blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State, Is.EqualTo(BroadcastedTransactionState.Completed), $"Request doesnt have Complete status after {BLOCKCHAIN_MINING_TIME} minutes and still in a {blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State}");
 
                     var transactionBlock = blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().Block;
 
