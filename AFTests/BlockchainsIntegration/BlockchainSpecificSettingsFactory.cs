@@ -118,7 +118,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWalletKey = "cU5b5pAnSBE4DoUtTVMQx5U8RTd3SaXjmVPSN8afDXCvGNayYKqa";
                 ExternalWalletAddress = "tmL4JCMEFQW2YtxQptLbBJtH6dzowHouyxw";
                 ExternalWalletKey = "cVWdihupzUy3GyP5bha15Dk1W1ejbETBngMV51xATMJzr4Z6fnRk";
-                BlockchainMiningTime = 20;
+                BlockchainMiningTime = 30;
             }
         }
 
