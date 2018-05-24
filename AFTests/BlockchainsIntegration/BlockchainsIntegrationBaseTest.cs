@@ -88,6 +88,9 @@ namespace AFTests.BlockchainsIntegrationTests
                 Outputs = transactions
             };
 
+            wallets.ForEach(w =>
+                new BlockchainApi(_currentSettings.Value.BlockchainApi).Balances.PostBalances(w.PublicAddress));
+
             var response = new BlockchainApi(_currentSettings.Value.BlockchainApi).Operations.PostTransactionsManyOutputs(request);
             response.Validate.StatusCode(HttpStatusCode.OK);
 
@@ -95,9 +98,6 @@ namespace AFTests.BlockchainsIntegrationTests
 
             var broadcastRequset = new BroadcastTransactionRequest() { OperationId = request.OperationId, SignedTransaction = signResponse.GetResponseObject().SignedTransaction };
             var broadcatedResponse = new BlockchainApi(_currentSettings.Value.BlockchainApi).Operations.PostTransactionsBroadcast(broadcastRequset);
-
-            wallets.ForEach(w =>
-                new BlockchainApi(_currentSettings.Value.BlockchainApi).Balances.PostBalances(w.PublicAddress));
 
             WaitForBalance(wallets[0].PublicAddress);
 
