@@ -198,7 +198,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "5MGbbqvUvPWLbBLdfQKyvRwFWLktG1P7nC5UtpzahA4i";
                 ExternalWallerAddressContext = "";
                 AssetId = "WAVES";
-                BlockchainMiningTime = 20;
+                BlockchainMiningTime = 25;
             }
         }
 
