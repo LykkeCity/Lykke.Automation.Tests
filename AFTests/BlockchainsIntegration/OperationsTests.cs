@@ -29,7 +29,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -129,7 +128,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -173,7 +171,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -222,7 +219,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -304,7 +300,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -384,7 +379,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -448,7 +442,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -483,94 +476,6 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class DeleteTranstactionsObservationFromInvalidAddress : BlockchainsIntegrationBaseTest
-        {
-            [TestCase("testOId")]
-            [TestCase("1234")]
-            [TestCase("!@%^&*()")]
-            [Category("BlockchainIntegration")]
-            public void DeleteTranstactionsObservationFromInvalidAddressTest(string address)
-            {
-                var response = blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(address);
-                response.Validate.StatusCode(HttpStatusCode.BadRequest);
-            }
-        }
-
-        public class DeleteTranstactionsObservationFromValidAddress : BlockchainsIntegrationBaseTest
-        {
-            [Test]
-            [Category("BlockchainIntegration")]
-            public void DeleteTranstactionsObservationFromValidAddressTest()
-            {
-                var address = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
-                var response = blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(address);
-                Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.OK, HttpStatusCode.NoContent), "Unexpected status code");
-            }
-        }
-
-        public class DeleteTranstactionsObservationToInvalidAddress : BlockchainsIntegrationBaseTest
-        {
-            [TestCase("testOId")]
-            [TestCase("1234")]
-            [TestCase("!@%^&*()")]
-            [Category("BlockchainIntegration")]
-            public void DeleteTranstactionsObservationToInvalidAddressTest(string address)
-            {
-                var response = blockchainApi.Operations.DeleteTranstactionsObservationToAddress(address);
-                response.Validate.StatusCode(HttpStatusCode.BadRequest);
-            }
-        }
-
-        public class DeleteTranstactionsObservationToValidAddress : BlockchainsIntegrationBaseTest
-        {
-            [Test]
-            [Category("BlockchainIntegration")]
-            public void DeleteTranstactionsObservatioToValidAddressTest()
-            {
-                var address = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
-                var response = blockchainApi.Operations.DeleteTranstactionsObservationToAddress(address);
-                Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.NoContent, HttpStatusCode.OK));
-            }
-        }
-
-        public class DeleteTranstactionsObservationFromValidAddressPositive : BlockchainsIntegrationBaseTest
-        {
-            [Test]
-            [Category("BlockchainIntegration")]
-            public void DeleteTranstactionsObservationFromValidAddressPositiveTest()
-            {
-                //remove in case it is enabled
-                var newWallet = blockchainSign.PostWallet().GetResponseObject();
-
-                blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(newWallet.PublicAddress);
-
-                var response = blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet.PublicAddress);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-
-                var delete = blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(newWallet.PublicAddress);
-                delete.Validate.StatusCode(HttpStatusCode.OK);
-            }
-        }
-
-        public class DeleteTranstactionsObservationToValidAddressPositive : BlockchainsIntegrationBaseTest
-        {
-            [Test]
-            [Category("BlockchainIntegration")]
-            public void DeleteTranstactionsObservationToValidAddressPositiveTest()
-            {
-                var wallet = blockchainSign.PostWallet().GetResponseObject();
-
-                //remove in case it is enabled
-                blockchainApi.Operations.DeleteTranstactionsObservationToAddress(wallet.PublicAddress);
-
-                var response = blockchainApi.Operations.PostHistoryFromToAddress("to", wallet.PublicAddress);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-
-                var delete = blockchainApi.Operations.DeleteTranstactionsObservationToAddress(wallet.PublicAddress);
-                delete.Validate.StatusCode(HttpStatusCode.OK);
-            }
-        }
-
         public class EWDWTransfer : BlockchainsIntegrationBaseTest
         {
             WalletCreationResponse wallet;
@@ -585,7 +490,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -676,7 +580,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -721,7 +624,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -796,7 +698,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -854,7 +755,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -903,7 +803,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 

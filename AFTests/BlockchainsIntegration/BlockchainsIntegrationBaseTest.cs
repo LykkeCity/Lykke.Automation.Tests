@@ -192,33 +192,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 WaitForBalance(walletAddress);
         }
 
-        protected static void ReturnMoneyToEW()
-        {
-            return;
-            //do nothing right now
-            var api = new BlockchainApi(BlockchainApi);
-            var sign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
-
-            var model = new BuildSingleTransactionRequest()
-            {
-                Amount = AMOUNT,
-                AssetId = ASSET_ID,
-                FromAddress = HOT_WALLET,
-                IncludeFee = false,
-                OperationId = Guid.NewGuid(),
-                ToAddress = EXTERNAL_WALLET,
-                FromAddressContext = HOT_WALLET_CONTEXT
-            };
-
-            var responseTransaction = api.Operations.PostTransactions(model).GetResponseObject();
-            string operationId = model.OperationId.ToString();
-
-            var signResponse = sign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { HOT_WALLET_KEY }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
-
-            var response = api.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
-
-        }
-
         protected static void AddCryptoToWalletWithRecieveTransaction(string walletAddress, string walletKey, bool wait = true)
         {
             var api = new BlockchainApi(BlockchainApi);
