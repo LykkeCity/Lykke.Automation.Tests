@@ -10,6 +10,7 @@ using XUnitTestCommon.Utils;
 using AlgoStoreData.DTOs;
 using XUnitTestData.Entities.AlgoStore;
 using AlgoStoreData.HelpersAlgoStore;
+using System.Text.RegularExpressions;
 
 namespace AFTests.AlgoStore
 {
@@ -804,6 +805,38 @@ namespace AFTests.AlgoStore
             // Assert statistics endpoint returns "TradedAssetName" and "AssetTwoName"
             Assert.That(statistics.TradedAssetName, Is.EqualTo("EUR"));
             Assert.That(statistics.AssetTwoName, Is.EqualTo("BTC"));
+
+            // Stop the algo instance
+            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+        }
+
+        [Test, Description("AL-488")]
+        [Category("AlgoStore")]
+        public async Task CheckTokenGeneratedOnInstanceCreation()
+        {
+            Dictionary<string, string> queryParams = new Dictionary<string, string>()
+            {
+                { "algoId" , postInstanceData.AlgoId },
+                { "instanceId", postInstanceData.InstanceId}
+            };
+
+            var instanceDataResponse = await Consumer.ExecuteRequest(algoInstanceDataPath, queryParams, null, Method.GET);
+            Assert.That(instanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
+
+            // Wait up to 3 minutes for the algo to be started
+            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+
+            // Get Algo Instance Data from DB
+            ClientInstanceEntity instanceDataFromDB = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
+
+            // Assert AuthToken is not null
+            Assert.That(instanceDataFromDB.AuthToken, Is.Not.Null, "AuthToken is null whereas it should not be null");
+
+            // Assert that AuthToken is Giud
+            Regex regex = new Regex(GlobalConstants.GuidRegexPattern, RegexOptions.IgnoreCase);
+            Match match = regex.Match(instanceDataFromDB.AuthToken);
+            string errorMessage = $"The AuthToken is not a Guid. Value: '{instanceDataFromDB.AuthToken}'";
+            Assert.That(match.Success, Is.True, errorMessage);
 
             // Stop the algo instance
             await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);

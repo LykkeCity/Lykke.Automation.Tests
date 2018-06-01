@@ -23,5 +23,8 @@ namespace XUnitTestData.Entities.AlgoStore
         public string WalletId { get; set; }
         public string AlgoInstanceStatusValue { get; set; }
         public string AlgoInstanceTypeValue { get; set; }
+        public bool IsStraight { get; set; }
+        public string OppositeAssetId { get; set; }
+        public string AuthToken { get; set; }
     }
 }
