@@ -830,12 +830,13 @@ namespace AFTests.AlgoStore
             ClientInstanceEntity instanceDataFromDB = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
 
             // Assert AuthToken is not null
-            Assert.That(instanceDataFromDB.AuthToken, Is.Not.EqualTo(null));
+            Assert.That(instanceDataFromDB.AuthToken, Is.Not.Null, "AuthToken is null whereas it should not be null");
 
             // Assert that AuthToken is Giud
             Regex regex = new Regex(GlobalConstants.GuidRegexPattern, RegexOptions.IgnoreCase);
             Match match = regex.Match(instanceDataFromDB.AuthToken);
-            Assert.That(match.Success, Is.EqualTo(true));
+            string errorMessage = $"The AuthToken is not a Guid. Value: '{instanceDataFromDB.AuthToken}'";
+            Assert.That(match.Success, Is.True, errorMessage);
 
             // Stop the algo instance
             await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
