@@ -61,7 +61,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO("123 invalid algo id", await GetExistingWallet());
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO("123 invalid algo id", await GetExistingWallet(), "Demo");
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -98,7 +98,7 @@ namespace AFTests.AlgoStore
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(algoID, await GetExistingWallet());
+            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(algoID, await GetExistingWallet(), "Demo");
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
