@@ -130,6 +130,8 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DWHWTransactionWillProduceIncreasOfBlockNumberTest()
             {
+                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null, $"Wallet {wallet.PublicAddress} balance is null. Fail test");
+
                 // enable observation
 
                 var pResponse = blockchainApi.Balances.PostBalances(wallet.PublicAddress);

@@ -37,7 +37,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitshares"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Zcash"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         protected static Queue<WalletCreationResponse> Wallets()
@@ -126,7 +126,11 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static string AMOUT_WITH_FEE = "29000001";
         protected static long BLOCKCHAIN_MINING_TIME = _currentSettings.Value.BlockchainMiningTime ?? 10;
 
-
+        [SetUp]
+        public void SetUp()
+        {
+            TestContext.Progress.WriteLine($"Started test {TestContext.CurrentContext.Test.Name}");
+        }
 
         [OneTimeTearDown]
         public void SetProperty()
@@ -177,11 +181,16 @@ namespace AFTests.BlockchainsIntegrationTests
                 };
 
                 var responseTransaction = api.Operations.PostTransactions(model).GetResponseObject();
+                Assert.That(responseTransaction.TransactionContext, Is.Not.Null, "Transaction context is null");
                 string operationId = model.OperationId.ToString();
 
                 var signResponse = sign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { EXTERNAL_WALLET_KEY }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
+                Assert.That(signResponse.SignedTransaction, Is.Not.Null, "Signed transaction is null");
+
                 var response = api.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
                 var getResponse = api.Operations.GetOperationId(operationId);
 
