@@ -20,6 +20,10 @@ namespace WalletApi.Api
                 .WithHeaders("SignatureVerificationToken", accessToken)
                 .AddJsonBody(operation).Build().Execute<ResponseModelHotWalletSuccessTradeRespModel>();
 
+        public IResponse<ResponseModel> PostCashOut(HotWalletCashoutOperation operation, string accessToken, string token) =>
+            Request.Post("/HotWallet/cashout").WithBearerToken(token).WithHeaders("SignatureVerificationToken", accessToken)
+                .AddJsonBody(operation).Build().Execute<ResponseModel>();
+
         //TODO: Add other
     }
 }

@@ -22,8 +22,9 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the HotWalletCashoutOperation class.
         /// </summary>
-        public HotWalletCashoutOperation(string destinationAddress = default(string), string assetId = default(string), double? volume = default(double?))
+        public HotWalletCashoutOperation(string destinationAddressExtension = default(string), string destinationAddress = default(string), string assetId = default(string), double? volume = default(double?))
         {
+            DestinationAddressExtension = destinationAddressExtension;
             DestinationAddress = destinationAddress;
             AssetId = assetId;
             Volume = volume;
@@ -34,6 +35,11 @@ namespace Lykke.Client.AutorestClient.Models
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "DestinationAddressExtension ")]
+        public string DestinationAddressExtension { get; set; }
 
         /// <summary>
         /// </summary>

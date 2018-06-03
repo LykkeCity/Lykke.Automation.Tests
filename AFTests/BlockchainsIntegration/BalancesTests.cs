@@ -132,14 +132,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DWHWTransactionWillProduceIncreasOfBlockNumberTest()
             {
-                // enable observation
-
-                var pResponse = blockchainApi.Balances.PostBalances(wallet.PublicAddress);
-
-                blockchainApi.Balances.GetBalances("500", null).Validate.StatusCode(HttpStatusCode.OK);
-
-                Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == wallet.PublicAddress),
-                    Is.True.After(5 * 60 * 1000, 2 * 1000), "Wallet is not present in Get Balances after 5 minutes");
+                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null, $"Wallet {wallet.PublicAddress} balance is null. Stop test");
 
                 //create transaction and broadcast it
 

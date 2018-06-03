@@ -100,6 +100,7 @@ namespace AFTests.BlockchainsIntegration
         {
             public DashSettings()
             {
+                BlockchainIntegration = "DASH";
                 BlockchainApi = "http://dash-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://dash-sign.autotests-service.svc.cluster.local/api";
                 AssetId = "DASH";

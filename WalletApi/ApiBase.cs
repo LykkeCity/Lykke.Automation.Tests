@@ -11,7 +11,7 @@ namespace WalletApi
     {
         private static readonly string Url = Environment.GetEnvironmentVariable("WalletApiUrl")
                                              ?? TestContext.Parameters["WalletApiUrl"]
-                                             ?? "https://api-test.lykkex.net/api";
+                                             ?? "https://api-dev.lykkex.net/api";
         public static string ApiUrl => Url;
 
         protected IRequestBuilder Request => Requests.For(Url);
