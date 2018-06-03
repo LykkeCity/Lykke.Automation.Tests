@@ -77,7 +77,6 @@ namespace AFTests.BlockchainsIntegration
             return _settings;
         }
 
-
         class LitecoinSettings : BlockchainSpecificModel
         {
             public LitecoinSettings()

@@ -40,91 +40,25 @@ namespace AFTests.BlockchainsIntegrationTests
             return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitshares"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
-        protected static Queue<WalletCreationResponse> Wallets()
-        {
-            lock (_lock)
-            {
-                if (result == null)
-                {
-                    result = new Queue<WalletCreationResponse>();
-                    BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
-                    for (var i = 0; i < 20; i++)
-                    {
-                        var wallet = blockchainSign.PostWallet();
-                        if (wallet.StatusCode != HttpStatusCode.OK)
-                            throw new Exception($"Cant create wallet. Got: {wallet.StatusCode}.  {wallet.Content}");
-                        result.Enqueue(wallet.GetResponseObject());
-                    }
-
-                    if (!SetBalanceWIthManyOutputs(result.ToList()))
-                    {
-                        result.ToList().ForEach(w => AddCyptoToBalanceFromExternal(w.PublicAddress, w.PrivateKey, false));
-                        result.ToList().ForEach(w => WaitForBalance(w.PublicAddress));
-                    }
-                }
-                result.ToList().ForEach(w => 
-                {
-                    TestContext.Out.WriteLine($"wallet {w.PublicAddress} balance: { new BlockchainApi(_currentSettings.Value.BlockchainApi).Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(wallet => wallet.Address == w.PublicAddress)?.Balance}");
-                });
-            }
-            
-            return result;
-        }
-
-        private static bool SetBalanceWIthManyOutputs(List<WalletCreationResponse> wallets)
-        {
-            var run = new BlockchainApi(_currentSettings.Value.BlockchainApi).Capabilities.GetCapabilities().GetResponseObject().AreManyOutputsSupported;
-            if (!run.Value)
-                return false;
-
-            List<TransactionOutputContract> transactions = new List<TransactionOutputContract>();
-
-            wallets.ForEach(w => transactions.Add(new TransactionOutputContract() {Amount = AMOUT_WITH_FEE, ToAddress = w.PublicAddress }));
-            var request = new BuildTransactionWithManyOutputsRequest()
-            {
-                AssetId = ASSET_ID,
-                OperationId = Guid.NewGuid(),
-                FromAddress = EXTERNAL_WALLET,
-                Outputs = transactions
-            };
-
-            wallets.ForEach(w =>
-                new BlockchainApi(_currentSettings.Value.BlockchainApi).Balances.PostBalances(w.PublicAddress));
-
-            var response = new BlockchainApi(_currentSettings.Value.BlockchainApi).Operations.PostTransactionsManyOutputs(request);
-            response.Validate.StatusCode(HttpStatusCode.OK);
-
-            var signResponse = new BlockchainSign(_currentSettings.Value.BlockchainSign).PostSign(new SignRequest() { TransactionContext = response.GetResponseObject().TransactionContext, PrivateKeys = new List<string>() { EXTERNAL_WALLET_KEY } });
-
-            var broadcastRequset = new BroadcastTransactionRequest() { OperationId = request.OperationId, SignedTransaction = signResponse.GetResponseObject().SignedTransaction };
-            var broadcatedResponse = new BlockchainApi(_currentSettings.Value.BlockchainApi).Operations.PostTransactionsBroadcast(broadcastRequset);
-
-            WaitForBalance(wallets[0].PublicAddress);
-
-            return true;
-        }
+        #region test values
 
         protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
         protected BlockchainApi blockchainApi = new BlockchainApi(BlockchainApi);
         protected BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
         protected BlockchainWallets blockchainWallets = new BlockchainWallets();
-
         protected static string HOT_WALLET = _currentSettings.Value.HotWallet;
-
         protected static string HOT_WALLET_KEY = _currentSettings.Value.HotWalletKey;
         protected static string HOT_WALLET_CONTEXT = _currentSettings.Value.HotWalletAddressContext;
-
-
         protected static string BlockChainName = _currentSettings.Value.BlockchainIntegration;
-
         protected static string ASSET_ID = _currentSettings.Value.AssetId;
-
         protected static string EXTERNAL_WALLET = _currentSettings.Value.ExternalWalletAddress;
         protected static string EXTERNAL_WALLET_KEY = _currentSettings.Value.ExternalWalletKey;
         protected static string EXTERNAL_WALLET_ADDRESS_CONTEXT = _currentSettings.Value.ExternalWallerAddressContext;
         protected static string AMOUNT = "20000001";
         protected static string AMOUT_WITH_FEE = "29000001";
         protected static long BLOCKCHAIN_MINING_TIME = _currentSettings.Value.BlockchainMiningTime ?? 10;
+
+        #endregion
 
         [SetUp]
         public void SetUp()
@@ -147,6 +81,73 @@ namespace AFTests.BlockchainsIntegrationTests
             catch (Exception) { /*do nothing*/}
 
             new Allure2Report().CreateEnvFile();
+        }
+
+        #region Helpers methods
+
+
+        protected static Queue<WalletCreationResponse> Wallets()
+        {
+            lock (_lock)
+            {
+                if (result == null)
+                {
+                    result = new Queue<WalletCreationResponse>();
+                    BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
+                    for (var i = 0; i < 20; i++)
+                    {
+                        var wallet = blockchainSign.PostWallet();
+                        if (wallet.StatusCode != HttpStatusCode.OK)
+                            throw new Exception($"Cant create wallet. Got: {wallet.StatusCode}.  {wallet.Content}");
+                        result.Enqueue(wallet.GetResponseObject());
+                    }
+
+                    if (!SetBalanceWIthManyOutputs(result.ToList()))
+                    {
+                        result.ToList().ForEach(w => AddCyptoToBalanceFromExternal(w.PublicAddress, w.PrivateKey, false));
+                        result.ToList().ForEach(w => WaitForBalance(w.PublicAddress));
+                    }
+                }
+                result.ToList().ForEach(w =>
+                {
+                    TestContext.Out.WriteLine($"wallet {w.PublicAddress} balance: { new BlockchainApi(_currentSettings.Value.BlockchainApi).Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(wallet => wallet.Address == w.PublicAddress)?.Balance}");
+                });
+            }
+
+            return result;
+        }
+
+        private static bool SetBalanceWIthManyOutputs(List<WalletCreationResponse> wallets)
+        {
+            var run = new BlockchainApi(_currentSettings.Value.BlockchainApi).Capabilities.GetCapabilities().GetResponseObject().AreManyOutputsSupported;
+            if (!run.Value)
+                return false;
+
+            List<TransactionOutputContract> transactions = new List<TransactionOutputContract>();
+
+            wallets.ForEach(w => transactions.Add(new TransactionOutputContract() { Amount = AMOUT_WITH_FEE, ToAddress = w.PublicAddress }));
+            var request = new BuildTransactionWithManyOutputsRequest()
+            {
+                AssetId = ASSET_ID,
+                OperationId = Guid.NewGuid(),
+                FromAddress = EXTERNAL_WALLET,
+                Outputs = transactions
+            };
+
+            wallets.ForEach(w =>
+                new BlockchainApi(_currentSettings.Value.BlockchainApi).Balances.PostBalances(w.PublicAddress));
+
+            var response = new BlockchainApi(_currentSettings.Value.BlockchainApi).Operations.PostTransactionsManyOutputs(request);
+            response.Validate.StatusCode(HttpStatusCode.OK);
+
+            var signResponse = new BlockchainSign(_currentSettings.Value.BlockchainSign).PostSign(new SignRequest() { TransactionContext = response.GetResponseObject().TransactionContext, PrivateKeys = new List<string>() { EXTERNAL_WALLET_KEY } });
+
+            var broadcastRequset = new BroadcastTransactionRequest() { OperationId = request.OperationId, SignedTransaction = signResponse.GetResponseObject().SignedTransaction };
+            var broadcatedResponse = new BlockchainApi(_currentSettings.Value.BlockchainApi).Operations.PostTransactionsBroadcast(broadcastRequset);
+
+            WaitForBalance(wallets[0].PublicAddress);
+
+            return true;
         }
 
         protected static void AddCyptoToBalanceFromExternal(string walletAddress, string walletKey = null, bool wait = true)
@@ -302,5 +303,7 @@ namespace AFTests.BlockchainsIntegrationTests
             }
             sw.Stop();
         }
+
+        #endregion
     }
 }
