@@ -1,24 +1,32 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Text;
 using System.Threading;
 using Autofac;
 using Common;
 using Common.Log;
+using FIX.Client;
+//using Lykke.Logging;
+//using Lykke.Service.FixGateway.Core.Services;
+//using Lykke.Service.FixGateway.Core.Settings.ServiceSettings;
 using QuickFix;
 using QuickFix.Fields;
 using QuickFix.FIX44;
 using QuickFix.Lykke;
 using QuickFix.Transport;
+using XUnitTestCommon.TestsCore;
 using Message = QuickFix.Message;
 
 
 namespace FIX.Client
 {
-    internal class FixClient : IApplication, IStartable, IStopable
+    public class FixClient : IApplication,/* ISupportInit,*/ IStopable
     {
         private readonly SocketInitiator _socketInitiator;
         private SessionID _sessionId;
         private readonly LogToConsole _log;
-        private Message _response;
+        private readonly BlockingCollection<Message> _appMessages = new BlockingCollection<Message>(1);
+        private readonly BlockingCollection<Message> _adminMessages = new BlockingCollection<Message>(1);
 
         public FixClient(string targetCompId = Const.TargetCompId, string senderCompId = Const.SenderCompId, string uri = Const.Uri, int port = Const.Port)
         {
@@ -34,7 +42,7 @@ namespace FIX.Client
                     "ConnectionType=initiator",
                     "ReconnectInterval=60",
                     "BeginString=FIX.4.4",
-                    @"DataDictionary=ClientFIX44.xml",
+                    @"DataDictionary=FIX/ClientFIX44.xml",
                     "SSLEnable=N",
                     @"SSLProtocols=Tls",
                     "SSLValidateCertificates=N",
@@ -50,7 +58,7 @@ namespace FIX.Client
             _log = new LogToConsole();
             var settings = new SessionSettings(s.GetFixConfigAsReader());
             var storeFactory = new MemoryStoreFactory();
-            var logFactory = new LykkeLogFactory(_log, false, false, false);
+            var logFactory = new LykkeLogFactory(_log, true, true, true);
             _socketInitiator = new SocketInitiator(this, storeFactory, settings, logFactory);
         }
 
@@ -59,24 +67,29 @@ namespace FIX.Client
             _log.WriteInfo("FixClient", "ToAdmin", "");
             if (message is Logon logon)
             {
-                logon.Password = new Password(Const.Password);
+                logon.Password = new Password(Environment.GetEnvironmentVariable("FIXWrongPassword")??  Const.Password);
             }
         }
 
         public void FromAdmin(Message message, SessionID sessionID)
         {
             _log.WriteInfo("FixClient", "FromAdmin", "");
+            if (message is TestRequest || message is Heartbeat)
+            {
+                return;
+            }
+            _adminMessages.Add(message);
         }
 
         public void ToApp(Message message, SessionID sessionId)
         {
-            _log.WriteInfo("FixClient", "ToApp", "");
+           // _log.WriteInfo("FixClient", "ToApp", "");
         }
 
         public void FromApp(Message message, SessionID sessionID)
         {
-            _log.WriteInfo("FixClient", "FromApp", "");
-            _response = message;
+            //_log.WriteInfo("FixClient", "FromApp", "");
+            _appMessages.Add(message);
         }
 
         public void OnCreate(SessionID sessionID)
@@ -100,6 +113,7 @@ namespace FIX.Client
             var header = message.Header;
             header.SetField(new SenderCompID(_sessionId.SenderCompID));
             header.SetField(new TargetCompID(_sessionId.TargetCompID));
+            Log(message);
 
             var result = QuickFix.Session.SendToTarget(message);
             if (!result)
@@ -110,21 +124,27 @@ namespace FIX.Client
 
         public T GetResponse<T>(int timeout = 20000) where T : Message
         {
-            for (var i = 0; i < timeout; i++)
+            _appMessages.TryTake(out var message, TimeSpan.FromMilliseconds(timeout));
+            if ((T)message == null)
             {
-                if (_response != null)
-                {
-                    var copy = _response;
-                    _response = null;
-                    return (T)copy;
-                }
-                Thread.Sleep(1);
+                var admMessage = GetAdminResponse<T>();
+                Log(admMessage, "Recieving adming message");
             }
-            return null;
+                
+            Log(message, "Recieving");
+
+            return (T)message;
         }
 
-        public void Start()
+        public T GetAdminResponse<T>(int timeout = 2000) where T : Message
         {
+            _adminMessages.TryTake(out var message, TimeSpan.FromMilliseconds(timeout));
+            return (T)message;
+        }
+
+        public void Init()
+        {
+
             _socketInitiator.Start();
             for (var i = 0; i < 1000; i++)
             {
@@ -143,6 +163,7 @@ namespace FIX.Client
 
         public void Stop()
         {
+
             _socketInitiator.Stop();
             for (var i = 0; i < 10; i++)
             {
@@ -153,5 +174,21 @@ namespace FIX.Client
                 Thread.Sleep(500);
             }
         }
+
+        #region allure report region
+        private void Log(Message message, string send = "Sending")
+        {
+            string attachName = $"{send} message";
+            var attachContext = new StringBuilder();
+            attachContext.AppendLine(send);
+            if (message != null)
+            {
+                attachContext.AppendLine(message.ToString().Replace("\u0001", "|"));
+            }
+            Allure2Helper.AttachJson(attachName, attachContext.ToString());
+        }
+
+        #endregion
+
     }
 }

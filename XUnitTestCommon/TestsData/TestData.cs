@@ -45,7 +45,7 @@ namespace XUnitTestCommon.TestsData
 
         public static string GenerateEmail() => $"lykke_autotest_{GenerateString(10)}@lykke.com";
 
-        public static string GeneratePhone(int length = 12) => "+" + GenerateNumbers(length);
+        public static string GeneratePhone(int length = 12) => "+7" + GenerateNumbers(length-1);
 
         public static string GenerateNumbers(int length = 12)
         {

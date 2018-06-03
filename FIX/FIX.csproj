@@ -12,4 +12,8 @@
     <PackageReference Include="Lykke.Fix" Version="1.0.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
+  </ItemGroup>
+
 </Project>
