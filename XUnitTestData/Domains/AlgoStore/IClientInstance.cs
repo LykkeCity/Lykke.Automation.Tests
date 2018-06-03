@@ -11,5 +11,15 @@ namespace XUnitTestData.Domains.AlgoStore
         int Margin { get; set; }
         string TradedAsset { get; set; }
         int Volume { get; set;}
+        string AlgoId { get; set; }
+        dynamic AlgoMetaDataInformation { get; set; }
+        string ClientId { get; set; }
+        string InstanceName { get; set; }
+        string WalletId { get; set; }
+        string AlgoInstanceStatusValue { get; set; }
+        string AlgoInstanceTypeValue { get; set; }
+        bool IsStraight { get; set; }
+        string OppositeAssetId { get; set; }
+        string AuthToken { get; set; }
     }
 }

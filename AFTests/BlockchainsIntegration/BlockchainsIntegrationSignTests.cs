@@ -43,10 +43,12 @@ namespace AFTests.BlockchainsIntegrationTests
             [Test]
             [Category("BlockchainIntegration")]
             public void PostSignTest()
-            { 
+            {
+                var wallet = blockchainSign.PostWallet().GetResponseObject();
+
                 var req = new SignRequest()
                 {
-                    PrivateKeys = new List<string>() { PKey },
+                    PrivateKeys = new List<string>() { wallet.PrivateKey },
                     TransactionContext = "testHex"
                 };
 

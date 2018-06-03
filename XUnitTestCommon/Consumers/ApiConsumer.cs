@@ -78,6 +78,31 @@ namespace XUnitTestCommon.Consumers
             return new Response(response.StatusCode, response.Content);
         }
 
+        public async Task<Response> ExecuteRequestCustomEndpoint(string url, Dictionary<string, string> queryParams, string body, Method method)
+        {
+            _client = new RestClient(url);
+            _request = new RestRequest(method);
+
+            AddQueryParams(queryParams);
+
+            if (body != null)
+            {
+                _request.AddParameter("application/json", body, ParameterType.RequestBody);
+            }
+
+            if (_oAuthConsumer != null)
+            {
+                await _oAuthConsumer.UpdateToken();
+                _request.AddParameter("Authorization", "Bearer " + _oAuthConsumer.AuthToken, ParameterType.HttpHeader);
+            }
+
+            var response = await _client.ExecuteAsync(_request);
+
+            Log(response);
+
+            return new Response(response.StatusCode, response.Content);
+        }
+
         public async Task<Response> ExecuteRequestFileUpload(string path, Dictionary<string, string> queryParams, string body, Method method, string pathFile)
         {
             var uri = BuildUri(_urlPrefix, _baseUrl, path);

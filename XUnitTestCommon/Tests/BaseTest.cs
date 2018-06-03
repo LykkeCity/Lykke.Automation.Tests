@@ -1,12 +1,9 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using XUnitTestCommon.Reports;
 using XUnitTestCommon.TestsCore;
 
 namespace XUnitTestCommon.Tests
@@ -163,5 +160,18 @@ namespace XUnitTestCommon.Tests
         }
         #endregion
 
+    }
+
+    [SetUpFixture]
+    public class HelperClass
+    {
+        [OneTimeTearDown]
+        public void AfterTests()
+        {
+            var context = TestContext.CurrentContext;
+            Environment.SetEnvironmentVariable("failedTests", context.Result.FailCount.ToString());
+            Environment.SetEnvironmentVariable("passedTests", context.Result.PassCount.ToString());
+            Environment.SetEnvironmentVariable("skippedTests", context.Result.SkipCount.ToString());
+        }
     }
 }

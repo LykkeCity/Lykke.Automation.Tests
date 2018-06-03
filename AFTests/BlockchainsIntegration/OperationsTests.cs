@@ -14,27 +14,43 @@ namespace AFTests.BlockchainsIntegrationTests
 {
     class OperationsTests
     {
-
         public class GetOperationId : BlockchainsIntegrationBaseTest
         {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
             [Test]
             [Category("BlockchainIntegration")]
             public void GetOperationIdTest()
             {
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
+
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
-                    FromAddress = WALLET_ADDRESS,
+                    FromAddress = wallet.PublicAddress,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString(); // Stefan/ with dashes
 
-                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { wallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
@@ -55,7 +71,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var response = blockchainApi.Operations.GetOperationId(operationId);
 
-                Assert.That(new ArrayList() { HttpStatusCode.BadRequest, HttpStatusCode.NotFound }, Has.Member(response.StatusCode));
+                Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.BadRequest, HttpStatusCode.NotFound, HttpStatusCode.MethodNotAllowed));
             }
         }
 
@@ -98,24 +114,41 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public class PostTransactionsBroadcast : BlockchainsIntegrationBaseTest
         {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
             [Test]
             [Category("BlockchainIntegration")]
             public void PostTransactionsBroadcastTest()
             {
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
+
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100002",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
-                    FromAddress = WALLET_ADDRESS,
+                    FromAddress = wallet.PublicAddress,
                     IncludeFee = true,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
-                string operationId = model.OperationId.ToString("N");
+                string operationId = model.OperationId.ToString();
 
-                var signResponse = blockchainSign.PostSign(new SignRequest() {PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = blockchainSign.PostSign(new SignRequest() {PrivateKeys = new List<string>() { wallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
@@ -125,14 +158,47 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public class PostTransactionsBroadcastInvalidTransaction : BlockchainsIntegrationBaseTest
         {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
             [Test]
             [Category("BlockchainIntegration")]
             public void PostTransactionsBroadcastInvalidTransactionTest()
             {
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
+                    
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = AMOUNT,
+                    AssetId = ASSET_ID,
+                    FromAddress = wallet.PublicAddress,
+                    IncludeFee = true,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { wallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
                 string sTransaction = Guid.NewGuid().ToString();
 
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest()
-                { OperationId = Guid.NewGuid(), SignedTransaction = sTransaction });
+                { OperationId = model.OperationId, SignedTransaction = sTransaction });
 
                 response.Validate.StatusCode(HttpStatusCode.BadRequest);
                 Assert.That(response.Content, Does.Contain("errorMessage").IgnoreCase);
@@ -141,31 +207,50 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public class DeleteOperationId : BlockchainsIntegrationBaseTest
         {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
             [Test]
             [Category("BlockchainIntegration")]
             public void DeleteOperationIdTest()
             {
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
+
+                Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.Any(w => w.Address == wallet.PublicAddress), Is.True.After(2*60*1000, 2*1000), "");
+
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
-                    FromAddress = WALLET_ADDRESS,
+                    FromAddress = wallet.PublicAddress,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
-                string operationId = model.OperationId.ToString("N");
+                string operationId = model.OperationId.ToString();
 
-                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { PKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { wallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
                 response.Validate.StatusCode(HttpStatusCode.OK);
 
                 var responseDelete = blockchainApi.Operations.DeleteOperationId(operationId);
-                response.Validate.StatusCode(HttpStatusCode.OK);
+                responseDelete.Validate.StatusCode(HttpStatusCode.OK);
             }
         }
 
@@ -175,12 +260,11 @@ namespace AFTests.BlockchainsIntegrationTests
             [TestCase("testOId")]
             [TestCase("1234")]
             [TestCase("!@%^&*()")]
-            [Description("Here two possible Status code: NoContent in case transaction not found and BadRequest in case operationId is not valid")]
             [Category("BlockchainIntegration")]
             public void DeleteOperationIdInvalidOIdTest(string operationId)
             {
                 var response = blockchainApi.Operations.DeleteOperationId(operationId);
-                Assert.That(new object[] { HttpStatusCode.BadRequest, HttpStatusCode.NoContent, HttpStatusCode.NotFound}, Has.Member(response.StatusCode));
+                Assert.That(response.StatusCode, Is.AnyOf(new object[] { HttpStatusCode.BadRequest, HttpStatusCode.NoContent, HttpStatusCode.NotFound, HttpStatusCode.MethodNotAllowed }));
             }
         }
 
@@ -196,7 +280,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyOutputsSupported;
                 if (!run.Value)
-                    Assert.Ignore("Many outputs are not supported by blockachain");
+                    Assert.Ignore("Many outputs are not supported by blockchain");
 
                 var response = blockchainApi.Operations.GetTransactionsManyOutputs(operationId);
                 Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest }, Does.Contain(response.StatusCode));
@@ -205,36 +289,53 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public class GetTransactionsManyOutputs: BlockchainsIntegrationBaseTest
         {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
             [Test]
             [Category("BlockchainIntegration")]
             public void GetTransactionsManyOutputsTest()
             {
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyOutputsSupported;
                 if (!run.Value)
-                    Assert.Ignore("Many outputs are not supported by blockachain");
+                    Assert.Ignore("Many outputs are not supported by blockchain");
+
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
 
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
-                    FromAddress = WALLET_ADDRESS,
+                    FromAddress = wallet.PublicAddress,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
                 };
 
                 var request = new BuildTransactionWithManyOutputsRequest()
                 {
                     AssetId = ASSET_ID,
                     OperationId = model.OperationId,
-                    FromAddress = WALLET_ADDRESS,
-                    Outputs = new List<TransactionOutputContract>() { new TransactionOutputContract() { Amount = "100001", ToAddress = HOT_WALLET } }
+                    FromAddress = wallet.PublicAddress,
+                    Outputs = new List<TransactionOutputContract>() { new TransactionOutputContract() { Amount = AMOUNT, ToAddress = HOT_WALLET } }
                 };
 
                 var response = blockchainApi.Operations.PostTransactionsManyOutputs(request);
                 response.Validate.StatusCode(HttpStatusCode.OK);
 
-                var signResponse = blockchainSign.PostSign(new SignRequest() { TransactionContext = response.GetResponseObject().TransactionContext, PrivateKeys = new List<string>() { PKey } });
+                var signResponse = blockchainSign.PostSign(new SignRequest() { TransactionContext = response.GetResponseObject().TransactionContext, PrivateKeys = new List<string>() { wallet.PrivateKey } });
 
                 var broadcastRequset = new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.GetResponseObject().SignedTransaction };
                 var broadcatedResponse = blockchainApi.Operations.PostTransactionsBroadcast(broadcastRequset);
@@ -256,31 +357,51 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyInputsSupported;
                 if (!run.Value)
-                    Assert.Ignore("Many inputs not supported by blockachain");
+                    Assert.Ignore("Many inputs not supported by blockchain");
 
                 var response = blockchainApi.Operations.GetTransactionsManyInputs(operationId);
-                Assert.That(new object[] { HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest, HttpStatusCode.NotFound }, Has.Member(response.StatusCode));
+                Assert.That(response.StatusCode, Is.AnyOf(new object[]
+                {
+                    HttpStatusCode.NoContent, HttpStatusCode.NotImplemented, HttpStatusCode.BadRequest, HttpStatusCode.NotFound, HttpStatusCode.MethodNotAllowed
+                }));
             }
         }
 
         public class GetTransactionsManyInputs : BlockchainsIntegrationBaseTest
         {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
             [Test]
             [Category("BlockchainIntegration")]
             public void GetTransactionsManyInputsTest()
             {
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyInputsSupported;
                 if (!run.Value)
-                    Assert.Ignore("Many inputs are not supported by blockachain");
+                    Assert.Ignore("Many inputs are not supported by blockchain");
+
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
 
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
-                    FromAddress = WALLET_ADDRESS,
+                    FromAddress = wallet.PublicAddress,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
                 };
 
                 var request = new BuildTransactionWithManyInputsRequest()
@@ -288,13 +409,16 @@ namespace AFTests.BlockchainsIntegrationTests
                     AssetId = ASSET_ID,
                     OperationId = model.OperationId,
                     ToAddress = HOT_WALLET,
-                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract() { Amount = "100001", FromAddress = WALLET_ADDRESS } }
+                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract()
+                    {
+                        Amount = AMOUNT, FromAddress = wallet.PublicAddress
+                    } }
                 };
 
                 var response = blockchainApi.Operations.PostTransactionsManyInputs(request);
                 response.Validate.StatusCode(HttpStatusCode.OK);
 
-                var signResponse = blockchainSign.PostSign(new SignRequest() { TransactionContext = response.GetResponseObject().TransactionContext, PrivateKeys = new List<string>() { PKey } });
+                var signResponse = blockchainSign.PostSign(new SignRequest() { TransactionContext = response.GetResponseObject().TransactionContext, PrivateKeys = new List<string>() { wallet.PrivateKey } });
 
                 var broadcastRequset = new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.GetResponseObject().SignedTransaction };
                 var broadcatedResponse = blockchainApi.Operations.PostTransactionsBroadcast(broadcastRequset);
@@ -309,6 +433,20 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public class PostTransactionsManyInputsInvalidOperationId : BlockchainsIntegrationBaseTest
         {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
             [TestCase("")]
             [TestCase("testOId")]
             [TestCase("1234")]
@@ -318,14 +456,18 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyInputsSupported;
                 if (!run.Value)
-                    Assert.Ignore("Many inputs not supported by blockachain");
+                    Assert.Ignore("Many inputs not supported by blockchain");
 
                 var request = new BuildTransactionWithManyInputsRequest()
                 {
                     AssetId = ASSET_ID,
                     OperationId = Guid.NewGuid(),
                     ToAddress = HOT_WALLET,
-                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract() { Amount = "100001", FromAddress = WALLET_ADDRESS } }
+                    Inputs = new List<TransactionInputContract>() { new TransactionInputContract()
+                    {
+                        Amount = AMOUNT,
+                        FromAddress = wallet.PublicAddress
+                    } }
                 };
 
                 var json = JsonConvert.SerializeObject(request);
@@ -357,7 +499,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var address = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
                 var response = blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(address);
-                response.Validate.StatusCode(HttpStatusCode.NoContent);
+                Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.OK, HttpStatusCode.NoContent), "Unexpected status code");
             }
         }
 
@@ -382,7 +524,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var address = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
                 var response = blockchainApi.Operations.DeleteTranstactionsObservationToAddress(address);
-                response.Validate.StatusCode(HttpStatusCode.NoContent);
+                Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.NoContent, HttpStatusCode.OK));
             }
         }
 
@@ -393,12 +535,14 @@ namespace AFTests.BlockchainsIntegrationTests
             public void DeleteTranstactionsObservationFromValidAddressPositiveTest()
             {
                 //remove in case it is enabled
-                blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(WALLET_ADDRESS);
+                var newWallet = blockchainSign.PostWallet().GetResponseObject();
 
-                var response = blockchainApi.Operations.PostHistoryFromToAddress("from", WALLET_ADDRESS);
+                blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(newWallet.PublicAddress);
+
+                var response = blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet.PublicAddress);
                 response.Validate.StatusCode(HttpStatusCode.OK);
 
-                var delete = blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(WALLET_ADDRESS);
+                var delete = blockchainApi.Operations.DeleteTranstactionsObservationFromAddress(newWallet.PublicAddress);
                 delete.Validate.StatusCode(HttpStatusCode.OK);
             }
         }
@@ -409,50 +553,64 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DeleteTranstactionsObservationToValidAddressPositiveTest()
             {
-                //remove in case it is enabled
-                blockchainApi.Operations.DeleteTranstactionsObservationToAddress(WALLET_ADDRESS);
+                var wallet = blockchainSign.PostWallet().GetResponseObject();
 
-                var response = blockchainApi.Operations.PostHistoryFromToAddress("to", WALLET_ADDRESS);
+                //remove in case it is enabled
+                blockchainApi.Operations.DeleteTranstactionsObservationToAddress(wallet.PublicAddress);
+
+                var response = blockchainApi.Operations.PostHistoryFromToAddress("to", wallet.PublicAddress);
                 response.Validate.StatusCode(HttpStatusCode.OK);
 
-                var delete = blockchainApi.Operations.DeleteTranstactionsObservationToAddress(WALLET_ADDRESS);
+                var delete = blockchainApi.Operations.DeleteTranstactionsObservationToAddress(wallet.PublicAddress);
                 delete.Validate.StatusCode(HttpStatusCode.OK);
             }
         }
 
         public class EWDWTransfer : BlockchainsIntegrationBaseTest
         {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
             [Test]
             [Category("BlockchainIntegration")]
             public void EWDWTransferTest()
             {
                 Assert.That(EXTERNAL_WALLET, Is.Not.Null.Or.Empty, "External wallet address and key are empty!");
 
-                bool transferSupported = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
-                if (transferSupported)
+                blockchainApi.Balances.PostBalances(wallet.PublicAddress);
+
+                var transferSupported = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
+                if (transferSupported!= null && transferSupported.Value)
                 {
-                    blockchainApi.Balances.PostBalances(EXTERNAL_WALLET);
-                    var balanceBefore = blockchainApi.Balances.GetBalances("1000", null).GetResponseObject().
-                        Items.First(w => w.Address == EXTERNAL_WALLET).Balance;
-                    TestingTransferRequest request = new TestingTransferRequest() { amount = "100001", assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = WALLET_ADDRESS };
+                    TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUNT, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = wallet.PublicAddress };
                     var response = blockchainApi.Testing.PostTestingTransfer(request);
-                    Assert.That(() => long.Parse(blockchainApi.Balances.GetBalances("1000", null).GetResponseObject().
-                        Items.First(w => w.Address == EXTERNAL_WALLET).Balance), Is.GreaterThan(long.Parse(balanceBefore)).After(5*60*1000, 1*1000), "Balance after 5 minute after transaction not greater then berfore transaction");
                 }
                 else
                 {
                     var model = new BuildSingleTransactionRequest()
                     {
-                        Amount = "100001",
+                        Amount = AMOUNT,
                         AssetId = ASSET_ID,
                         FromAddress = EXTERNAL_WALLET,
                         IncludeFee = false,
                         OperationId = Guid.NewGuid(),
-                        ToAddress = WALLET_ADDRESS
+                        ToAddress = wallet.PublicAddress,
+                        FromAddressContext = EXTERNAL_WALLET_ADDRESS_CONTEXT
                     };
 
                     var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
-                    string operationId = model.OperationId.ToString("N");
+                    string operationId = model.OperationId.ToString();
 
                     var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { EXTERNAL_WALLET_KEY }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
@@ -475,7 +633,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = "100001",
+                    Amount = AMOUNT,
                     AssetId = ASSET_ID,
                     FromAddress = HOT_WALLET,
                     IncludeFee = false,
@@ -493,6 +651,287 @@ namespace AFTests.BlockchainsIntegrationTests
                 var getResponse = blockchainApi.Operations.GetOperationId(operationId);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
+            }
+        }
+
+        public class SameOperationIdFoDifferentTransactions : BlockchainsIntegrationBaseTest
+        {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void SameOperationIdFoDifferentTransactionsTest()
+            {
+                var operationId = Guid.NewGuid();
+
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
+
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = AMOUNT,
+                    AssetId = ASSET_ID,
+                    FromAddress = wallet.PublicAddress,
+                    IncludeFee = true,
+                    OperationId = operationId,
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model);
+                var secondResponseTransaction = blockchainApi.Operations.PostTransactions(model);
+
+                responseTransaction.Validate.StatusCode(HttpStatusCode.OK);
+
+                Assert.That(responseTransaction.GetResponseObject().TransactionContext, Is.Not.Null.Or.Empty, "Transaction Context is null");
+                Assert.That(secondResponseTransaction.GetResponseObject().TransactionContext, Is.Not.Null.Or.Empty, "Transaction Context is null");
+            }
+        }
+
+        public class DWHWTransfer : BlockchainsIntegrationBaseTest
+        {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
+            [Test]
+            [Category("BlockchainIntegration")]
+            [Description("Transfer all balance from DW to EW")]
+            public void DWHWTransferTest()
+            {
+                Assert.That(HOT_WALLET, Is.Not.Null.Or.Empty, "Hot wallet address and key are empty!");
+
+                blockchainApi.Balances.PostBalances(wallet.PublicAddress);
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
+                var take = "500";
+
+                int i = 60;
+                while(i-->0 && !blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.Any(w => w.Address == wallet.PublicAddress))
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+                }
+
+                var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
+
+                Assert.That(currentBalance, Is.Not.Null, $"{wallet.PublicAddress} does not present in GetBalances or its balance is null");
+
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = currentBalance,
+                    AssetId = ASSET_ID,
+                    FromAddress = wallet.PublicAddress,
+                    IncludeFee = true,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString();
+
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { wallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+                var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+                var getResponse = blockchainApi.Operations.GetOperationId(operationId);
+                response.Validate.StatusCode(HttpStatusCode.OK);
+                Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
+                if(getResponse.GetResponseObject().State == BroadcastedTransactionState.Completed)
+                {
+                    Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.EqualTo("0").Or.Null.After( 60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
+                }
+                else
+                {
+                    //validate balance is 0 or null
+                    Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.EqualTo("0").Or.Null.After(5 * 60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
+                }   
+            }
+        }
+
+        //Test 1 DW-Hw, broadcast double, all balance
+        public class DWHWTransferDoubleBroadcast : BlockchainsIntegrationBaseTest
+        {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void DWHWTransferDoubleBroadcastTest()
+            {
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
+
+                string take = "500";
+                int i = 60;
+                while (i-- > 0 && !blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.Any(w => w.Address == wallet.PublicAddress))
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+                }
+
+                var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
+
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = currentBalance,
+                    AssetId = ASSET_ID,
+                    FromAddress = wallet.PublicAddress,
+                    IncludeFee = true,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString();
+
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { wallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+                var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                var response1 = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+                response1.Validate.StatusCode(HttpStatusCode.Conflict);
+            }
+        }
+
+        // Test2 HW - EW broadcast double, all balance
+
+        public class HWEWTransferDoubleBroadcast : BlockchainsIntegrationBaseTest
+        {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void HWEWTransferDoubleBroadcastTest()
+            {
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = AMOUNT,
+                    AssetId = ASSET_ID,
+                    FromAddress = HOT_WALLET,
+                    IncludeFee = false,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = EXTERNAL_WALLET
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString();
+
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { HOT_WALLET_KEY }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+                var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                var response1 = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+                response1.Validate.StatusCode(HttpStatusCode.Conflict);
+            }
+        }
+        // Test 3, DW HW broadcast alf balance
+
+        public class DWHWPartialTransferDoubleBroadcast : BlockchainsIntegrationBaseTest
+        {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = blockchainSign.PostWallet().GetResponseObject();
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void DWHWPartialTransferDoubleBroadcastTest()
+            {
+                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey);
+
+                string take = "500";
+                int i = 60;
+                while (i-- > 0 && !blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.Any(w => w.Address == wallet.PublicAddress))
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+                }
+
+                var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
+
+                var partialBalance = Math.Round(long.Parse(currentBalance) * 0.9).ToString();
+
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = partialBalance,
+                    AssetId = ASSET_ID,
+                    FromAddress = wallet.PublicAddress,
+                    IncludeFee = true,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString();
+
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { wallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+                var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                var response1 = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+                response1.Validate.StatusCode(HttpStatusCode.Conflict);
+
+                WaitForOperationGotCompleteStatus(model.OperationId.ToString());
+
+                var balanceAfterTransaction = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
+
+                Assert.That(balanceAfterTransaction, Is.EqualTo(Math.Round(long.Parse(currentBalance) * 0.1).ToString()), "Unexpected Balance after partial transaction");
+
             }
         }
     }

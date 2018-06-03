@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using XUnitTestCommon.RestRequests.Interfaces;
 
-namespace BlockchainsIntegration.LiteCoin.Api
+namespace BlockchainsIntegration.Api
 {
     public class Operations : ApiBase
     {
@@ -15,6 +15,11 @@ namespace BlockchainsIntegration.LiteCoin.Api
         public IResponse<BuildTransactionResponse> PostTransactions(BuildSingleTransactionRequest model)
         {
             return Request.Post("/transactions/single").AddJsonBody(model).Build().Execute<BuildTransactionResponse>();
+        }
+
+        public IResponse<BuildSingleReceiveTransactionResponse> PostTranstactionSingleRecieve(BuildSingleReceiveTransactionRequest model)
+        {
+            return Request.Post("/transactions/single/recieve").AddJsonBody(model).Build().Execute<BuildSingleReceiveTransactionResponse>();
         }
 
         public IResponse PostTransactionsBroadcast(BroadcastTransactionRequest model)
@@ -72,16 +77,16 @@ namespace BlockchainsIntegration.LiteCoin.Api
             return Request.Delete($"/transactions/history/to/{address}/observation").Build().Execute();
         }
 
-        public IResponse<GetTransactionsHistoryFromToResponse> GetTransactionHistorFromAddress(string address, string take, string afterHash = null)
+        public IResponse<TransactionHistory[]> GetTransactionHistorFromAddress(string address, string take, string afterHash = null)
         {
             return Request.Get($"/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
-                .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<GetTransactionsHistoryFromToResponse>();
+                .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<TransactionHistory[]>();
         }
 
-        public IResponse<GetTransactionsHistoryFromToResponse> GetTransactionHistorToAddress(string address, string take, string afterHash = null)
+        public IResponse<TransactionHistory[]> GetTransactionHistorToAddress(string address, string take, string afterHash = null)
         {
             return Request.Get($"/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)
-                .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<GetTransactionsHistoryFromToResponse>();
+                .AddQueryParameterIfNotNull("afterHash", afterHash).Build().Execute<TransactionHistory[]>();
         }
 
         public IResponse PostHistoryFromToAddress(string fromTo, string address)

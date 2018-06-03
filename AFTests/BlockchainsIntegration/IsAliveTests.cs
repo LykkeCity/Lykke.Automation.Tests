@@ -16,8 +16,9 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var response = blockchainApi.IsAlive.GetIsAlive();
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().Version, Is.Not.Null, "Unexpected Version");
-                Assert.That(response.GetResponseObject().Name, Does.Contain(BlockChainName).IgnoreCase, "Unexpected Name");
+                Assert.That(response.JObject.Property("name").Value.ToString(), Does.Contain(BlockChainName).IgnoreCase);
+
+                //Assert.That(response.GetResponseObject().Name, Does.Contain(BlockChainName).IgnoreCase, "Unexpected Name");
             }
         }
     }
