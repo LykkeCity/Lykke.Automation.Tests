@@ -81,6 +81,9 @@ namespace XUnitTestCommon
         //Algo Store
         public static readonly string ALGO_STORE_IS_ALIVE = "/api/IsAlive";
         public static readonly string ALGO_STORE_METADATA = "/api/v1/clientData/metadata";
+        public static readonly string ALGO_STORE_CREATE_ALGO = "/api/v1/algo/create";
+        public static readonly string ALGO_STORE_GET_INSTANCE_DATA = "/api/v1/algoInstances/getAlgoInstance";
+        public static readonly string ALGO_STORE_SAVE_ALGO_INSTANCE = "/api/v1/algoInstances/saveAlgoInstance";
         public static readonly string ALGO_STORE_GET_ALGO_METADATA = "/api/v1/clientData/algoMetadata";
         public static readonly string ALGO_STORE_CASCADE_DELETE = "/api/v1/clientData/metadata/cascadeDelete";
         public static readonly string ALGO_STORE_UPLOAD_BINARY = "/api/v1/clientData/imageData/upload/binary";

@@ -16,6 +16,7 @@ namespace AlgoStoreData.DTOs
         public string AlgoClientId { get; set; }
         public string WalletId { get; set; }
         public string InstanceName { get; set; }
+        public string AlgoInstanceType { get; set; }
         public AlgoMetaDataInformation AlgoMetaDataInformation { get; set; }
     }
 
@@ -35,21 +36,21 @@ namespace AlgoStoreData.DTOs
 
     public class PredefinedValues
     {
-          public string Key { get; set; }
-          public int Value { get; set; }
+        public string Key { get; set; }
+        public int Value { get; set; }
     }
 
     public class AlgoMetaDataFunction
     {
         public string Type { get; set; }
         public string Id { get; set; }
-        public string FunctionParameterType { get; set; }        
+        public string FunctionParameterType { get; set; }
         public IEnumerable<AlgoMetaDataParameter> Parameters { get; set; }
     }
 
     public class GetPopulatedInstanceDataDTO
     {
-        public static InstanceDataDTO returnInstanceDataDTO(string AlgoId, WalletDTO walletDTO)
+        public static InstanceDataDTO returnInstanceDataDTO(string AlgoId, WalletDTO walletDTO, string algoInstanceType)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
@@ -57,6 +58,7 @@ namespace AlgoStoreData.DTOs
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
                 WalletId = walletDTO.Id,
                 InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
+                AlgoInstanceType = algoInstanceType,
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
                     Parameters = new List<AlgoMetaDataParameter>()
@@ -64,7 +66,13 @@ namespace AlgoStoreData.DTOs
                         new AlgoMetaDataParameter()
                         {
                            Key = "StartFrom",
-                           Value = "01-04-2018",
+                           Value = "2018-04-01T00:00:00.000Z",
+                           Type  ="DateTime"
+                        },
+                        new AlgoMetaDataParameter()
+                        {
+                           Key = "EndOn",
+                           Value = "2019-05-16T00:00:00.000Z",
                            Type  ="DateTime"
                         },
                         new AlgoMetaDataParameter()
@@ -169,15 +177,21 @@ namespace AlgoStoreData.DTOs
                     Functions = new List<AlgoMetaDataFunction>()
                         { new AlgoMetaDataFunction()
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
                                 Id = "SMA_Short",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
                                 Parameters = new List<AlgoMetaDataParameter>
                                 {
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "01-04-2018",
+                                        Value = "2016-04-01T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2018-04-01T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter
@@ -207,7 +221,7 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "CandleTimeInterval",
-                                        Value = "60",
+                                        Value = "604800",
                                         Type = "CandleTimeInterval",
                                         PredefinedValues = new List<PredefinedValues>()
                                         {
@@ -311,9 +325,9 @@ namespace AlgoStoreData.DTOs
                             },
                         new AlgoMetaDataFunction
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
                                 Id = "SMA_Long",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
                                 Parameters = new List<AlgoMetaDataParameter>()
                                 {
                                     new AlgoMetaDataParameter()
@@ -325,7 +339,13 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter()
                                     {
                                         Key = "StartingDate",
-                                        Value = "01-04-2018",
+                                        Value = "2016-04-01T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2018-04-01T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter()
@@ -343,7 +363,7 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter()
                                     {
                                         Key = "CandleTimeInterval",
-                                        Value = "60",
+                                        Value = "604800",
                                         Type = "CandleTimeInterval",
                                         PredefinedValues = new List<PredefinedValues>()
                                         {
@@ -447,9 +467,9 @@ namespace AlgoStoreData.DTOs
                             },
                         new AlgoMetaDataFunction()
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
                                 Id = "ADX",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
                                 Parameters = new List<AlgoMetaDataParameter>
                                 {
                                     new AlgoMetaDataParameter
@@ -467,13 +487,19 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "01-04-2018",
+                                        Value = "2016-04-01T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2018-04-01T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "CandleTimeInterval",
-                                        Value = "60",
+                                        Value = "604800",
                                         Type = "CandleTimeInterval",
                                         PredefinedValues = new List<PredefinedValues>()
                                         {
@@ -548,14 +574,14 @@ namespace AlgoStoreData.DTOs
                                     {
                                         Key = "AdxPeriod",
                                         Value = "14",
-                                        Type = "int",                                       
+                                        Type = "int",
                                     },
                                 }
                             },
                         }
                 }
             };
-     
+
             return instanceForAlgo;
         }
 
@@ -577,7 +603,13 @@ namespace AlgoStoreData.DTOs
                         new AlgoMetaDataParameter()
                         {
                            Key = "StartFrom",
-                           Value = "10-02-2018",
+                           Value = "2018-02-10T00:00:00.000Z",
+                           Type  ="DateTime"
+                        },
+                        new AlgoMetaDataParameter()
+                        {
+                           Key = "EndOn",
+                           Value = "2019-05-10T00:00:00.000Z",
                            Type  ="DateTime"
                         },
                         new AlgoMetaDataParameter()
@@ -682,15 +714,21 @@ namespace AlgoStoreData.DTOs
                     Functions = new List<AlgoMetaDataFunction>()
                         { new AlgoMetaDataFunction()
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
                                 Id = "SMA_Short",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
                                 Parameters = new List<AlgoMetaDataParameter>
                                 {
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "2018-05-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter
@@ -824,9 +862,9 @@ namespace AlgoStoreData.DTOs
                             },
                         new AlgoMetaDataFunction
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
                                 Id = "SMA_Long",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
                                 Parameters = new List<AlgoMetaDataParameter>()
                                 {
                                     new AlgoMetaDataParameter()
@@ -838,7 +876,13 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter()
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "2018-05-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter()
@@ -960,9 +1004,9 @@ namespace AlgoStoreData.DTOs
                             },
                         new AlgoMetaDataFunction()
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
                                 Id = "ADX",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
                                 Parameters = new List<AlgoMetaDataParameter>
                                 {
                                     new AlgoMetaDataParameter
@@ -980,7 +1024,13 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-02-2018",
+                                        Value = "2018-02-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                     new AlgoMetaDataParameter
@@ -1090,7 +1140,13 @@ namespace AlgoStoreData.DTOs
                         new AlgoMetaDataParameter()
                         {
                            Key = "StartFrom",
-                           Value = "10-02-2018",
+                           Value = "2018-02-10T00:00:00.000Z",
+                           Type  ="DateTime"
+                        },
+                        new AlgoMetaDataParameter()
+                        {
+                           Key = "EndOn",
+                           Value = "2019-05-10T00:00:00.000Z",
                            Type  ="DateTime"
                         },
                         new AlgoMetaDataParameter()
@@ -1195,15 +1251,21 @@ namespace AlgoStoreData.DTOs
                     Functions = new List<AlgoMetaDataFunction>()
                         { new AlgoMetaDataFunction()
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
                                 Id = "SMA_Short",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
                                 Parameters = new List<AlgoMetaDataParameter>
                                 {
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "2018-05-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter
@@ -1337,9 +1399,9 @@ namespace AlgoStoreData.DTOs
                             },
                         new AlgoMetaDataFunction
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
                                 Id = "SMA_Long",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
                                 Parameters = new List<AlgoMetaDataParameter>()
                                 {
                                     new AlgoMetaDataParameter()
@@ -1351,7 +1413,13 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter()
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "2018-05-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter()
@@ -1473,9 +1541,9 @@ namespace AlgoStoreData.DTOs
                             },
                         new AlgoMetaDataFunction()
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
                                 Id = "ADX",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
                                 Parameters = new List<AlgoMetaDataParameter>
                                 {
                                     new AlgoMetaDataParameter
@@ -1493,7 +1561,13 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-02-2018",
+                                        Value = "2018-02-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                     new AlgoMetaDataParameter
@@ -1602,7 +1676,13 @@ namespace AlgoStoreData.DTOs
                         new AlgoMetaDataParameter()
                         {
                            Key = "StartFrom",
-                           Value = "10-02-2018",
+                           Value = "2018-02-10T00:00:00.000Z",
+                           Type  ="DateTime"
+                        },
+                        new AlgoMetaDataParameter()
+                        {
+                           Key = "EndOn",
+                           Value = "2019-05-10T00:00:00.000Z",
                            Type  ="DateTime"
                         },
                         new AlgoMetaDataParameter()
@@ -1707,15 +1787,21 @@ namespace AlgoStoreData.DTOs
                     Functions = new List<AlgoMetaDataFunction>()
                         { new AlgoMetaDataFunction()
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
                                 Id = "SMA_Short",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
                                 Parameters = new List<AlgoMetaDataParameter>
                                 {
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "2018-05-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter
@@ -1849,9 +1935,9 @@ namespace AlgoStoreData.DTOs
                             },
                         new AlgoMetaDataFunction
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
                                 Id = "SMA_Long",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
                                 Parameters = new List<AlgoMetaDataParameter>()
                                 {
                                     new AlgoMetaDataParameter()
@@ -1863,7 +1949,13 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter()
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "2018-05-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter()
@@ -1985,9 +2077,9 @@ namespace AlgoStoreData.DTOs
                             },
                         new AlgoMetaDataFunction()
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
                                 Id = "ADX",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
                                 Parameters = new List<AlgoMetaDataParameter>
                                 {
                                     new AlgoMetaDataParameter
@@ -2005,7 +2097,13 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-02-2018",
+                                        Value = "2018-02-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                     new AlgoMetaDataParameter
@@ -2115,7 +2213,13 @@ namespace AlgoStoreData.DTOs
                         new AlgoMetaDataParameter()
                         {
                            Key = "StartFrom",
-                           Value = "10-02-2018",
+                           Value = "2018-02-10T00:00:00.000Z",
+                           Type  ="DateTime"
+                        },
+                        new AlgoMetaDataParameter()
+                        {
+                           Key = "EndOn",
+                           Value = "2019-05-10T00:00:00.000Z",
                            Type  ="DateTime"
                         },
                         new AlgoMetaDataParameter()
@@ -2220,15 +2324,21 @@ namespace AlgoStoreData.DTOs
                     Functions = new List<AlgoMetaDataFunction>()
                         { new AlgoMetaDataFunction()
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
                                 Id = "SMA_Short",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
                                 Parameters = new List<AlgoMetaDataParameter>
                                 {
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "2018-05-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter
@@ -2362,9 +2472,9 @@ namespace AlgoStoreData.DTOs
                             },
                         new AlgoMetaDataFunction
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
                                 Id = "SMA_Long",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.SMA.SmaParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
                                 Parameters = new List<AlgoMetaDataParameter>()
                                 {
                                     new AlgoMetaDataParameter()
@@ -2376,7 +2486,13 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter()
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-05-2018",
+                                        Value = "2018-05-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                      new AlgoMetaDataParameter()
@@ -2498,9 +2614,9 @@ namespace AlgoStoreData.DTOs
                             },
                         new AlgoMetaDataFunction()
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxFunction",
+                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
                                 Id = "ADX",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Services.Functions.ADX.AdxParameters",
+                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
                                 Parameters = new List<AlgoMetaDataParameter>
                                 {
                                     new AlgoMetaDataParameter
@@ -2518,7 +2634,13 @@ namespace AlgoStoreData.DTOs
                                     new AlgoMetaDataParameter
                                     {
                                         Key = "StartingDate",
-                                        Value = "10-02-2018",
+                                        Value = "2018-02-10T00:00:00.000Z",
+                                        Type = "DateTime"
+                                    },
+                                    new AlgoMetaDataParameter
+                                    {
+                                        Key = "EndingDate",
+                                        Value = "2050-05-10T00:00:00.000Z",
                                         Type = "DateTime"
                                     },
                                     new AlgoMetaDataParameter

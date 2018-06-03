@@ -8,6 +8,7 @@ using XUnitTestCommon.ServiceSettings;
 using LykkeAutomationPrivate.Resources.RegistrationResourse;
 using LykkeAutomationPrivate.Resources.ClientAccountResource;
 using PrivateServices.Resources.Assets;
+using PrivateServices.Resources.CandlesHistory;
 
 namespace LykkeAutomationPrivate.Api
 {
@@ -18,5 +19,6 @@ namespace LykkeAutomationPrivate.Api
         public Registration Registration => new Registration();
         public ClientAccountBase ClientAccount => new ClientAccountBase();
         public Assets Assets => new Assets();
+        public CandlesHistory CandleHistory => new CandlesHistory();
     }
 }

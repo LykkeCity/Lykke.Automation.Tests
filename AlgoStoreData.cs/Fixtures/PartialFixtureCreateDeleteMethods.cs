@@ -1,4 +1,5 @@
 ﻿using AlgoStoreData.DTOs;
+using AlgoStoreData.HelpersAlgoStore;
 using ApiV2Data.DTOs;
 using NUnit.Framework;
 using RestSharp;
@@ -18,7 +19,7 @@ namespace AlgoStoreData.Fixtures
 
         public async Task<List<BuilInitialDataObjectDTO>> UploadSomeBaseMetaData(int nuberDto)
         {
-            string url = ApiPaths.ALGO_STORE_METADATA;
+            string url = ApiPaths.ALGO_STORE_CREATE_ALGO;
             string message;
             List <MetaDataDTO> metadataList = new List<MetaDataDTO>();
             List<MetaDataResponseDTO> responceMetadataList = new List<MetaDataResponseDTO>();
@@ -28,7 +29,8 @@ namespace AlgoStoreData.Fixtures
                 MetaDataDTO metadata = new MetaDataDTO()
                 {
                     Name = $"{ GlobalConstants.AutoTest }_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()}",
-                    Description = $"{ GlobalConstants.AutoTest }_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()} - Description"
+                    Description = $"{ GlobalConstants.AutoTest }_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()} - Description",
+                    Content = Base64Helpers.EncodeToBase64(CSharpAlgoString)
                 };
                 metadataList.Add(metadata);
             }
@@ -36,7 +38,7 @@ namespace AlgoStoreData.Fixtures
             foreach (var metadata in metadataList)
             {
                 var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
-                message = $"{url} returned status: {response.Status} and response: {response.ResponseJson}. Expected: {HttpStatusCode.OK}";
+                message = $"POST {url} returned status: {response.Status} and response: {response.ResponseJson}. Expected: {HttpStatusCode.OK}";
                 Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK), message);
 
                 MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
@@ -45,22 +47,13 @@ namespace AlgoStoreData.Fixtures
 
             for (int i = 0; i < nuberDto; i++)
             {
-                url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
-
-                UploadStringDTO stringDTO = new UploadStringDTO()
-                {
-                    AlgoId = responceMetadataList[i].Id,
-                    Data = this.CSharpAlgoString
-                };
-
-                var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
-                Assert.That(response.Status, Is.EqualTo(HttpStatusCode.NoContent));
                 WalletDTO walletDTO = await GetExistingWallet();
-                instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(stringDTO.AlgoId, walletDTO);
-                url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
+                instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(responceMetadataList[i].Id, walletDTO, "Demo");
+                url = ApiPaths.ALGO_STORE_SAVE_ALGO_INSTANCE;
 
-                var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-                message = $"{url} returned status: {postInstanceDataResponse.Status} and response: {postInstanceDataResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
+                string requestBody = JsonUtils.SerializeObject(instanceForAlgo);
+                var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, requestBody, Method.POST);
+                message = $"POST {url} returned status: {postInstanceDataResponse.Status} and response: {postInstanceDataResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
                 Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK), message);
 
                 postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
@@ -69,17 +62,17 @@ namespace AlgoStoreData.Fixtures
 
                 DeployBinaryDTO deploy = new DeployBinaryDTO()
                 {
-                    AlgoId = stringDTO.AlgoId,
+                    AlgoId = responceMetadataList[i].Id,
                     InstanceId = postInstanceData.InstanceId,
                 };
 
                 var deployBynaryResponse = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
-                message = $"{url} returned status: {deployBynaryResponse.Status} and response: {deployBynaryResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
+                message = $"POST {url} returned status: {deployBynaryResponse.Status} and response: {deployBynaryResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
                 Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
                 BuilInitialDataObjectDTO tempDataDTO = new BuilInitialDataObjectDTO()
                 {
-                    AlgoId = stringDTO.AlgoId,
+                    AlgoId = responceMetadataList[i].Id,
                     InstanceId = postInstanceData.InstanceId,
                     Name = responceMetadataList[i].Name,
                     Description = responceMetadataList[i].Description
