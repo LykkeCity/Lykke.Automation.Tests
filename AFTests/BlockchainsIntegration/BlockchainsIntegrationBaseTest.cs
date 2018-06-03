@@ -37,7 +37,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Zcash"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitshares"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         protected static Queue<WalletCreationResponse> Wallets()
@@ -265,6 +265,23 @@ namespace AFTests.BlockchainsIntegrationTests
                 }
                 else
                     break;
+            }
+            sw.Stop();
+        }
+
+        public static void WaitForBalanceBlockIncreased(string walletAddress, long startBlock)
+        {
+            var api = new BlockchainApi(BlockchainApi);
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
+            {
+                var currentBlock = api.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == walletAddress)?.Block;
+                if (startBlock  < currentBlock)
+                    return;
+                    
+                else
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
             }
             sw.Stop();
         }

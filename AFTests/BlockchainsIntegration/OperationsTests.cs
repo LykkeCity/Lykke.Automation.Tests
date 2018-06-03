@@ -836,6 +836,8 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
 
+                var startBlock = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Block;
+
                 var partialBalance = Math.Round(long.Parse(currentBalance) * 0.9).ToString();
 
                 var model = new BuildSingleTransactionRequest()
@@ -862,6 +864,8 @@ namespace AFTests.BlockchainsIntegrationTests
                 response1.Validate.StatusCode(HttpStatusCode.Conflict);
 
                 WaitForOperationGotCompleteStatus(model.OperationId.ToString());
+
+                WaitForBalanceBlockIncreased(wallet.PublicAddress, startBlock.Value);
 
                 var balanceAfterTransaction = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
 
