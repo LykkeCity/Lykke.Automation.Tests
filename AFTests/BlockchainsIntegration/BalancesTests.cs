@@ -28,7 +28,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -124,7 +123,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                ReturnMoneyToEW();
                 blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
             }
 
@@ -132,7 +130,9 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DWHWTransactionWillProduceIncreasOfBlockNumberTest()
             {
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null, $"Wallet {wallet.PublicAddress} balance is null. Stop test");
+                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null, $"Wallet {wallet.PublicAddress} balance is null. Fail test");
+
+                // enable observation
 
                 //create transaction and broadcast it
 
