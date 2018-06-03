@@ -7,26 +7,25 @@
 namespace Lykke.Client.AutorestClient.Models
 {
     using Newtonsoft.Json;
-    using System;
     using System.Linq;
 
-    public partial class VolumePrice : IComparable
+    public partial class Throughput
     {
         /// <summary>
-        /// Initializes a new instance of the VolumePrice class.
+        /// Initializes a new instance of the Throughput class.
         /// </summary>
-        public VolumePrice()
+        public Throughput()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the VolumePrice class.
+        /// Initializes a new instance of the Throughput class.
         /// </summary>
-        public VolumePrice(double volume, double price)
+        public Throughput(int averageCandlesPersistedPerSecond, int averageCandleRowsPersistedPerSecond)
         {
-            Volume = volume;
-            Price = price;
+            AverageCandlesPersistedPerSecond = averageCandlesPersistedPerSecond;
+            AverageCandleRowsPersistedPerSecond = averageCandleRowsPersistedPerSecond;
             CustomInit();
         }
 
@@ -37,13 +36,13 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "Volume")]
-        public double Volume { get; set; }
+        [JsonProperty(PropertyName = "AverageCandlesPersistedPerSecond")]
+        public int AverageCandlesPersistedPerSecond { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "Price")]
-        public double Price { get; set; }
+        [JsonProperty(PropertyName = "AverageCandleRowsPersistedPerSecond")]
+        public int AverageCandleRowsPersistedPerSecond { get; set; }
 
         /// <summary>
         /// Validate the object.
@@ -54,12 +53,6 @@ namespace Lykke.Client.AutorestClient.Models
         public virtual void Validate()
         {
             //Nothing to validate
-        }
-
-        public int CompareTo(object obj)
-        {
-            var volume1 = (VolumePrice)obj;
-            return (this.Price - volume1.Price) > 0 ? 1 : (this.Price - volume1.Price) == 0? 0 : -1;
         }
     }
 }
