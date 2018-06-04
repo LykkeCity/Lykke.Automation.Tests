@@ -92,6 +92,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWalletKey = "cSS6VUdFTuKfr4uFPT9Vy6CCU5SHsTEKRDNrzEaHQZRrVb3eQUi3";
                 HotWalletAddressContext = "{\"PubKey\":\"03584f2d9dac279c2a85e58e97f67fc6559a60d950ba30cc4cee544c2ef8457ba1\"}";
                 BlockchainMiningTime = 20;
+                BlockchainIntegration = "LiteCoin";
             }
         }
 
@@ -207,7 +208,6 @@ namespace AFTests.BlockchainsIntegration
             public BitcoinCashSettings()
             {
                 BlockchainIntegration = "BitcoinCash";
-
                 BlockchainApi = "http://bitcoincash-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://bitcoincash-sign.autotests-service.svc.cluster.local/api";
                 HotWallet = "mnKfRMF5R5x3qY2sNkUymhaj5WSNNHB9EF";
