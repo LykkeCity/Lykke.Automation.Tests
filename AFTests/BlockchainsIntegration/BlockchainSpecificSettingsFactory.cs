@@ -244,10 +244,10 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainIntegration = "Monero";
                 BlockchainApi = "http://monero-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://monero-sign.autotests-service.svc.cluster.local/api";
-                HotWallet = "A7gZHjpJUZd3Jvy5AvwkMSeQvocaWzjDTammvDZBLmb24KvkCyxoxAbMvJ8zrqGvMDjkJSjMCGtKJMFHzcVRmJMGaRayME9yxkbGovmcAz";
+                HotWallet = "9wytGvzosJ73Jvy5AvwkMSeQvocaWzjDTammvDZBLmb24KvkCyxoxAbMvJ8zrqGvMDjkJSjMCGtKJMFHzcVRmJMGPVjQ4FP";
                 HotWalletKey = "ea7581947da5c6f27203531322830fd40f2e89ebc6729ca7a4ffda2b029e6708";
                 HotWalletAddressContext = "";
-                ExternalWalletAddress = "A7gZHjpJUZd3Jvy5AvwkMSeQvocaWzjDTammvDZBLmb24KvkCyxoxAbMvJ8zrqGvMDjkJSjMCGtKJMFHzcVRmJMGaPgyy3kH9TiRykHhGN";
+                ExternalWalletAddress = "9wytGvzosJ73Jvy5AvwkMSeQvocaWzjDTammvDZBLmb24KvkCyxoxAbMvJ8zrqGvMDjkJSjMCGtKJMFHzcVRmJMGPVjQ4FP";
                 ExternalWalletKey = "ea7581947da5c6f27203531322830fd40f2e89ebc6729ca7a4ffda2b029e6708";
                 ExternalWallerAddressContext = "";
                 AssetId = "XMR";
