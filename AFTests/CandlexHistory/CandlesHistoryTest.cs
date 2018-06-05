@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using AFTests.PrivateApiTests;
 using Lykke.Client.AutorestClient.Models;
+using MoreLinq;
 using NUnit.Framework;
 using XUnitTestCommon.Tests;
 
@@ -332,7 +333,6 @@ namespace AFTests.CandlexHistory
             }
         }
 
-
         // two trade wallet
         public class CandleHistoryTradeType : CandlesHistoryBaseTest
         {
@@ -494,16 +494,17 @@ namespace AFTests.CandlexHistory
                 // validate trade candle
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
 
-
                 candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
 
-                Assert.That(candlesTrades.History.First().Low, Is.EqualTo(newMaxBuyPrice), "Low value is not expected");
-                Assert.That(candlesTrades.History.First().High, Is.EqualTo(newMinSellPrice), "High value is not expected");
-                Assert.That(candlesTrades.History.First().TradingVolume, Is.EqualTo(tradingVolume *2), "Unexpected trading volume value");
+                Assert.That(candlesTrades.History.Any(c => c.Low == newMaxBuyPrice), Is.True, "Low value is not expected");
+                Assert.That(candlesTrades.History.Any(c => c.High == newMinSellPrice), Is.True, "High value is not expected");
+                double realTradingVolume = 0;
+
+                candlesTrades.History.ForEach(c => realTradingVolume += c.TradingVolume);
+
+                Assert.That(realTradingVolume, Is.EqualTo(tradingVolume *2), "Unexpected trading volume value");
             }
         }
-
-
 
         static double Make5numberAfterDot(double input)
         {
