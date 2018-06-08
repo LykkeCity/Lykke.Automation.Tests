@@ -72,6 +72,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "monero")
                 _settings = new MoneroSettings();
 
+            if (blockchain == "decred")
+                _settings = new DecredSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -252,6 +255,23 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWallerAddressContext = "";
                 AssetId = "XMR";
                 BlockchainMiningTime = 7;
+            }
+        }
+        public class DecredSettings : BlockchainSpecificModel
+        {
+            public DecredSettings()
+            {
+                BlockchainIntegration = "Decred";
+
+                BlockchainApi = "http://lykke-service-decred-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://lykke-service-decred-sign.autotests-service.svc.cluster.local/api";
+                HotWallet = "TsgbAonAUgtgGhTdi6qYwUDcL45ZuNnMFuK";
+                HotWalletKey = "PtWUCdaSMrJ2et41GdUm125kPmN5n9gxKdVfm5ZLkcLeuJFVpuN8m";
+                ExternalWalletAddress = "TsjGG5ybrDLeoeAvkxbZLVHyzBYr27Pb13W";
+                ExternalWalletKey = "PtWUd45tMVbhvdWRubAutbWrrm5gfr7iA1fhi37n1xPeytYRHaG6N";
+                ExternalWallerAddressContext = "";
+                AssetId = "DCR";
+                BlockchainMiningTime = 10;
             }
         }
 
