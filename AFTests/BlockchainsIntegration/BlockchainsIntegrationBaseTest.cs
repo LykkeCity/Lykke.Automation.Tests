@@ -37,7 +37,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Dash"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Decred"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -120,7 +120,7 @@ namespace AFTests.BlockchainsIntegrationTests
         private static bool SetBalanceWIthManyOutputs(List<WalletCreationResponse> wallets)
         {
             var run = new BlockchainApi(_currentSettings.Value.BlockchainApi).Capabilities.GetCapabilities().GetResponseObject().AreManyOutputsSupported;
-            if (!run.Value)
+            if (run == null || !run.Value)
                 return false;
 
             List<TransactionOutputContract> transactions = new List<TransactionOutputContract>();
