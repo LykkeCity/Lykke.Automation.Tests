@@ -51,8 +51,8 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "ripple")
                 _settings = new RippleSettings();
 
-            if (blockchain == "stellar-v2")
-                _settings = new StellarV2Settings();
+            if (blockchain == "stellar")
+                _settings = new StellarSettings();
 
             if (blockchain == "bitshares")
                 _settings = new BitsharesSettings();
@@ -141,9 +141,9 @@ namespace AFTests.BlockchainsIntegration
             }
         }
 
-        class StellarV2Settings : BlockchainSpecificModel
+        class StellarSettings : BlockchainSpecificModel
         {
-            public StellarV2Settings()
+            public StellarSettings()
             {
                 BlockchainIntegration = "Stellar";
                 BlockchainApi = "http://stellar-api-schnidlo.autotests-service.svc.cluster.local/api";
