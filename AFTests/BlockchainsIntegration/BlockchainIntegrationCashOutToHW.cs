@@ -48,7 +48,7 @@ namespace AFTests.BlockchainsIntegrationTests
             string hint = "qwe";
 
             [Test]
-            [Category("BlockchainIntegration")]
+          //  [Category("BlockchainIntegration")]
             public void ProhibotCashOutsToHWTest()
             {
                 string phonePrefix = null;
