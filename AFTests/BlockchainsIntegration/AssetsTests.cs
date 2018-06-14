@@ -44,8 +44,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var cont = TestData.GenerateString(8);
                 var response = blockchainApi.Assets.GetAssets("100", cont);
-                response.Validate.StatusCode(HttpStatusCode.BadRequest);
-                Assert.That(response.GetResponseObject().Items, Is.Null);
+                Assert.That(response.StatusCode, Is.Not.EqualTo(HttpStatusCode.InternalServerError));
             }
         }
 
