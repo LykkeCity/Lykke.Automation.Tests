@@ -172,20 +172,6 @@ namespace AFTests.CandlexHistory
                 return double.Parse(s);
         }
 
-        protected static double Make5numberAfterDotS(double input)
-        {
-            var s = input.ToString(System.Globalization.CultureInfo.InvariantCulture);
-            if (s.Contains("."))
-            {
-                if ((s.Length - s.IndexOf(".")) > 5)
-                    return double.Parse(s.Substring(0, s.IndexOf('.') + 6));
-
-                return double.Parse(s);
-            }
-            else
-                return double.Parse(s);
-        }
-
         public static double SUM(IEnumerable<double> collection)
         {
             double result = 0;
