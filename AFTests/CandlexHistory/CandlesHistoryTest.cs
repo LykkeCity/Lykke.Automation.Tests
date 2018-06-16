@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -15,124 +16,11 @@ namespace AFTests.CandlexHistory
     {
         public class CandleHistorySecond : CandlesHistoryBaseTest
         {
-            string ApiKey = "92ca97e5-93ff-4847-ae6e-aee488c3ca35";
-            string AssetPairId = "chfDEB";
-            string SecondAssetId = "DEB";
-            DateTime fromMoment;
-
-            /// <summary>
-            /// set sell and buy prices to test candles
-            /// </summary>
-            [SetUp]
-            public void SetUp()
-            {
-                //to start from the minute
-                if (DateTime.Now.Second > 10)
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(60 - DateTime.Now.Second));
-
-                var orderBooks = hft.OrderBooks.GetOrderBooks(AssetPairId).GetResponseObject();
-
-                var minSellPrice = Double.MaxValue;
-                var maxBuyPrice = Double.MinValue;
-
-                orderBooks.FindAll(o => o.IsBuy == true).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price > maxBuyPrice)
-                            maxBuyPrice = p.Price;
-                    });
-                });
-
-                orderBooks.FindAll(o => o.IsBuy == false).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price < minSellPrice)
-                            minSellPrice = p.Price;
-                    });
-                });
-
-                if (maxBuyPrice == double.MinValue && minSellPrice != double.MaxValue)
-                    maxBuyPrice = 0.9 * minSellPrice;
-
-                if (minSellPrice == double.MaxValue && maxBuyPrice != double.MinValue)
-                    minSellPrice = 1.1 * maxBuyPrice;
-
-                if(minSellPrice == double.MaxValue && maxBuyPrice == double.MinValue)
-                {
-                    maxBuyPrice = 1.0;
-                    minSellPrice = 1.3;
-                }
-
-                // accuracy = 5
-
-                maxBuyPrice = Make5numberAfterDot(maxBuyPrice);
-                minSellPrice = Make5numberAfterDot(minSellPrice);
-
-                fromMoment = DateTime.Now.ToUniversalTime();
-
-                var limitOrderRequestBuy = new LimitOrderRequest() { Price = maxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = 0.1 };
-
-                var response = hft.Orders.PostOrdersLimitOrder(limitOrderRequestBuy, ApiKey);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-
-                var limitOrderRequestSell = new LimitOrderRequest() { Price = minSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = 0.1 };
-
-                var response1 = hft.Orders.PostOrdersLimitOrder(limitOrderRequestSell, ApiKey);
-                response1.Validate.StatusCode(HttpStatusCode.OK);
-
-                //wait to appear in orderbook
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(10));
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                var take = "100";
-                var skip = "0";
-
-                var response = hft.Orders.GetOrders(OrderStatus.InOrderBook, skip, take, ApiKey);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-
-                response.GetResponseObject().ForEach(o => hft.Orders.PostOrdersCancelOrder(o.Id.ToString(), ApiKey));
-            }
-
-            [Test]
-            [Category("CandleHistory")]
+            //[Test]
+         //   [Category("CandleHistory")]
             public void CandleHistorySecondTest()
             {
-                var orderBooks = hft.OrderBooks.GetOrderBooks(AssetPairId).GetResponseObject();
-
-                var minSellPrice = Double.MaxValue;
-                var maxBuyPrice = Double.MinValue;
-
-                orderBooks.FindAll(o => o.IsBuy == true).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price > maxBuyPrice)
-                            maxBuyPrice = p.Price;
-                    });
-                });
-
-                orderBooks.FindAll(o => o.IsBuy == false).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price < minSellPrice)
-                            minSellPrice = p.Price;
-                    });
-                });
-
-                var middle = (maxBuyPrice + minSellPrice) / 2;
-
-                //move sell price down and buy price up
-                var newMinSellPrice = minSellPrice - (minSellPrice - middle ) / 2;
-                var newMaxBuyPrice = maxBuyPrice + (middle - maxBuyPrice) / 2;
-
-                newMinSellPrice = Make5numberAfterDot(newMinSellPrice);
-                newMaxBuyPrice = Make5numberAfterDot(newMaxBuyPrice);
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
 
                 var request = new LimitOrderRequest() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
@@ -155,145 +43,43 @@ namespace AFTests.CandlexHistory
 
                 var candlesMid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Mid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
 
+                var askClose = candlesAsk.History.Select(c => c.Close);
+                var askOpen = candlesAsk.History.Select(c => c.Open);
+                var askLow = candlesAsk.History.Select(c => c.Low);
+
+                var bidClose = candlesBid.History.Select(c => c.Close);
+                var bidOpen = candlesBid.History.Select(c => c.Open);
+                var bidLow = candlesBid.History.Select(c => c.Low);
+
                 var expectedCloseMid = (candlesAsk.History.First().Close + candlesBid.History.First().Close) / 2;
                 var expectedOpenMid = (candlesAsk.History.First().Open + candlesBid.History.First().Open) /2;
                 var expectedLowMid = (candlesAsk.History.First().Low + candlesBid.History.First().Low) /2;
 
-                expectedLowMid = Make5numberAfterDot(expectedLowMid);
-                expectedOpenMid = Make5numberAfterDot(expectedOpenMid);
-                expectedCloseMid = Make5numberAfterDot(expectedCloseMid);
+                expectedLowMid = Make5numberAfterDotS(expectedLowMid);
+                expectedOpenMid = Make5numberAfterDotS(expectedOpenMid);
+                expectedCloseMid = Make5numberAfterDotS(expectedCloseMid);
 
+                var candlesCloseArr = candlesAsk.History.Select(c => c.Close).ToList();
 
-                Assert.That(candlesAsk.History.Any(c => { return c.Close == newMinSellPrice; }), Is.True, $"Sell price {newMinSellPrice} is not present in Candles");
-                Assert.That(candlesBid.History.Any(c => { return c.Close == newMaxBuyPrice; }), Is.True, $"Buy price {newMaxBuyPrice} is not present in Candles");
+                Assert.Multiple(() =>
+               {
+                   Assert.That(candlesAsk.History.Select(c => c.Close).ToList(), Does.Contain(newMinSellPrice), $"Sell price {newMinSellPrice} is not present in Candles");
+                   Assert.That(candlesBid.History.Any(c => { return c.Close == newMaxBuyPrice; }), Is.True, $"Buy price {newMaxBuyPrice} is not present in Candles");
 
-                Assert.That(candlesMid.History.First().Open, Is.EqualTo(expectedOpenMid), "Unexpected mid value");
-                Assert.That(candlesMid.History.First().Close, Is.EqualTo(expectedCloseMid), "Unexpected mid value");
-                Assert.That(candlesMid.History.First().Low, Is.EqualTo(expectedLowMid), "Unexpected mid value");
+                   Assert.That(candlesMid.History.Select(c => c.Open), Does.Contain(expectedOpenMid), "Unexpected open mid value");
+                   Assert.That(candlesMid.History.Select(c => c.Close), Does.Contain(expectedCloseMid), "Unexpected close mid value");
+                   Assert.That(candlesMid.History.Select(c => c.Low), Does.Contain(expectedLowMid), "Unexpected low mid value");
+               });
             }
         }
 
         public class CandleHistoryDifferentPeriod : CandlesHistoryBaseTest
         {
-            string ApiKey = "92ca97e5-93ff-4847-ae6e-aee488c3ca35";
-            string AssetPairId = "chfDEB";
-            string SecondAssetId = "DEB";
-            DateTime fromMoment;
-
-            /// <summary>
-            /// set sell and buy prices to test candles
-            /// </summary>
-            [SetUp]
-            public void SetUp()
-            {
-                //to start from the minute
-                if (DateTime.Now.Second > 10)
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(60 - DateTime.Now.Second));
-
-                var orderBooks = hft.OrderBooks.GetOrderBooks(AssetPairId).GetResponseObject();
-
-                var minSellPrice = Double.MaxValue;
-                var maxBuyPrice = Double.MinValue;
-
-                orderBooks.FindAll(o => o.IsBuy == true).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price > maxBuyPrice)
-                            maxBuyPrice = p.Price;
-                    });
-                });
-
-                orderBooks.FindAll(o => o.IsBuy == false).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price < minSellPrice)
-                            minSellPrice = p.Price;
-                    });
-                });
-
-                if (maxBuyPrice == double.MinValue && minSellPrice != double.MaxValue)
-                    maxBuyPrice = 0.9 * minSellPrice;
-
-                if (minSellPrice == double.MaxValue && maxBuyPrice != double.MinValue)
-                    minSellPrice = 1.1 * maxBuyPrice;
-
-                if (minSellPrice == double.MaxValue && maxBuyPrice == double.MinValue)
-                {
-                    maxBuyPrice = 1.0;
-                    minSellPrice = 1.3;
-                }
-
-                // accuracy = 5
-
-                maxBuyPrice = Make5numberAfterDot(maxBuyPrice);
-                minSellPrice = Make5numberAfterDot(minSellPrice);
-
-                fromMoment = DateTime.Now.ToUniversalTime();
-
-                var limitOrderRequestBuy = new LimitOrderRequest() { Price = maxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = 0.1 };
-
-                var response = hft.Orders.PostOrdersLimitOrder(limitOrderRequestBuy, ApiKey);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-
-                var limitOrderRequestSell = new LimitOrderRequest() { Price = minSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = 0.1 };
-
-                var response1 = hft.Orders.PostOrdersLimitOrder(limitOrderRequestSell, ApiKey);
-                response1.Validate.StatusCode(HttpStatusCode.OK);
-
-                //wait to appear in orderbook
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(10));
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                var take = "100";
-                var skip = "0";
-
-                var response = hft.Orders.GetOrders(OrderStatus.InOrderBook, skip, take, ApiKey);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-
-                response.GetResponseObject().ForEach(o => hft.Orders.PostOrdersCancelOrder(o.Id.ToString(), ApiKey));
-            }
-
-            [Test]
-            [Category("CandleHistory")]
+          //  [Test]
+         //   [Category("CandleHistory")]
             public void CandleHistoryDifferentPeriodTest()
             {
-                var orderBooks = hft.OrderBooks.GetOrderBooks(AssetPairId).GetResponseObject();
-
-                var minSellPrice = Double.MaxValue;
-                var maxBuyPrice = Double.MinValue;
-
-                orderBooks.FindAll(o => o.IsBuy == true).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price > maxBuyPrice)
-                            maxBuyPrice = p.Price;
-                    });
-                });
-
-                orderBooks.FindAll(o => o.IsBuy == false).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price < minSellPrice)
-                            minSellPrice = p.Price;
-                    });
-                });
-
-                var middle = (maxBuyPrice + minSellPrice) / 2;
-
-                //move sell price down and buy price up
-                var newMinSellPrice = minSellPrice - (minSellPrice - middle) / 2;
-                var newMaxBuyPrice = maxBuyPrice + (middle - maxBuyPrice) / 2;
-
-                newMinSellPrice = Make5numberAfterDot(newMinSellPrice);
-
-                newMaxBuyPrice = Make5numberAfterDot(newMaxBuyPrice);
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
 
                 var request = new LimitOrderRequest() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
@@ -325,137 +111,17 @@ namespace AFTests.CandlexHistory
 
                 Assert.That(candlesAsk.History.Any(c => { return c.Close == newMinSellPrice; }), Is.False, $"Sell price {newMinSellPrice} is Close price after cancelling order");
                 Assert.That(candlesBid.History.Any(c => { return c.Close == newMaxBuyPrice; }), Is.False, $"Buy price {newMaxBuyPrice} is Close price after cancelling order");
-
-                Assert.That(candlesAsk.History.Any(c => { return c.Close == minSellPrice; }), Is.True, $"Start Sell price {minSellPrice} is not Close price after cancelling order");
-                Assert.That(candlesBid.History.Any(c => { return c.Close == maxBuyPrice; }), Is.True, $"Start Buy price {maxBuyPrice} is not Close price after cancelling order");
-
-                // 
             }
         }
 
         // two trade wallet
         public class CandleHistoryTradeType : CandlesHistoryBaseTest
         {
-            string ApiKey = "92ca97e5-93ff-4847-ae6e-aee488c3ca35";
-            string SecondWalletApiKey = "1606b4dd-fe22-4425-92ea-dccd5fffcce8";
-            string AssetPairId = "chfDEB";
-            string SecondAssetId = "DEB";
-            DateTime fromMoment;
-            double tradingVolume = 0.1;
-
-            /// <summary>
-            /// set sell and buy prices to test candles
-            /// </summary>
-            [SetUp]
-            public void SetUp()
-            {
-                //to start from the minute
-                if (DateTime.Now.Second > 10)
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(60 - DateTime.Now.Second));
-
-                var orderBooks = hft.OrderBooks.GetOrderBooks(AssetPairId).GetResponseObject();
-
-                var minSellPrice = Double.MaxValue;
-                var maxBuyPrice = Double.MinValue;
-
-                orderBooks.FindAll(o => o.IsBuy == true).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price > maxBuyPrice)
-                            maxBuyPrice = p.Price;
-                    });
-                });
-
-                orderBooks.FindAll(o => o.IsBuy == false).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price < minSellPrice)
-                            minSellPrice = p.Price;
-                    });
-                });
-
-                if (maxBuyPrice == double.MinValue && minSellPrice != double.MaxValue)
-                    maxBuyPrice = 0.9 * minSellPrice;
-
-                if (minSellPrice == double.MaxValue && maxBuyPrice != double.MinValue)
-                    minSellPrice = 1.1 * maxBuyPrice;
-
-                if (minSellPrice == double.MaxValue && maxBuyPrice == double.MinValue)
-                {
-                    maxBuyPrice = 1.0;
-                    minSellPrice = 1.3;
-                }
-
-                // accuracy = 5
-
-                maxBuyPrice = Make5numberAfterDot(maxBuyPrice);
-                minSellPrice = Make5numberAfterDot(minSellPrice);
-
-                fromMoment = DateTime.Now.ToUniversalTime();
-
-                var limitOrderRequestBuy = new LimitOrderRequest() { Price = maxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
-
-                var response = hft.Orders.PostOrdersLimitOrder(limitOrderRequestBuy, ApiKey);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-
-                var limitOrderRequestSell = new LimitOrderRequest() { Price = minSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
-
-                var response1 = hft.Orders.PostOrdersLimitOrder(limitOrderRequestSell, ApiKey);
-                response1.Validate.StatusCode(HttpStatusCode.OK);
-
-                //wait to appear in orderbook
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                var take = "100";
-                var skip = "0";
-
-                var response = hft.Orders.GetOrders(OrderStatus.InOrderBook, skip, take, ApiKey);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-
-                response.GetResponseObject().ForEach(o => hft.Orders.PostOrdersCancelOrder(o.Id.ToString(), ApiKey));
-            }
-
-            [Test]
-            [Category("CandleHistory")]
+          //  [Test]
+        //    [Category("CandleHistory")]
             public void CandleHistoryTradeTypeTest()
             {
-                var orderBooks = hft.OrderBooks.GetOrderBooks(AssetPairId).GetResponseObject();
-
-                var minSellPrice = Double.MaxValue;
-                var maxBuyPrice = Double.MinValue;
-
-                orderBooks.FindAll(o => o.IsBuy == true).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price > maxBuyPrice)
-                            maxBuyPrice = p.Price;
-                    });
-                });
-
-                orderBooks.FindAll(o => o.IsBuy == false).ForEach(o =>
-                {
-                    o.Prices.ToList().ForEach(p =>
-                    {
-                        if (p.Price < minSellPrice)
-                            minSellPrice = p.Price;
-                    });
-                });
-
-                var middle = (maxBuyPrice + minSellPrice) / 2;
-
-                //move sell price down and buy price up
-                var newMinSellPrice = minSellPrice - (minSellPrice - middle) / 2;
-                var newMaxBuyPrice = maxBuyPrice + (middle - maxBuyPrice) / 2;
-
-                newMinSellPrice = Make5numberAfterDot(newMinSellPrice);
-                newMaxBuyPrice = Make5numberAfterDot(newMaxBuyPrice);
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
 
                 var request = new LimitOrderRequest() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
 
@@ -505,10 +171,395 @@ namespace AFTests.CandlexHistory
                 Assert.That(realTradingVolume, Is.EqualTo(tradingVolume *2), "Unexpected trading volume value");
             }
         }
+        
+        //new tests
 
-        static double Make5numberAfterDot(double input)
+        public class LOSellCandle : CandlesHistoryBaseTest
         {
-            return (Math.Floor((input * Math.Pow(10, 5)) % Math.Pow(10, 5))) / Math.Pow(10, 5);
+            [Test]
+            [Category("CandleHistory")]
+            public void LOBuyCandleTest()
+            {
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
+                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+
+                var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
+                responseSell.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var requestBuy = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+
+                var responseBuy = hft.Orders.PostOrdersLimitOrder(requestBuy, SecondWalletApiKey);
+                responseBuy.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Minute, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesAsk = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.Multiple(() =>
+               {
+                   Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
+                   Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume), "does not contain trading volume");
+                   Assert.That(candlesTrades.History.Select(c => decimal.Parse(c.TradingOppositeVolume.ToString())), Does.Contain((decimal.Parse(tradingVolume.ToString()) * (decimal.Parse(newMinSellPrice.ToString())))), "does not contain trading volume * sell price");
+               });
+            }
+        }
+
+        public class LOBuyCandle : CandlesHistoryBaseTest
+        {
+            [Test]
+            [Category("CandleHistory")]
+            public void LOSellCandleTest()
+            {
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
+                var requestBuy = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+
+                var responseBuy = hft.Orders.PostOrdersLimitOrder(requestBuy, ApiKey);
+                responseBuy.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+
+                var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, SecondWalletApiKey);
+                responseBuy.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Minute, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesAsk = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
+                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume), "does not contain trading volume");
+                    Assert.That(candlesTrades.History.Select(c => decimal.Parse(c.TradingOppositeVolume.ToString())), Does.Contain((decimal.Parse(tradingVolume.ToString()) * (decimal.Parse(newMinSellPrice.ToString())))), "does not contain trading volume * sell price");
+                });
+            }
+        }
+
+        public class MOBuyInvertedCandle : CandlesHistoryBaseTest
+        {
+            [Test]
+            [Category("CandleHistory")]
+            public void MOBuyInvertedCandleTest()
+            {
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
+                (var marketSell, var marketBuy) = currentMinMaxPrices();
+
+                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = 0.1 };
+
+                var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
+                responseSell.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var requestBuy = new MarketOrderRequest() {  AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume /2, Asset = SecondAssetId };
+
+                var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, SecondWalletApiKey);
+                responseBuy.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Minute, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesAsk = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(marketBuy), "Close price does not contain new min sell price");
+                    Assert.That(candlesTrades.History.Select(c => c.TradingOppositeVolume), Does.Contain(tradingVolume/2), "does not contain trading volume");
+                });
+            }
+        }
+
+        public class MOBuyCandle : CandlesHistoryBaseTest
+        {
+            [Test]
+            [Category("CandleHistory")]
+            public void MOBuyTest()
+            {
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
+                (var marketSell, var marketBuy) = currentMinMaxPrices();
+
+                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+
+                var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
+                responseSell.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+                // MO
+                var requestBuy = new MarketOrderRequest() { AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume / 2, Asset = FirstAssetId };
+
+                var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, SecondWalletApiKey);
+                responseBuy.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Minute, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesAsk = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
+                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume / 2), "does not contain trading volume");
+                });
+            }
+        }
+
+        public class MOSellCandle : CandlesHistoryBaseTest
+        {
+            [Test]
+            [Category("CandleHistory")]
+            public void MOSellTest()
+            {
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
+                (var marketSell, var marketBuy) = currentMinMaxPrices();
+
+                var requestBuy = new LimitOrderRequest() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+
+                var responseBuy = hft.Orders.PostOrdersLimitOrder(requestBuy, ApiKey);
+                responseBuy.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+                // MO
+                var requestSell = new MarketOrderRequest() { AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume / 2, Asset = FirstAssetId };
+
+                var responseSell = hft.Orders.PostOrdersMarket(requestSell, SecondWalletApiKey);
+                responseSell.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Minute, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesAsk = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMaxBuyPrice), "Close price does not contain new min sell price");
+                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume / 2), "does not contain trading volume");
+                });
+            }
+        }
+
+        public class MOSellInvertedCandle : CandlesHistoryBaseTest
+        {
+            [Test]
+            [Category("CandleHistory")]
+            public void MOSellInvertedTest()
+            {
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
+                (var marketSell, var marketBuy) = currentMinMaxPrices();
+
+                //
+                var candlesAsk1 = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid1 = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+                //
+
+                var requestSell1user = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = 0.1 };
+
+                var responseSell1user = hft.Orders.PostOrdersLimitOrder(requestSell1user, ApiKey);
+                responseSell1user.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+ 
+                var requestSell = new MarketOrderRequest() { AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume / 2, Asset = SecondAssetId };
+
+                var responseSell = hft.Orders.PostOrdersMarket(requestSell, SecondWalletApiKey);
+                responseSell.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesAsk = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
+                    Assert.That(candlesTrades.History.Select(c => c.TradingOppositeVolume), Does.Contain(tradingVolume / 2), "does not contain trading volume");
+                });
+            }
+        }
+
+        //
+        public class LOSellPartiallyExecutionCandle : CandlesHistoryBaseTest
+        {
+            int partialCount = 10;
+            [Test]
+            [Category("CandleHistory")]
+            public void LOSellPartiallyExecutionTest()
+            {
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
+                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume * partialCount };
+
+                var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
+                responseSell.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var requestBuy = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+
+                for(var i=0; i < partialCount; i++) { 
+                    var responseBuy = hft.Orders.PostOrdersLimitOrder(requestBuy, SecondWalletApiKey);
+                    responseBuy.Validate.StatusCode(HttpStatusCode.OK);
+                }
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Minute, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesAsk = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
+                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume*partialCount), "does not contain trading volume");
+                    Assert.That(candlesTrades.History.Select(c => decimal.Parse(c.TradingOppositeVolume.ToString())), Does.Contain((decimal.Parse(tradingVolume.ToString()) * (decimal.Parse(newMinSellPrice.ToString())) *(decimal)partialCount )), "does not contain trading volume * sell price");
+                });
+            }
+        }
+
+        public class LOSellPartiallyMarketOrderExecutionCandle : CandlesHistoryBaseTest
+        {
+            int partialCount = 10;
+            [Test]
+            [Category("CandleHistory")]
+            public void LOSellPartiallyMarketOrderExecutionCandleTest()
+            {
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
+                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume * partialCount };
+
+                var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
+                responseSell.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var requestBuy = new MarketOrderRequest() {AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume, Asset = FirstAssetId };
+
+                for (var i = 0; i < partialCount; i++)
+                {
+                    var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, SecondWalletApiKey);
+                    responseBuy.Validate.StatusCode(HttpStatusCode.OK);
+                }
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Minute, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesAsk = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
+                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume * partialCount), "does not contain trading volume");
+                    Assert.That(candlesTrades.History.Select(c => decimal.Parse(c.TradingOppositeVolume.ToString())), Does.Contain((decimal.Parse(tradingVolume.ToString()) * (decimal.Parse(newMinSellPrice.ToString())) * (decimal)partialCount)), "does not contain trading volume * sell price");
+                });
+            }
+        }
+
+        public class LONumerousTradesCandle : CandlesHistoryBaseTest
+        {
+            int partialCount = 10;
+            [Test]
+            [Category("CandleHistory")]
+            public void LONumerousTradesCandleTest()
+            {
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
+
+                for (var i = 0; i < partialCount; i++)
+                {
+                    var requestBuy = new LimitOrderRequest() { Price = newMaxBuyPrice + i/Math.Pow(10, 5), AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+                    var responseBuy = hft.Orders.PostOrdersLimitOrder(requestBuy, ApiKey);
+                    responseBuy.Validate.StatusCode(HttpStatusCode.OK);
+                }
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                hft.OrderBooks.GetOrderBooks(AssetPairId);
+
+                var requestSell = new MarketOrderRequest() { AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume * partialCount, Asset = FirstAssetId };
+                
+                var responseSell = hft.Orders.PostOrdersMarket(requestSell, SecondWalletApiKey);
+                responseSell.Validate.StatusCode(HttpStatusCode.OK);
+                
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Minute, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesAsk = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(candlesTrades.History.Select(c => c.High), Does.Contain(newMaxBuyPrice + (partialCount-1) / Math.Pow(10, 5)), "Unexpected max price");
+                    Assert.That(candlesTrades.History.Select(c => c.Low), Does.Contain(newMaxBuyPrice), "Unexpected low price");
+                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume * partialCount), "does not contain trading volume");
+                });
+            }
+        }
+
+        public class MONumerousTradesCandle : CandlesHistoryBaseTest
+        {
+            int partialCount = 10;
+            [Test]
+            [Category("CandleHistory")]
+            public void MONumerousTradesCandleTest()
+            {
+                (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
+
+                for (var i = 0; i < partialCount; i++)
+                {
+                    var requestSell = new LimitOrderRequest() { Price = newMinSellPrice + i / Math.Pow(10, 5), AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+                    var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
+                    responseSell.Validate.StatusCode(HttpStatusCode.OK);
+                }
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                hft.OrderBooks.GetOrderBooks(AssetPairId);
+
+                var requestBuy = new MarketOrderRequest() { AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume * partialCount, Asset = FirstAssetId };
+
+                var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, SecondWalletApiKey);
+                responseBuy.Validate.StatusCode(HttpStatusCode.OK);
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
+
+                var candlesTrades = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Trades, CandleTimeInterval.Minute, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesAsk = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Ask, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(candlesTrades.History.Select(c => c.High), Does.Contain(newMinSellPrice + (partialCount - 1) / Math.Pow(10, 5)), "Unexpected max price");
+                    Assert.That(candlesTrades.History.Select(c => c.Low), Does.Contain(newMinSellPrice), "Unexpected low price");
+                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume * partialCount), "does not contain trading volume");
+                });
+            }
         }
     }
 }
