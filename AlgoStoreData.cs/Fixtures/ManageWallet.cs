@@ -99,7 +99,8 @@ namespace AlgoStoreData.Fixtures
                     BalanceDTO walletBalanceDTO = JsonUtils.DeserializeJson<BalanceDTO>(response.ResponseJson);
                     balance = walletBalanceDTO.Balance;
                     break;
-                case HttpStatusCode.NotFound: // Service returns not found if the balance is 0
+                case HttpStatusCode.NotFound: // Service returns not found if there is no balance for the asset
+                case HttpStatusCode.InternalServerError: // Service returns InternalServerError and message "Message": "Technical problem" if there is no balance for the asset
                     balance = 0;
                     break;
                 default:

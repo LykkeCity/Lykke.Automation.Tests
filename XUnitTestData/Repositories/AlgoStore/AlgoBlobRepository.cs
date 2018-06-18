@@ -1,4 +1,6 @@
 ﻿using AzureStorage;
+using AzureStorage.Blob;
+using Lykke.SettingsReader;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,18 +10,19 @@ using XUnitTestData.Domains.AlgoStore;
 
 namespace XUnitTestData.Repositories.AlgoStore
 {
-    public class AlgoBlobRepository : AzureStorage.Blob.AzureBlobStorage 
+    public class AlgoBlobRepository
     {
+        IBlobStorage blobStorage;
         private const string BlobContainer = "algo-store-binary";
 
-        public AlgoBlobRepository(string connectionString, TimeSpan? maxExecutionTimeout = null) : base(connectionString, maxExecutionTimeout)
+        public AlgoBlobRepository(IReloadingManager<string> connectionStringManager, TimeSpan? maxExecutionTimeout = null)
         {
+            blobStorage = AzureBlobStorage.Create(connectionStringManager, maxExecutionTimeout);
         }
 
         public async Task<bool> CheckIfBlobExists(string blobName, string binaryType)
         {
-            return await HasBlobAsync(BlobContainer, blobName+binaryType);         
+            return await blobStorage.HasBlobAsync(BlobContainer, blobName+binaryType);
         }
-
     }
 }

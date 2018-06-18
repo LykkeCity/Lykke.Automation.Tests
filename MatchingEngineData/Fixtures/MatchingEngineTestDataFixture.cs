@@ -23,6 +23,9 @@ using XUnitTestData.Entities.Assets;
 using NUnit.Framework;
 using XUnitTestCommon.Tests;
 using XUnitTestCommon.GlobalActions;
+using XUnitTestCommon.Settings.AutomatedFunctionalTests;
+using Lykke.SettingsReader;
+using XUnitTestCommon.Settings;
 
 namespace AFTMatchingEngine.Fixtures
 {
@@ -58,7 +61,8 @@ namespace AFTMatchingEngine.Fixtures
         private RabbitMQConsumer<LimitOrdersResponse> LimitOrderSubscription;
         private RabbitMQConsumer<MarketOrderWithTrades> TradesOrderSubscription;
 
-        private ConfigBuilder _configBuilder;
+        private IReloadingManager<AppSettings> _configBuilder;
+        private MatchingEngineSettings _matchingEngineSettings;
 
         private List<string> _createdQueues;
         private IContainer container;
@@ -66,7 +70,8 @@ namespace AFTMatchingEngine.Fixtures
         [OneTimeSetUp]
         public void Initialize()
         {
-            this._configBuilder = new ConfigBuilder(Constants.ConfigItemName);
+            _configBuilder = new ConfigBuilder().ReloadingManager;
+            _matchingEngineSettings = _configBuilder.CurrentValue.AutomatedFunctionalTests.MatchingEngine;
             prepareConsumer();
             prepareRabbitQueues();
             prepareRabbitMQConnections();
@@ -93,30 +98,30 @@ namespace AFTMatchingEngine.Fixtures
             RabbitMqMessages = new Dictionary<Type, List<IRabbitMQOperation>>();
 
             CashInOutSubscription = new RabbitMQConsumer<CashOperation>(
-                new RabbitMQSettings(_configBuilder, "cashinout", Constants.TestQueueName), handleOperationMessages);
+                new RabbitMQSettings(_matchingEngineSettings, "cashinout", Constants.TestQueueName), handleOperationMessages);
 
             CashTransferSubscription = new RabbitMQConsumer<CashTransferOperation>(
-                new RabbitMQSettings(_configBuilder, "transfers", Constants.TestQueueName), handleOperationMessages);
+                new RabbitMQSettings(_matchingEngineSettings, "transfers", Constants.TestQueueName), handleOperationMessages);
 
             CashSwapSubscription = new RabbitMQConsumer<CashSwapOperation>(
-                new RabbitMQSettings(_configBuilder, "cashswap", Constants.TestQueueName), handleOperationMessages);
+                new RabbitMQSettings(_matchingEngineSettings, "cashswap", Constants.TestQueueName), handleOperationMessages);
 
             BalanceUpdateSubscription = new RabbitMQConsumer<BalanceUpdate>(
-                new RabbitMQSettings(_configBuilder, "balanceupdate", Constants.TestQueueName), handleOperationMessages);
+                new RabbitMQSettings(_matchingEngineSettings, "balanceupdate", Constants.TestQueueName), handleOperationMessages);
 
             LimitOrderSubscription = new RabbitMQConsumer<LimitOrdersResponse>(
-                new RabbitMQSettings(_configBuilder, "limitorders.clients", Constants.TestQueueName), handleOperationMessages);
+                new RabbitMQSettings(_matchingEngineSettings, "limitorders.clients", Constants.TestQueueName), handleOperationMessages);
 
             TradesOrderSubscription = new RabbitMQConsumer<MarketOrderWithTrades>(
-                new RabbitMQSettings(_configBuilder, "trades", Constants.TestQueueName), handleOperationMessages);
+                new RabbitMQSettings(_matchingEngineSettings, "trades", Constants.TestQueueName), handleOperationMessages);
 
         }
 
         private void prepareConsumer()
         {
-            if (Int32.TryParse(_configBuilder.Config["Port"], out int port))
+            if (Int32.TryParse(_matchingEngineSettings.Port, out int port))
             {
-                Consumer = new MatchingEngineConsumer(_configBuilder.Config["BaseUrl"], port);
+                Consumer = new MatchingEngineConsumer(_matchingEngineSettings.BaseUrl, port);
             }
             else
             {
@@ -126,10 +131,10 @@ namespace AFTMatchingEngine.Fixtures
 
         private void prepareRabbitQueues()
         {
-            RabbitMQHttpApiConsumer.Setup(new RabbitMQHttpApiSettings(_configBuilder));
+            RabbitMQHttpApiConsumer.Setup(new RabbitMQHttpApiSettings(_matchingEngineSettings));
 
             
-            if(!Int32.TryParse(_configBuilder.Config["RabbitMQMessageWait"], out waitForRabbitMQMessage))
+            if(!Int32.TryParse(_matchingEngineSettings.RabbitMQMessageWait, out waitForRabbitMQMessage))
                 waitForRabbitMQMessage = 20000;
 
             List<Task<bool>> createQueueTasks = new List<Task<bool>>
@@ -175,7 +180,7 @@ namespace AFTMatchingEngine.Fixtures
 
         private async Task prepareTestData()
         {
-            ConfigBuilder apiv2Config = new ConfigBuilder("ApiV2");
+            ApiV2Settings apiv2Config = new ConfigBuilder().ReloadingManager.CurrentValue.AutomatedFunctionalTests.ApiV2;
             ApiConsumer registerConsumer1 = new ApiConsumer(apiv2Config);
             ApiConsumer registerConsumer2 = new ApiConsumer(apiv2Config);
             var registerTestAccount1 = registerConsumer1.RegisterNewUser();
@@ -199,7 +204,7 @@ namespace AFTMatchingEngine.Fixtures
                 Consumer.Client.UpdateBalanceAsync(Guid.NewGuid().ToString(), TestAccountId2, TestAsset2, Constants.InitialAssetAmmount)
             };
 
-            if (!Int32.TryParse(_configBuilder.Config["AssetPrecission"], out AssetPrecission))
+            if (!Int32.TryParse(_matchingEngineSettings.AssetPrecission, out AssetPrecission))
                 AssetPrecission = 2;
 
             this.TestAssetPair = (AssetPairEntity)Task.Run(async () =>

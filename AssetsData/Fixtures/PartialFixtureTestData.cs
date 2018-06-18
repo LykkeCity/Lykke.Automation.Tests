@@ -80,9 +80,8 @@ namespace AssetsData.Fixtures
             this.AllAssetPairsFromDB = (await assetPairsFromDB).Cast<AssetPairEntity>().ToList();
             this.TestAssetPair = EnumerableUtils.PickRandom(AllAssetPairsFromDB);
 
-            ConfigBuilder apiv2Config = new ConfigBuilder("ApiV2");
-            ApiConsumer registerConsumer1 = new ApiConsumer(apiv2Config);
-            ApiConsumer registerConsumer2 = new ApiConsumer(apiv2Config);
+            ApiConsumer registerConsumer1 = new ApiConsumer(_configBuilder.ReloadingManager.CurrentValue.AutomatedFunctionalTests.ApiV2);
+            ApiConsumer registerConsumer2 = new ApiConsumer(_configBuilder.ReloadingManager.CurrentValue.AutomatedFunctionalTests.ApiV2);
 
             var registeredAccount1 = registerConsumer1.RegisterNewUser();
             var registeredAccount2 = registerConsumer2.RegisterNewUser();

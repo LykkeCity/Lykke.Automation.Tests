@@ -34,12 +34,12 @@ namespace Lykke.AlgoStore.CSharp.Algo.Implemention.ExecutableClass
 
             if (quote.Price < 10000)
             {
-                context.Actions.Buy(Volume);
+                context.Actions.Buy(quote, Volume);
             }
 
             if (quote.Price > 8000)
             {
-                context.Actions.Sell(Volume);
+                context.Actions.Sell(quote, Volume);
             }
         }
 

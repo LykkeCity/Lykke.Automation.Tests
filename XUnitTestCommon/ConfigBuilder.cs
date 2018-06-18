@@ -6,41 +6,36 @@ using System.Text;
 using System.Net.Http;
 using Microsoft.Extensions.FileProviders;
 using XUnitTestCommon.Config;
+using Lykke.SettingsReader;
+using XUnitTestCommon.Settings;
+using System.IO;
 
 namespace XUnitTestCommon
 {
     public sealed class ConfigBuilder
     {
-        private readonly Lazy<IConfigurationRoot> lazyLocal;
+        public IConfigurationRoot Config { get; }
 
-        public IConfigurationRoot LocalConfig { get { return lazyLocal.Value; } }
+        public IReloadingManager<AppSettings> ReloadingManager { get; }
 
-        private readonly Lazy<IConfigurationRoot> lazy;
-
-        public IConfigurationRoot Config { get { return lazy.Value; } }
-
-        public ConfigBuilder(string TestItemName)
+        public ConfigBuilder()
         {
-            this.lazyLocal = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().AddJsonFile("Config.json").Build());
-            this.lazy = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder()
-           .AddHttpJsonConfig(
-               LocalConfig["SettingsServiceURL"],
-               LocalConfig["SettingsServiceAccessToken"],
-               LocalConfig["SettingsServiceRootItemName"],
-               TestItemName
-               ).Build());
-        }
-        public ConfigBuilder(string RootItem, string TestItemName)
-        {
-            this.lazyLocal = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().AddJsonFile("Config.json").Build());
-            this.lazy = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder()
-           .AddHttpJsonConfig(
-               LocalConfig["SettingsServiceURL"],
-               LocalConfig["SettingsServiceAccessToken"],
-               RootItem,
-               TestItemName
-               ).Build());
+            LocalConfig localConfig = LocalConfig.GetLocalConfig();
+
+            Config = new ConfigurationBuilder().AddEnvironmentVariables().Build();
+            Config.Providers.First().Set("SettingsUrl", $"{localConfig.SettingsServiceURL}{localConfig.SettingsServiceAccessToken}");
+            
+            ReloadingManager = Config.LoadSettings<AppSettings>("SettingsUrl", false);
         }
 
+        public static IReloadingManager<AppSettings> InitConfiguration()
+        {
+            LocalConfig localConfig = LocalConfig.GetLocalConfig();
+
+            var config = new ConfigurationBuilder().AddEnvironmentVariables().Build();
+            config.Providers.First().Set("SettingsUrl", $"{localConfig.SettingsServiceURL}{localConfig.SettingsServiceAccessToken}");
+
+            return config.LoadSettings<AppSettings>("SettingsUrl", false);
+        }
     }
 }
