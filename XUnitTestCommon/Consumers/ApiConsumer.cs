@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
 using System.Threading.Tasks;
 using XUnitTestCommon.TestsCore;
 using XUnitTestCommon.DTOs;
+using XUnitTestCommon.Settings;
 
 namespace XUnitTestCommon.Consumers
 {
@@ -43,11 +43,11 @@ namespace XUnitTestCommon.Consumers
                 _oAuthConsumer.Authenticate().Wait();
         }
 
-        public ApiConsumer(ConfigBuilder configBuilder, OAuthConsumer oAuthConsumer)
-            : this(configBuilder.Config["UrlPefix"], configBuilder.Config["BaseUrl"], Boolean.Parse(configBuilder.Config["IsHttps"]), oAuthConsumer)
+        public ApiConsumer(IAppSettings configBuilder, OAuthConsumer oAuthConsumer)
+            : this(configBuilder.UrlPefix, configBuilder.BaseUrl, configBuilder.IsHttps, oAuthConsumer)
         { }
 
-        public ApiConsumer(ConfigBuilder configBuilder) : this(configBuilder, new OAuthConsumer(configBuilder))
+        public ApiConsumer(IAppSettings configBuilder) : this(configBuilder, new OAuthConsumer(configBuilder))
         {
 
         }

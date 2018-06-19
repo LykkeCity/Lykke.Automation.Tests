@@ -34,7 +34,7 @@ namespace BlueApiData.Fixtures
         {
             Task<List<ApiConsumer>> registerUsersTasks = RegisterNUsers(2);
 
-            this.GlobalConsumer = new ApiConsumer(this._configBuilder);
+            this.GlobalConsumer = new ApiConsumer(_blueApiAppSettings);
             await this.GlobalConsumer.RegisterNewUser();
 
             var createLinkResponse = await this.GlobalConsumer.ExecuteRequest(ApiPaths.REFERRAL_LINKS_INVITATION_PATH, Helpers.EmptyDictionary, null, Method.POST);
@@ -91,9 +91,9 @@ namespace BlueApiData.Fixtures
 
         public void PrepareTwitterData()
         {
-            AccountEmail = _configBuilder.Config["TwitterAccountEmail"];
-            if (!Boolean.TryParse(_configBuilder.Config["TwitterAggessiveCheck"], out TwitterAggressiveCheck))
-                TwitterAggressiveCheck = false;
+            AccountEmail = _blueApiAppSettings.TwitterAccountEmail;
+            if (_blueApiAppSettings.TwitterAggressiveCheck) 
+                 TwitterAggressiveCheck = false;
         }
     }
 }

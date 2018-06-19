@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XUnitTestCommon.Consumers;
+using XUnitTestCommon.Settings.AutomatedFunctionalTests;
 
 namespace XUnitTestCommon.GlobalActions
 {
@@ -14,6 +15,7 @@ namespace XUnitTestCommon.GlobalActions
 
         private static ConfigBuilder MeConfig;
         private static MatchingEngineConsumer MEConsumer;
+        private static MatchingEngineSettings MESettings;
 
         public static async Task<bool> DeleteClientAccount(string clientId)
         {
@@ -33,8 +35,9 @@ namespace XUnitTestCommon.GlobalActions
         {
             if (MEConsumer == null)
             {
-                MeConfig = new ConfigBuilder("MatchingEngine");
-                MEConsumer = new MatchingEngineConsumer(MeConfig.Config["BaseUrl"], Int32.Parse(MeConfig.Config["Port"]));
+                MeConfig = new ConfigBuilder();
+                MESettings = MeConfig.ReloadingManager.CurrentValue.AutomatedFunctionalTests.MatchingEngine;
+                MEConsumer = new MatchingEngineConsumer(MESettings.BaseUrl, Int32.Parse(MESettings.Port));
 
                 Thread.Sleep(500);
             }

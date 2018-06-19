@@ -20,13 +20,14 @@ using NUnit.Framework;
 using XUnitTestCommon.DTOs;
 using XUnitTestCommon.GlobalActions;
 using XUnitTestCommon.Tests;
+using XUnitTestCommon.Settings.AutomatedFunctionalTests;
 
 namespace ApiV2Data.Fixtures
 {
     [TestFixture]
     public partial class ApiV2TestDataFixture: BaseTest
     {
-        private ConfigBuilder _configBuilder;
+        private ApiV2Settings _apiV2Settings;
         private IContainer _container;
 
         public string TestClientId;
@@ -62,15 +63,15 @@ namespace ApiV2Data.Fixtures
         [OneTimeSetUp]
         public void Initialize()
         {
-            _configBuilder = new ConfigBuilder("ApiV2");
+            _apiV2Settings = new ConfigBuilder().ReloadingManager.CurrentValue.AutomatedFunctionalTests.ApiV2;
 
-            ConfigBuilder MeConfig = new ConfigBuilder("MatchingEngine");
-            if (Int32.TryParse(MeConfig.Config["Port"], out int port))
+            MatchingEngineSettings MeConfig = new ConfigBuilder().ReloadingManager.CurrentValue.AutomatedFunctionalTests.MatchingEngine;
+            if (Int32.TryParse(MeConfig.Port, out int port))
             {
-                MEConsumer = new MatchingEngineConsumer(MeConfig.Config["BaseUrl"], port);
+                MEConsumer = new MatchingEngineConsumer(MeConfig.BaseUrl, port);
             }
 
-            Consumer = new ApiConsumer(_configBuilder);
+            Consumer = new ApiConsumer(_apiV2Settings);
 
             PrepareDependencyContainer();
             PrepareTestData().Wait();
@@ -79,7 +80,7 @@ namespace ApiV2Data.Fixtures
         private void PrepareDependencyContainer()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ApiV2TestModule(_configBuilder));
+            builder.RegisterModule(new ApiV2TestModule(_apiV2Settings));
             _container = builder.Build();
 
             this.WalletRepository = RepositoryUtils.ResolveGenericRepository<WalletEntity, IWallet>(this._container);
@@ -120,7 +121,7 @@ namespace ApiV2Data.Fixtures
             this.TestOperationRegisterDetails = await CreateTestOperation();
 
 
-            this.ClientInfoConsumer = new ApiConsumer(_configBuilder);
+            this.ClientInfoConsumer = new ApiConsumer(_apiV2Settings);
             await this.ClientInfoConsumer.RegisterNewUser();
             AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(ClientInfoConsumer.ClientInfo.Account.Id));
 

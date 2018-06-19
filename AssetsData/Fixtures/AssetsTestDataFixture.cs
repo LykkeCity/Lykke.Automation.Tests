@@ -31,9 +31,9 @@ namespace AssetsData.Fixtures
         [OneTimeSetUp]
         public void Initialize()
         {
-            _configBuilder = new ConfigBuilder("Assets");
+            _configBuilder = new ConfigBuilder();
 
-            this.Consumer = new ApiConsumer(_configBuilder);
+            Consumer = new ApiConsumer(_configBuilder.ReloadingManager.CurrentValue.AutomatedFunctionalTests.Assets);
 
             prepareDependencyContainer();
             prepareTestData().Wait();

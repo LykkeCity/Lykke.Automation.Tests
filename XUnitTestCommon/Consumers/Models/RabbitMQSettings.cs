@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using XUnitTestCommon.Settings.AutomatedFunctionalTests;
 
 namespace XUnitTestCommon.Consumers.Models
 {
@@ -16,12 +17,12 @@ namespace XUnitTestCommon.Consumers.Models
             Endpoint = endpoint;
         }
 
-        public RabbitMQSettings(ConfigBuilder config, string sourceEndpoint, string endpoint)
+        public RabbitMQSettings(MatchingEngineSettings config, string sourceEndpoint, string endpoint)
         {
-            Hostname = config.Config["RabbitMQHost"];
-            Port = config.Config["RabbitMQamqpPort"];
-            Username = config.Config["RabbitMQUsername"];
-            Password = config.Config["RabbitMQPassword"];
+            Hostname = config.RabbitMQHost;
+            Port = config.RabbitMQamqpPort;
+            Username = config.RabbitMQUsername;
+            Password = config.RabbitMQPassword;
             SourceEndpoint = sourceEndpoint;
             Endpoint = endpoint;
         }

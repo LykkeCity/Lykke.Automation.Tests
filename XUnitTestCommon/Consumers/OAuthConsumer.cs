@@ -10,6 +10,8 @@ using XUnitTestData.Repositories;
 using XUnitTestData.Entities.ApiV2;
 using XUnitTestData.Domains.ApiV2;
 using AzureStorage.Tables;
+using Lykke.SettingsReader;
+using XUnitTestCommon.Settings;
 
 namespace XUnitTestCommon.Consumers
 {
@@ -24,24 +26,24 @@ namespace XUnitTestCommon.Consumers
         public ClientRegisterResponseDTO ClientInfo { get; set; }
         public string AuthToken { get; private set; }
 
+        public IReloadingManager<AppSettings> ReloadingManager { get; }
+
         private DateTime? _tokenUpdateTime;
 
         public OAuthConsumer() { }
 
-        public OAuthConsumer(ConfigBuilder config)
+        public OAuthConsumer(IAppSettings config)
         {
-            AuthTokenTimeout = Int32.Parse(config.Config["AuthTokenTimeout"]);
-            AuthPath = config.Config["AuthPath"];
-            RegisterPath = config.Config["RegisterPath"];
-            BaseAuthUrl = config.Config["BaseUrlAuth"];
-            BaseRegisterUrl = config.Config["BaseUrlRegister"];
+            AuthTokenTimeout = config.AuthTokenTimeout;
+            AuthPath = config.AuthPath;
+            RegisterPath = config.RegisterPath;
+            BaseAuthUrl = config.BaseUrlAuth;
+            BaseRegisterUrl =  config.BaseUrlRegister;
             AuthUser = new User
             {
-                Email = config.Config["AuthEmail"],
-                Password = config.Config["AuthPassword"]
+                Email = config.AuthEmail,
+                Password = config.AuthPassword
             };
-
-
         }
 
         public async Task<bool> Authenticate()
