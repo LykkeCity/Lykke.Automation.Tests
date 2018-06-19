@@ -83,6 +83,7 @@ namespace XUnitTestCommon
         public static readonly string ALGO_STORE_METADATA = "/api/v1/clientData/metadata";
         public static readonly string ALGO_STORE_CREATE_ALGO = "/api/v1/algo/create";
         public static readonly string ALGO_STORE_GET_INSTANCE_DATA = "/api/v1/algoInstances/getAlgoInstance";
+        public static readonly string ALGO_STORE_FAKE_TRADING_INSTANCE_DATA = "/api/v1/algoInstances/fakeTradingInstanceData";
         public static readonly string ALGO_STORE_SAVE_ALGO_INSTANCE = "/api/v1/algoInstances/saveAlgoInstance";
         public static readonly string ALGO_STORE_GET_MY_ALGOS = "/api/v1/algo/getAllUserAlgos";
         public static readonly string ALGO_STORE_GET_ALGO_METADATA = "/api/v1/clientData/algoMetadata";
@@ -99,6 +100,7 @@ namespace XUnitTestCommon
         public static readonly string ALGO_STORE_CLIENT_DATA_GET_ALL_ALGOS = "/api/v1/clientData/getAllAlgos";
         public static readonly string ALGO_STORE_ADD_TO_PUBLIC = "/api/v1/clientData/addToPublic";
         public static readonly string ALGO_STORE_STATISTICS = "/api/v1/statistics";
+        public static readonly string ALGO_STORE_GET_AVAILABLE_WALLETS = "/api/v1/clients/wallets";
 
         public static String WALLET_BALANCE_BY_ASSET_ID(string walletId, string assetId)
         {

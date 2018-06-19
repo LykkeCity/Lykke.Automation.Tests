@@ -1,11 +1,7 @@
-﻿using AlgoStoreData.HelpersAlgoStore;
-using ApiV2Data.DTOs;
-using System;
-using System.Collections;
+﻿using ApiV2Data.DTOs;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using XUnitTestCommon;
+using XUnitTestData.Enums;
 
 namespace AlgoStoreData.DTOs
 {
@@ -16,8 +12,10 @@ namespace AlgoStoreData.DTOs
         public string AlgoClientId { get; set; }
         public string WalletId { get; set; }
         public string InstanceName { get; set; }
-        public string AlgoInstanceType { get; set; }
+        public AlgoInstanceType AlgoInstanceType { get; set; }
         public AlgoMetaDataInformation AlgoMetaDataInformation { get; set; }
+        public double? FakeTradingTradingAssetBalance { get; set; }
+        public double? FakeTradingAssetTwoBalance { get; set; }
     }
 
     public class AlgoMetaDataInformation
@@ -50,14 +48,13 @@ namespace AlgoStoreData.DTOs
 
     public class GetPopulatedInstanceDataDTO
     {
-        public static InstanceDataDTO returnInstanceDataDTO(string AlgoId, WalletDTO walletDTO, string algoInstanceType)
+        public static InstanceDataDTO ReturnInstanceDataDTO(string AlgoId, WalletDTO walletDTO, AlgoInstanceType algoInstanceType)
         {
             InstanceDataDTO instanceForAlgo = new InstanceDataDTO()
             {
                 AlgoId = AlgoId,
                 AlgoClientId = "e658abfc-1779-427c-8316-041a2deb1db8",
-                WalletId = walletDTO.Id,
-                InstanceName = $"{ GlobalConstants.AutoTest }_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
+                InstanceName = $"{algoInstanceType}{GlobalConstants.AutoTest}_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}",
                 AlgoInstanceType = algoInstanceType,
                 AlgoMetaDataInformation = new AlgoMetaDataInformation()
                 {
@@ -103,484 +100,179 @@ namespace AlgoStoreData.DTOs
                         {
                            Key = "CandleInterval",
                            Value = "60",
-                           Type  ="CandleTimeInterval",
-                           PredefinedValues = new List<PredefinedValues>()
-                           {
-                               new PredefinedValues()
-                               {
-                                   Key = "Unspecified",
-                                   Value = 0
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Second",
-                                   Value = 1
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Minute",
-                                   Value = 60
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "5 Minutes",
-                                   Value = 300
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "15 Minutes",
-                                   Value = 900
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "30 Minutes",
-                                   Value = 1800
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Hour",
-                                   Value = 3600
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "4 Hours",
-                                   Value = 7200
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "6 Hours",
-                                   Value = 21600
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "12 Hours",
-                                   Value = 43200
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Day",
-                                   Value = 86400
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Week",
-                                   Value = 604800
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Month",
-                                   Value = 3000000
-                               }
-                           }
-                        },
+                           Type  ="CandleTimeInterval"
+                        }
                     },
                     Functions = new List<AlgoMetaDataFunction>()
-                        { new AlgoMetaDataFunction()
-                            {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
-                                Id = "SMA_Short",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
-                                Parameters = new List<AlgoMetaDataParameter>
-                                {
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2016-04-01T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2018-04-01T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                     new AlgoMetaDataParameter
-                                    {
-                                        Key = "Capacity",
-                                        Value = "5",
-                                        Type = "int"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "SMA_Short",
-                                        Type = "String"
-                                    },
-                                     new AlgoMetaDataParameter()
-                                    {
-                                        Key = "AssetPair",
-                                        Value = "BTCEUR",
-                                        Type  ="String"
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "TradedAsset",
-                                        Value = "EUR",
-                                        Type  ="String"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "604800",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleOperationMode",
-                                        Value = "1",
-                                        Type = "CandleValue",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                            {
-                                                Key = "OPEN",
-                                                Value = 0
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "CLOSE",
-                                                Value = 1
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "LOW",
-                                                Value = 2
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "HIGH",
-                                                Value = 3
-                                            }
-                                        }
-                                    },
-                                }
-                            },
-                        new AlgoMetaDataFunction
-                            {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
-                                Id = "SMA_Long",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
-                                Parameters = new List<AlgoMetaDataParameter>()
-                                {
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "SMA_Long",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2016-04-01T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2018-04-01T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                     new AlgoMetaDataParameter()
-                                    {
-                                        Key = "Capacity",
-                                        Value = "10",
-                                        Type = "int"
-                                    },
-                                      new AlgoMetaDataParameter()
-                                    {
-                                        Key = "AssetPair",
-                                        Value = "BTCEUR",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "604800",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                             new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "CandleOperationMode",
-                                        Value = "1",
-                                        Type = "CandleValue",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                             new PredefinedValues()
-                                            {
-                                                Key = "OPEN",
-                                                Value = 0
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "CLOSE",
-                                                Value = 1
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "LOW",
-                                                Value = 2
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "HIGH",
-                                                Value = 3
-                                            }
-                                        }
-                                    }
-                                }
-                            },
+                    {
                         new AlgoMetaDataFunction()
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
+                            Id = "SMA_Short",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
+                            Parameters = new List<AlgoMetaDataParameter>
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
-                                Id = "ADX",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
-                                Parameters = new List<AlgoMetaDataParameter>
+                                new AlgoMetaDataParameter
                                 {
+                                    Key = "StartingDate",
+                                    Value = "2016-04-01T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2018-04-01T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
                                     new AlgoMetaDataParameter
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "ADX",
-                                        Type = "String"
-                                    },
-                                     new AlgoMetaDataParameter
-                                    {
-                                        Key = "AssetPair",
-                                        Value = "BTCEUR",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2016-04-01T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2018-04-01T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "604800",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "AdxPeriod",
-                                        Value = "14",
-                                        Type = "int",
-                                    },
+                                {
+                                    Key = "Capacity",
+                                    Value = "5",
+                                    Type = "int"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "SMA_Short",
+                                    Type = "String"
+                                },
+                                    new AlgoMetaDataParameter()
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type  ="String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "TradedAsset",
+                                    Value = "EUR",
+                                    Type  ="String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "604800",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleOperationMode",
+                                    Value = "1",
+                                    Type = "CandleValue"
                                 }
-                            },
+                            }
+                        },
+                        new AlgoMetaDataFunction
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
+                            Id = "SMA_Long",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
+                            Parameters = new List<AlgoMetaDataParameter>()
+                            {
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "SMA_Long",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "StartingDate",
+                                    Value = "2016-04-01T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2018-04-01T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                    new AlgoMetaDataParameter()
+                                {
+                                    Key = "Capacity",
+                                    Value = "10",
+                                    Type = "int"
+                                },
+                                    new AlgoMetaDataParameter()
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "604800",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "CandleOperationMode",
+                                    Value = "1",
+                                    Type = "CandleValue"
+                                }
+                            }
+                        },
+                        new AlgoMetaDataFunction()
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
+                            Id = "ADX",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
+                            Parameters = new List<AlgoMetaDataParameter>
+                            {
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "ADX",
+                                    Type = "String"
+                                },
+                                    new AlgoMetaDataParameter
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "StartingDate",
+                                    Value = "2016-04-01T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2018-04-01T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "604800",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "AdxPeriod",
+                                    Value = "14",
+                                    Type = "int"
+                                }
+                            }
                         }
+                    }
                 }
             };
+
+            if (algoInstanceType == AlgoInstanceType.Live)
+            {
+                instanceForAlgo.WalletId = walletDTO.Id;
+                instanceForAlgo.FakeTradingTradingAssetBalance = null;
+                instanceForAlgo.FakeTradingAssetTwoBalance = null;
+            } else
+            {
+                instanceForAlgo.WalletId = null;
+                instanceForAlgo.FakeTradingTradingAssetBalance = 8192;
+                instanceForAlgo.FakeTradingAssetTwoBalance = 2.048;
+            }
 
             return instanceForAlgo;
         }
@@ -640,482 +332,165 @@ namespace AlgoStoreData.DTOs
                         {
                            Key = "CandleInterval",
                            Value = "60",
-                           Type  ="CandleTimeInterval",
-                           PredefinedValues = new List<PredefinedValues>()
-                           {
-                               new PredefinedValues()
-                               {
-                                   Key = "Unspecified",
-                                   Value = 0
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Second",
-                                   Value = 1
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Minute",
-                                   Value = 60
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "5 Minutes",
-                                   Value = 300
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "15 Minutes",
-                                   Value = 900
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "30 Minutes",
-                                   Value = 1800
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Hour",
-                                   Value = 3600
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "4 Hours",
-                                   Value = 7200
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "6 Hours",
-                                   Value = 21600
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "12 Hours",
-                                   Value = 43200
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Day",
-                                   Value = 86400
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Week",
-                                   Value = 604800
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Month",
-                                   Value = 3000000
-                               }
-                           }
-                        },
+                           Type  ="CandleTimeInterval"
+                        }
                     },
                     Functions = new List<AlgoMetaDataFunction>()
-                        { new AlgoMetaDataFunction()
-                            {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
-                                Id = "SMA_Short",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
-                                Parameters = new List<AlgoMetaDataParameter>
-                                {
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                     new AlgoMetaDataParameter
-                                    {
-                                        Key = "Capacity",
-                                        Value = "5",
-                                        Type = "int"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "SMA_Short",
-                                        Type = "String"
-                                    },
-                                     new AlgoMetaDataParameter()
-                                         {
-                                             Key = "AssetPair",
-                                             Value = "BTCBTC",
-                                             Type  ="String"
-                                         },
-                                    new AlgoMetaDataParameter()
-                                        {
-                                             Key = "TradedAsset",
-                                             Value = "EUR",
-                                            Type  ="String"
-                                        },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleOperationMode",
-                                        Value = "1",
-                                        Type = "CandleValue",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                            {
-                                                Key = "OPEN",
-                                                Value = 0
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "CLOSE",
-                                                Value = 1
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "LOW",
-                                                Value = 2
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "HIGH",
-                                                Value = 3
-                                            }
-                                        }
-                                    },
-                                }
-                            },
-                        new AlgoMetaDataFunction
-                            {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
-                                Id = "SMA_Long",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
-                                Parameters = new List<AlgoMetaDataParameter>()
-                                {
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "SMA_Long",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                     new AlgoMetaDataParameter()
-                                    {
-                                        Key = "Capacity",
-                                        Value = "10",
-                                        Type = "int"
-                                    },
-                                      new AlgoMetaDataParameter()
-                                    {
-                                        Key = "AssetPair",
-                                        Value = "BTCBTC",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                             new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "CandleOperationMode",
-                                        Value = "1",
-                                        Type = "CandleValue",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                             new PredefinedValues()
-                                            {
-                                                Key = "OPEN",
-                                                Value = 0
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "CLOSE",
-                                                Value = 1
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "LOW",
-                                                Value = 2
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "HIGH",
-                                                Value = 3
-                                            }
-                                        }
-                                    }
-                                }
-                            },
+                    {
                         new AlgoMetaDataFunction()
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
+                            Id = "SMA_Short",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
+                            Parameters = new List<AlgoMetaDataParameter>
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
-                                Id = "ADX",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
-                                Parameters = new List<AlgoMetaDataParameter>
+                                new AlgoMetaDataParameter
                                 {
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "ADX",
-                                        Type = "String"
-                                    },
-                                     new AlgoMetaDataParameter
-                                    {
-                                        Key = "AssetPair",
-                                        Value = "BTCBTC",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-02-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "AdxPeriod",
-                                        Value = "14",
-                                        Type = "int",
-                                    },
+                                    Key = "StartingDate",
+                                    Value = "2018-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "Capacity",
+                                    Value = "5",
+                                    Type = "int"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "SMA_Short",
+                                    Type = "String"
+                                },
+                                    new AlgoMetaDataParameter()
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCBTC",
+                                    Type  ="String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "TradedAsset",
+                                    Value = "EUR",
+                                    Type  ="String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleOperationMode",
+                                    Value = "1",
+                                    Type = "CandleValue"
                                 }
-                            },
+                            }
+                        },
+                        new AlgoMetaDataFunction
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
+                            Id = "SMA_Long",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
+                            Parameters = new List<AlgoMetaDataParameter>()
+                            {
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "SMA_Long",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "StartingDate",
+                                    Value = "2018-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "Capacity",
+                                    Value = "10",
+                                    Type = "int"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCBTC",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "CandleOperationMode",
+                                    Value = "1",
+                                    Type = "CandleValue"
+                                }
+                            }
+                        },
+                        new AlgoMetaDataFunction()
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
+                            Id = "ADX",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
+                            Parameters = new List<AlgoMetaDataParameter>
+                            {
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "ADX",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCBTC",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "StartingDate",
+                                    Value = "2018-02-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "AdxPeriod",
+                                    Value = "14",
+                                    Type = "int"
+                                }
+                            }
                         }
+                    }
                 }
             };
 
@@ -1177,482 +552,165 @@ namespace AlgoStoreData.DTOs
                         {
                            Key = "CandleInterval",
                            Value = "60",
-                           Type  ="CandleTimeInterval",
-                           PredefinedValues = new List<PredefinedValues>()
-                           {
-                               new PredefinedValues()
-                               {
-                                   Key = "Unspecified",
-                                   Value = 0
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Second",
-                                   Value = 1
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Minute",
-                                   Value = 60
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "5 Minutes",
-                                   Value = 300
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "15 Minutes",
-                                   Value = 900
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "30 Minutes",
-                                   Value = 1800
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Hour",
-                                   Value = 3600
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "4 Hours",
-                                   Value = 7200
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "6 Hours",
-                                   Value = 21600
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "12 Hours",
-                                   Value = 43200
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Day",
-                                   Value = 86400
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Week",
-                                   Value = 604800
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Month",
-                                   Value = 3000000
-                               }
-                           }
-                        },
+                           Type  ="CandleTimeInterval"
+                        }
                     },
                     Functions = new List<AlgoMetaDataFunction>()
-                        { new AlgoMetaDataFunction()
-                            {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
-                                Id = "SMA_Short",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
-                                Parameters = new List<AlgoMetaDataParameter>
-                                {
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                     new AlgoMetaDataParameter
-                                    {
-                                        Key = "Capacity",
-                                        Value = "5",
-                                        Type = "int"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "SMA_Short",
-                                        Type = "String"
-                                    },
-                                     new AlgoMetaDataParameter()
-                                         {
-                                             Key = "AssetPair",
-                                             Value = "BTCEUR",
-                                             Type  ="String"
-                                         },
-                                    new AlgoMetaDataParameter()
-                                        {
-                                             Key = "TradedAsset",
-                                             Value = "USD",
-                                            Type  ="String"
-                                        },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleOperationMode",
-                                        Value = "1",
-                                        Type = "CandleValue",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                            {
-                                                Key = "OPEN",
-                                                Value = 0
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "CLOSE",
-                                                Value = 1
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "LOW",
-                                                Value = 2
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "HIGH",
-                                                Value = 3
-                                            }
-                                        }
-                                    },
-                                }
-                            },
-                        new AlgoMetaDataFunction
-                            {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
-                                Id = "SMA_Long",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
-                                Parameters = new List<AlgoMetaDataParameter>()
-                                {
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "SMA_Long",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                     new AlgoMetaDataParameter()
-                                    {
-                                        Key = "Capacity",
-                                        Value = "10",
-                                        Type = "int"
-                                    },
-                                      new AlgoMetaDataParameter()
-                                    {
-                                        Key = "AssetPair",
-                                        Value = "BTCEUR",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                             new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "CandleOperationMode",
-                                        Value = "1",
-                                        Type = "CandleValue",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                             new PredefinedValues()
-                                            {
-                                                Key = "OPEN",
-                                                Value = 0
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "CLOSE",
-                                                Value = 1
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "LOW",
-                                                Value = 2
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "HIGH",
-                                                Value = 3
-                                            }
-                                        }
-                                    }
-                                }
-                            },
+                    {
                         new AlgoMetaDataFunction()
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
+                            Id = "SMA_Short",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
+                            Parameters = new List<AlgoMetaDataParameter>
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
-                                Id = "ADX",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
-                                Parameters = new List<AlgoMetaDataParameter>
+                                new AlgoMetaDataParameter
                                 {
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "ADX",
-                                        Type = "String"
-                                    },
-                                     new AlgoMetaDataParameter
-                                    {
-                                        Key = "AssetPair",
-                                        Value = "BTCEUR",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-02-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "AdxPeriod",
-                                        Value = "14",
-                                        Type = "int",
-                                    },
+                                    Key = "StartingDate",
+                                    Value = "2018-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "Capacity",
+                                    Value = "5",
+                                    Type = "int"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "SMA_Short",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type  ="String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "TradedAsset",
+                                    Value = "USD",
+                                    Type  ="String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleOperationMode",
+                                    Value = "1",
+                                    Type = "CandleValue"
                                 }
-                            },
+                            }
+                        },
+                        new AlgoMetaDataFunction
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
+                            Id = "SMA_Long",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
+                            Parameters = new List<AlgoMetaDataParameter>()
+                            {
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "SMA_Long",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "StartingDate",
+                                    Value = "2018-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "Capacity",
+                                    Value = "10",
+                                    Type = "int"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "CandleOperationMode",
+                                    Value = "1",
+                                    Type = "CandleValue"
+                                }
+                            }
+                        },
+                        new AlgoMetaDataFunction()
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
+                            Id = "ADX",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
+                            Parameters = new List<AlgoMetaDataParameter>
+                            {
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "ADX",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "StartingDate",
+                                    Value = "2018-02-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "AdxPeriod",
+                                    Value = "14",
+                                    Type = "int"
+                                }
+                            }
                         }
+                    }
                 }
             };
 
@@ -1713,482 +771,165 @@ namespace AlgoStoreData.DTOs
                         {
                            Key = "CandleInterval",
                            Value = "60",
-                           Type  ="CandleTimeInterval",
-                           PredefinedValues = new List<PredefinedValues>()
-                           {
-                               new PredefinedValues()
-                               {
-                                   Key = "Unspecified",
-                                   Value = 0
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Second",
-                                   Value = 1
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Minute",
-                                   Value = 60
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "5 Minutes",
-                                   Value = 300
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "15 Minutes",
-                                   Value = 900
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "30 Minutes",
-                                   Value = 1800
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Hour",
-                                   Value = 3600
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "4 Hours",
-                                   Value = 7200
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "6 Hours",
-                                   Value = 21600
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "12 Hours",
-                                   Value = 43200
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Day",
-                                   Value = 86400
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Week",
-                                   Value = 604800
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Month",
-                                   Value = 3000000
-                               }
-                           }
-                        },
+                           Type  ="CandleTimeInterval"
+                        }
                     },
                     Functions = new List<AlgoMetaDataFunction>()
-                        { new AlgoMetaDataFunction()
-                            {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
-                                Id = "SMA_Short",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
-                                Parameters = new List<AlgoMetaDataParameter>
-                                {
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                     new AlgoMetaDataParameter
-                                    {
-                                        Key = "Capacity",
-                                        Value = "5",
-                                        Type = "int"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "SMA_Short",
-                                        Type = "String"
-                                    },
-                                     new AlgoMetaDataParameter()
-                                         {
-                                             Key = "AssetPair",
-                                             Value = "BTCEUR",
-                                             Type  ="String"
-                                         },
-                                    new AlgoMetaDataParameter()
-                                        {
-                                             Key = "TradedAsset",
-                                             Value = "EUR",
-                                            Type  ="String"
-                                        },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleOperationMode",
-                                        Value = "1",
-                                        Type = "CandleValue",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                            {
-                                                Key = "OPEN",
-                                                Value = 0
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "CLOSE",
-                                                Value = 1
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "LOW",
-                                                Value = 2
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "HIGH",
-                                                Value = 3
-                                            }
-                                        }
-                                    },
-                                }
-                            },
-                        new AlgoMetaDataFunction
-                            {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
-                                Id = "SMA_Long",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
-                                Parameters = new List<AlgoMetaDataParameter>()
-                                {
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "SMA_Long",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                     new AlgoMetaDataParameter()
-                                    {
-                                        Key = "Capacity",
-                                        Value = "10",
-                                        Type = "int"
-                                    },
-                                      new AlgoMetaDataParameter()
-                                    {
-                                        Key = "AssetPair",
-                                        Value = "BTCEUR",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                             new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "CandleOperationMode",
-                                        Value = "1",
-                                        Type = "CandleValue",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                             new PredefinedValues()
-                                            {
-                                                Key = "OPEN",
-                                                Value = 0
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "CLOSE",
-                                                Value = 1
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "LOW",
-                                                Value = 2
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "HIGH",
-                                                Value = 3
-                                            }
-                                        }
-                                    }
-                                }
-                            },
+                    {
                         new AlgoMetaDataFunction()
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
+                            Id = "SMA_Short",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
+                            Parameters = new List<AlgoMetaDataParameter>
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
-                                Id = "ADX",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
-                                Parameters = new List<AlgoMetaDataParameter>
+                                new AlgoMetaDataParameter
                                 {
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "ADX",
-                                        Type = "String"
-                                    },
-                                     new AlgoMetaDataParameter
-                                    {
-                                        Key = "AssetPair",
-                                        Value = "BTCEUR",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-02-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "AdxPeriod",
-                                        Value = "14",
-                                        Type = "int",
-                                    },
+                                    Key = "StartingDate",
+                                    Value = "2018-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "Capacity",
+                                    Value = "5",
+                                    Type = "int"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "SMA_Short",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type  ="String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "TradedAsset",
+                                    Value = "EUR",
+                                    Type  ="String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleOperationMode",
+                                    Value = "1",
+                                    Type = "CandleValue"
                                 }
-                            },
+                            }
+                        },
+                        new AlgoMetaDataFunction
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
+                            Id = "SMA_Long",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
+                            Parameters = new List<AlgoMetaDataParameter>()
+                            {
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "SMA_Long",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "StartingDate",
+                                    Value = "2018-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "Capacity",
+                                    Value = "10",
+                                    Type = "int"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "CandleOperationMode",
+                                    Value = "1",
+                                    Type = "CandleValue"
+                                }
+                            }
+                        },
+                        new AlgoMetaDataFunction()
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
+                            Id = "ADX",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
+                            Parameters = new List<AlgoMetaDataParameter>
+                            {
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "ADX",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "StartingDate",
+                                    Value = "2018-02-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "AdxPeriod",
+                                    Value = "14",
+                                    Type = "int"
+                                }
+                            }
                         }
+                    }
                 }
             };
 
@@ -2250,493 +991,169 @@ namespace AlgoStoreData.DTOs
                         {
                            Key = "CandleInterval",
                            Value = "60",
-                           Type  ="CandleTimeInterval",
-                           PredefinedValues = new List<PredefinedValues>()
-                           {
-                               new PredefinedValues()
-                               {
-                                   Key = "Unspecified",
-                                   Value = 0
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Second",
-                                   Value = 1
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Minute",
-                                   Value = 60
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "5 Minutes",
-                                   Value = 300
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "15 Minutes",
-                                   Value = 900
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "30 Minutes",
-                                   Value = 1800
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Hour",
-                                   Value = 3600
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "4 Hours",
-                                   Value = 7200
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "6 Hours",
-                                   Value = 21600
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "12 Hours",
-                                   Value = 43200
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Day",
-                                   Value = 86400
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Week",
-                                   Value = 604800
-                               },
-                               new PredefinedValues()
-                               {
-                                   Key = "Month",
-                                   Value = 3000000
-                               }
-                           }
-                        },
+                           Type  ="CandleTimeInterval"
+                        }
                     },
                     Functions = new List<AlgoMetaDataFunction>()
-                        { new AlgoMetaDataFunction()
-                            {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
-                                Id = "SMA_Short",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
-                                Parameters = new List<AlgoMetaDataParameter>
-                                {
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                     new AlgoMetaDataParameter
-                                    {
-                                        Key = "Capacity",
-                                        Value = "5",
-                                        Type = "int"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "SMA_Short",
-                                        Type = "String"
-                                    },
-                                     new AlgoMetaDataParameter()
-                                         {
-                                             Key = "AssetPair",
-                                             Value = "BTCEUR",
-                                             Type  ="String"
-                                         },
-                                    new AlgoMetaDataParameter()
-                                        {
-                                             Key = "TradedAsset",
-                                             Value = "EUR",
-                                            Type  ="String"
-                                        },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleOperationMode",
-                                        Value = "1",
-                                        Type = "CandleValue",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                            {
-                                                Key = "OPEN",
-                                                Value = 0
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "CLOSE",
-                                                Value = 1
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "LOW",
-                                                Value = 2
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "HIGH",
-                                                Value = 3
-                                            }
-                                        }
-                                    },
-                                }
-                            },
-                        new AlgoMetaDataFunction
-                            {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
-                                Id = "SMA_Long",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
-                                Parameters = new List<AlgoMetaDataParameter>()
-                                {
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "SMA_Long",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                     new AlgoMetaDataParameter()
-                                    {
-                                        Key = "Capacity",
-                                        Value = "10",
-                                        Type = "int"
-                                    },
-                                      new AlgoMetaDataParameter()
-                                    {
-                                        Key = "AssetPair",
-                                        Value = "BTCEUR",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                             new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter()
-                                    {
-                                        Key = "CandleOperationMode",
-                                        Value = "1",
-                                        Type = "CandleValue",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                             new PredefinedValues()
-                                            {
-                                                Key = "OPEN",
-                                                Value = 0
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "CLOSE",
-                                                Value = 1
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "LOW",
-                                                Value = 2
-                                            },
-                                            new PredefinedValues()
-                                            {
-                                                Key = "HIGH",
-                                                Value = 3
-                                            }
-                                        }
-                                    }
-                                }
-                            },
+                    {
                         new AlgoMetaDataFunction()
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
+                            Id = "SMA_Short",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
+                            Parameters = new List<AlgoMetaDataParameter>
                             {
-                                Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
-                                Id = "ADX",
-                                FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
-                                Parameters = new List<AlgoMetaDataParameter>
+                                new AlgoMetaDataParameter
                                 {
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "FunctionInstanceIdentifier",
-                                        Value = "ADX",
-                                        Type = "String"
-                                    },
-                                     new AlgoMetaDataParameter
-                                    {
-                                        Key = "AssetPair",
-                                        Value = "BTCEUR",
-                                        Type = "String"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "StartingDate",
-                                        Value = "2018-02-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "EndingDate",
-                                        Value = "2050-05-10T00:00:00.000Z",
-                                        Type = "DateTime"
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "CandleTimeInterval",
-                                        Value = "60",
-                                        Type = "CandleTimeInterval",
-                                        PredefinedValues = new List<PredefinedValues>()
-                                        {
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Unspecified",
-                                                     Value = 0
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "Second",
-                                                    Value = 1
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Minute",
-                                                    Value = 60
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "5 Minutes",
-                                                    Value = 300
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "15 Minutes",
-                                                   Value = 900
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                     Key = "30 Minutes",
-                                                     Value = 1800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Hour",
-                                                    Value = 3600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "4 Hours",
-                                                    Value = 7200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "6 Hours",
-                                                    Value = 21600
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "12 Hours",
-                                                    Value = 43200
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Day",
-                                                    Value = 86400
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Week",
-                                                    Value = 604800
-                                                },
-                                            new PredefinedValues()
-                                                {
-                                                    Key = "Month",
-                                                    Value = 3000000
-                                                },
-                                        }
-                                    },
-                                    new AlgoMetaDataParameter
-                                    {
-                                        Key = "AdxPeriod",
-                                        Value = "14",
-                                        Type = "int",
-                                    },
+                                    Key = "StartingDate",
+                                    Value = "2018-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "Capacity",
+                                    Value = "5",
+                                    Type = "int"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "SMA_Short",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type  ="String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "TradedAsset",
+                                    Value = "EUR",
+                                    Type  ="String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleOperationMode",
+                                    Value = "1",
+                                    Type = "CandleValue"
                                 }
-                            },
+                            }
+                        },
+                        new AlgoMetaDataFunction
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction",
+                            Id = "SMA_Long",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters",
+                            Parameters = new List<AlgoMetaDataParameter>()
+                            {
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "SMA_Long",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "StartingDate",
+                                    Value = "2018-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "Capacity",
+                                    Value = "10",
+                                    Type = "int"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter()
+                                {
+                                    Key = "CandleOperationMode",
+                                    Value = "1",
+                                    Type = "CandleValue"
+                                }
+                            }
+                        },
+                        new AlgoMetaDataFunction()
+                        {
+                            Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction",
+                            Id = "ADX",
+                            FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters",
+                            Parameters = new List<AlgoMetaDataParameter>
+                            {
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "FunctionInstanceIdentifier",
+                                    Value = "ADX",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "AssetPair",
+                                    Value = "BTCEUR",
+                                    Type = "String"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "StartingDate",
+                                    Value = "2018-02-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "EndingDate",
+                                    Value = "2050-05-10T00:00:00.000Z",
+                                    Type = "DateTime"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "CandleTimeInterval",
+                                    Value = "60",
+                                    Type = "CandleTimeInterval"
+                                },
+                                new AlgoMetaDataParameter
+                                {
+                                    Key = "AdxPeriod",
+                                    Value = "14",
+                                    Type = "int"
+                                }
+                            }
                         }
+                    }
                 }
             };
 
             return instanceForAlgo;
         }
-
-
-
-
-
     }
 }
-
-

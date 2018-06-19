@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
+using XUnitTestData.Enums;
 
 namespace AFTests.AlgoStore
 {
@@ -61,7 +62,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO("123 invalid algo id", await GetExistingWallet(), "Demo");
+            instanceForAlgo = GetPopulatedInstanceDataDTO.ReturnInstanceDataDTO("123 invalid algo id", await GetExistingWallet(), AlgoInstanceType.Demo);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -98,7 +99,7 @@ namespace AFTests.AlgoStore
 
             string algoID = metadataForUploadedBinary.AlgoId;
 
-            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(algoID, await GetExistingWallet(), "Demo");
+            instanceForAlgo = GetPopulatedInstanceDataDTO.ReturnInstanceDataDTO(algoID, await GetExistingWallet(), AlgoInstanceType.Demo);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 

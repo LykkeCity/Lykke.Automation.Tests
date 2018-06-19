@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Tests;
 using XUnitTestCommon.Utils;
-
+using XUnitTestData.Enums;
 
 namespace AlgoStoreData.Fixtures
 {
@@ -47,9 +47,18 @@ namespace AlgoStoreData.Fixtures
 
             for (int i = 0; i < nuberDto; i++)
             {
+                var instanceType = AlgoInstanceType.Demo;
+
                 WalletDTO walletDTO = await GetExistingWallet();
-                instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(responceMetadataList[i].Id, walletDTO, "Demo");
-                url = ApiPaths.ALGO_STORE_SAVE_ALGO_INSTANCE;
+                instanceForAlgo = GetPopulatedInstanceDataDTO.ReturnInstanceDataDTO(responceMetadataList[i].Id, walletDTO, instanceType);
+
+                if (instanceType == AlgoInstanceType.Live)
+                {
+                    url = ApiPaths.ALGO_STORE_SAVE_ALGO_INSTANCE;
+                } else
+                {
+                    url = ApiPaths.ALGO_STORE_FAKE_TRADING_INSTANCE_DATA;
+                }
 
                 string requestBody = JsonUtils.SerializeObject(instanceForAlgo);
                 var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, requestBody, Method.POST);
@@ -59,7 +68,6 @@ namespace AlgoStoreData.Fixtures
                 postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
 
                 url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
-
                 DeployBinaryDTO deploy = new DeployBinaryDTO()
                 {
                     AlgoId = responceMetadataList[i].Id,

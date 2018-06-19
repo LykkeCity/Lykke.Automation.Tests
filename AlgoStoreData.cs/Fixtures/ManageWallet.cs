@@ -18,10 +18,15 @@ namespace AlgoStoreData.Fixtures
     {
         private string walletPath = ApiPaths.WALLETS_BASE_PATH;
 
-        public async Task<WalletDTO> GetExistingWallet()
+        public async Task<List<WalletDTO>> GetAllWalletsOfUser()
         {
             var response = await Consumer.ExecuteRequestCustomEndpoint($"{BaseUrl.ApiV2BaseUrl}{walletPath}", Helpers.EmptyDictionary, null, Method.GET);
-            List<WalletDTO> walletDTOs = JsonUtils.DeserializeJson<List<WalletDTO>>(response.ResponseJson);
+            return JsonUtils.DeserializeJson<List<WalletDTO>>(response.ResponseJson);
+        }
+
+        public async Task<WalletDTO> GetExistingWallet()
+        {
+            List<WalletDTO> walletDTOs = await GetAllWalletsOfUser();
 
             walletDTOs.RemoveAll(x => x.Name == "Trading");
 
