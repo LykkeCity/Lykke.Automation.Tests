@@ -22,8 +22,6 @@ namespace AlgoStoreData.Fixtures
     public partial class AlgoStoreTestDataFixture : BaseTest
     {
         private ConfigBuilder _configBuilder;
-        private ConfigBuilder _configBuilderDB;
-        private ConfigBuilder _configBuilderBaseUrls;
         private TimeSpan timespan = TimeSpan.FromSeconds(120);
         public ApiConsumer Consumer;
         private OAuthConsumer User;

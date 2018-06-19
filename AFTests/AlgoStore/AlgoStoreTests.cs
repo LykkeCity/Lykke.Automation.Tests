@@ -879,5 +879,44 @@ namespace AFTests.AlgoStore
             // Stop the algo instance
             await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
         }
+
+        [Test, Description("AL-520")]
+        [Category("AlgoStore")]
+        public async Task CheckGetAllAvailableWallets()
+        {
+            // Wait up to 3 minutes for the algo to be started
+            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+
+            // Get all running Live instances of the user
+            List<ClientInstanceEntity> allRunningInstances = await ClientInstanceRepository.GetAllAsync(t => t.ClientId == postInstanceData.AlgoClientId && t.AlgoInstanceTypeValue == "Live" && t.AlgoInstanceStatusValue != "Stopped") as List<ClientInstanceEntity>;
+            
+            // Get unique walletIds from all running instances
+            var uniqueUsedWallets = (from i in allRunningInstances select i.WalletId).Distinct().ToList();
+
+            // Get expected results
+            var expectedResult = (await GetAllWalletsOfUser()).Where(t => !uniqueUsedWallets.Contains(t.Id)).ToList();
+
+            // Get actual results from the service
+            var myAlgos = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_GET_AVAILABLE_WALLETS, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.That(myAlgos.Status, Is.EqualTo(HttpStatusCode.OK));
+            List<AvailableWalletDTO> actualResult = JsonUtils.DeserializeJson<List<AvailableWalletDTO>>(myAlgos.ResponseJson);
+
+            // Assert expected result and actual result counts are the same
+            Assert.That(expectedResult.Count, Is.EqualTo(actualResult.Count));
+
+            // Sort actual and expected wallets by wallet id
+            expectedResult.Sort((x, y) => x.Id.CompareTo(y.Id));
+            actualResult.Sort((x, y) => x.Id.CompareTo(y.Id));
+
+            // Assert actual wallets are the same as expected wallets
+            for (int i = 0; i < expectedResult.Count; i++)
+            {
+                Assert.That(expectedResult[i].Id, Is.EqualTo(actualResult[i].Id));
+                Assert.That(expectedResult[i].Name, Is.EqualTo(actualResult[i].Name));
+            }
+
+            // Stop the algo instance
+            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+        }
     }
 }
