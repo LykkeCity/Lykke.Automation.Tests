@@ -101,6 +101,7 @@ namespace XUnitTestCommon
         public static readonly string ALGO_STORE_ADD_TO_PUBLIC = "/api/v1/clientData/addToPublic";
         public static readonly string ALGO_STORE_STATISTICS = "/api/v1/statistics";
         public static readonly string ALGO_STORE_GET_AVAILABLE_WALLETS = "/api/v1/clients/wallets";
+        public static readonly string ALGO_STORE_INSTANCE_STATUS = "/api/v1/algoInstances/{0}/status";
 
         public static String WALLET_BALANCE_BY_ASSET_ID(string walletId, string assetId)
         {
