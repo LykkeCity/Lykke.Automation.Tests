@@ -86,21 +86,24 @@ namespace XUnitTestCommon
         public static readonly string ALGO_STORE_FAKE_TRADING_INSTANCE_DATA = "/api/v1/algoInstances/fakeTradingInstanceData";
         public static readonly string ALGO_STORE_SAVE_ALGO_INSTANCE = "/api/v1/algoInstances/saveAlgoInstance";
         public static readonly string ALGO_STORE_GET_MY_ALGOS = "/api/v1/algo/getAllUserAlgos";
-        public static readonly string ALGO_STORE_GET_ALGO_METADATA = "/api/v1/clientData/algoMetadata";
-        public static readonly string ALGO_STORE_CASCADE_DELETE = "/api/v1/clientData/metadata/cascadeDelete";
-        public static readonly string ALGO_STORE_UPLOAD_BINARY = "/api/v1/clientData/imageData/upload/binary";
-        public static readonly string ALGO_STORE_UPLOAD_STRING = "/api/v1/clientData/imageData/upload/string";
+        public static readonly string ALGO_STORE_GET_ALGO_METADATA = "/api/v1/algo/getAlgoInformation";
+        public static readonly string ALGO_STORE_CASCADE_DELETE = "/api/v1/algo/cascadeDelete";
+        public static readonly string ALGO_STORE_UPLOAD_BINARY = "/api/v1/algo/sourceCode/upload/binary";
+        public static readonly string ALGO_STORE_UPLOAD_STRING = "/api/v1/algo/sourceCode/upload/string";
         public static readonly string ALGO_STORE_DEPLOY_BINARY = "/api/v1/management/deploy/binary";
         public static readonly string ALGO_STORE_ALGO_START = "/api/v1/management/test/start";
         public static readonly string ALGO_STORE_ALGO_STOP = "/api/v1/management/test/stop";
         public static readonly string ALGO_STORE_ALGO_LOG = "/api/v1/management/test/log";
         public static readonly string ALGO_STORE_ALGO_TAIL_LOG = "/api/v1/management/test/tailLog";
-        public static readonly string ALGO_STORE_ALGO_GET_ALL_INSTANCE_DATA = "/api/v1/clientData/instanceData/allByAlgoIdAndClientId";
-        public static readonly string ALGO_STORE_ALGO_INSTANCE_DATA = "/api/v1/clientData/instanceData";
-        public static readonly string ALGO_STORE_CLIENT_DATA_GET_ALL_ALGOS = "/api/v1/clientData/getAllAlgos";
-        public static readonly string ALGO_STORE_ADD_TO_PUBLIC = "/api/v1/clientData/addToPublic";
+        public static readonly string ALGO_STORE_ALGO_GET_ALL_INSTANCE_DATA = "/api/v1/algoInstances/getAllByAlgoIdAndClientId";
+        public static readonly string ALGO_STORE_ALGO_INSTANCE_DATA = "api/v1/algoInstances/getAlgoInstance";
+        public static readonly string ALGO_STORE_CLIENT_DATA_GET_ALL_ALGOS = "/api/v1/algo/getAllAlgos";
+        public static readonly string ALGO_STORE_ADD_TO_PUBLIC = "/api/v1/algo/addToPublic";
+        public static readonly string ALGO_STORE_REMOVE_FROM_PUBLIC = "/api/v1/algo/removeFromPublic";
         public static readonly string ALGO_STORE_STATISTICS = "/api/v1/statistics";
         public static readonly string ALGO_STORE_GET_AVAILABLE_WALLETS = "/api/v1/clients/wallets";
+        public static readonly string ALGO_STORE_DELETE_ALGO = "/api/v1/algo/delete";
+        public static readonly string ALGO_STORE_DELETE_INSTANCE = "/api/v1/algoInstances";
 
         public static String WALLET_BALANCE_BY_ASSET_ID(string walletId, string assetId)
         {

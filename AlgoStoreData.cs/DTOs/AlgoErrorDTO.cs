@@ -7,5 +7,6 @@ namespace AlgoStoreData.DTOs
     public class AlgoErrorDTO
     {
         public string ErrorMessage { get; set; }
+        public string DisplayMessage { get; set; }
     }
 }
