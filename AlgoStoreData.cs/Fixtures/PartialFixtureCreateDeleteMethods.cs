@@ -9,87 +9,85 @@ using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Tests;
 using XUnitTestCommon.Utils;
+using XUnitTestData.Entities.AlgoStore;
 using XUnitTestData.Enums;
 
 namespace AlgoStoreData.Fixtures
 {
     public partial class AlgoStoreTestDataFixture : BaseTest
     {
-        private static List<BuilInitialDataObjectDTO> initialDTOObjectsList = new List<BuilInitialDataObjectDTO>();
+        private string message;
+        public AlgoDataDTO algoData;
+        public AlgoInstanceType instanceType = AlgoInstanceType.Live;
 
-        public async Task<List<BuilInitialDataObjectDTO>> UploadSomeBaseMetaData(int nuberDto)
+        public async Task<AlgoDataDTO> CreateAlgo()
         {
-            string url = ApiPaths.ALGO_STORE_CREATE_ALGO;
-            string message;
-            List <MetaDataDTO> metadataList = new List<MetaDataDTO>();
-            List<MetaDataResponseDTO> responceMetadataList = new List<MetaDataResponseDTO>();
-
-            for (int i = 0; i < nuberDto; i++)
+            CreateAlgoDTO metadata = new CreateAlgoDTO()
             {
-                MetaDataDTO metadata = new MetaDataDTO()
-                {
-                    Name = $"{ GlobalConstants.AutoTest }_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()}",
-                    Description = $"{ GlobalConstants.AutoTest }_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()} - Description",
-                    Content = Base64Helpers.EncodeToBase64(CSharpAlgoString)
-                };
-                metadataList.Add(metadata);
-            }
+                Name = $"{GlobalConstants.AutoTest}_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()}",
+                Description = $"{ GlobalConstants.AutoTest }_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()} - Description",
+                Content = Base64Helpers.EncodeToBase64(CSharpAlgoString)
+            };
 
-            foreach (var metadata in metadataList)
+            var createAlgoResponse = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_CREATE_ALGO, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
+            message = $"POST {ApiPaths.ALGO_STORE_CREATE_ALGO} returned status: {createAlgoResponse.Status} and response: {createAlgoResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
+            Assert.That(createAlgoResponse.Status, Is.EqualTo(HttpStatusCode.OK), message);
+
+            return JsonUtils.DeserializeJson<AlgoDataDTO>(createAlgoResponse.ResponseJson);
+        }
+
+        public async Task<InstanceDataDTO> SaveInstance(AlgoDataDTO algoData, AlgoInstanceType instanceType, bool useExistingWallet = true)
+        {
+            WalletDTO walletDTO = useExistingWallet == true ? await GetExistingWallet() : await CreateTestWallet();
+
+            instanceForAlgo = GetPopulatedInstanceDataDTO.ReturnInstanceDataDTO(algoData.Id, walletDTO, instanceType);
+
+            var url = instanceType == AlgoInstanceType.Live ? ApiPaths.ALGO_STORE_SAVE_ALGO_INSTANCE : ApiPaths.ALGO_STORE_FAKE_TRADING_INSTANCE_DATA;
+
+            string requestBody = JsonUtils.SerializeObject(instanceForAlgo);
+            var saveInstanceResponse = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, requestBody, Method.POST);
+            message = $"POST {url} returned status: {saveInstanceResponse.Status} and response: {saveInstanceResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
+            Assert.That(saveInstanceResponse.Status, Is.EqualTo(HttpStatusCode.OK), message);
+
+            return JsonUtils.DeserializeJson<InstanceDataDTO>(saveInstanceResponse.ResponseJson);
+        }
+
+        public async Task DeployInstance(InstanceDataDTO instanceData)
+        {
+            DeployBinaryDTO deploy = new DeployBinaryDTO()
             {
-                var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
-                message = $"POST {url} returned status: {response.Status} and response: {response.ResponseJson}. Expected: {HttpStatusCode.OK}";
-                Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK), message);
+                AlgoId = instanceData.AlgoId,
+                InstanceId = instanceData.InstanceId,
+            };
 
-                MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
-                responceMetadataList.Add(responceMetaData);
-            }
+            var deployBynaryResponse = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_DEPLOY_BINARY, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
+            message = $"POST {ApiPaths.ALGO_STORE_DEPLOY_BINARY} returned status: {deployBynaryResponse.Status} and response: {deployBynaryResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
+            Assert.That(deployBynaryResponse.Status, Is.EqualTo(HttpStatusCode.OK));
+        }
 
-            for (int i = 0; i < nuberDto; i++)
+        public async Task<List<BuilInitialDataObjectDTO>> CreateAlgoAndStartInstance(int numberOfInstances)
+        {
+            List<BuilInitialDataObjectDTO> instancesList = new List<BuilInitialDataObjectDTO>();
+
+            for (int i = 0; i < numberOfInstances; i++)
             {
-                var instanceType = AlgoInstanceType.Demo;
-
-                WalletDTO walletDTO = await GetExistingWallet();
-                instanceForAlgo = GetPopulatedInstanceDataDTO.ReturnInstanceDataDTO(responceMetadataList[i].Id, walletDTO, instanceType);
-
-                if (instanceType == AlgoInstanceType.Live)
-                {
-                    url = ApiPaths.ALGO_STORE_SAVE_ALGO_INSTANCE;
-                } else
-                {
-                    url = ApiPaths.ALGO_STORE_FAKE_TRADING_INSTANCE_DATA;
-                }
-
-                string requestBody = JsonUtils.SerializeObject(instanceForAlgo);
-                var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, requestBody, Method.POST);
-                message = $"POST {url} returned status: {postInstanceDataResponse.Status} and response: {postInstanceDataResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
-                Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK), message);
-
-                postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
-
-                url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
-                DeployBinaryDTO deploy = new DeployBinaryDTO()
-                {
-                    AlgoId = responceMetadataList[i].Id,
-                    InstanceId = postInstanceData.InstanceId,
-                };
-
-                var deployBynaryResponse = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
-                message = $"POST {url} returned status: {deployBynaryResponse.Status} and response: {deployBynaryResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
-                Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
+                algoData = await CreateAlgo();
+                InstanceDataDTO instanceData = await SaveInstance(algoData, instanceType);
+                postInstanceData = instanceData;
+                await DeployInstance(instanceData);
 
                 BuilInitialDataObjectDTO tempDataDTO = new BuilInitialDataObjectDTO()
                 {
-                    AlgoId = responceMetadataList[i].Id,
-                    InstanceId = postInstanceData.InstanceId,
-                    Name = responceMetadataList[i].Name,
-                    Description = responceMetadataList[i].Description
+                    AlgoId = algoData.Id,
+                    InstanceId = instanceData.InstanceId,
+                    Name = algoData.Name,
+                    Description = algoData.Description
                 };
 
-                initialDTOObjectsList.Add(tempDataDTO);
+                instancesList.Add(tempDataDTO);
             }
 
-            return initialDTOObjectsList;
+            return instancesList;
         }
 
         public async Task<List<Response>> ClearAllCascadeDelete(List<BuilInitialDataObjectDTO> listDtoToBeDeleted)
@@ -120,20 +118,55 @@ namespace AlgoStoreData.Fixtures
                 if (isPodMissing)
                 {
                     Assert.That(responceCascadeDelete.Status, Is.EqualTo(HttpStatusCode.NoContent));
-                } else
+                }
+                else
                 {
                     Assert.That(responceCascadeDelete.Status, Is.EqualTo(HttpStatusCode.NotFound));
                 }
 
-                responces.Add(responceCascadeDelete);               
+                responces.Add(responceCascadeDelete);
             }
 
             return responces;
         }
 
-        public async Task<WalletDTO> GetWallet()
+        public async Task<Response> DeleteAlgo(InstanceDataDTO instanceData, bool forceDelete = false)
         {
-            return await GetExistingWallet();
+            DeleteAlgoDTO deleteAlgoDTO = new DeleteAlgoDTO()
+            {
+                AlgoId = instanceData.AlgoId,
+                AlgoClientId = instanceData.AlgoClientId,
+                ForceDelete = forceDelete
+            };
+
+            // Delete the algo
+            return await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_DELETE_ALGO, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deleteAlgoDTO), Method.DELETE);
+        }
+
+        public async Task AssertAlgoDeleted(Response deleteAlgoRequest, InstanceDataDTO instanceData)
+        {
+            AlgoErrorDTO deleteAlgoResponse = JsonUtils.DeserializeJson<AlgoErrorDTO>(deleteAlgoRequest.ResponseJson);
+
+            Assert.That(deleteAlgoRequest.Status, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(deleteAlgoResponse, Is.Null);
+            // Assert algo is deleted from DB
+            Assert.That(await AlgoExists(instanceData), Is.False);
+        }
+
+        public async Task AssertAlgoNotDeleted(Response deleteAlgoRequest, InstanceDataDTO instanceData, string errorMessage)
+        {
+            AlgoErrorDTO deleteAlgoResponse = JsonUtils.DeserializeJson<AlgoErrorDTO>(deleteAlgoRequest.ResponseJson);
+
+            Assert.That(deleteAlgoRequest.Status, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(deleteAlgoResponse.DisplayMessage, Is.EqualTo(errorMessage));
+            // Assert algo is not deleted from DB
+            Assert.That(await AlgoExists(instanceData), Is.True);
+        }
+
+        public async Task<bool> AlgoExists(InstanceDataDTO instanceDataDTO)
+        {
+            List<AlgoEntity> allUserAlgos = await AlgoRepository.GetAllAsync(t => t.ClientId == instanceDataDTO.AlgoClientId) as List<AlgoEntity>;
+            return allUserAlgos.Exists(x => x.AlgoId == instanceDataDTO.AlgoId);
         }
     }
 }

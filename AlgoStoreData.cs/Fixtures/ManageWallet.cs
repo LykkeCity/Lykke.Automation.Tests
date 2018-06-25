@@ -24,9 +24,18 @@ namespace AlgoStoreData.Fixtures
             return JsonUtils.DeserializeJson<List<WalletDTO>>(response.ResponseJson);
         }
 
+        public async Task<List<WalletDTO>> GetAllAvailableWalletsOfUser()
+        {
+            var myAlgos = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_GET_AVAILABLE_WALLETS, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.That(myAlgos.Status, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(myAlgos.ResponseJson, Is.Not.Empty);
+
+            return JsonUtils.DeserializeJson<List<WalletDTO>>(myAlgos.ResponseJson);
+        }
+
         public async Task<WalletDTO> GetExistingWallet()
         {
-            List<WalletDTO> walletDTOs = await GetAllWalletsOfUser();
+            List<WalletDTO> walletDTOs = await GetAllAvailableWalletsOfUser();
 
             walletDTOs.RemoveAll(x => x.Name == "Trading");
 
@@ -36,6 +45,7 @@ namespace AlgoStoreData.Fixtures
             var walletId = walletDTOs[rndIdx].Id;
 
             // TODO: Make traded assets random
+
             // Add some funds to the wallet
             await AddAssetFundsToWallet(walletId, "EUR", 100);
             await AddAssetFundsToWallet(walletId, "USD", 100);
@@ -72,6 +82,7 @@ namespace AlgoStoreData.Fixtures
             returnModel.Description = newWallet.Description;
 
             // TODO: Make traded assets random
+
             // Add some funds to the wallet
             await AddAssetFundsToWallet(createdDTO.WalletId, "EUR", 100);
             await AddAssetFundsToWallet(createdDTO.WalletId, "USD", 100);

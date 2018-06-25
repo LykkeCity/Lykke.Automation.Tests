@@ -31,6 +31,8 @@ namespace AFTests.AlgoStore
                 instanceDataEntityExists = await clientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
                 count--;
             }
+
+            Wait.ForPredefinedTime(30000); // Wait for half a minute more so that the deploy can finish successfully
         }
 
         public static async Task StopAlgoInstance(ApiConsumer apiConsumer, InstanceDataDTO postInstanceData)
@@ -68,6 +70,40 @@ namespace AFTests.AlgoStore
             Assert.That(statisticsResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
             return JsonUtils.DeserializeJson<StatisticsDTO>(statisticsResponse.ResponseJson);
+        }
+
+        public static async Task DeleteAlgoInstance(ApiConsumer apiConsumer, InstanceDataDTO instanceData)
+        {
+            CascadeDeleteDTO deleteInstanceDTO = new CascadeDeleteDTO()
+            {
+                AlgoId = instanceData.AlgoId,
+                AlgoClientId = instanceData.AlgoClientId,
+                InstanceId = instanceData.InstanceId
+            };
+            var deleteInstanceRequest = await apiConsumer.ExecuteRequest(ApiPaths.ALGO_STORE_DELETE_INSTANCE, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deleteInstanceDTO), Method.DELETE);
+            Assert.That(deleteInstanceRequest.Status, Is.EqualTo(HttpStatusCode.NoContent));
+        }
+
+        public static async Task MakeAlgoPublic(ApiConsumer apiConsumer, InstanceDataDTO instanceData)
+        {
+            AddToPublicDTO addAlgo = new AddToPublicDTO()
+            {
+                AlgoId = instanceData.AlgoId,
+                ClientId = instanceData.AlgoClientId
+            };
+            var makeAlgoPublicResponse = await apiConsumer.ExecuteRequest(ApiPaths.ALGO_STORE_ADD_TO_PUBLIC, Helpers.EmptyDictionary, JsonUtils.SerializeObject(addAlgo), Method.POST);
+            Assert.That(makeAlgoPublicResponse.Status, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        public static async Task MakeAlgoPrivate(ApiConsumer apiConsumer, InstanceDataDTO instanceData)
+        {
+            AddToPublicDTO addAlgo = new AddToPublicDTO()
+            {
+                AlgoId = instanceData.AlgoId,
+                ClientId = instanceData.AlgoClientId
+            };
+            var makeAlgoPrivateResponse = await apiConsumer.ExecuteRequest(ApiPaths.ALGO_STORE_REMOVE_FROM_PUBLIC, Helpers.EmptyDictionary, JsonUtils.SerializeObject(addAlgo), Method.POST);
+            Assert.That(makeAlgoPrivateResponse.Status, Is.EqualTo(HttpStatusCode.OK));
         }
     }
 }
