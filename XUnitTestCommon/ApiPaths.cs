@@ -103,6 +103,7 @@ namespace XUnitTestCommon
         public static readonly string ALGO_STORE_STATISTICS = "/api/v1/statistics";
         public static readonly string ALGO_STORE_GET_AVAILABLE_WALLETS = "/api/v1/clients/wallets";
         public static readonly string ALGO_STORE_DELETE_ALGO = "/api/v1/algo/delete";
+        public static readonly string ALGO_STORE_INSTANCE_STATUS = "/api/v1/algoInstances/{0}/status";
         public static readonly string ALGO_STORE_DELETE_INSTANCE = "/api/v1/algoInstances";
 
         public static String WALLET_BALANCE_BY_ASSET_ID(string walletId, string assetId)
