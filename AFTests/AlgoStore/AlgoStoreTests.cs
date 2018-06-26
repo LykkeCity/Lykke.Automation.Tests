@@ -12,6 +12,8 @@ using XUnitTestData.Entities.AlgoStore;
 using AlgoStoreData.HelpersAlgoStore;
 using System.Text.RegularExpressions;
 using System.Linq;
+using XUnitTestData.Enums;
+using AlgoStoreData;
 
 namespace AFTests.AlgoStore
 {
@@ -1024,6 +1026,64 @@ namespace AFTests.AlgoStore
 
             // Stop the algo instance
             await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+        }
+
+        [Test, Description("AL-586")]
+        [Category("AlgoStore")]
+        [TestCase(AlgoInstanceType.Live, true)]
+        [TestCase(AlgoInstanceType.Demo, true)]
+        [TestCase(AlgoInstanceType.Test, false)]
+        public async Task CheckStoppingEntityRowForInstance(AlgoInstanceType algoInstanceType, bool expectedResult)
+        {
+            // TODO: Add another fixture that does not create an algo instance
+
+            // Wait up to 3 minutes for the algo to be started
+            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+
+            // Stop the algo instance
+            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+
+            // Delete the instance
+            await AlgoStoreCommonSteps.DeleteAlgoInstance(Consumer, postInstanceData);
+
+            // Create an instance
+            InstanceDataDTO instanceData = await SaveInstance(algoData, algoInstanceType);
+            postInstanceData = instanceData;
+            await DeployInstance(instanceData);
+
+            // Check StoppingEntity row exists for Live and Demo and does not exist for Test instance
+            var stoppingEntity = await AlgoStoreCommonSteps.GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
+            Assert.That(stoppingEntity != null, Is.EqualTo(expectedResult));
+
+            // Assert EndOn date is equal to the entry in DB for Live and Demo instances
+            if (algoInstanceType != AlgoInstanceType.Test)
+            {
+                var expectedEndOn = postInstanceData.AlgoMetaDataInformation.Parameters.First(x => x.Key == "EndOn").Value;
+                long ticks;
+                long.TryParse(stoppingEntity.RowKey, out ticks);
+                Assert.That(new DateTime(ticks).ToString(Constants.ISO_8601_DATE_FORMAT), Is.EqualTo(expectedEndOn));
+            }
+
+            // Wait up to 3 minutes for the algo to be started
+            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+
+            // Check StoppingEntity row exists for Live and Demo and does not exist for Test instance
+            stoppingEntity = await AlgoStoreCommonSteps.GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
+            Assert.That(stoppingEntity != null, Is.EqualTo(expectedResult));
+
+            // Stop the algo instance
+            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+
+            // Check StoppingEntity row does not exists for all instance types
+            stoppingEntity = await AlgoStoreCommonSteps.GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
+            Assert.That(stoppingEntity != null, Is.False);
+
+            // Delete the instance
+            await AlgoStoreCommonSteps.DeleteAlgoInstance(Consumer, postInstanceData);
+
+            // Check StoppingEntity row does not exists for all instance types
+            stoppingEntity = await AlgoStoreCommonSteps.GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
+            Assert.That(stoppingEntity != null, Is.False);
         }
     }
 }
