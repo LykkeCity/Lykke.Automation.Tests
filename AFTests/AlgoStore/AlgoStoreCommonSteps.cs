@@ -105,5 +105,10 @@ namespace AFTests.AlgoStore
             var makeAlgoPrivateResponse = await apiConsumer.ExecuteRequest(ApiPaths.ALGO_STORE_REMOVE_FROM_PUBLIC, Helpers.EmptyDictionary, JsonUtils.SerializeObject(addAlgo), Method.POST);
             Assert.That(makeAlgoPrivateResponse.Status, Is.EqualTo(HttpStatusCode.OK));
         }
+
+        public static async Task<ClientInstanceEntity> GetStoppingEntityForInstance(GenericRepository<ClientInstanceEntity, IClientInstance> clientInstanceRepository, InstanceDataDTO postInstanceData)
+        {
+            return await clientInstanceRepository.TryGetAsync(t => t.InstanceId == postInstanceData.InstanceId) as ClientInstanceEntity;
+        }
     }
 }

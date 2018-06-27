@@ -28,5 +28,6 @@ namespace XUnitTestData.Entities.AlgoStore
         public string TradedAssetId { get; set; }
         public int Volume { get; set; }
         public string WalletId { get; set; }
+        public string InstanceId { get; set; }
     }
 }

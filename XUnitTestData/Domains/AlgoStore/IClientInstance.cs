@@ -25,5 +25,6 @@ namespace XUnitTestData.Domains.AlgoStore
         string TradedAssetId { get; set; }
         int Volume { get; set; }
         string WalletId { get; set; }
+        string InstanceId { get; set; }
     }
 }
