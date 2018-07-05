@@ -75,6 +75,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "decred")
                 _settings = new DecredSettings();
 
+            if (blockchain == "eos")
+                _settings = new EosSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -271,6 +274,22 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "PtWUd45tMVbhvdWRubAutbWrrm5gfr7iA1fhi37n1xPeytYRHaG6N";
                 ExternalWallerAddressContext = "";
                 AssetId = "DCR";
+                BlockchainMiningTime = 10;
+            }
+        }
+
+        class EosSettings : BlockchainSpecificModel
+        {
+            public EosSettings()
+            {
+                BlockchainIntegration = "Eos";
+                BlockchainApi = "http://eos-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://eos-signservice.autotests-service.svc.cluster.local/api";
+                AssetId = "EOS";
+                HotWallet = "herb";
+                HotWalletKey = "5JcjhSQzfTUnQUXKCZupbBsGj6mkmTRxfzbMxiGBLxw9JjzXo66";
+                ExternalWalletAddress = "insect";
+                ExternalWalletKey = "5JKyVNU65er9y5xLKprVPcdYzqULkMwDKWDX6zokgX5dAAj7dVv";
                 BlockchainMiningTime = 10;
             }
         }
