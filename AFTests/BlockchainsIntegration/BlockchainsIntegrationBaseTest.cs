@@ -51,11 +51,12 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static string HOT_WALLET_CONTEXT = _currentSettings.Value.HotWalletAddressContext;
         protected static string BlockChainName = _currentSettings.Value.BlockchainIntegration;
         protected static string ASSET_ID = _currentSettings.Value.AssetId;
+        protected static byte ASSET_ACCURACY = _currentSettings.Value.AssetAccuracy ?? 8;
         protected static string EXTERNAL_WALLET = _currentSettings.Value.ExternalWalletAddress;
         protected static string EXTERNAL_WALLET_KEY = _currentSettings.Value.ExternalWalletKey;
         protected static string EXTERNAL_WALLET_ADDRESS_CONTEXT = _currentSettings.Value.ExternalWallerAddressContext;
-        protected static string AMOUNT = "20000001";
-        protected static string AMOUT_WITH_FEE = "29000001";
+        protected static string AMOUNT = Convert.ToInt64(0.20000001 * Math.Pow(10, ASSET_ACCURACY)).ToString();
+        protected static string AMOUT_WITH_FEE = Convert.ToInt64(0.20000001 * Math.Pow(10, ASSET_ACCURACY)).ToString();
         protected static long BLOCKCHAIN_MINING_TIME = _currentSettings.Value.BlockchainMiningTime ?? 10;
 
         #endregion
