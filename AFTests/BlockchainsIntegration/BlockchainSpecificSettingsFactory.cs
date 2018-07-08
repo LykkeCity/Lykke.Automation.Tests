@@ -286,6 +286,7 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://eos-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://eos-signservice.autotests-service.svc.cluster.local/api";
                 AssetId = "EOS";
+                AssetAccuracy = 4;
                 HotWallet = "herb";
                 HotWalletKey = "5JcjhSQzfTUnQUXKCZupbBsGj6mkmTRxfzbMxiGBLxw9JjzXo66";
                 ExternalWalletAddress = "insect";
@@ -313,6 +314,7 @@ namespace AFTests.BlockchainsIntegration
         public string HotWalletKey { get; set; }
         public string HotWalletAddressContext { get; set; }
         public string AssetId { get; set; }
+        public byte? AssetAccuracy { get; set; }
         public string ExternalWalletAddress { get; set; }
         public string ExternalWalletKey { get; set; }
         public string ExternalWallerAddressContext { get; set; }
