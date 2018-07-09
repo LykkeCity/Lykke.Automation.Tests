@@ -23,6 +23,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 wallet = Wallets().Dequeue();
                 TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
+                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), "Unxpected balance");
             }
 
             [TearDown]
@@ -230,6 +231,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 wallet = Wallets().Dequeue();
                 TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
+                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), "Unxpected balance");
             }
 
             [TearDown]
@@ -243,8 +245,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [Description("This case validate case when DW got transaction from EW immidiatly after DW-HW transaction and show correct block number after transaction got completed")]
             public void DWHWandEwDwTransactionsFinalBlockNumberTest()
             {
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null, $"Wallet {wallet.PublicAddress} balance is null. Fail test");
-
                 //create transaction and broadcast it
 
                 long? newBlock = null;
