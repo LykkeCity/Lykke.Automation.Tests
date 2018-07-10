@@ -55,5 +55,6 @@ namespace XUnitTestData.Entities.AlgoStore
         public DateTime? AlgoInstanceStopDate { get; set; }
         public string InstanceId { get; set; }
         public string WalletId { get; set; }
+        public string InstanceId { get; set; }
     }
 }
