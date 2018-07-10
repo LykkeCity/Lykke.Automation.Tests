@@ -38,7 +38,7 @@ namespace AFTests.ApiV2
             );
             Assert.NotNull(testAccount);
 
-            var accountBalance = testAccount.BalancesParsed.FirstOrDefault(b => b.Asset == this.TestAssetId);
+            var accountBalance = testAccount.BalancesParsed.FirstOrDefault(b => b.AssetId == this.TestAssetId);
             Assert.NotNull(accountBalance);
 
             var realBallance = accountBalance.Balance - accountBalance.Reserved;
@@ -48,7 +48,7 @@ namespace AFTests.ApiV2
             var cashOutAmmount = Math.Round((realBallance / 10) * -1, this.AssetPrecission);
 
             var meGoodCashOutResponse = await this.MEConsumer.Client.CashInOutAsync(
-                cashOutId, testAccount.Id, accountBalance.Asset, cashOutAmmount);
+                cashOutId, testAccount.Id, accountBalance.AssetId, cashOutAmmount);
 
             Assert.True(meGoodCashOutResponse.Status == MeStatusCodes.Ok);
 

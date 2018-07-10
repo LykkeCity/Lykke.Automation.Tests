@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace XUnitTestCommon.Utils
 {
@@ -14,7 +12,13 @@ namespace XUnitTestCommon.Utils
 
         public static T DeserializeJson<T>(string json)
         {
-            return JsonConvert.DeserializeObject<T>(json);
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                NullValueHandling = NullValueHandling.Ignore,
+            };
+
+            return JsonConvert.DeserializeObject<T>(json, settings);
         }
 
         public static string SerializeObject(object model)

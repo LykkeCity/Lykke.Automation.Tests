@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace AlgoStoreData.DTOs.InstanceData
 {
     public class AlgoMetaDataInformation
     {
-        public IEnumerable<AlgoMetaDataParameter> Parameters { get; set; }
-        public IEnumerable<AlgoMetaDataFunction> Functions { get; set; }
+        public List<MetaDataParameter> Parameters { get; set; }
+        public List<AlgoMetaDataFunction> Functions { get; set; }
     }
 }

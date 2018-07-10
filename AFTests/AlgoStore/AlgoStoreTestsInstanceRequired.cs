@@ -1,27 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
+﻿using AlgoStoreData.DTOs;
+using AlgoStoreData.DTOs.InstanceData;
 using AlgoStoreData.Fixtures;
+using AlgoStoreData.HelpersAlgoStore;
 using NUnit.Framework;
 using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Utils;
-using AlgoStoreData.DTOs;
 using XUnitTestData.Entities.AlgoStore;
-using AlgoStoreData.HelpersAlgoStore;
-using System.Text.RegularExpressions;
-using System.Linq;
 
 namespace AFTests.AlgoStore
 {
     [Category("FullRegression")]
     [Category("AlgoStore")]
-    public partial class AlgoStoreTests : AlgoStoreTestDataFixture
+    public partial class AlgoStoreTestsInstanceRequired : CreateAlgoWithInstanceFixture
     {
         #region Path Variables
 
-        private String isAlivePath = ApiPaths.ALGO_STORE_IS_ALIVE;
         private String metaDataPath = ApiPaths.ALGO_STORE_METADATA;
         private String uploadStringPath = ApiPaths.ALGO_STORE_UPLOAD_STRING;
         private String algoInstanceDataPath = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
@@ -33,31 +32,22 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("AlgoStore")]
-        public async Task CheckIfServiceIsAlive()
-        {
-            var response = await Consumer.ExecuteRequest(isAlivePath, Helpers.EmptyDictionary, null, Method.GET);
-
-            Assert.That(response.Status , Is.EqualTo(HttpStatusCode.OK));
-            var baseDate = JsonUtils.DeserializeJson<IsAliveDTO>(response.ResponseJson).Name;
-            Assert.That(baseDate, Is.EqualTo("Lykke.AlgoStore.Api"));
-        }
-
-        [Test]
-        [Category("AlgoStore")]
+        [Ignore("Needs refactoring")]
         public async Task UploadMetadata()
-        {        
-            CreateAlgoDTO metadata = new CreateAlgoDTO()
+        {
+            CreateAlgoDTO createAlgoDTO = new CreateAlgoDTO()
             {
-                Name = Helpers.RandomString(8),
-                Description = Helpers.RandomString(8)
+                Name = $"{GlobalConstants.AutoTest}_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()}",
+                Description = $"{ GlobalConstants.AutoTest }_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()} - Description",
+                Content = Base64Helpers.EncodeToBase64(CSharpAlgoString)
             };
-            
-            var response = await Consumer.ExecuteRequest(metaDataPath, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
-            Assert.That(response.Status , Is.EqualTo(HttpStatusCode.OK));
+
+            var response = await Consumer.ExecuteRequest(metaDataPath, Helpers.EmptyDictionary, JsonUtils.SerializeObject(createAlgoDTO), Method.POST);
+            Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK));
             AlgoDataDTO responseMetaData = JsonUtils.DeserializeJson<AlgoDataDTO>(response.ResponseJson);
 
-            Assert.That(metadata.Name, Is.EqualTo(responseMetaData.Name));
-            Assert.That(metadata.Description, Is.EqualTo(responseMetaData.Description));
+            Assert.That(createAlgoDTO.Name, Is.EqualTo(responseMetaData.Name));
+            Assert.That(createAlgoDTO.Description, Is.EqualTo(responseMetaData.Description));
             Assert.NotNull(responseMetaData.DateCreated);
             Assert.NotNull(responseMetaData.DateModified);
             Assert.NotNull(responseMetaData.Id);
@@ -73,6 +63,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("AlgoStore")]
+        [Ignore("Needs refactoring")]
         public async Task EditMetadata()
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
@@ -97,7 +88,7 @@ namespace AFTests.AlgoStore
             };
 
             var responseMetaDataAfterEditRequest = await Consumer.ExecuteRequest(metaDataPath, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-            Assert.That(responseMetaDataAfterEditRequest.Status , Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(responseMetaDataAfterEditRequest.Status, Is.EqualTo(HttpStatusCode.OK));
             AlgoDataDTO responseMetaDataAfterEdit = JsonUtils.DeserializeJson<AlgoDataDTO>(responseMetaDataAfterEditRequest.ResponseJson);
 
             Assert.AreEqual(responseMetaDataAfterEdit.Name, editMetaData.Name);
@@ -118,11 +109,12 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("AlgoStore")]
+        [Ignore("Needs refactoring")]
         public async Task GetAllMetadataForClient()
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
             var responceAllClientMetadata = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, null, Method.GET);
-            Assert.That(responceAllClientMetadata.Status , Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(responceAllClientMetadata.Status, Is.EqualTo(HttpStatusCode.OK));
             Object responceClientGetAll = JsonUtils.DeserializeJson(responceAllClientMetadata.ResponseJson);
             List<AlgoDataDTO> listAllClinetObjects = Newtonsoft.Json.JsonConvert.DeserializeObject<List<AlgoDataDTO>>(responceClientGetAll.ToString());
             List<string> keysPreBuildData = new List<string>();
@@ -136,37 +128,26 @@ namespace AFTests.AlgoStore
                     mathcedKeysCounter++;
                 }
             }
-            Assert.That(keysPreBuildData.Count , Is.EqualTo(mathcedKeysCounter));
+            Assert.That(keysPreBuildData.Count, Is.EqualTo(mathcedKeysCounter));
         }
 
         [Test]
         [Category("AlgoStore")]
         public async Task GetTailLog()
         {
-            List<BuilInitialDataObjectDTO> metadataForUploadedBinaryList = await CreateAlgoAndStartInstance(1);
-            BuilInitialDataObjectDTO metadataForUploadedBinary = metadataForUploadedBinaryList[metadataForUploadedBinaryList.Count - 1];
-
-            string AlgoID = metadataForUploadedBinary.AlgoId;
+            InstanceDataDTO instanceData = instancesList.Last();
 
             string url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
 
             Dictionary<string, string> algoIDTailLog = new Dictionary<string, string>()
             {
-                { "AlgoId", AlgoID },
-                { "InstanceId" , metadataForUploadedBinary.InstanceId },
-                {"AlgoClientId" , "e658abfc-1779-427c-8316-041a2deb1db8"  },
-                {"Tail" , "60" }
+                { "AlgoId", instanceData.AlgoId },
+                { "InstanceId" , instanceData.InstanceId },
+                { "AlgoClientId" , instanceData.AlgoClientId },
+                { "Tail" , "100" }
             };
-            int retryCounter = 0;
 
             var algoIDTailLogResponse = await Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
-
-            while ((algoIDTailLogResponse.Status.Equals(HttpStatusCode.InternalServerError) || algoIDTailLogResponse.Status.Equals(HttpStatusCode.NotFound)) && retryCounter <= 30)
-            {
-                System.Threading.Thread.Sleep(100000);
-                algoIDTailLogResponse = await Consumer.ExecuteRequest(url, algoIDTailLog, null, Method.GET);
-                retryCounter++;
-            }
 
             Assert.That(algoIDTailLogResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
@@ -177,6 +158,7 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("AlgoStore")]
+        [Ignore("Needs refactoring")]
         public async Task UploadString()
         {
             CreateAlgoDTO metadata = new CreateAlgoDTO()
@@ -198,11 +180,12 @@ namespace AFTests.AlgoStore
             Assert.True(response.Status == System.Net.HttpStatusCode.OK);
 
             bool blobExists = await BlobRepository.CheckIfBlobExists(stringDTO.AlgoId, BinaryAlgoFileType.STRING);
-            Assert.That(blobExists , Is.EqualTo(true));
+            Assert.That(blobExists, Is.EqualTo(true));
         }
 
         [Test]
         [Category("AlgoStore")]
+        [Ignore("Needs refactoring")]
         public async Task GetUploadedString()
         {
             CreateAlgoDTO metadata = new CreateAlgoDTO()
@@ -217,7 +200,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO stringDTO = new UploadStringDTO()
             {
                 AlgoId = responseMetaData.Id,
-                Data =  CSharpAlgoString
+                Data = CSharpAlgoString
             };
 
             var responsetemp = await Consumer.ExecuteRequest(uploadStringPath, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
@@ -229,7 +212,7 @@ namespace AFTests.AlgoStore
             };
 
             var responceGetUploadString = await Consumer.ExecuteRequest(uploadStringPath, quaryParamGetString, null, Method.GET);
-            Assert.That(responceGetUploadString.Status , Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(responceGetUploadString.Status, Is.EqualTo(HttpStatusCode.OK));
 
             UploadStringDTO uploadedStringContent = JsonUtils.DeserializeJson<UploadStringDTO>(responceGetUploadString.ResponseJson);
 
@@ -245,7 +228,7 @@ namespace AFTests.AlgoStore
             string algoID = metadataForUploadedBinary.AlgoId;
 
             //InstanceDataDTO instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(algoID);
-            
+
             var postInstanceDataResponse = await Consumer.ExecuteRequest(algoInstanceDataPath, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
             Assert.That(postInstanceDataResponse.Status == HttpStatusCode.OK);
 
@@ -264,7 +247,7 @@ namespace AFTests.AlgoStore
             };
 
             var responceAllClientInstance = await Consumer.ExecuteRequest(algoGetAllInstanceDataPath, queryParmas, null, Method.GET);
-            Assert.That(responceAllClientInstance.Status , Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(responceAllClientInstance.Status, Is.EqualTo(HttpStatusCode.OK));
             Object responceClientGetAll = JsonUtils.DeserializeJson(responceAllClientInstance.ResponseJson);
             List<InstanceDataDTO> listAllClinetObjects = Newtonsoft.Json.JsonConvert.DeserializeObject<List<InstanceDataDTO>>(responceClientGetAll.ToString());
             int mathcedKeysCounter = 0;
@@ -276,11 +259,12 @@ namespace AFTests.AlgoStore
                     mathcedKeysCounter++;
                 }
             }
-            Assert.That(mathcedKeysCounter , Is.EqualTo(1));
+            Assert.That(mathcedKeysCounter, Is.EqualTo(1));
         }
 
         [Test]
         [Category("AlgoStore")]
+        [Ignore("Needs refactoring")]
         public async Task PostInstanceDataForAlgo()
         {
             UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
@@ -345,7 +329,7 @@ namespace AFTests.AlgoStore
             //InstanceDataDTO instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(algoID);
 
             var postInstanceDataResponse = await Consumer.ExecuteRequest(algoInstanceDataPath, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status , Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
             InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
 
@@ -360,7 +344,7 @@ namespace AFTests.AlgoStore
 
             var postInstanceDataResponseEdit = await Consumer.ExecuteRequest(algoInstanceDataPath, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgoEdit), Method.POST);
 
-            Assert.That(postInstanceDataResponseEdit.Status , Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(postInstanceDataResponseEdit.Status, Is.EqualTo(HttpStatusCode.OK));
             InstanceDataDTO postInstanceDataEdit = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponseEdit.ResponseJson);
             Assert.That(postInstanceDataEdit.AlgoClientId, Is.EqualTo(instanceForAlgo.AlgoClientId));
             Assert.That(postInstanceDataEdit.AlgoId, Is.EqualTo(instanceForAlgo.AlgoId));
@@ -382,7 +366,7 @@ namespace AFTests.AlgoStore
             //InstanceDataDTO instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTO(algoID);
 
             var postInstanceDataResponse = await Consumer.ExecuteRequest(algoInstanceDataPath, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status , Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
             InstanceDataDTO postInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(postInstanceDataResponse.ResponseJson);
 
@@ -400,7 +384,7 @@ namespace AFTests.AlgoStore
             };
 
             var instanceDataResponse = await Consumer.ExecuteRequest(algoInstanceDataPath, queryParmas, null, Method.GET);
-            Assert.That(instanceDataResponse.Status , Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(instanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
             InstanceDataDTO returnedClinetInstanceData = JsonUtils.DeserializeJson<InstanceDataDTO>(instanceDataResponse.ResponseJson);
 
@@ -452,16 +436,15 @@ namespace AFTests.AlgoStore
                 Assert.NotNull(expectedAlgoDTO.Author);
             }
         }
-       
+
         [Category("AlgoStore")]
         [TestCase("")]
         [TestCase("getFromData")]
         public async Task GetAlgoMetaData(string clientIdTemp)
         {
-            List<BuilInitialDataObjectDTO> metadataForUploadedBinaryList = await CreateAlgoAndStartInstance(1);
-            BuilInitialDataObjectDTO metadataForUploadedBinary = metadataForUploadedBinaryList[metadataForUploadedBinaryList.Count - 1];
+            AlgoDataDTO algoDataDTO = algosList.Last();
 
-            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == metadataForUploadedBinary.AlgoId) as MetaDataEntity;
+            MetaDataEntity metaDataEntity = await MetaDataRepository.TryGetAsync(t => t.Id == algoDataDTO.Id) as MetaDataEntity;
 
             if (clientIdTemp.Equals("getFromData"))
             {
@@ -472,24 +455,25 @@ namespace AFTests.AlgoStore
 
             Dictionary<string, string> quaryParamAlgoData = new Dictionary<string, string>()
             {
-                {"AlgoId",  metadataForUploadedBinary.AlgoId },
-                {"clientId", clientIdTemp}
+                { "AlgoId",  algoDataDTO.Id },
+                { "clientId", clientIdTemp }
             };
 
             var responceAlgoMetadata = await Consumer.ExecuteRequest(url, quaryParamAlgoData, null, Method.GET);
-            Assert.That(responceAlgoMetadata.Status , Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(responceAlgoMetadata.Status, Is.EqualTo(HttpStatusCode.OK));
 
             GetAlgoMetaDataDTO postInstanceData = JsonUtils.DeserializeJson<GetAlgoMetaDataDTO>(responceAlgoMetadata.ResponseJson);
 
-            Assert.That(postInstanceData.AlgoId, Is.EqualTo(metadataForUploadedBinary.AlgoId));
-            Assert.That(postInstanceData.Name, Is.EqualTo(metadataForUploadedBinary.Name));
-            Assert.That(postInstanceData.Description, Is.EqualTo(metadataForUploadedBinary.Description));
+            Assert.That(postInstanceData.AlgoId, Is.EqualTo(algoDataDTO.Id));
+            Assert.That(postInstanceData.Name, Is.EqualTo(algoDataDTO.Name));
+            Assert.That(postInstanceData.Description, Is.EqualTo(algoDataDTO.Description));
             Assert.That(postInstanceData.Date, Is.Not.Null);
             Assert.That(postInstanceData.Author, Is.Not.Null);
             Assert.That(postInstanceData.Rating, Is.Zero);
             Assert.That(postInstanceData.UsersCount, Is.Not.Zero);
             Assert.That(postInstanceData.AlgoMetaDataInformation, Is.Null);
         }
+
         [Test]
         [Category("AlgoStore")]
         public async Task DeployStringAlgo()
@@ -497,21 +481,21 @@ namespace AFTests.AlgoStore
             string url = ApiPaths.ALGO_STORE_METADATA;
 
             CreateAlgoDTO metadata = new CreateAlgoDTO()
-             {
-                 Name = Helpers.RandomString(13),
-                 Description = Helpers.RandomString(13)
-             };
-        
+            {
+                Name = Helpers.RandomString(13),
+                Description = Helpers.RandomString(13)
+            };
+
             var response = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
             AlgoDataDTO responseMetaData = JsonUtils.DeserializeJson<AlgoDataDTO>(response.ResponseJson);
 
             url = ApiPaths.ALGO_STORE_UPLOAD_STRING;
 
             UploadStringDTO stringDTO = new UploadStringDTO()
-                {
-                    AlgoId = responseMetaData.Id,
-                    Data = CSharpAlgoString
-                };
+            {
+                AlgoId = responseMetaData.Id,
+                Data = CSharpAlgoString
+            };
 
             var responsetemp = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
             Assert.That(responsetemp.Status, Is.EqualTo(HttpStatusCode.NoContent));
@@ -528,10 +512,10 @@ namespace AFTests.AlgoStore
             url = ApiPaths.ALGO_STORE_DEPLOY_BINARY;
 
             DeployBinaryDTO deploy = new DeployBinaryDTO()
-                {
-                    AlgoId = stringDTO.AlgoId,
-                    InstanceId = postInstanceData.InstanceId,
-                };
+            {
+                AlgoId = stringDTO.AlgoId,
+                InstanceId = postInstanceData.InstanceId,
+            };
 
             var deployBynaryResponse = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
             Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
@@ -540,24 +524,24 @@ namespace AFTests.AlgoStore
             int retryCounter = 0;
 
             CascadeDeleteDTO editMetaData = new CascadeDeleteDTO()
-                {
-                    AlgoId = postInstanceData.AlgoId,
-                    InstanceId = postInstanceData.InstanceId
-                };
+            {
+                AlgoId = postInstanceData.AlgoId,
+                InstanceId = postInstanceData.InstanceId
+            };
             var responceCascadeDelete = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
 
-           // Currently we can not send cascade delete to kubernatees if he has not build the algo before that thorus not found and we leave data
+            // Currently we can not send cascade delete to kubernatees if he has not build the algo before that thorus not found and we leave data
 
-           while (responceCascadeDelete.Status.Equals(System.Net.HttpStatusCode.NotFound) && retryCounter <= 30)
-                {
-                    System.Threading.Thread.Sleep(10000);
-                    responceCascadeDelete = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
-                    retryCounter++;
-                }
-
-           Assert.That(responceCascadeDelete.Status, Is.EqualTo(HttpStatusCode.NoContent));
-
+            while (responceCascadeDelete.Status.Equals(System.Net.HttpStatusCode.NotFound) && retryCounter <= 30)
+            {
+                System.Threading.Thread.Sleep(10000);
+                responceCascadeDelete = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(editMetaData), Method.POST);
+                retryCounter++;
             }
+
+            Assert.That(responceCascadeDelete.Status, Is.EqualTo(HttpStatusCode.NoContent));
+
+        }
 
         [Test]
         [Category("AlgoStore")]
@@ -631,7 +615,7 @@ namespace AFTests.AlgoStore
 
             Assert.That(stopAlgoResponce.Status, Is.EqualTo("Stopped"));
 
-            ClientInstanceEntity algoInstanceEntitiy = await ClientInstanceRepository.TryGetAsync(t => t.PartitionKey == "algo_"+stringDTO.AlgoId) as ClientInstanceEntity;
+            ClientInstanceEntity algoInstanceEntitiy = await ClientInstanceRepository.TryGetAsync(t => t.PartitionKey == "algo_" + stringDTO.AlgoId) as ClientInstanceEntity;
 
             Assert.That(algoInstanceEntitiy.AlgoInstanceStatusValue, Is.EqualTo("Stopped"));
 
@@ -666,6 +650,7 @@ namespace AFTests.AlgoStore
 
         [Test, Description("AL-363")]
         [Category("AlgoStore")]
+        [Ignore("Move to AlgoStoreTestsInstanceNotRequired")]
         public async Task CheckWalletBalanceCalculatedBasedOnBestPrice()
         {
             Dictionary<string, string> queryParmas = new Dictionary<string, string>()
@@ -681,7 +666,7 @@ namespace AFTests.AlgoStore
             AlgoInstanceStatisticsEntity algoInstanceStatisticsEntity = await AlgoInstanceStaticsticsRepository.TryGetAsync(t => t.InstanceId == postInstanceData.InstanceId && t.Id == "Summary") as AlgoInstanceStatisticsEntity;
 
             // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+            await WaitAlgoInstanceToStart(postInstanceData.InstanceId);
 
             Dictionary<string, string> statisticsQueryParams = new Dictionary<string, string>()
             {
@@ -692,7 +677,7 @@ namespace AFTests.AlgoStore
             StatisticsDTO statistics = null;
             for (int i = 0; i < 6; i++)
             {
-                statistics = await AlgoStoreCommonSteps.GetStatisticsResponseAsync(Consumer, postInstanceData);
+                statistics = await GetStatisticsResponseAsync(postInstanceData);
             }
 
             Assert.That(algoInstanceStatisticsEntity.InstanceId, Is.EqualTo(statistics.InstanceId));
@@ -708,7 +693,7 @@ namespace AFTests.AlgoStore
 
         [Test, Description("AL-357")]
         [Category("AlgoStore")]
-        public async Task CheckSummaryRowUpdatedWhenAlogIsStopped()
+        public async Task CheckSummaryRowUpdatedWhenAlgoIsStopped()
         {
             ClientInstanceEntity instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
             Assert.NotNull(instanceDataEntityExists);
@@ -731,13 +716,13 @@ namespace AFTests.AlgoStore
             Assert.That(initialAlgoInstanceStatisticsEntity.InitialAssetTwoBalance, Is.EqualTo(initialAlgoInstanceStatisticsEntity.LastAssetTwoBalance));
 
             // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+            await WaitAlgoInstanceToStart(postInstanceData.InstanceId);
 
             // Get actual values from statistics endpoint 6 times within 1 minute
             StatisticsDTO statistics;
             for (int i = 0; i < 6; i++)
             {
-                statistics = await AlgoStoreCommonSteps.GetStatisticsResponseAsync(Consumer, postInstanceData);
+                statistics = await GetStatisticsResponseAsync(postInstanceData);
             }
 
             // Wait for 5 seconds before getting statistics values from Azure
@@ -755,7 +740,7 @@ namespace AFTests.AlgoStore
             Assert.That(updatedAlgoInstanceStatisticsEntity.InitialAssetTwoBalance, Is.EqualTo(initialAlgoInstanceStatisticsEntity.InitialAssetTwoBalance));
 
             // Stop the algo instance
-            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+            await StopAlgoInstance(postInstanceData);
 
             // Get statistics values from Azure after the algo is stopped and before calling statistics endpoint
             AlgoInstanceStatisticsEntity afterStoppingAlgoInstanceStatisticsEntity = await AlgoInstanceStaticsticsRepository.TryGetAsync(t => t.InstanceId == postInstanceData.InstanceId && t.Id == "Summary") as AlgoInstanceStatisticsEntity;
@@ -769,7 +754,7 @@ namespace AFTests.AlgoStore
             Assert.That(afterStoppingAlgoInstanceStatisticsEntity.InitialAssetTwoBalance, Is.EqualTo(initialAlgoInstanceStatisticsEntity.InitialAssetTwoBalance));
 
             // Wait for a minute and invoke statistics endpoint again
-            statistics = await AlgoStoreCommonSteps.GetStatisticsResponseAsync(Consumer, postInstanceData, 60000);
+            statistics = await GetStatisticsResponseAsync(postInstanceData, 60000);
 
             // Wait for 5 seconds before getting statistics values from Azure
             Wait.ForPredefinedTime(5000);
@@ -800,35 +785,20 @@ namespace AFTests.AlgoStore
             Assert.That(instanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
 
             // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+            await WaitAlgoInstanceToStart(postInstanceData.InstanceId);
 
-            StatisticsDTO statistics = await AlgoStoreCommonSteps.GetStatisticsResponseAsync(Consumer, postInstanceData);
+            StatisticsDTO statistics = await GetStatisticsResponseAsync(postInstanceData);
 
             // TODO: Update the test to use dynamic TradedAsset and AssetTwo
             // Assert statistics endpoint returns "TradedAssetName" and "AssetTwoName"
             Assert.That(statistics.TradedAssetName, Is.EqualTo("EUR"));
             Assert.That(statistics.AssetTwoName, Is.EqualTo("BTC"));
-
-            // Stop the algo instance
-            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
         }
 
         [Test, Description("AL-488")]
         [Category("AlgoStore")]
         public async Task CheckTokenGeneratedOnInstanceCreation()
         {
-            Dictionary<string, string> queryParams = new Dictionary<string, string>()
-            {
-                { "algoId" , postInstanceData.AlgoId },
-                { "instanceId", postInstanceData.InstanceId}
-            };
-
-            var instanceDataResponse = await Consumer.ExecuteRequest(algoInstanceDataPath, queryParams, null, Method.GET);
-            Assert.That(instanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK));
-
-            // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
-
             // Get Algo Instance Data from DB
             ClientInstanceEntity instanceDataFromDB = await ClientInstanceRepository.TryGetAsync(t => t.Id == postInstanceData.InstanceId) as ClientInstanceEntity;
 
@@ -836,22 +806,13 @@ namespace AFTests.AlgoStore
             Assert.That(instanceDataFromDB.AuthToken, Is.Not.Null, "AuthToken is null whereas it should not be null");
 
             // Assert that AuthToken is Giud
-            Regex regex = new Regex(GlobalConstants.GuidRegexPattern, RegexOptions.IgnoreCase);
-            Match match = regex.Match(instanceDataFromDB.AuthToken);
-            string errorMessage = $"The AuthToken is not a Guid. Value: '{instanceDataFromDB.AuthToken}'";
-            Assert.That(match.Success, Is.True, errorMessage);
-
-            // Stop the algo instance
-            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+            Assert.That(instanceDataFromDB.AuthToken, Does.Match(GlobalConstants.GuidRegexPattern).IgnoreCase, $"The AuthToken is not a Guid. Value: '{instanceDataFromDB.AuthToken}'");
         }
 
         [Test, Description("AL-467")]
         [Category("AlgoStore")]
         public async Task CheckGetAllUserAlgos()
         {
-            // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
-
             // Get all my algoes from Azure
             List<AlgoEntity> expectedResult = await AlgoRepository.GetAllAsync(t => t.ClientId == postInstanceData.AlgoClientId) as List<AlgoEntity>;
 
@@ -877,21 +838,15 @@ namespace AFTests.AlgoStore
                 Assert.That(expectedResult[i].AlgoVisibilityValue, Is.EqualTo(actualResult[i].AlgoVisibility.ToString()));
                 Assert.That(expectedResult[i].DateCreated.ToString("s"), Is.EqualTo(actualResult[i].DateCreated.ToString("s")));
             }
-
-            // Stop the algo instance
-            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
         }
 
         [Test, Description("AL-520")]
         [Category("AlgoStore")]
         public async Task CheckGetAllAvailableWallets()
         {
-            // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
-
             // Get all running Live instances of the user
             List<ClientInstanceEntity> allRunningInstances = await ClientInstanceRepository.GetAllAsync(t => t.ClientId == postInstanceData.AlgoClientId && t.AlgoInstanceTypeValue == "Live" && t.AlgoInstanceStatusValue != "Stopped") as List<ClientInstanceEntity>;
-            
+
             // Get unique walletIds from all running instances
             var uniqueUsedWallets = (from i in allRunningInstances select i.WalletId).Distinct().ToList();
 
@@ -916,39 +871,33 @@ namespace AFTests.AlgoStore
                 Assert.That(expectedResult[i].Id, Is.EqualTo(actualResult[i].Id));
                 Assert.That(expectedResult[i].Name, Is.EqualTo(actualResult[i].Name));
             }
-
-            // Stop the algo instance
-            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
         }
 
         [Test, Description("AL-307")]
         [Category("AlgoStore")]
         public async Task CheckAlgoDeletion()
         {
-            // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
-
             // Delete the algo
-            var deleteAlgoRequest = await DeleteAlgo(postInstanceData, false);
-            await AssertAlgoNotDeleted(deleteAlgoRequest, postInstanceData, "Cannot delete algo because it has algo instances.");
+            var deleteAlgoRequest = await DeleteAlgo(algoData, false);
+            await AssertAlgoNotDeleted(deleteAlgoRequest, algoData, "Cannot delete algo because it has algo instances.");
 
             // Force delete the algo
-            deleteAlgoRequest = await DeleteAlgo(postInstanceData, true);
-            await AssertAlgoNotDeleted(deleteAlgoRequest, postInstanceData, "Cannot delete algo because it has running algo instances.");
+            deleteAlgoRequest = await DeleteAlgo(algoData, true);
+            await AssertAlgoNotDeleted(deleteAlgoRequest, algoData, "Cannot delete algo because it has running algo instances.");
 
             // Delete the instance
-            await AlgoStoreCommonSteps.DeleteAlgoInstance(Consumer, postInstanceData);
+            await DeleteAlgoInstance(postInstanceData);
 
             // Make the algo public
-            await AlgoStoreCommonSteps.MakeAlgoPublic(Consumer, postInstanceData);
+            await MakeAlgoPublic(algoData);
 
             // Delete the algo
-            deleteAlgoRequest = await DeleteAlgo(postInstanceData, false);
-            await AssertAlgoNotDeleted(deleteAlgoRequest, postInstanceData, "The algo must not be public.");
+            deleteAlgoRequest = await DeleteAlgo(algoData, false);
+            await AssertAlgoNotDeleted(deleteAlgoRequest, algoData, "The algo must not be public.");
 
             // Force delete the algo
-            deleteAlgoRequest = await DeleteAlgo(postInstanceData, true);
-            await AssertAlgoNotDeleted(deleteAlgoRequest, postInstanceData, "The algo must not be public.");
+            deleteAlgoRequest = await DeleteAlgo(algoData, true);
+            await AssertAlgoNotDeleted(deleteAlgoRequest, algoData, "The algo must not be public.");
 
             // Create an instance
             InstanceDataDTO instanceData = await SaveInstance(algoData, instanceType);
@@ -956,32 +905,32 @@ namespace AFTests.AlgoStore
             await DeployInstance(instanceData);
 
             // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+            await WaitAlgoInstanceToStart(postInstanceData.InstanceId);
 
             // Delete the algo
-            deleteAlgoRequest = await DeleteAlgo(postInstanceData, false);
-            await AssertAlgoNotDeleted(deleteAlgoRequest, postInstanceData, "The algo must not be public.");
+            deleteAlgoRequest = await DeleteAlgo(algoData, false);
+            await AssertAlgoNotDeleted(deleteAlgoRequest, algoData, "The algo must not be public.");
 
             // Force delete the algo
-            deleteAlgoRequest = await DeleteAlgo(postInstanceData, true);
-            await AssertAlgoNotDeleted(deleteAlgoRequest, postInstanceData, "The algo must not be public.");
+            deleteAlgoRequest = await DeleteAlgo(algoData, true);
+            await AssertAlgoNotDeleted(deleteAlgoRequest, algoData, "The algo must not be public.");
 
             // Stop the instance
-            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+            await StopAlgoInstance(postInstanceData);
 
             // Delete the algo
-            deleteAlgoRequest = await DeleteAlgo(postInstanceData, false);
-            await AssertAlgoNotDeleted(deleteAlgoRequest, postInstanceData, "The algo must not be public.");
+            deleteAlgoRequest = await DeleteAlgo(algoData, false);
+            await AssertAlgoNotDeleted(deleteAlgoRequest, algoData, "The algo must not be public.");
 
             // Force delete the algo
-            deleteAlgoRequest = await DeleteAlgo(postInstanceData, true);
-            await AssertAlgoNotDeleted(deleteAlgoRequest, postInstanceData, "The algo must not be public.");
+            deleteAlgoRequest = await DeleteAlgo(algoData, true);
+            await AssertAlgoNotDeleted(deleteAlgoRequest, algoData, "The algo must not be public.");
 
             // Delete the instance
-            await AlgoStoreCommonSteps.DeleteAlgoInstance(Consumer, postInstanceData);
+            await DeleteAlgoInstance(postInstanceData);
 
             // Make the algo private
-            await AlgoStoreCommonSteps.MakeAlgoPrivate(Consumer, postInstanceData);
+            await MakeAlgoPrivate(algoData);
 
             // Create an instance
             instanceData = await SaveInstance(algoData, instanceType);
@@ -989,18 +938,18 @@ namespace AFTests.AlgoStore
             await DeployInstance(instanceData);
 
             // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+            await WaitAlgoInstanceToStart(postInstanceData.InstanceId);
 
             // Stop the instance
-            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+            await StopAlgoInstance(postInstanceData);
 
             // Delete the algo
-            deleteAlgoRequest = await DeleteAlgo(postInstanceData, false);
-            await AssertAlgoNotDeleted(deleteAlgoRequest, postInstanceData, "Cannot delete algo because it has algo instances.");
+            deleteAlgoRequest = await DeleteAlgo(algoData, false);
+            await AssertAlgoNotDeleted(deleteAlgoRequest, algoData, "Cannot delete algo because it has algo instances.");
 
             // Force delete the algo
-            deleteAlgoRequest = await DeleteAlgo(postInstanceData, true);
-            await AssertAlgoDeleted(deleteAlgoRequest, postInstanceData);
+            deleteAlgoRequest = await DeleteAlgo(algoData, true);
+            await AssertAlgoDeleted(deleteAlgoRequest, algoData);
         }
 
         [Test, Description("AL-483")]
@@ -1015,15 +964,12 @@ namespace AFTests.AlgoStore
             Assert.That(instanceStatusBeforeStarted.ResponseJson, Is.EqualTo("0"));
 
             // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+            await WaitAlgoInstanceToStart(postInstanceData.InstanceId);
 
             // Get instance status after instance is started
             var instanceStatusAfterStarted = await Consumer.ExecuteRequest(instanceStatusUrl, Helpers.EmptyDictionary, null, Method.GET);
             Assert.That(instanceStatusAfterStarted.Status, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(instanceStatusAfterStarted.ResponseJson, Is.EqualTo("1"));
-
-            // Stop the algo instance
-            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
         }
     }
 }

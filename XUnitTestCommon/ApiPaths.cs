@@ -11,7 +11,8 @@ namespace XUnitTestCommon
         public static readonly string WALLETS_BASE_PATH = "/api/wallets";
         public static readonly string WALLETS_BALANCES_PATH = "/api/wallets/balances";
         public static readonly string WALLETS_TRADING_BALANCES_PATH = "/api/wallets/trading/balances";
-        private static readonly string walletBalanceByAssetID = "/api/wallets/{0}/balances/{1}";
+        public static readonly string walletBalanceByAssetID = "/api/wallets/{0}/balances/{1}";
+        public static readonly string WALLETS_GET_WALLET_DETAILS_BY_ID = "/api/wallets/{0}";
 
         public static readonly string OPERATIONS_BASE_PATH = "/api/operations";
         public static readonly string OPERATIONS_DETAILS_PATH = "/api/operationsDetails";
@@ -29,11 +30,13 @@ namespace XUnitTestCommon
         public static readonly string ASSETS_BASE_PATH = "/api/assets";
         public static readonly string ASSETS_BASEASSET_PATH = "/api/assets/baseAsset";
 
+        public static readonly string API_V2_CANDLES_HISTORY = "/api/candlesHistory";
+
         public static readonly string ISALIVE_BASE_PATH = "/api/isAlive";        
 
         public static readonly string TRANSACTION_HISTORY_BASE_PATH = "/api/transactionHistory";
 
-        // blue API
+        // Blue API
         public static readonly string PLEDGES_BASE_PATH = "/api/pledges";
 
         public static readonly string TWITTER_BASE_PATH = "/api/twitter/getTweetsJSON";
@@ -65,20 +68,22 @@ namespace XUnitTestCommon
 
         public static readonly string ERC20TOKENS_BASE_PATH = "/api/v2/erc20-tokens";
       
-        //client account service
+        // Client account service
         public static readonly string CLIENT_ACCOUNT_SERVICE_PREFIX = "client-account";
         public static readonly string CLIENT_ACCOUNT_SERVICE_BASEURL = "lykke-service.svc.cluster.local";
         public static readonly string CLIENT_ACCOUNT_PATH = "/api/ClientAccount";
 
+        // HFT service
+        public static readonly string HFT_HISTORY_TRADES = "/api/History/trades";
 
-        //balances service
+        // Balances service
         public static readonly string BALANCES_IS_ALIVE = "/api/IsAlive";
         public static readonly string BALANCES_WALLET_CREDENTIAL = "/api/WalletCredential";
         public static readonly string BALANCES_WALLET_CREDENTIALS_HISTORY = "/api/WalletCredentialsHistory";
         public static readonly string BALANCES_WALLET_BALANCES = "/api/WalletsClientBalances";
 
 
-        //Algo Store
+        // Algo Store
         public static readonly string ALGO_STORE_IS_ALIVE = "/api/IsAlive";
         public static readonly string ALGO_STORE_METADATA = "/api/v1/clientData/metadata";
         public static readonly string ALGO_STORE_CREATE_ALGO = "/api/v1/algo/create";
@@ -91,10 +96,8 @@ namespace XUnitTestCommon
         public static readonly string ALGO_STORE_UPLOAD_BINARY = "/api/v1/algo/sourceCode/upload/binary";
         public static readonly string ALGO_STORE_UPLOAD_STRING = "/api/v1/algo/sourceCode/upload/string";
         public static readonly string ALGO_STORE_DEPLOY_BINARY = "/api/v1/management/deploy/binary";
-        public static readonly string ALGO_STORE_ALGO_START = "/api/v1/management/test/start";
-        public static readonly string ALGO_STORE_ALGO_STOP = "/api/v1/management/test/stop";
-        public static readonly string ALGO_STORE_ALGO_LOG = "/api/v1/management/test/log";
-        public static readonly string ALGO_STORE_ALGO_TAIL_LOG = "/api/v1/management/test/tailLog";
+        public static readonly string ALGO_STORE_ALGO_STOP = "/api/v1/management/stop";
+        public static readonly string ALGO_STORE_ALGO_TAIL_LOG = "/api/v1/management/tailLog";
         public static readonly string ALGO_STORE_ALGO_GET_ALL_INSTANCE_DATA = "/api/v1/algoInstances/getAllByAlgoIdAndClientId";
         public static readonly string ALGO_STORE_ALGO_INSTANCE_DATA = "api/v1/algoInstances/getAlgoInstance";
         public static readonly string ALGO_STORE_CLIENT_DATA_GET_ALL_ALGOS = "/api/v1/algo/getAllAlgos";
@@ -105,6 +108,17 @@ namespace XUnitTestCommon
         public static readonly string ALGO_STORE_DELETE_ALGO = "/api/v1/algo/delete";
         public static readonly string ALGO_STORE_INSTANCE_STATUS = "/api/v1/algoInstances/{0}/status";
         public static readonly string ALGO_STORE_DELETE_INSTANCE = "/api/v1/algoInstances";
+        public static readonly string ALGO_STORE_GET_ALL_INSTANCES_OF_USER = "/api/v1/algoInstances/userInstances";
+        public static readonly string ALGO_STORE_GET_INSTANCE_TRADES = "/api/v1/trades";
+
+        // Algo Store Stopping Job Api
+        public static readonly string ALGO_STORE_STOPPING_JOB_API_IS_ALIVE = "/api/IsAlive";
+        public static readonly string ALGO_STORE_STOPPING_JOB_API_GET_INSTANCE_PODS = "/api/kubernetes/getPods";
+        public static readonly string ALGO_STORE_STOPPING_JOB_API_DELETE_POD_BY_INSTANCE_ID = "/api/kubernetes/deleteAlgoInstance";
+        public static readonly string ALGO_STORE_STOPPING_JOB_API_DELETE_POD_BY_INSTANCE_ID_AND_POD_NAMESPACE = "/api/kubernetes/deleteByInstanceIdAndPod";
+
+        // Algo Store History Api
+        public static readonly string ALGO_STORE_HISTORY_API_CANDLES = "/api/v1/candles";
 
         public static String WALLET_BALANCE_BY_ASSET_ID(string walletId, string assetId)
         {

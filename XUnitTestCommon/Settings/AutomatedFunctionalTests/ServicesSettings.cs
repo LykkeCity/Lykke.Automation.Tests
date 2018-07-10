@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace XUnitTestCommon.Settings.AutomatedFunctionalTests
 {
@@ -13,7 +11,13 @@ namespace XUnitTestCommon.Settings.AutomatedFunctionalTests
         public String SessionApiBaseUrl { get; set; }
         public String AssetsApiBaseUrl { get; set; }
         public String AlgoStoreApiBaseUrl { get; set; }
+        public String AlgoStoreStoppingJobApiBaseUrl { get; set; }
+        public String AlgoStoreLoggingApiBaseUrl { get; set; }
+        public String AlgoStoreSecurityServiceApiBaseUrl { get; set; }
+        public String AlgoStoreTradesApiBaseUrl { get; set; }
+        public String AlgoStoreHistoryApiBaseUrl { get; set; }
         public String RegistrationApiBaseUrl { get; set; }
+        public String HftApiBaseUrl { get; set; }
         public String BalancesApiBaseUrl { get; set; }
     }
 }
