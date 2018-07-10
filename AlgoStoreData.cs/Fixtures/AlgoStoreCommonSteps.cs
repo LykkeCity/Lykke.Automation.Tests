@@ -12,8 +12,10 @@ using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Tests;
 using XUnitTestCommon.Utils;
+using XUnitTestData.Domains.AlgoStore;
 using XUnitTestData.Entities.AlgoStore;
 using XUnitTestData.Enums;
+using XUnitTestData.Repositories;
 
 namespace AlgoStoreData.Fixtures
 {
@@ -141,6 +143,11 @@ namespace AlgoStoreData.Fixtures
 
                 retryCounter++;
             }
+        }
+
+        public static async Task<ClientInstanceEntity> GetStoppingEntityForInstance(GenericRepository<ClientInstanceEntity, IClientInstance> clientInstanceRepository, InstanceDataDTO postInstanceData)
+        {
+            return await clientInstanceRepository.TryGetAsync(t => t.InstanceId == postInstanceData.InstanceId) as ClientInstanceEntity;
         }
 
         public async Task<StatisticsDTO> GetStatisticsResponseAsync(InstanceDataDTO instanceData, int waitTime = 10000)

@@ -984,13 +984,13 @@ namespace AFTests.AlgoStore
             // TODO: Add another fixture that does not create an algo instance
 
             // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+            await WaitAlgoInstanceToStart(postInstanceData.InstanceId);
 
             // Stop the algo instance
-            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+            await StopAlgoInstance(postInstanceData);
 
             // Delete the instance
-            await AlgoStoreCommonSteps.DeleteAlgoInstance(Consumer, postInstanceData);
+            await DeleteAlgoInstance(postInstanceData);
 
             // Create an instance
             InstanceDataDTO instanceData = await SaveInstance(algoData, algoInstanceType);
@@ -998,7 +998,7 @@ namespace AFTests.AlgoStore
             await DeployInstance(instanceData);
 
             // Check StoppingEntity row exists for Live and Demo and does not exist for Test instance
-            var stoppingEntity = await AlgoStoreCommonSteps.GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
+            var stoppingEntity = await GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
             Assert.That(stoppingEntity != null, Is.EqualTo(expectedResult));
 
             // Assert EndOn date is equal to the entry in DB for Live and Demo instances
@@ -1011,24 +1011,24 @@ namespace AFTests.AlgoStore
             }
 
             // Wait up to 3 minutes for the algo to be started
-            await AlgoStoreCommonSteps.WaitAlgoToStart(ClientInstanceRepository, postInstanceData);
+            await WaitAlgoInstanceToStart(postInstanceData.InstanceId);
 
             // Check StoppingEntity row exists for Live and Demo and does not exist for Test instance
-            stoppingEntity = await AlgoStoreCommonSteps.GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
+            stoppingEntity = await GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
             Assert.That(stoppingEntity != null, Is.EqualTo(expectedResult));
 
             // Stop the algo instance
-            await AlgoStoreCommonSteps.StopAlgoInstance(Consumer, postInstanceData);
+            await StopAlgoInstance(postInstanceData);
 
             // Check StoppingEntity row does not exists for all instance types
-            stoppingEntity = await AlgoStoreCommonSteps.GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
+            stoppingEntity = await GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
             Assert.That(stoppingEntity != null, Is.False);
 
             // Delete the instance
-            await AlgoStoreCommonSteps.DeleteAlgoInstance(Consumer, postInstanceData);
+            await DeleteAlgoInstance(postInstanceData);
 
             // Check StoppingEntity row does not exists for all instance types
-            stoppingEntity = await AlgoStoreCommonSteps.GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
+            stoppingEntity = await GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
             Assert.That(stoppingEntity != null, Is.False);
         }
     }
