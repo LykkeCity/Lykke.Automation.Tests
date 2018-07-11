@@ -17,7 +17,7 @@ namespace AFTests.AlgoStore
 {
     [Category("FullRegression")]
     [Category("AlgoStore")]
-    public partial class AlgoStoreTests : AlgoStoreTestDataFixture
+    public partial class AlgoStoreTestsInstanceRequired : CreateAlgoWithInstanceFixture
     {
 
         [Category("AlgoStore")]

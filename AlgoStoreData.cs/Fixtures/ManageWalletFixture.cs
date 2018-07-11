@@ -14,6 +14,7 @@ using XUnitTestData.Entities;
 
 namespace AlgoStoreData.Fixtures
 {
+    [TestFixture]
     public partial class AlgoStoreTestDataFixture : BaseTest
     {
         private string walletPath = ApiPaths.WALLETS_BASE_PATH;
@@ -56,7 +57,7 @@ namespace AlgoStoreData.Fixtures
 
         public async Task<WalletDTO> CreateTestWallet()
         {
-            string createWalletPath = $"{BaseUrl.ApiV2BaseUrl}{walletPath}/hft";
+            string createWalletUrl = $"{BaseUrl.ApiV2BaseUrl}{walletPath}/hft";
 
             string utcTimestamp = DateTime.UtcNow.ToString("s");
             WalletCreateDTO newWallet = new WalletCreateDTO
@@ -67,7 +68,7 @@ namespace AlgoStoreData.Fixtures
 
             string createParam = JsonUtils.SerializeObject(newWallet);    
 
-            var response = await Consumer.ExecuteRequestCustomEndpoint(BaseUrl.ApiV2BaseUrl + createWalletPath, Helpers.EmptyDictionary, createParam, Method.POST);
+            var response = await Consumer.ExecuteRequestCustomEndpoint(createWalletUrl, Helpers.EmptyDictionary, createParam, Method.POST);
             if (response.Status != HttpStatusCode.OK)
             {
                 return null;

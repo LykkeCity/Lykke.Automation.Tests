@@ -1,7 +1,11 @@
 ﻿using AlgoStoreData.DTOs;
+using AlgoStoreData.DTOs.InstanceData;
+using AlgoStoreData.DTOs.InstanceData.Builders;
 using AlgoStoreData.Fixtures;
+using ApiV2Data.DTOs;
 using NUnit.Framework;
 using RestSharp;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using XUnitTestCommon;
@@ -12,20 +16,45 @@ namespace AFTests.AlgoStore
 {
     [Category("FullRegression")]
     [Category("AlgoStore")]
-    public partial class AlgoStoreTests : AlgoStoreTestDataFixture
+    public partial class AlgoStoreTestsInstanceNotRequired : AlgoStoreTestDataFixture
     {
         [Test]
         [Category("AlgoStore")]
-        public async Task PostInvalidInstanceAssetPair()
+        [TestCase(AlgoInstanceType.Live)]
+        [TestCase(AlgoInstanceType.Demo)]
+        [TestCase(AlgoInstanceType.Test)]
+        public async Task PostInvalidInstanceAssetPair(AlgoInstanceType algoInstanceType)
         {
-            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-            string algoID = metadataForUploadedBinary.AlgoId;
+            WalletDTO walletDTO = null;
+            if (algoInstanceType == AlgoInstanceType.Live)
+            {
+                walletDTO = await GetExistingWallet();
+            }
 
-            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTOInvalidAssetPair(algoID, await GetExistingWallet());
+            // Create algo
+            var algoData = await CreateAlgo();
+
+            // Build days offset
+            DaysOffsetDTO daysOffsetDTO = BuildDaysOffsetByInstanceType(algoInstanceType);
+            // Build InstanceParameters
+            InstanceParameters instanceParameters = new InstanceParameters()
+            {
+                AssetPair = "BTCBTC",
+                TradedAsset = "USD",
+                InstanceTradeVolume = 2,
+                InstanceCandleInterval = CandleTimeInterval.Minute,
+                FunctionCandleInterval = CandleTimeInterval.Day,
+                FunctionCandleOperationMode = CandleOperationMode.CLOSE,
+                FunctionCapacity = 4,
+                InstanceFunctions = new List<FunctionType>() { FunctionType.SMA_Short, FunctionType.SMA_Long }
+            };
+
+            // Build instance request payload
+            var instanceForAlgo = InstanceDataBuilder.BuildInstanceData(algoData, walletDTO, algoInstanceType, instanceParameters, daysOffsetDTO);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
-            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            var postInstanceDataResponse = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
 
             AlgoErrorDTO postInstanceDataResponseDTO = JsonUtils.DeserializeJson<AlgoErrorDTO>(postInstanceDataResponse.ResponseJson);
 
@@ -35,50 +64,126 @@ namespace AFTests.AlgoStore
 
  
         }
+
         [Test]
         [Category("AlgoStore")]
-        public async Task PostInvalidInstanceTradedAsset()
+        [TestCase(AlgoInstanceType.Live)]
+        [TestCase(AlgoInstanceType.Demo)]
+        [TestCase(AlgoInstanceType.Test)]
+        public async Task PostInvalidInstanceTradedAsset(AlgoInstanceType algoInstanceType)
         {
-            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-            string algoID = metadataForUploadedBinary.AlgoId;
+            WalletDTO walletDTO = null;
+            if (algoInstanceType == AlgoInstanceType.Live)
+            {
+                walletDTO = await GetExistingWallet();
+            }
 
-            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTOInvalidTradedAsset(algoID, await GetExistingWallet());
+            // Create algo
+            var algoData = await CreateAlgo();
+
+            // Build days offset
+            DaysOffsetDTO daysOffsetDTO = BuildDaysOffsetByInstanceType(algoInstanceType);
+            // Build InstanceParameters
+            InstanceParameters instanceParameters = new InstanceParameters()
+            {
+                AssetPair = "BTCUSD",
+                TradedAsset = "EUR",
+                InstanceTradeVolume = 2,
+                InstanceCandleInterval = CandleTimeInterval.Minute,
+                FunctionCandleInterval = CandleTimeInterval.Day,
+                FunctionCandleOperationMode = CandleOperationMode.CLOSE,
+                FunctionCapacity = 4,
+                InstanceFunctions = new List<FunctionType>() { FunctionType.SMA_Short, FunctionType.SMA_Long }
+            };
+
+            // Build instance request payload
+            var instanceForAlgo = InstanceDataBuilder.BuildInstanceData(algoData, walletDTO, algoInstanceType, instanceParameters, daysOffsetDTO);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
-            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            var postInstanceDataResponse = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
 
             AlgoErrorDTO postInstanceDataResponseDTO = JsonUtils.DeserializeJson<AlgoErrorDTO>(postInstanceDataResponse.ResponseJson);
 
             Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.BadRequest), "should be bad response erorr code");
 
             Assert.That(postInstanceDataResponseDTO.ErrorMessage, Does.Contain("ValidationError Message:Asset <USD> is not valid for asset pair <BTCEUR>"), "we should receive erorr for the invalid traded asset");
-
         }
+
         [Test]
         [Category("AlgoStore")]
-        public async Task PostInvalidAlgoId()
+        [TestCase(AlgoInstanceType.Live)]
+        [TestCase(AlgoInstanceType.Demo)]
+        [TestCase(AlgoInstanceType.Test)]
+        public async Task PostInvalidAlgoId(AlgoInstanceType algoInstanceType)
         {
-            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-            string algoID = metadataForUploadedBinary.AlgoId;
+            WalletDTO walletDTO = null;
+            if (algoInstanceType == AlgoInstanceType.Live)
+            {
+                walletDTO = await GetExistingWallet();
+            }
 
-            instanceForAlgo = GetPopulatedInstanceDataDTO.ReturnInstanceDataDTO("123 invalid algo id", await GetExistingWallet(), AlgoInstanceType.Demo);
+            // Create algo
+            var algoData = await CreateAlgo();
+
+            // Build days offset
+            DaysOffsetDTO daysOffsetDTO = BuildDaysOffsetByInstanceType(algoInstanceType);
+            // Build InstanceParameters
+            InstanceParameters instanceParameters = new InstanceParameters()
+            {
+                AssetPair = "BTCUSD",
+                TradedAsset = "EUR",
+                InstanceTradeVolume = 2,
+                InstanceCandleInterval = CandleTimeInterval.Minute,
+                FunctionCandleInterval = CandleTimeInterval.Day,
+                FunctionCandleOperationMode = CandleOperationMode.CLOSE,
+                FunctionCapacity = 4,
+                InstanceFunctions = new List<FunctionType>() { FunctionType.SMA_Short, FunctionType.SMA_Long }
+            };
+
+            // Build instance request payload
+            var instanceForAlgo = InstanceDataBuilder.BuildInstanceData(algoData, walletDTO, algoInstanceType, instanceParameters, daysOffsetDTO, true);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
-            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            var postInstanceDataResponse = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
 
             Assert.That(postInstanceDataResponse.Status , Is.EqualTo(HttpStatusCode.NotFound), "we should receive not found response code");
-
         }
+
         [Test]
         [Category("AlgoStore")]
-        public async Task PostInvalidVolume()
+        [TestCase(AlgoInstanceType.Live)]
+        [TestCase(AlgoInstanceType.Demo)]
+        [TestCase(AlgoInstanceType.Test)]
+        public async Task PostInvalidVolume(AlgoInstanceType algoInstanceType)
         {
-            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-            string algoID = metadataForUploadedBinary.AlgoId;
+            WalletDTO walletDTO = null;
+            if (algoInstanceType == AlgoInstanceType.Live)
+            {
+                walletDTO = await GetExistingWallet();
+            }
 
-            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTONegativeVolume(algoID, await GetExistingWallet());
+            // Create algo
+            var algoData = await CreateAlgo();
+
+            // Build days offset
+            DaysOffsetDTO daysOffsetDTO = BuildDaysOffsetByInstanceType(algoInstanceType);
+            // Build InstanceParameters
+            InstanceParameters instanceParameters = new InstanceParameters()
+            {
+                AssetPair = "BTCUSD",
+                TradedAsset = "EUR",
+                InstanceTradeVolume = -2,
+                InstanceCandleInterval = CandleTimeInterval.Minute,
+                FunctionCandleInterval = CandleTimeInterval.Day,
+                FunctionCandleOperationMode = CandleOperationMode.CLOSE,
+                FunctionCapacity = 4,
+                InstanceFunctions = new List<FunctionType>() { FunctionType.SMA_Short, FunctionType.SMA_Long }
+            };
+
+            // Build instance request payload
+            var instanceForAlgo = InstanceDataBuilder.BuildInstanceData(algoData, walletDTO, algoInstanceType, instanceParameters, daysOffsetDTO);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
@@ -93,31 +198,41 @@ namespace AFTests.AlgoStore
 
         [Test]
         [Category("AlgoStore")]
-        public async Task PostInstanceDataOnlyWithMetadata()
+        [TestCase(AlgoInstanceType.Live)]
+        [TestCase(AlgoInstanceType.Demo)]
+        [TestCase(AlgoInstanceType.Test)]
+        public async Task PostInstanceDataOnlyWithZeroVolume(AlgoInstanceType algoInstanceType)
         {
-            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
+            WalletDTO walletDTO = null;
+            if (algoInstanceType == AlgoInstanceType.Live)
+            {
+                walletDTO = await GetExistingWallet();
+            }
 
-            string algoID = metadataForUploadedBinary.AlgoId;
+            // Create algo
+            var algoData = await CreateAlgo();
 
-            instanceForAlgo = GetPopulatedInstanceDataDTO.ReturnInstanceDataDTO(algoID, await GetExistingWallet(), AlgoInstanceType.Demo);
+            // Build days offset
+            DaysOffsetDTO daysOffsetDTO = BuildDaysOffsetByInstanceType(algoInstanceType);
+            // Build InstanceParameters
+            InstanceParameters instanceParameters = new InstanceParameters()
+            {
+                AssetPair = "BTCUSD",
+                TradedAsset = "EUR",
+                InstanceTradeVolume = 0,
+                InstanceCandleInterval = CandleTimeInterval.Minute,
+                FunctionCandleInterval = CandleTimeInterval.Day,
+                FunctionCandleOperationMode = CandleOperationMode.CLOSE,
+                FunctionCapacity = 4,
+                InstanceFunctions = new List<FunctionType>() { FunctionType.SMA_Short, FunctionType.SMA_Long }
+            };
+
+            // Build instance request payload
+            var instanceForAlgo = InstanceDataBuilder.BuildInstanceData(algoData, walletDTO, algoInstanceType, instanceParameters, daysOffsetDTO);
 
             string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
 
-            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
-            Assert.That(postInstanceDataResponse.Status, Is.EqualTo(HttpStatusCode.OK), "we shoudl recieve ok responce" );
-        }
-        [Test]
-        [Category("AlgoStore")]
-        public async Task PostInstanceDataOnlyWithZeroVolume()
-        {
-            UploadStringDTO metadataForUploadedBinary = await UploadStringAlgo();
-            string algoID = metadataForUploadedBinary.AlgoId;
-
-            instanceForAlgo = GetPopulatedInstanceDataDTO.returnInstanceDataDTOInvalidVolume(algoID, await GetExistingWallet());
-
-            string url = ApiPaths.ALGO_STORE_ALGO_INSTANCE_DATA;
-
-            var postInstanceDataResponse = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
+            var postInstanceDataResponse = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(instanceForAlgo), Method.POST);
 
             AlgoErrorDTO postInstanceDataResponseDTO = JsonUtils.DeserializeJson<AlgoErrorDTO>(postInstanceDataResponse.ResponseJson);
 

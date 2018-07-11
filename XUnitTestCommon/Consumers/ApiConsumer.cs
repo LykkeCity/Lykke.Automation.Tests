@@ -78,12 +78,13 @@ namespace XUnitTestCommon.Consumers
             return new Response(response.StatusCode, response.Content);
         }
 
-        public async Task<Response> ExecuteRequestCustomEndpoint(string url, Dictionary<string, string> queryParams, string body, Method method)
+        public async Task<Response> ExecuteRequestCustomEndpoint(string url, Dictionary<string, string> queryParams, string body, Method method, string authToken = null, Dictionary<string, string> headers = null)
         {
             _client = new RestClient(url);
             _request = new RestRequest(method);
 
             AddQueryParams(queryParams);
+            AddHeaders(headers);
 
             if (body != null)
             {
@@ -93,7 +94,8 @@ namespace XUnitTestCommon.Consumers
             if (_oAuthConsumer != null)
             {
                 await _oAuthConsumer.UpdateToken();
-                _request.AddParameter("Authorization", "Bearer " + _oAuthConsumer.AuthToken, ParameterType.HttpHeader);
+                authToken = authToken ?? _oAuthConsumer.AuthToken;
+                _request.AddParameter("Authorization", "Bearer " + authToken, ParameterType.HttpHeader);
             }
 
             var response = await _client.ExecuteAsync(_request);
@@ -129,9 +131,9 @@ namespace XUnitTestCommon.Consumers
 
         public async Task<ClientRegisterResponseDTO> RegisterNewUser(ClientRegisterDTO registerInfo = null)
         {
-            if (this._oAuthConsumer != null)
+            if (_oAuthConsumer != null)
             {
-                return await this._oAuthConsumer.RegisterNewUser(registerInfo);
+                return await _oAuthConsumer.RegisterNewUser(registerInfo);
             }
             return null;
         }
@@ -141,6 +143,17 @@ namespace XUnitTestCommon.Consumers
             foreach (var param in queryParams)
             {
                 _request.AddQueryParameter(param.Key, param.Value);
+            }
+        }
+
+        private void AddHeaders(Dictionary<string, string> headers)
+        {
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                {
+                    _request.AddHeader(header.Key, header.Value);
+                }
             }
         }
 

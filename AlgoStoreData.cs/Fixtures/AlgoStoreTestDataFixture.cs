@@ -1,14 +1,15 @@
 ﻿using AlgoStoreData.DependancyInjection;
 using AlgoStoreData.DTOs;
+using AlgoStoreData.DTOs.InstanceData;
+using AlgoStoreData.DTOs.InstanceData.Builders;
 using Autofac;
 using Lykke.SettingsReader;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
+using XUnitTestCommon.Settings.AutomatedFunctionalTests;
 using XUnitTestCommon.Tests;
 using XUnitTestCommon.Utils;
 using XUnitTestData.Domains.AlgoStore;
@@ -25,7 +26,7 @@ namespace AlgoStoreData.Fixtures
         private TimeSpan timespan = TimeSpan.FromSeconds(120);
         public ApiConsumer Consumer;
         private OAuthConsumer User;
-        public BaseUrls BaseUrl;
+        public ServicesSettings BaseUrl;
         private IContainer _container;
         public GenericRepository<MetaDataEntity, IMetaData> MetaDataRepository;
         public GenericRepository<AlgoEntity, IAlgo> AlgoRepository;
@@ -38,25 +39,28 @@ namespace AlgoStoreData.Fixtures
         public GenericRepository<PublicsAlgosTableEntity, IPublicAlgosTable> PublicAlgosRepository;
         public GenericRepository<StatisticsEntity, IStatisticss> StatisticsRepository;
         public GenericRepository<AlgoInstanceStatisticsEntity, IAlgoInstanceStatistics> AlgoInstanceStaticsticsRepository;
+        public GenericRepository<AlgoInstanceTradesEntity, IAlgoInstanceTrades> AlgoInstanceTradesRepository;
         public List<BuilInitialDataObjectDTO> PreStoredMetadata;
         public AlgoBlobRepository BlobRepository;
-        public static string CSharpAlgoStringFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "DummyAlgo.txt");
-        public string CSharpAlgoString = File.ReadAllText(CSharpAlgoStringFile);
-        protected InstanceDataDTO instanceForAlgo;
         protected InstanceDataDTO postInstanceData;
+        protected AlgoDataDTO algoData;
 
+        protected List<AlgoDataDTO> algosList;
+        protected List<InstanceDataDTO> instancesList;
 
         [OneTimeSetUp]
         public void Initialize()
         {
+            algosList = new List<AlgoDataDTO>();
+            instancesList = new List<InstanceDataDTO>();
+
             _configBuilder = new ConfigBuilder();
 
             User = new OAuthConsumer(_configBuilder.ReloadingManager.CurrentValue.AutomatedFunctionalTests.AlgoStore);
             Consumer = new ApiConsumer(_configBuilder.ReloadingManager.CurrentValue.AutomatedFunctionalTests.AlgoStore, User);
-            BaseUrl = new BaseUrls(_configBuilder.ReloadingManager.CurrentValue.AutomatedFunctionalTests.Services);
+            BaseUrl = _configBuilder.ReloadingManager.CurrentValue.AutomatedFunctionalTests.Services;
 
             PrepareDependencyContainer();
-            PrepareTestData().Wait();
         }
 
         private void PrepareDependencyContainer()
@@ -79,25 +83,14 @@ namespace AlgoStoreData.Fixtures
             StatisticsRepository = RepositoryUtils.ResolveGenericRepository<StatisticsEntity, IStatisticss>(_container);
             BlobRepository = new AlgoBlobRepository(reloadingDbManager, timespan);
             AlgoInstanceStaticsticsRepository = RepositoryUtils.ResolveGenericRepository<AlgoInstanceStatisticsEntity, IAlgoInstanceStatistics>(_container);
-        }
-
-        private async Task PrepareTestData()
-        {
-            PreStoredMetadata = await CreateAlgoAndStartInstance(1);
-            DataManager.storeMetadata(PreStoredMetadata);
-        }
-
-        private async Task ClearTestData()
-        {
-            await ClearAllCascadeDelete(DataManager.getAllMetaData());
+            AlgoInstanceTradesRepository = RepositoryUtils.ResolveGenericRepository<AlgoInstanceTradesEntity, IAlgoInstanceTrades>(_container);
         }
 
         [OneTimeTearDown]
         public void Cleanup()
         {
-            Wait.ForPredefinedTime(100000);
-            ClearTestData().Wait(1000000);
             GC.SuppressFinalize(this);
+            ClearTestData().Wait();
         }
     }
 }

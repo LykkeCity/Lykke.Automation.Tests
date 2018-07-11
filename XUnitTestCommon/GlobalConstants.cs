@@ -11,5 +11,6 @@ namespace XUnitTestCommon
         public static readonly string AutoTestEmail = "_autotest@auto.test";
 
         public static readonly string GuidRegexPattern = "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$";
+        public static readonly string ApiVersionRegexPattern = "^\\d+\\.\\d+\\.\\d+\\.\\d+$";
     }
 }

@@ -81,7 +81,7 @@ namespace AFTests.ApiV2
                 {
                     foreach (BalanceDTO balanceDTO in accountEntity.BalancesParsed)
                     {
-                        var parsedBalance = wbDTO.Balances.Where(b => b.AssetId == balanceDTO.Asset).FirstOrDefault();
+                        var parsedBalance = wbDTO.Balances.Where(b => b.AssetId == balanceDTO.AssetId).FirstOrDefault();
                         if (parsedBalance != null)
                         {
                             Assert.True(balanceDTO.Balance == parsedBalance.Balance);
@@ -106,7 +106,7 @@ namespace AFTests.ApiV2
 
             foreach (BalanceDTO balanceDTO in this.TestWalletAccount.BalancesParsed)
             {
-                var parsedBalance = parsedResponse.Where(b => b.AssetId == balanceDTO.Asset).FirstOrDefault();
+                var parsedBalance = parsedResponse.Where(b => b.AssetId == balanceDTO.AssetId).FirstOrDefault();
                 if (parsedBalance != null)
                     Assert.True(balanceDTO.Balance == parsedBalance.Balance);
             }
@@ -140,7 +140,7 @@ namespace AFTests.ApiV2
 
                 if (accountEntity != null)
                 {
-                    BalanceDTO balanceDTO = accountEntity.BalancesParsed.Where(b => b.Asset == this.TestAssetId).FirstOrDefault();
+                    BalanceDTO balanceDTO = accountEntity.BalancesParsed.Where(b => b.AssetId == this.TestAssetId).FirstOrDefault();
                     Assert.True(balanceDTO.Balance == wbDTO.Balances.Balance);
                     Assert.True(balanceDTO.Reserved == wbDTO.Balances.Reserved);
                 }
@@ -167,7 +167,7 @@ namespace AFTests.ApiV2
             Assert.True(response.Status == HttpStatusCode.OK);
             WBalanceDTO parsedResponse = JsonUtils.DeserializeJson<WBalanceDTO>(response.ResponseJson);
 
-            BalanceDTO accountBalance = this.TestWalletAccount.BalancesParsed.Where(b => b.Asset == this.TestAssetId).FirstOrDefault();
+            BalanceDTO accountBalance = this.TestWalletAccount.BalancesParsed.Where(b => b.AssetId == this.TestAssetId).FirstOrDefault();
 
             Assert.NotNull(accountBalance);
             Assert.True(parsedResponse.Balance == accountBalance.Balance);
@@ -191,7 +191,7 @@ namespace AFTests.ApiV2
 
             foreach (BalanceDTO entityBalance in entity.BalancesParsed)
             {
-                WBalanceDTO responseBalance = parsedResponse.Where(b => b.AssetId == entityBalance.Asset).FirstOrDefault();
+                WBalanceDTO responseBalance = parsedResponse.Where(b => b.AssetId == entityBalance.AssetId).FirstOrDefault();
                 Assert.NotNull(responseBalance);
                 Assert.True(entityBalance.Balance == responseBalance.Balance);
             }
@@ -212,7 +212,7 @@ namespace AFTests.ApiV2
 
             AccountEntity entity = await this.AccountRepository.TryGetAsync(this.TestClientId) as AccountEntity;
             Assert.NotNull(entity);
-            BalanceDTO entityBalance = entity.BalancesParsed.Where(b => b.Asset == this.TestAssetId).FirstOrDefault();
+            BalanceDTO entityBalance = entity.BalancesParsed.Where(b => b.AssetId == this.TestAssetId).FirstOrDefault();
             Assert.NotNull(entityBalance);
 
             Assert.True(entityBalance.Balance == parsedResponse.Balance);

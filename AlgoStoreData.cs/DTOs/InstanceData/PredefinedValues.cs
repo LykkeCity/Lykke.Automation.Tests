@@ -11,8 +11,8 @@ namespace AlgoStoreData.DTOs.InstanceData
 
         public PredefinedValue(string key, int value)
         {
-            this.Key = key;
-            this.Value = value;
+            Key = key;
+            Value = value;
         }
     }
 }
