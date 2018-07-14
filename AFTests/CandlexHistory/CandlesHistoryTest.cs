@@ -45,7 +45,7 @@ namespace AFTests.CandlexHistory
                {
                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume), "does not contain trading volume");
-                   Assert.That(candlesTrades.History.Select(c => decimal.Parse(c.TradingOppositeVolume.ToString())), Does.Contain((decimal.Parse(tradingVolume.ToString()) * (decimal.Parse(newMinSellPrice.ToString())))), "does not contain trading volume * sell price");
+                   Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingOppositeVolume)), Does.Contain((Decimal(tradingVolume) * (Decimal(newMinSellPrice)))), "does not contain trading volume * sell price");
                });
             }
         }
@@ -81,7 +81,7 @@ namespace AFTests.CandlexHistory
                 {
                     Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
                     Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume), "does not contain trading volume");
-                    Assert.That(candlesTrades.History.Select(c => decimal.Parse(c.TradingOppositeVolume.ToString())), Does.Contain((decimal.Parse(tradingVolume.ToString()) * (decimal.Parse(newMinSellPrice.ToString())))), "does not contain trading volume * sell price");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingOppositeVolume)), Does.Contain((Decimal(tradingVolume) * Decimal(newMinSellPrice))), "does not contain trading volume * sell price");
                 });
             }
         }
@@ -117,8 +117,8 @@ namespace AFTests.CandlexHistory
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(marketBuy), "Close price does not contain new min sell price");
-                    Assert.That(candlesTrades.History.Select(c => c.TradingOppositeVolume), Does.Contain(tradingVolume/2), "does not contain trading volume");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.Close)), Does.Contain(Decimal(marketBuy)), "Close price does not contain new min sell price");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingOppositeVolume)), Does.Contain(Decimal(tradingVolume/2)), "does not contain trading volume");
                 });
             }
         }
@@ -155,7 +155,7 @@ namespace AFTests.CandlexHistory
                 Assert.Multiple(() =>
                 {
                     Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
-                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume / 2), "does not contain trading volume");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingVolume)), Does.Contain(Decimal(tradingVolume / 2)), "does not contain trading volume");
                 });
             }
         }
@@ -192,7 +192,7 @@ namespace AFTests.CandlexHistory
                 Assert.Multiple(() =>
                 {
                     Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMaxBuyPrice), "Close price does not contain new min sell price");
-                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume / 2), "does not contain trading volume");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingVolume)), Does.Contain(Decimal(tradingVolume / 2)), "does not contain trading volume");
                 });
             }
         }
@@ -232,10 +232,18 @@ namespace AFTests.CandlexHistory
 
                 var candlesBid = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
 
+                var prices = new List<decimal>();
+                candlesTrades.History.ForEach(p => {
+                    prices.Add(Decimal(p.Close));
+                    prices.Add(Decimal(p.Open));
+                    prices.Add(Decimal(p.High));
+                    prices.Add(Decimal(p.Low));
+                });
+
                 Assert.Multiple(() =>
                 {
-                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
-                    Assert.That(candlesTrades.History.Select(c => c.TradingOppositeVolume), Does.Contain(tradingVolume / 2), "does not contain trading volume");
+                    Assert.That(prices, Does.Contain(Decimal(newMinSellPrice)), "Close price does not contain new min sell price");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingOppositeVolume)), Does.Contain(Decimal(tradingVolume / 2)), "does not contain trading volume");
                 });
             }
         }
@@ -272,9 +280,9 @@ namespace AFTests.CandlexHistory
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
-                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume*partialCount), "does not contain trading volume");
-                    Assert.That(candlesTrades.History.Select(c => decimal.Parse(c.TradingOppositeVolume.ToString())), Does.Contain((decimal.Parse(tradingVolume.ToString()) * (decimal.Parse(newMinSellPrice.ToString())) *(decimal)partialCount )), "does not contain trading volume * sell price");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.Close)), Does.Contain(Decimal(newMinSellPrice)), "Close price does not contain new min sell price");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingVolume)), Does.Contain(Decimal(tradingVolume) * Decimal(partialCount)), "does not contain trading volume");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingOppositeVolume)), Does.Contain(Decimal(tradingVolume) * Decimal(newMinSellPrice) * Decimal(partialCount)), "does not contain trading volume * sell price");
                 });
             }
         }
@@ -311,9 +319,9 @@ namespace AFTests.CandlexHistory
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(candlesTrades.History.Select(c => c.Close), Does.Contain(newMinSellPrice), "Close price does not contain new min sell price");
-                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume * partialCount), "does not contain trading volume");
-                    Assert.That(candlesTrades.History.Select(c => decimal.Parse(c.TradingOppositeVolume.ToString())), Does.Contain((decimal.Parse(tradingVolume.ToString()) * (decimal.Parse(newMinSellPrice.ToString())) * (decimal)partialCount)), "does not contain trading volume * sell price");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.Close)), Does.Contain(Decimal(newMinSellPrice)), "Close price does not contain new min sell price");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingVolume)), Does.Contain(Decimal(tradingVolume) * Decimal(partialCount)), "does not contain trading volume");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingOppositeVolume)), Does.Contain((Decimal(tradingVolume) * Decimal(newMinSellPrice) * partialCount)), "does not contain trading volume * sell price");
                 });
             }
         }
@@ -353,9 +361,9 @@ namespace AFTests.CandlexHistory
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(candlesTrades.History.Select(c => c.High), Does.Contain(newMaxBuyPrice + (partialCount-1) / Math.Pow(10, 5)), "Unexpected max price");
-                    Assert.That(candlesTrades.History.Select(c => c.Low), Does.Contain(newMaxBuyPrice), "Unexpected low price");
-                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume * partialCount), "does not contain trading volume");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.High)), Does.Contain(Decimal(newMaxBuyPrice) + Decimal(((partialCount-1) / Math.Pow(10, 5)))), "Unexpected max price");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.Low)), Does.Contain(Decimal(newMaxBuyPrice)), "Unexpected low price");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingVolume)), Does.Contain(Decimal(tradingVolume) * Decimal(partialCount)), "does not contain trading volume");
                 });
             }
         }
@@ -395,9 +403,9 @@ namespace AFTests.CandlexHistory
 
                 Assert.Multiple(() =>
                 {
-                    Assert.That(candlesTrades.History.Select(c => c.High), Does.Contain(newMinSellPrice + (partialCount - 1) / Math.Pow(10, 5)), "Unexpected max price");
-                    Assert.That(candlesTrades.History.Select(c => c.Low), Does.Contain(newMinSellPrice), "Unexpected low price");
-                    Assert.That(candlesTrades.History.Select(c => c.TradingVolume), Does.Contain(tradingVolume * partialCount), "does not contain trading volume");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.High)), Does.Contain(Decimal(newMinSellPrice) + Decimal((partialCount - 1) / Math.Pow(10, 5))), "Unexpected max price");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.Low)), Does.Contain(Decimal(newMinSellPrice)), "Unexpected low price");
+                    Assert.That(candlesTrades.History.Select(c => Decimal(c.TradingVolume)), Does.Contain(Decimal(tradingVolume) * Decimal(partialCount)), "does not contain trading volume");
                 });
             }
         }

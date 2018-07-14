@@ -17,7 +17,7 @@ namespace AFTests.CandlexHistory
         public string SecondWalletApiKey = "1606b4dd-fe22-4425-92ea-dccd5fffcce8";
         public string AssetPairId = "chfDEB";
         public string FirstAssetId = "CHF";
-        public string SecondAssetId = "DEB";
+        public string SecondAssetId = "DEBt";
         public DateTime fromMoment;
         public double tradingVolume = 0.3;
 
@@ -33,24 +33,23 @@ namespace AFTests.CandlexHistory
             var minSellPrice = Double.MaxValue;
             var maxBuyPrice = Double.MinValue;
 
-            orderBooks.FindAll(o => o.IsBuy == true).ForEach(o =>
-            {
-                o.Prices.ToList().ForEach(p =>
+                  orderBooks.FindAll(o => o.IsBuy == true)?.ForEach(o =>
                 {
-                    if (p.Price > maxBuyPrice)
-                        maxBuyPrice = p.Price;
+                    o.Prices.ToList()?.ForEach(p =>
+                    {
+                        if (p.Price > maxBuyPrice)
+                            maxBuyPrice = p.Price;
+                    });
                 });
-            });
 
-            orderBooks.FindAll(o => o.IsBuy == false).ForEach(o =>
-            {
-                o.Prices.ToList().ForEach(p =>
+                orderBooks.FindAll(o => o.IsBuy == false).ForEach(o =>
                 {
-                    if (p.Price < minSellPrice)
-                        minSellPrice = p.Price;
+                    o.Prices.ToList()?.ForEach(p =>
+                    {
+                        if (p.Price < minSellPrice)
+                            minSellPrice = p.Price;
+                    });
                 });
-            });
-
             if (maxBuyPrice == double.MinValue && minSellPrice != double.MaxValue)
                 maxBuyPrice = 0.9 * minSellPrice;
 
@@ -178,5 +177,6 @@ namespace AFTests.CandlexHistory
             collection.ForEach(c => result += c);
             return result;
         }
-    }
+
+        public static decimal Decimal(double d) => decimal.Parse(d.ToString(), System.Globalization.NumberStyles.Float);    }
 }
