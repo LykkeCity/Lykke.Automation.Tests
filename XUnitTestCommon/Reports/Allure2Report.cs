@@ -2,11 +2,16 @@
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
+using OpenQA.Selenium;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using Web.Utils;
+using XUnitTestCommon.RestRequests;
 
 namespace XUnitTestCommon.TestsCore
 {
@@ -58,6 +63,27 @@ namespace XUnitTestCommon.TestsCore
                     AddMissedTest(testResult);
                 }
             }
+        }
+
+        public void StartStep(string name, ITestResult result)
+        {
+            Allure.StartStep(Guid.NewGuid().ToString(), new StepResult() { status = Status.passed, name = name});
+        }
+
+        public void UpdateStep(StepResult result)
+        {
+            Allure.UpdateStep(x => 
+            {
+                x.attachments = result.attachments;
+                x.status = result.status;
+                x.statusDetails = result.statusDetails;
+                x.descriptionHtml = result.descriptionHtml;
+            });
+        }
+
+        public void StopStep()
+        {
+            Allure.StopStep();
         }
 
         public void PrepareEnvFile()
@@ -148,12 +174,12 @@ namespace XUnitTestCommon.TestsCore
             return categories.Select(c => Label.Feature(c)).ToList();
         }
 
-        private List<Parameter> GetParameters()
+        private List<Allure.Commons.Parameter> GetParameters()
         {
             var parameters = TestExecutionContext.CurrentContext.CurrentTest.Arguments;
             if (!parameters.Any())
-                return new List<Parameter>();
-            return parameters.Select(p => new Parameter() { name = "param", value = p?.ToString() ?? "null" }).ToList();
+                return new List<Allure.Commons.Parameter>();
+            return parameters.Select(p => new Allure.Commons.Parameter() { name = "param", value = p?.ToString() ?? "null" }).ToList();
         }
 
         //[TearDown]
@@ -184,6 +210,81 @@ namespace XUnitTestCommon.TestsCore
                 Allure.UpdateTestCase(caseId, x => x.attachments.Add(logAttach));
         }
 
+        public void AttachVideo(string caseId, string hubUrl, string sessionId)
+        {
+            if (sessionId == null)
+                return;
+
+            var videoAttach = GetVideoAttach(hubUrl, sessionId);
+            if (videoAttach != null)
+                Allure.UpdateTestCase(caseId, x => x.attachments.Add(videoAttach));
+        }
+
+        private void WaitForVideoWillBeSavedFromDocker(string hubUrl, string sessionId)
+        {
+            int timer = 50;
+            while (timer-- > 0)
+            {
+                try
+                {
+                    var videoUrl = $"{hubUrl.Replace("wd/hub", "")}";
+                    var client = new RestClient(videoUrl);
+                    var request = new RestRequest($"video/{sessionId}", Method.GET);
+                    var response = client.Execute(request);
+                    var currentLength = long.Parse(response.Headers.First(h => h.Name == "Content-Length").Value.ToString());
+
+                    while (timer-- > 0 && (currentLength >= long.Parse(client.Execute(request).Headers.First(h => h.Name == "Content-Length").Value.ToString()) || long.Parse(client.Execute(request).Headers.First(h => h.Name == "Content-Length").Value.ToString()) < 1000))
+                    {
+                      
+                        System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+                    }
+                   
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+                    break;
+                }
+                catch (Exception)
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+                }
+            }
+        }
+
+        //TODO: refactor that
+        private Attachment GetVideoAttach(string hubUrl, string sessionId)
+        {
+            if (!hubUrl.Contains("wd/hub"))
+            {
+                TestContext.Progress.WriteLine($"Hub URL {hubUrl} does not contains 'hub/url/'");
+                return null;
+            }
+
+            WaitForVideoWillBeSavedFromDocker(hubUrl, sessionId);
+
+            string testOutput = TestExecutionContext.CurrentContext.CurrentResult.Output;
+            string attachFile = $"{sessionId}.mp4";
+            var videoUrl = $"{hubUrl.Replace("wd/hub","video/")}{sessionId}";
+            int timer = 30;
+            while (timer-- > 0)
+            {
+                try
+                {
+                    new WebClient().DownloadFile(videoUrl, Path.Combine(Allure.ResultsDirectory, attachFile));
+                    break;
+                }
+                catch (Exception)
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+                }
+            }
+
+            return new Attachment()
+            {
+                name = "Video",
+                source = attachFile,
+                type = "video/mp4"
+            };
+        }
+
         private Attachment GetTestLog()
         {
             string testOutput = TestExecutionContext.CurrentContext.CurrentResult.Output;
@@ -202,6 +303,19 @@ namespace XUnitTestCommon.TestsCore
                 name = "Output",
                 source = attachFile,
                 type = "text/plain"
+            };
+        }
+
+        public Attachment GetScreenShotAttachment(Screenshot screenshot)
+        {
+            var fileName = Path.Combine(TestContext.CurrentContext.WorkDirectory, "allure-results", Guid.NewGuid() + ".png");
+            File.WriteAllBytes(fileName, screenshot.AsByteArray);
+
+            return new Allure.Commons.Attachment()
+            {
+                name = "Browser1",
+                type = "image/png",
+                source = fileName
             };
         }
 

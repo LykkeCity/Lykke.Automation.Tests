@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using XUnitTestCommon.TestsCore;
+using NUnit.Framework.Internal;
 
 namespace XUnitTestCommon.Tests
 {
@@ -18,14 +19,33 @@ namespace XUnitTestCommon.Tests
         private readonly List<Func<Task>> _cleanupActions = new List<Func<Task>>();
         private readonly List<Func<Task>> _oneTimeCleanupActions = new List<Func<Task>>();
 
-        private Allure2Report allure = new Allure2Report();
+        protected Allure2Report allure = new Allure2Report();
 
         protected virtual void Initialize() { }
 
         protected void Step(string name, Action action)
         {
             Console.WriteLine(name);
-            action.Invoke();
+            var result = TestExecutionContext.CurrentContext.CurrentTest.MakeTestResult();
+
+            allure.StartStep(name, result);
+            Exception exc = null;
+            try
+            {
+                action.Invoke();
+            }
+            catch (Exception e)
+            {
+                allure.UpdateStep(new Allure.Commons.StepResult
+                {
+                    status = Allure.Commons.Status.failed
+                });
+                exc = e;
+            }
+            finally { }
+            allure.StopStep();
+            if (exc != null)
+                throw exc;
         }
 
         #region response info

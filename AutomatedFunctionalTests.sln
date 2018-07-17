@@ -34,7 +34,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlgoStoreData", "AlgoStoreD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HFT", "HFT\HFT.csproj", "{17F9D45E-1F90-4C9F-99F9-4F70E91C6A30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIX", "FIX\FIX.csproj", "{06034EFE-6690-4A3A-96AF-1C2B966A041C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FIX", "FIX\FIX.csproj", "{06034EFE-6690-4A3A-96AF-1C2B966A041C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "Web\Web.csproj", "{D1B4D49B-EF77-495B-844A-CA55949E4B77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mobile", "Mobile\Mobile.csproj", "{B0E7FDFE-3F9B-478A-88C2-7FED6728485A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,6 +106,14 @@ Global
 		{06034EFE-6690-4A3A-96AF-1C2B966A041C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06034EFE-6690-4A3A-96AF-1C2B966A041C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06034EFE-6690-4A3A-96AF-1C2B966A041C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1B4D49B-EF77-495B-844A-CA55949E4B77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1B4D49B-EF77-495B-844A-CA55949E4B77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1B4D49B-EF77-495B-844A-CA55949E4B77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1B4D49B-EF77-495B-844A-CA55949E4B77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0E7FDFE-3F9B-478A-88C2-7FED6728485A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0E7FDFE-3F9B-478A-88C2-7FED6728485A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0E7FDFE-3F9B-478A-88C2-7FED6728485A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0E7FDFE-3F9B-478A-88C2-7FED6728485A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
