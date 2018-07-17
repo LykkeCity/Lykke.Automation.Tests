@@ -959,6 +959,10 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DoublePutTransactionReturnConflictTest()
             {
+                if (!blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTransactionsRebuildingSupported.HasValue || (blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTransactionsRebuildingSupported.HasValue &&
+    !blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTransactionsRebuildingSupported.Value))
+                    Assert.Ignore($"Blockchain {BlockChainName} does not support PUT /transaction");
+
                 var wallet = blockchainSign.PostWallet().GetResponseObject();
 
                 var model = new RebuildTransactionRequest()
@@ -1108,7 +1112,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model);
                 var signResponse = blockchainSign.PostSign(new SignRequest { PrivateKeys = new List<string> { HOT_WALLET_KEY }, TransactionContext = responseTransaction.GetResponseObject().TransactionContext });
 
-                Assert.That(signResponse.StatusCode, Is.Not.EqualTo(HttpStatusCode.OK), "DW DW transaction has NOT been successfully signed with DW pkey for blockchains with address extension");
+                Assert.That(signResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK), "DW DW transaction has been successfully signed with DW pkey for blockchains with address extension");
             }
         }
     }
