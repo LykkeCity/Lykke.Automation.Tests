@@ -95,7 +95,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 {
                     result = new Queue<WalletCreationResponse>();
                     BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
-                    for (var i = 0; i < 24; i++)
+                    for (var i = 0; i < 29; i++)
                     {
                         var wallet = blockchainSign.PostWallet();
                         if (wallet.StatusCode != HttpStatusCode.OK)
