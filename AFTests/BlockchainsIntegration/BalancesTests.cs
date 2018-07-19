@@ -160,7 +160,11 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
-                newBlock = GetTransactionCompleteStatusTime(operationId, wallet.PublicAddress);
+                GetTransactionCompleteStatusTime(operationId, wallet.PublicAddress);
+                WaitForBalanceBlockIncreased(wallet.PublicAddress, startBlock);
+                
+                newBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress)?.Block;
+                
                 if (newBlock == null)
                 {
                     var completeBlock = blockchainApi.Operations.GetOperationId(model.OperationId.ToString()).GetResponseObject();
@@ -212,7 +216,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     {
                         if (r.GetResponseObject().State == BroadcastedTransactionState.Failed)
                             Assert.Fail("Operation got 'Failed status'");
-                        block = request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().FirstOrDefault(a => a.Address == wallet)?.Block;
+                        block = r.GetResponseObject()?.Block;
                         break;
                     }
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
@@ -266,10 +270,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString();
 
-                //
-                AddCyptoToBalanceFromExternal(wallet.PublicAddress, wallet.PrivateKey, false);
-                //
-
                 var signResponse = blockchainSign.PostSign(
                     new SignRequest() {
                         PrivateKeys = new List<string>()
@@ -280,6 +280,10 @@ namespace AFTests.BlockchainsIntegrationTests
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
                 newBlock = GetTransactionCompleteStatusTime(operationId, wallet.PublicAddress);
+                WaitForBalanceBlockIncreased(wallet.PublicAddress, startBlock);
+                
+                newBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress)?.Block;
+                
                 if (newBlock == null)
                 {
                     var completeBlock = blockchainApi.Operations.GetOperationId(model.OperationId.ToString()).GetResponseObject();

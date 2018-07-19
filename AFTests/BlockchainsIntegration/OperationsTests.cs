@@ -672,6 +672,9 @@ namespace AFTests.BlockchainsIntegrationTests
                 var getResponse = blockchainApi.Operations.GetOperationId(operationId);
                 response.Validate.StatusCode(HttpStatusCode.OK);
                 Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(model.OperationId));
+                
+                WaitForOperationGotCompleteStatus(operationId);
+                
                 if(getResponse.GetResponseObject().State == BroadcastedTransactionState.Completed)
                 {
                     Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.EqualTo("0").Or.Null.After((int)BLOCKCHAIN_MINING_TIME*60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
