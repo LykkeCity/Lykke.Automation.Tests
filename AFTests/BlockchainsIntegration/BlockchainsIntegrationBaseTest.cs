@@ -230,18 +230,20 @@ namespace AFTests.BlockchainsIntegrationTests
 
             // wait for wallet present in history
 
-            var history = api.Operations.GetTransactionHistorToAddress(walletAddress, "500").GetResponseObject();
+            var broadcastedSendTransaction = api.Operations.GetOperationId(operationId).GetResponseObject();
 
             int i = 0;
-            while(i++<150 && api.Operations.GetTransactionHistorToAddress(walletAddress, "500").GetResponseObject().Length == 0)
+            while(i++<150 && broadcastedSendTransaction.State == BroadcastedTransactionState.InProgress)
             {
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+                broadcastedSendTransaction = api.Operations.GetOperationId(operationId).GetResponseObject();
             }
 
-            history = api.Operations.GetTransactionHistorToAddress(walletAddress, "500").GetResponseObject();
+            Assert.That(broadcastedSendTransaction.State, Is.EqualTo(BroadcastedTransactionState.Completed));
+            
             //BuildSingleReceiveTransactionRequest recieve transaction
 
-            var reciveModel = new BuildSingleReceiveTransactionRequest() { operationId = Guid.NewGuid(), sendTransactionHash = history.ToList().First().hash };
+            var reciveModel = new BuildSingleReceiveTransactionRequest() { operationId = Guid.NewGuid(), sendTransactionHash = broadcastedSendTransaction.Hash };
             var recieve = api.Operations.PostTranstactionSingleRecieve(reciveModel).GetResponseObject();
             var signReciveResponse = sign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { walletKey }, TransactionContext = recieve.transactionContext}).GetResponseObject();
 
