@@ -97,7 +97,6 @@ namespace XUnitTestCommon
         public static readonly string ALGO_STORE_UPLOAD_STRING = "/api/v1/algo/sourceCode/upload/string";
         public static readonly string ALGO_STORE_DEPLOY_BINARY = "/api/v1/management/deploy/binary";
         public static readonly string ALGO_STORE_ALGO_STOP = "/api/v1/management/stop";
-        public static readonly string ALGO_STORE_ALGO_TAIL_LOG = "/api/v1/management/tailLog";
         public static readonly string ALGO_STORE_ALGO_GET_ALL_INSTANCE_DATA = "/api/v1/algoInstances/getAllByAlgoIdAndClientId";
         public static readonly string ALGO_STORE_ALGO_INSTANCE_DATA = "api/v1/algoInstances/getAlgoInstance";
         public static readonly string ALGO_STORE_CLIENT_DATA_GET_ALL_ALGOS = "/api/v1/algo/getAllAlgos";
@@ -119,6 +118,13 @@ namespace XUnitTestCommon
 
         // Algo Store History Api
         public static readonly string ALGO_STORE_HISTORY_API_CANDLES = "/api/v1/candles";
+
+        // Algo Store Logging Api
+        public static readonly string ALGO_STORE_LOGGING_API_IS_ALIVE = "/api/IsAlive";
+        public static readonly string ALGO_STORE_LOGGING_API_TAIL_LOG = "/api/v1/userLog/tailLog";
+        public static readonly string ALGO_STORE_LOGGING_API_WRITE_MESSAGE = "/api/v1/userLog/writeMessage";
+        public static readonly string ALGO_STORE_LOGGING_API_WRITE_LOG = "/api/v1/userLog/writeLog";
+        public static readonly string ALGO_STORE_LOGGING_API_WRITE_LOGS = "/api/v1/userLog/writeLogs";
 
         public static String WALLET_BALANCE_BY_ASSET_ID(string walletId, string assetId)
         {

@@ -31,7 +31,7 @@ namespace AlgoStoreData.DTOs.InstanceData
         {
             AlgoId = algoData.Id;
             AlgoClientId = algoData.ClientId;
-            InstanceName = $"{algoInstanceType}{GlobalConstants.AutoTest}_AlgoIntanceName_{Helpers.GetFullUtcTimestamp()}";
+            InstanceName = $"{algoInstanceType} {Helpers.GetTimestampIso8601()}{GlobalConstants.AutoTest}_IntanceName";
             AlgoInstanceType = algoInstanceType;
             AlgoMetaDataInformation = algoMetaDataInformation;
 
