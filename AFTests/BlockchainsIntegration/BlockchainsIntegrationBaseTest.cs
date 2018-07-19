@@ -37,7 +37,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Zcash"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitshares"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -95,7 +95,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 {
                     result = new Queue<WalletCreationResponse>();
                     BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
-                    for (var i = 0; i < 20; i++)
+                    for (var i = 0; i < 29; i++)
                     {
                         var wallet = blockchainSign.PostWallet();
                         if (wallet.StatusCode != HttpStatusCode.OK)
@@ -113,6 +113,17 @@ namespace AFTests.BlockchainsIntegrationTests
                 {
                     TestContext.Out.WriteLine($"wallet {w.PublicAddress} balance: { new BlockchainApi(_currentSettings.Value.BlockchainApi).Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(wallet => wallet.Address == w.PublicAddress)?.Balance}");
                 });
+
+                var blockchainApi = new BlockchainApi(_currentSettings.Value.BlockchainApi);
+
+                if (blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsPublicAddressExtensionRequired.HasValue &&
+                    blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsPublicAddressExtensionRequired.Value)
+                {
+                    result.ToList().ForEach(w =>
+                    {
+                        w.PrivateKey = HOT_WALLET_KEY;
+                    });
+                }
             }
 
             return result;

@@ -167,7 +167,7 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://lykke-service-bitshares-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://lykke-service-bitshares-sign.autotests-service.svc.cluster.local/api";
                 HotWallet = "1.2.20477:e91757da-6a69-43f4-8283-b2612703af59";
-                HotWalletKey = "keep_keys_private";
+                HotWalletKey = "5JdCrsRQrW1nTgDjTEeVXt7AQ95Kre9w6TQqAz4dKmEF4k8RfLk";
                 ExternalWalletAddress = "1.2.22396:06eea045-43ee-4cca-a19d-1356abc2b70e";
                 ExternalWalletKey = "5J5sD5KNh4ArR1VdJNyge2oiE9vSMs2A7VYaJQULUagHrMBXfcj";
                 AssetId = "1.3.0";
