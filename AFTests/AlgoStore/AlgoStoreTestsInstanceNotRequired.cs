@@ -1,7 +1,7 @@
-﻿using AlgoStoreData;
-using AlgoStoreData.DTOs;
+﻿using AlgoStoreData.DTOs;
 using AlgoStoreData.DTOs.InstanceData.Builders;
 using AlgoStoreData.Fixtures;
+using AlgoStoreData.HelpersAlgoStore;
 using NUnit.Framework;
 using RestSharp;
 using System;
@@ -50,7 +50,6 @@ namespace AFTests.AlgoStore
 
             // Create Live instance
             var instanceData = await SaveInstance(algoData, algoInstanceType, useExistingWallet: false);
-            await DeployInstance(instanceData);
             // Wait up to 3 minutes for the instance to start
             await WaitAlgoInstanceToStart(instanceData.InstanceId);
 
@@ -131,19 +130,16 @@ namespace AFTests.AlgoStore
 
             // Create Live instance
             var liveInstanceData = await SaveInstance(algoData, AlgoInstanceType.Live);
-            await DeployInstance(liveInstanceData);
             // Wait up to 3 minutes for the instance to start
             await WaitAlgoInstanceToStart(liveInstanceData.InstanceId);
 
             // Create Demo instance
             var demoInstanceData = await SaveInstance(algoData, AlgoInstanceType.Demo);
-            await DeployInstance(demoInstanceData);
             // Wait up to 3 minutes for the instance to start
             await WaitAlgoInstanceToStart(demoInstanceData.InstanceId);
 
             // Create Test instance
             var testInstanceData = await SaveInstance(algoData, AlgoInstanceType.Test);
-            await DeployInstance(testInstanceData);
             // Wait up to 3 minutes for the instance to start
             await WaitAlgoInstanceToStart(testInstanceData.InstanceId);
 
@@ -232,7 +228,6 @@ namespace AFTests.AlgoStore
             // Start an instance
             var instanceData = await SaveInstance(algoData, algoInstanceType);
 
-            await DeployInstance(instanceData);
             // Wait up to 3 minutes for the instance to start
             await WaitAlgoInstanceToStart(instanceData.InstanceId);
 
@@ -242,8 +237,8 @@ namespace AFTests.AlgoStore
             // Build params dictionary
             Dictionary<string, string> historyApiCandlesRequestParams = new Dictionary<string, string>
             {
-                { "StartFrom", InstanceDataBuilder.FunctionsDictionary[FunctionType.SMA_Short.ToString()].StartingDate.ToString(Constants.ISO_8601_DATE_FORMAT) },
-                { "EndOn", InstanceDataBuilder.FunctionsDictionary[FunctionType.SMA_Long.ToString()].EndingDate.AddDays(daysBack).ToString(Constants.ISO_8601_DATE_FORMAT) },
+                { "StartFrom", InstanceDataBuilder.FunctionsDictionary[FunctionType.SMA_Short.ToString()].StartingDate.ToString(GlobalConstants.ISO_8601_DATE_FORMAT) },
+                { "EndOn", InstanceDataBuilder.FunctionsDictionary[FunctionType.SMA_Long.ToString()].EndingDate.AddDays(daysBack).ToString(GlobalConstants.ISO_8601_DATE_FORMAT) },
                 { "IndicatorName", FunctionType.SMA_Short.ToString() }
             };
 
@@ -265,8 +260,8 @@ namespace AFTests.AlgoStore
                 { "PriceType", "Mid" },
                 { "AssetPairId", InstanceDataBuilder.FunctionsDictionary[FunctionType.SMA_Short.ToString()].AssetPair },
                 { "TimeInterval", InstanceDataBuilder.FunctionsDictionary[FunctionType.SMA_Short.ToString()].CandleTimeInterval.ToString() },
-                { "FromMoment", InstanceDataBuilder.FunctionsDictionary[FunctionType.SMA_Long.ToString()].StartingDate.ToString(Constants.ISO_8601_DATE_FORMAT) },
-                { "ToMoment", InstanceDataBuilder.FunctionsDictionary[FunctionType.SMA_Long.ToString()].EndingDate.AddDays(daysBack).ToString(Constants.ISO_8601_DATE_FORMAT) }
+                { "FromMoment", InstanceDataBuilder.FunctionsDictionary[FunctionType.SMA_Long.ToString()].StartingDate.ToString(GlobalConstants.ISO_8601_DATE_FORMAT) },
+                { "ToMoment", InstanceDataBuilder.FunctionsDictionary[FunctionType.SMA_Long.ToString()].EndingDate.AddDays(daysBack).ToString(GlobalConstants.ISO_8601_DATE_FORMAT) }
             };
 
             // Get expected history candles
@@ -303,6 +298,49 @@ namespace AFTests.AlgoStore
                         Assert.That(actualResult[i].Low, Is.EqualTo(expectedResult[i].Low));
                     });
                 }
+            });
+        }
+
+        [Test, Description("AL-578")]
+        [Category("AlgoStore")]
+        [TestCase("Lykke.AlgoStore.CSharp.Algo.Implemention.ExecutableClass.Test")]
+        [TestCase("Lykke.AlgoStore.CSharp.Algo.Implemention.ExecutableClassTest")]
+        [TestCase("Lykke.AlgoStore.CSharp.Algo.Implemention.Test")]
+        [TestCase("Lykke.AlgoStore.CSharp.Algo")]
+        [TestCase("Lykke.AlgoStore.CSharp.Algo.ExecutableClass")]
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("     ")]
+        [TestCase("Lykke.AlgoStore.CSharp.Algo.Implemention..ExecutableClass")]
+        public async Task CheckInvalidNamespaces(string invalidNamespace)
+        {
+            // Create timestamp that will be used in algo name
+            var algoCreationTimestamp = Helpers.GetTimestampIso8601();
+            // Replace the default namespace with an invalid one
+            var algoString = CSharpAlgoString.Replace(GlobalConstants.AlgoDefaultNamespace, invalidNamespace);
+
+            // Create algo object
+            CreateAlgoDTO algoData = new CreateAlgoDTO()
+            {
+                Name = $"{algoCreationTimestamp}{GlobalConstants.AutoTest}_AlgoName",
+                Description = $"{algoCreationTimestamp}{GlobalConstants.AutoTest}_AlgoName - Description",
+                Content = Base64Helpers.EncodeToBase64(algoString)
+            };
+
+            // Create algo
+            var createAlgoResponse = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_CREATE_ALGO, Helpers.EmptyDictionary, JsonUtils.SerializeObject(algoData), Method.POST);
+            var message = $"POST {ApiPaths.ALGO_STORE_CREATE_ALGO} returned status: {createAlgoResponse.Status} and response: {createAlgoResponse.ResponseJson}. Expected: {HttpStatusCode.BadRequest}";
+
+            // Get user algos
+            var userAlgos = (await GetUserAlgos()).Select(a => a.Name).ToList();
+
+            // Assert algo is not created
+            Assert.Multiple(() =>
+            {
+                Assert.That(createAlgoResponse.Status, Is.EqualTo(HttpStatusCode.BadRequest), message);
+                Assert.That(createAlgoResponse.ResponseJson, Does.Contain("The provided namespace is not allowed").Or.Contains("Identifier expected"));
+                Assert.That(userAlgos, Does.Not.Contain(algoData.Name));
             });
         }
     }

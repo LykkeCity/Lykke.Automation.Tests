@@ -47,9 +47,6 @@ namespace AlgoStoreData.Fixtures
                 // Create instance
                 InstanceDataDTO instanceData = await SaveInstance(algoData, instanceType);
                 postInstanceData = instanceData;
-
-                // Deploy the instance
-                await DeployInstance(instanceData);
             }
         }
     }

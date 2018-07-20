@@ -139,7 +139,7 @@ namespace AFTests.AlgoStore
         {
             InstanceDataDTO instanceData = instancesList.Last();
 
-            string url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
+            string url = ApiPaths.ALGO_STORE_LOGGING_API_TAIL_LOG;
 
             Dictionary<string, string> algoIDTailLog = new Dictionary<string, string>()
             {
@@ -819,9 +819,7 @@ namespace AFTests.AlgoStore
             List<AlgoEntity> expectedResult = await AlgoRepository.GetAllAsync(t => t.ClientId == postInstanceData.AlgoClientId) as List<AlgoEntity>;
 
             // Get my algos from service
-            var myAlgos = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_GET_MY_ALGOS, Helpers.EmptyDictionary, null, Method.GET);
-            Assert.That(myAlgos.Status, Is.EqualTo(HttpStatusCode.OK));
-            List<AlgoDataDTO> actualResult = JsonUtils.DeserializeJson<List<AlgoDataDTO>>(myAlgos.ResponseJson);
+            List<AlgoDataDTO> actualResult = await GetUserAlgos();
 
             // Assert expected result and actual result counts are the same
             Assert.That(expectedResult.Count, Is.EqualTo(actualResult.Count));
@@ -904,7 +902,6 @@ namespace AFTests.AlgoStore
             // Create an instance
             InstanceDataDTO instanceData = await SaveInstance(algoData, instanceType);
             postInstanceData = instanceData;
-            await DeployInstance(instanceData);
 
             // Wait up to 3 minutes for the algo to be started
             await WaitAlgoInstanceToStart(postInstanceData.InstanceId);
@@ -937,7 +934,6 @@ namespace AFTests.AlgoStore
             // Create an instance
             instanceData = await SaveInstance(algoData, instanceType);
             postInstanceData = instanceData;
-            await DeployInstance(instanceData);
 
             // Wait up to 3 minutes for the algo to be started
             await WaitAlgoInstanceToStart(postInstanceData.InstanceId);
@@ -995,7 +991,6 @@ namespace AFTests.AlgoStore
             // Create an instance
             InstanceDataDTO instanceData = await SaveInstance(algoData, algoInstanceType);
             postInstanceData = instanceData;
-            await DeployInstance(instanceData);
 
             // Check StoppingEntity row exists for Live and Demo and does not exist for Test instance
             var stoppingEntity = await GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
@@ -1007,7 +1002,7 @@ namespace AFTests.AlgoStore
                 var expectedEndOn = postInstanceData.AlgoMetaDataInformation.Parameters.First(x => x.Key == "EndOn").Value;
                 long ticks;
                 long.TryParse(stoppingEntity.RowKey, out ticks);
-                Assert.That(new DateTime(ticks).ToString(Constants.ISO_8601_DATE_FORMAT), Is.EqualTo(expectedEndOn));
+                Assert.That(new DateTime(ticks).ToString(GlobalConstants.ISO_8601_DATE_FORMAT), Is.EqualTo(expectedEndOn));
             }
 
             // Wait up to 3 minutes for the algo to be started
@@ -1022,14 +1017,14 @@ namespace AFTests.AlgoStore
 
             // Check StoppingEntity row does not exists for all instance types
             stoppingEntity = await GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
-            Assert.That(stoppingEntity != null, Is.False);
+            Assert.That(stoppingEntity, Is.Null);
 
             // Delete the instance
             await DeleteAlgoInstance(postInstanceData);
 
             // Check StoppingEntity row does not exists for all instance types
             stoppingEntity = await GetStoppingEntityForInstance(ClientInstanceRepository, postInstanceData);
-            Assert.That(stoppingEntity != null, Is.False);
+            Assert.That(stoppingEntity, Is.Null);
         }
     }
 }

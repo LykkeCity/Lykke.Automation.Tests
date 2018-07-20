@@ -29,16 +29,19 @@ namespace AlgoStoreData.Fixtures
         protected InstanceParameters instanceParameters = null;
 
         private string message = string.Empty;
-        public static string CSharpAlgoStringFile = Path.Combine(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar, "AlgoStore" + Path.DirectorySeparatorChar, "TestData" + Path.DirectorySeparatorChar, "DummyAlgo.txt");
+        public static string TestDataPath = $"{Directory.GetCurrentDirectory()}/AlgoStore/TestData";
+        public static string CSharpAlgoStringFile = $"{TestDataPath}/DummyAlgo.txt";
+        public static string NegativeLogMessagesFile = $"{TestDataPath}/NegativeLogMessages.json";
         public string CSharpAlgoString = File.ReadAllText(CSharpAlgoStringFile);
+        public string NegativeMessagesAsString = File.ReadAllText(NegativeLogMessagesFile);
 
         public async Task<AlgoDataDTO> CreateAlgo()
         {
-            var algoCreationTimestamp = Helpers.GetFullUtcTimestamp();
+            var algoCreationTimestamp = Helpers.GetTimestampIso8601();
             CreateAlgoDTO metadata = new CreateAlgoDTO()
             {
-                Name = $"{GlobalConstants.AutoTest}_AlgoMetaDataName_{algoCreationTimestamp}",
-                Description = $"{ GlobalConstants.AutoTest }_AlgoMetaDataName_{algoCreationTimestamp} - Description",
+                Name = $"{algoCreationTimestamp}{GlobalConstants.AutoTest}_AlgoName",
+                Description = $"{algoCreationTimestamp}{GlobalConstants.AutoTest}_AlgoName - Description",
                 Content = Base64Helpers.EncodeToBase64(CSharpAlgoString)
             };
 
@@ -91,19 +94,6 @@ namespace AlgoStoreData.Fixtures
             instancesList.Add(instanceData);
 
             return instanceData;
-        }
-
-        public async Task DeployInstance(InstanceDataDTO instanceData)
-        {
-            DeployBinaryDTO deploy = new DeployBinaryDTO()
-            {
-                AlgoId = instanceData.AlgoId,
-                InstanceId = instanceData.InstanceId,
-            };
-
-            var deployBynaryResponse = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_DEPLOY_BINARY, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deploy), Method.POST);
-            message = $"POST {ApiPaths.ALGO_STORE_DEPLOY_BINARY} returned status: {deployBynaryResponse.Status} and response: {deployBynaryResponse.ResponseJson}. Expected: {HttpStatusCode.OK}";
-            Assert.That(deployBynaryResponse.Status, Is.EqualTo(HttpStatusCode.OK));
         }
 
         public async Task WaitAlgoInstanceToStart(string instanceId)
@@ -174,7 +164,7 @@ namespace AlgoStoreData.Fixtures
                 InstanceId = instanceData.InstanceId
             };
             var deleteInstanceRequest = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_DELETE_INSTANCE, Helpers.EmptyDictionary, JsonUtils.SerializeObject(deleteInstanceDTO), Method.DELETE);
-            Assert.That(deleteInstanceRequest.Status, Is.EqualTo(HttpStatusCode.NoContent));
+            Assert.That(deleteInstanceRequest.Status, Is.AnyOf(HttpStatusCode.NoContent, HttpStatusCode.NotFound));
         }
 
         public async Task MakeAlgoPublic(AlgoDataDTO algoData)
@@ -254,6 +244,38 @@ namespace AlgoStoreData.Fixtures
 
             // Delete all created algos
             await DeleteCreatedAlgos();
+        }
+
+        public async Task<string> GetInstanceAuthToken(string instanceId)
+        {
+            ClientInstanceEntity instanceDataFromDB = await ClientInstanceRepository.TryGetAsync(t => t.Id == instanceId) as ClientInstanceEntity;
+            return instanceDataFromDB.AuthToken;
+        }
+
+        public async Task<List<TailLogDTO>> GetInstanceTailLog(string instanceId, int messagesToGet = 100)
+        {
+            var tailLogUrl = $"{BaseUrl.AlgoStoreLoggingApiBaseUrl}{ApiPaths.ALGO_STORE_LOGGING_API_TAIL_LOG}";
+
+            // Get instance token
+            var token = await GetInstanceAuthToken(instanceId);
+
+            // Build params
+            Dictionary<string, string> queryParams = new Dictionary<string, string>();
+            queryParams.Add("InstanceId", instanceId);
+            queryParams.Add("Tail", messagesToGet.ToString());
+
+            var tailLogRequest = await Consumer.ExecuteRequestCustomEndpoint(tailLogUrl, queryParams, null, Method.GET,authToken: token);
+            Assert.That(tailLogRequest.Status, Is.EqualTo(HttpStatusCode.OK));
+
+            return JsonUtils.DeserializeJson<List<TailLogDTO>>(tailLogRequest.ResponseJson);
+        }
+
+        public async Task<List<AlgoDataDTO>> GetUserAlgos()
+        {
+            var myAlgos = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_GET_MY_ALGOS, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.That(myAlgos.Status, Is.EqualTo(HttpStatusCode.OK));
+
+            return JsonUtils.DeserializeJson<List<AlgoDataDTO>>(myAlgos.ResponseJson);
         }
 
         public async Task DeleteCreatedInstances()

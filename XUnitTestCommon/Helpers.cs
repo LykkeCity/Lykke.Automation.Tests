@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace XUnitTestCommon
 {
@@ -30,6 +29,11 @@ namespace XUnitTestCommon
         public static string GetFullUtcTimestamp()
         {
             return DateTime.UtcNow.ToString("s");
+        }
+
+        public static string GetTimestampIso8601()
+        {
+            return DateTime.UtcNow.ToString(GlobalConstants.ISO_8601_DATE_FORMAT);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using XUnitTestCommon;
 using XUnitTestData.Enums;
 
 namespace AlgoStoreData.DTOs.InstanceData.Builders
@@ -30,8 +31,8 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
         public AlgoMetaDataBuilder WithAlgoParams(AlgoParamsDTO algoParams)
         {
             algoMetaDataInformation.Parameters = GetParamBuilder().CreateParameters()
-                    .WithParameterStartFrom(algoParams.StartFrom.ToString(Constants.ISO_8601_DATE_FORMAT))
-                    .WithParameterEndOn(algoParams.EndOn.ToString(Constants.ISO_8601_DATE_FORMAT))
+                    .WithParameterStartFrom(algoParams.StartFrom.ToString(GlobalConstants.ISO_8601_DATE_FORMAT))
+                    .WithParameterEndOn(algoParams.EndOn.ToString(GlobalConstants.ISO_8601_DATE_FORMAT))
                     .WithParameterAssetPair(algoParams.AssetPair)
                     .WithParameterTradedAsset(algoParams.TradedAsset)
                     .WithParameterVolume(algoParams.Volume)
@@ -49,8 +50,8 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
                     Id = functionParams.FunctionInstanceIdentifier,
                     Parameters = GetParamBuilder().CreateParameters()
                     .WithParameterFunctionInstanceIdentifier(functionParams.FunctionInstanceIdentifier)
-                    .WithParameterStartingDate(functionParams.StartingDate.ToString(Constants.ISO_8601_DATE_FORMAT))
-                    .WithParameterEndingDate(functionParams.EndingDate.ToString(Constants.ISO_8601_DATE_FORMAT))
+                    .WithParameterStartingDate(functionParams.StartingDate.ToString(GlobalConstants.ISO_8601_DATE_FORMAT))
+                    .WithParameterEndingDate(functionParams.EndingDate.ToString(GlobalConstants.ISO_8601_DATE_FORMAT))
                     .WithParameterAssetPair(functionParams.AssetPair)
                     .WithParameterCapacity(functionParams.Capacity)
                     .WithParameterCandleOperationMode(functionParams.CandleOperationMode)

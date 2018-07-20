@@ -106,7 +106,7 @@ namespace AFTests.AlgoStore
         [TestCase(null, null)]
         public async Task GetTailLogBadRequest(string AlgoID, string tail)
         {
-            var url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
+            var url = ApiPaths.ALGO_STORE_LOGGING_API_TAIL_LOG;
 
             Dictionary<string, string> algoIDTailLog = new Dictionary<string, string>()
             {
