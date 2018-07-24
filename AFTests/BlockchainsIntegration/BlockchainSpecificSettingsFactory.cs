@@ -99,6 +99,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWalletAddressContext = "{\"PubKey\":\"03584f2d9dac279c2a85e58e97f67fc6559a60d950ba30cc4cee544c2ef8457ba1\"}";
                 BlockchainMiningTime = 20;
                 BlockchainIntegration = "LiteCoin";
+                MaxWalletsForCashIn = 10;
             }
         }
 
@@ -319,5 +320,6 @@ namespace AFTests.BlockchainsIntegration
         public string ExternalWalletKey { get; set; }
         public string ExternalWallerAddressContext { get; set; }
         public long? BlockchainMiningTime { get; set; }
+        public long? MaxWalletsForCashIn { get; set; }
     }
 }

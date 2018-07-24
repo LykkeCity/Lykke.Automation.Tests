@@ -37,7 +37,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "bitshares"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Litecoin"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -58,6 +58,7 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static string AMOUNT = Convert.ToInt64(0.20000001 * Math.Pow(10, ASSET_ACCURACY)).ToString();
         protected static string AMOUT_WITH_FEE = Convert.ToInt64(0.29000001 * Math.Pow(10, ASSET_ACCURACY)).ToString();
         protected static long BLOCKCHAIN_MINING_TIME = _currentSettings.Value.BlockchainMiningTime ?? 10;
+        protected static long MAX_WALLETS_FOR_CASH_IN = _currentSettings.Value.MaxWalletsForCashIn ?? 30;
 
         #endregion
 
@@ -95,18 +96,28 @@ namespace AFTests.BlockchainsIntegrationTests
                 {
                     result = new Queue<WalletCreationResponse>();
                     BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
-                    for (var i = 0; i < 29; i++)
-                    {
-                        var wallet = blockchainSign.PostWallet();
-                        if (wallet.StatusCode != HttpStatusCode.OK)
-                            throw new Exception($"Cant create wallet. Got: {wallet.StatusCode}.  {wallet.Content}");
-                        result.Enqueue(wallet.GetResponseObject());
-                    }
 
-                    if (!SetBalanceWIthManyOutputs(result.ToList()))
+                    long maxWallets = 29;
+                    while(maxWallets > 0)
                     {
-                        result.ToList().ForEach(w => AddCyptoToBalanceFromExternal(w.PublicAddress, w.PrivateKey, false));
-                        result.ToList().ForEach(w => WaitForBalance(w.PublicAddress));
+                        var cycleWallets = new Queue<WalletCreationResponse>();
+
+                        for (var i = 0; i < Math.Min(MAX_WALLETS_FOR_CASH_IN, maxWallets); i++)
+                        {
+                            var wallet = blockchainSign.PostWallet();
+                            if (wallet.StatusCode != HttpStatusCode.OK)
+                                throw new Exception($"Cant create wallet. Got: {wallet.StatusCode}.  {wallet.Content}");
+                            cycleWallets.Enqueue(wallet.GetResponseObject());
+                        }
+
+                        if (!SetBalanceWIthManyOutputs(result.ToList()))
+                        {
+                            cycleWallets.ToList().ForEach(w => AddCyptoToBalanceFromExternal(w.PublicAddress, w.PrivateKey, false));
+                            cycleWallets.ToList().ForEach(w => WaitForBalance(w.PublicAddress));
+                        }
+
+                        maxWallets -= MAX_WALLETS_FOR_CASH_IN;
+                        cycleWallets.ToList().ForEach(w => result.Enqueue(w));
                     }
                 }
                 result.ToList().ForEach(w =>
@@ -114,6 +125,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     TestContext.Out.WriteLine($"wallet {w.PublicAddress} balance: { new BlockchainApi(_currentSettings.Value.BlockchainApi).Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(wallet => wallet.Address == w.PublicAddress)?.Balance}");
                 });
 
+                //after all
                 var blockchainApi = new BlockchainApi(_currentSettings.Value.BlockchainApi);
 
                 if (blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsPublicAddressExtensionRequired.HasValue &&

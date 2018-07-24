@@ -61,7 +61,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public class GetBalancesContinuation : BlockchainsIntegrationBaseTest
         {
-            [Test]
+           // [Test]
             [Category("BlockchainIntegration")]
             public void GetBalancesContinuationTest()
             {
