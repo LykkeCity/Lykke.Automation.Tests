@@ -309,7 +309,7 @@ namespace AFTests.HftTests
                 { Price = 1.0, AssetPairId = "BLRBTS", OrderAction = OrderAction.Buy, Volume = 0.1 };
 
                 var limitResponse = hft.Orders.PostOrdersLimitOrder(limitRequest, ApiKey);
-                Assert.That(limitResponse.Content, Does.Contain("Unknown asset").IgnoreCase);
+                Assert.That(limitResponse.StatusCode, Is.AnyOf(HttpStatusCode.NotFound, HttpStatusCode.BadRequest));
             }
         }
 
