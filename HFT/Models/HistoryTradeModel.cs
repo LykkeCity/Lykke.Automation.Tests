@@ -6,9 +6,13 @@
 
 namespace Lykke.Client.AutorestClient.Models
 {
+    using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
 
+    /// <summary>
+    /// Response model for quering placed trades.
+    /// </summary>
     public partial class HistoryTradeModel
     {
         /// <summary>
@@ -22,9 +26,17 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the HistoryTradeModel class.
         /// </summary>
-        /// <param name="state">Possible values include: 'InProgress',
-        /// 'Finished', 'Canceled', 'Failed'</param>
-        public HistoryTradeModel(System.DateTime dateTime, HistoryOperationState state, double amount, string id = default(string), string asset = default(string), string assetPair = default(string), double? price = default(double?))
+        /// <param name="id">The ID of the trade.</param>
+        /// <param name="dateTime">The time the trade was placed.</param>
+        /// <param name="state">The current status of the trade. Possible
+        /// values include: 'Unknown', 'InProgress', 'Finished', 'Canceled',
+        /// 'Failed'</param>
+        /// <param name="amount">The trade amount.</param>
+        /// <param name="asset">The trade base asset.</param>
+        /// <param name="assetPair">The trading pair.</param>
+        /// <param name="price">The trading price.</param>
+        /// <param name="fee">The applied trading fee.</param>
+        public HistoryTradeModel(string id, System.DateTime dateTime, TradeStatus state, double amount, string asset, string assetPair, double price, FeeModel fee)
         {
             Id = id;
             DateTime = dateTime;
@@ -33,6 +45,7 @@ namespace Lykke.Client.AutorestClient.Models
             Asset = asset;
             AssetPair = assetPair;
             Price = price;
+            Fee = fee;
             CustomInit();
         }
 
@@ -42,50 +55,82 @@ namespace Lykke.Client.AutorestClient.Models
         partial void CustomInit();
 
         /// <summary>
+        /// Gets or sets the ID of the trade.
         /// </summary>
         [JsonProperty(PropertyName = "Id")]
         public string Id { get; set; }
 
         /// <summary>
+        /// Gets or sets the time the trade was placed.
         /// </summary>
         [JsonProperty(PropertyName = "DateTime")]
         public System.DateTime DateTime { get; set; }
 
         /// <summary>
-        /// Gets or sets possible values include: 'InProgress', 'Finished',
-        /// 'Canceled', 'Failed'
+        /// Gets or sets the current status of the trade. Possible values
+        /// include: 'Unknown', 'InProgress', 'Finished', 'Canceled', 'Failed'
         /// </summary>
         [JsonProperty(PropertyName = "State")]
-        public HistoryOperationState State { get; set; }
+        public TradeStatus State { get; set; }
 
         /// <summary>
+        /// Gets or sets the trade amount.
         /// </summary>
         [JsonProperty(PropertyName = "Amount")]
         public double Amount { get; set; }
 
         /// <summary>
+        /// Gets or sets the trade base asset.
         /// </summary>
         [JsonProperty(PropertyName = "Asset")]
         public string Asset { get; set; }
 
         /// <summary>
+        /// Gets or sets the trading pair.
         /// </summary>
         [JsonProperty(PropertyName = "AssetPair")]
         public string AssetPair { get; set; }
 
         /// <summary>
+        /// Gets or sets the trading price.
         /// </summary>
         [JsonProperty(PropertyName = "Price")]
-        public double? Price { get; set; }
+        public double Price { get; set; }
+
+        /// <summary>
+        /// Gets or sets the applied trading fee.
+        /// </summary>
+        [JsonProperty(PropertyName = "Fee")]
+        public FeeModel Fee { get; set; }
 
         /// <summary>
         /// Validate the object.
         /// </summary>
-        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// <exception cref="ValidationException">
         /// Thrown if validation fails
         /// </exception>
         public virtual void Validate()
         {
+            if (Id == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Id");
+            }
+            if (Asset == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Asset");
+            }
+            if (AssetPair == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "AssetPair");
+            }
+            if (Fee == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Fee");
+            }
+            if (Fee != null)
+            {
+                Fee.Validate();
+            }
         }
     }
 }

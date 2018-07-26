@@ -19,6 +19,8 @@ namespace Lykke.Client.AutorestClient.Models
     {
         [EnumMember(Value = "InvalidInputField")]
         InvalidInputField,
+        [EnumMember(Value = "BadRequest")]
+        BadRequest,
         [EnumMember(Value = "LowBalance")]
         LowBalance,
         [EnumMember(Value = "AlreadyProcessed")]
@@ -39,6 +41,16 @@ namespace Lykke.Client.AutorestClient.Models
         BalanceLowerThanReserved,
         [EnumMember(Value = "LeadToNegativeSpread")]
         LeadToNegativeSpread,
+        [EnumMember(Value = "InvalidFee")]
+        InvalidFee,
+        [EnumMember(Value = "Duplicate")]
+        Duplicate,
+        [EnumMember(Value = "InvalidPrice")]
+        InvalidPrice,
+        [EnumMember(Value = "Replaced")]
+        Replaced,
+        [EnumMember(Value = "NotFoundPrevious")]
+        NotFoundPrevious,
         [EnumMember(Value = "Runtime")]
         Runtime
     }
@@ -55,6 +67,8 @@ namespace Lykke.Client.AutorestClient.Models
             {
                 case ErrorCodeType.InvalidInputField:
                     return "InvalidInputField";
+                case ErrorCodeType.BadRequest:
+                    return "BadRequest";
                 case ErrorCodeType.LowBalance:
                     return "LowBalance";
                 case ErrorCodeType.AlreadyProcessed:
@@ -75,6 +89,16 @@ namespace Lykke.Client.AutorestClient.Models
                     return "BalanceLowerThanReserved";
                 case ErrorCodeType.LeadToNegativeSpread:
                     return "LeadToNegativeSpread";
+                case ErrorCodeType.InvalidFee:
+                    return "InvalidFee";
+                case ErrorCodeType.Duplicate:
+                    return "Duplicate";
+                case ErrorCodeType.InvalidPrice:
+                    return "InvalidPrice";
+                case ErrorCodeType.Replaced:
+                    return "Replaced";
+                case ErrorCodeType.NotFoundPrevious:
+                    return "NotFoundPrevious";
                 case ErrorCodeType.Runtime:
                     return "Runtime";
             }
@@ -87,6 +111,8 @@ namespace Lykke.Client.AutorestClient.Models
             {
                 case "InvalidInputField":
                     return ErrorCodeType.InvalidInputField;
+                case "BadRequest":
+                    return ErrorCodeType.BadRequest;
                 case "LowBalance":
                     return ErrorCodeType.LowBalance;
                 case "AlreadyProcessed":
@@ -107,6 +133,16 @@ namespace Lykke.Client.AutorestClient.Models
                     return ErrorCodeType.BalanceLowerThanReserved;
                 case "LeadToNegativeSpread":
                     return ErrorCodeType.LeadToNegativeSpread;
+                case "InvalidFee":
+                    return ErrorCodeType.InvalidFee;
+                case "Duplicate":
+                    return ErrorCodeType.Duplicate;
+                case "InvalidPrice":
+                    return ErrorCodeType.InvalidPrice;
+                case "Replaced":
+                    return ErrorCodeType.Replaced;
+                case "NotFoundPrevious":
+                    return ErrorCodeType.NotFoundPrevious;
                 case "Runtime":
                     return ErrorCodeType.Runtime;
             }

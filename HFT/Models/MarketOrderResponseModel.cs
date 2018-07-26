@@ -9,26 +9,26 @@ namespace Lykke.Client.AutorestClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class LimitOrderRequest
+    /// <summary>
+    /// Response model for placing new market orders.
+    /// </summary>
+    public partial class MarketOrderResponseModel
     {
         /// <summary>
-        /// Initializes a new instance of the LimitOrderRequest class.
+        /// Initializes a new instance of the MarketOrderResponseModel class.
         /// </summary>
-        public LimitOrderRequest()
+        public MarketOrderResponseModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the LimitOrderRequest class.
+        /// Initializes a new instance of the MarketOrderResponseModel class.
         /// </summary>
-        /// <param name="orderAction">Possible values include: 'Buy',
-        /// 'Sell'</param>
-        public LimitOrderRequest(OrderAction orderAction, double volume, double price, string assetPairId = default(string))
+        /// <param name="price">The (average) price for which the market order
+        /// was settled.</param>
+        public MarketOrderResponseModel(double price)
         {
-            AssetPairId = assetPairId;
-            OrderAction = orderAction;
-            Volume = volume;
             Price = price;
             CustomInit();
         }
@@ -39,22 +39,8 @@ namespace Lykke.Client.AutorestClient.Models
         partial void CustomInit();
 
         /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "AssetPairId")]
-        public string AssetPairId { get; set; }
-
-        /// <summary>
-        /// Gets or sets possible values include: 'Buy', 'Sell'
-        /// </summary>
-        [JsonProperty(PropertyName = "OrderAction")]
-        public OrderAction OrderAction { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "Volume")]
-        public double Volume { get; set; }
-
-        /// <summary>
+        /// Gets or sets the (average) price for which the market order was
+        /// settled.
         /// </summary>
         [JsonProperty(PropertyName = "Price")]
         public double Price { get; set; }
@@ -67,6 +53,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// </exception>
         public virtual void Validate()
         {
+            //Nothing to validate
         }
     }
 }

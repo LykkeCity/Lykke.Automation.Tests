@@ -12,11 +12,13 @@ namespace Lykke.Client.AutorestClient.Models
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// Defines values for HistoryOperationState.
+    /// Defines values for TradeStatus.
     /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum HistoryOperationState
+    public enum TradeStatus
     {
+        [EnumMember(Value = "Unknown")]
+        Unknown,
         [EnumMember(Value = "InProgress")]
         InProgress,
         [EnumMember(Value = "Finished")]
@@ -26,41 +28,45 @@ namespace Lykke.Client.AutorestClient.Models
         [EnumMember(Value = "Failed")]
         Failed
     }
-    internal static class HistoryOperationStateEnumExtension
+    internal static class TradeStatusEnumExtension
     {
-        internal static string ToSerializedValue(this HistoryOperationState? value)
+        internal static string ToSerializedValue(this TradeStatus? value)
         {
-            return value == null ? null : ((HistoryOperationState)value).ToSerializedValue();
+            return value == null ? null : ((TradeStatus)value).ToSerializedValue();
         }
 
-        internal static string ToSerializedValue(this HistoryOperationState value)
+        internal static string ToSerializedValue(this TradeStatus value)
         {
             switch( value )
             {
-                case HistoryOperationState.InProgress:
+                case TradeStatus.Unknown:
+                    return "Unknown";
+                case TradeStatus.InProgress:
                     return "InProgress";
-                case HistoryOperationState.Finished:
+                case TradeStatus.Finished:
                     return "Finished";
-                case HistoryOperationState.Canceled:
+                case TradeStatus.Canceled:
                     return "Canceled";
-                case HistoryOperationState.Failed:
+                case TradeStatus.Failed:
                     return "Failed";
             }
             return null;
         }
 
-        internal static HistoryOperationState? ParseHistoryOperationState(this string value)
+        internal static TradeStatus? ParseTradeStatus(this string value)
         {
             switch( value )
             {
+                case "Unknown":
+                    return TradeStatus.Unknown;
                 case "InProgress":
-                    return HistoryOperationState.InProgress;
+                    return TradeStatus.InProgress;
                 case "Finished":
-                    return HistoryOperationState.Finished;
+                    return TradeStatus.Finished;
                 case "Canceled":
-                    return HistoryOperationState.Canceled;
+                    return TradeStatus.Canceled;
                 case "Failed":
-                    return HistoryOperationState.Failed;
+                    return TradeStatus.Failed;
             }
             return null;
         }

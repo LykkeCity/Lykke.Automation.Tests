@@ -41,20 +41,20 @@ namespace AFTests.HftTests
                 var responseBefore = hft.History.GetHistory(FirstAssetId, skip, take, ApiKey);
                 responseBefore.Validate.StatusCode(HttpStatusCode.OK);
 
-                var request = new MarketOrderRequest()
+                var request = new PlaceMarketOrderModel()
                 { Asset = SecondAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = 0.2 };
 
                 var response = hft.Orders.PostOrdersMarket(request, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
 
-                var amount = 0.009;
+                var amount = 0.01;
                 //buy
-                var requestBuy = new MarketOrderRequest()
+                var requestBuy = new PlaceMarketOrderModel()
                 { Asset = FirstAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = amount };
 
                 var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, ApiKey);
                 responseBuy.Validate.StatusCode(HttpStatusCode.OK);
-                var summ = responseBuy.GetResponseObject().Result;
+                var summ = responseBuy.GetResponseObject().Price;
 
                 var responseAfter = hft.History.GetHistory(FirstAssetId, skip, take, ApiKey);
                 responseAfter.Validate.StatusCode(HttpStatusCode.OK);

@@ -7,26 +7,29 @@
 namespace Lykke.Client.AutorestClient.Models
 {
     using Newtonsoft.Json;
-    using System;
     using System.Linq;
 
-    public partial class VolumePrice : IComparable
+    /// <summary>
+    /// Response model for placing new limit orders.
+    /// </summary>
+    public partial class LimitOrderResponseModel
     {
         /// <summary>
-        /// Initializes a new instance of the VolumePrice class.
+        /// Initializes a new instance of the LimitOrderResponseModel class.
         /// </summary>
-        public VolumePrice()
+        public LimitOrderResponseModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the VolumePrice class.
+        /// Initializes a new instance of the LimitOrderResponseModel class.
         /// </summary>
-        public VolumePrice(double volume, double price)
+        /// <param name="id">The identifier under which the limit order was
+        /// placed.</param>
+        public LimitOrderResponseModel(System.Guid id)
         {
-            Volume = volume;
-            Price = price;
+            Id = id;
             CustomInit();
         }
 
@@ -36,14 +39,10 @@ namespace Lykke.Client.AutorestClient.Models
         partial void CustomInit();
 
         /// <summary>
+        /// Gets or sets the identifier under which the limit order was placed.
         /// </summary>
-        [JsonProperty(PropertyName = "Volume")]
-        public double Volume { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "Price")]
-        public double Price { get; set; }
+        [JsonProperty(PropertyName = "Id")]
+        public System.Guid Id { get; set; }
 
         /// <summary>
         /// Validate the object.
@@ -54,12 +53,6 @@ namespace Lykke.Client.AutorestClient.Models
         public virtual void Validate()
         {
             //Nothing to validate
-        }
-
-        public int CompareTo(object obj)
-        {
-            var volume1 = (VolumePrice)obj;
-            return (this.Price - volume1.Price) > 0 ? 1 : (this.Price - volume1.Price) == 0? 0 : -1;
         }
     }
 }

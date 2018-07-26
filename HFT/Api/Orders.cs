@@ -9,44 +9,51 @@ namespace HFT.Api
     public class Orders : ApiBase
     {
 
-        public IResponse<List<LimitOrderState>> GetOrders(OrderStatus status, string skip, string take, string apiKey)
+        public IResponse<List<LimitOrderStateModel>> GetOrders(OrderStatus status, string skip, string take, string apiKey)
         {
             return Request.Get("/Orders")
                 .AddQueryParameterIfNotNull("status", status)
                 .AddQueryParameterIfNotNull("skip", skip)
                 .AddQueryParameterIfNotNull("take", take)
                 .WithHeaders("api-key", apiKey)
-                .Build().Execute<List<LimitOrderState>>();
+                .Build().Execute<List<LimitOrderStateModel>>();
         }
 
-        public IResponse<LimitOrderState> GetOrderById(string id, string apiKey)
+        public IResponse<LimitOrderStateModel> GetOrderById(string id, string apiKey)
         {
             return Request.Get($"/Orders/{id}")
                 .WithHeaders("api-key", apiKey)
-                .Build().Execute<LimitOrderState>();
+                .Build().Execute<LimitOrderStateModel>();
         }
 
-        public IResponse<ResponseModelDouble> PostOrdersMarket(MarketOrderRequest request, string apiKey)
+        public IResponse<MarketOrderResponseModel> PostOrdersMarket(PlaceMarketOrderModel request, string apiKey)
         {
-            return Request.Post($"/Orders/market")
+            return Request.Post($"/Orders/v2/market")
                 .AddJsonBody(request)
                 .WithHeaders("api-key", apiKey)
-                .Build().Execute<ResponseModelDouble>();
+                .Build().Execute<MarketOrderResponseModel>();
         }
 
-        public IResponse PostOrdersLimitOrder(LimitOrderRequest request, string apiKey)
+        public IResponse<LimitOrderResponseModel> PostOrdersLimitOrder(PlaceLimitOrderModel request, string apiKey)
         {
-            return Request.Post($"/Orders/limit")
+            return Request.Post($"/Orders/v2/limit")
                 .AddJsonBody(request)
                 .WithHeaders("api-key", apiKey)
-                .Build().Execute();
+                .Build().Execute<LimitOrderResponseModel>();
         }
 
-        public IResponse<ResponseModelDouble> PostOrdersCancelOrder(string id, string apiKey)
+        public IResponse<string[]> DeleteOrders(string apiKey)
         {
-            return Request.Post($"/Orders/{id}/Cancel")
+            return Request.Delete($"/Orders")
                 .WithHeaders("api-key", apiKey)
-                .Build().Execute<ResponseModelDouble>();
+                .Build().Execute<string[]>();
+        }
+
+        public IResponse<ResponseModel> DeleteOrder(string orderId, string apiKey)
+        {
+            return Request.Delete($"/Orders/{orderId}")
+                .WithHeaders("api-key", apiKey)
+                .Build().Execute<ResponseModel>();
         }
     }
 }

@@ -21,14 +21,14 @@ namespace AFTests.CandlexHistory
             public void LOBuyCandleTest()
             {
                 (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
-                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+                var requestSell = new PlaceLimitOrderModel() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
 
                 var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
                 responseSell.Validate.StatusCode(HttpStatusCode.OK);
 
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
 
-                var requestBuy = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+                var requestBuy = new PlaceLimitOrderModel() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
 
                 var responseBuy = hft.Orders.PostOrdersLimitOrder(requestBuy, SecondWalletApiKey);
                 responseBuy.Validate.StatusCode(HttpStatusCode.OK);
@@ -57,14 +57,14 @@ namespace AFTests.CandlexHistory
             public void LOSellCandleTest()
             {
                 (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
-                var requestBuy = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+                var requestBuy = new PlaceLimitOrderModel() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
 
                 var responseBuy = hft.Orders.PostOrdersLimitOrder(requestBuy, ApiKey);
                 responseBuy.Validate.StatusCode(HttpStatusCode.OK);
 
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
 
-                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+                var requestSell = new PlaceLimitOrderModel() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
 
                 var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, SecondWalletApiKey);
                 responseBuy.Validate.StatusCode(HttpStatusCode.OK);
@@ -95,14 +95,14 @@ namespace AFTests.CandlexHistory
                 (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
                 (var marketSell, var marketBuy) = currentMinMaxPrices();
 
-                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = 0.1 };
+                var requestSell = new PlaceLimitOrderModel() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = 0.1 };
 
                 var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
                 responseSell.Validate.StatusCode(HttpStatusCode.OK);
 
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
 
-                var requestBuy = new MarketOrderRequest() {  AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume /2, Asset = SecondAssetId };
+                var requestBuy = new PlaceMarketOrderModel() {  AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume /2, Asset = SecondAssetId };
 
                 var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, SecondWalletApiKey);
                 responseBuy.Validate.StatusCode(HttpStatusCode.OK);
@@ -132,14 +132,14 @@ namespace AFTests.CandlexHistory
                 (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
                 (var marketSell, var marketBuy) = currentMinMaxPrices();
 
-                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+                var requestSell = new PlaceLimitOrderModel() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
 
                 var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
                 responseSell.Validate.StatusCode(HttpStatusCode.OK);
 
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
                 // MO
-                var requestBuy = new MarketOrderRequest() { AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume / 2, Asset = FirstAssetId };
+                var requestBuy = new PlaceMarketOrderModel() { AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume / 2, Asset = FirstAssetId };
 
                 var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, SecondWalletApiKey);
                 responseBuy.Validate.StatusCode(HttpStatusCode.OK);
@@ -169,14 +169,14 @@ namespace AFTests.CandlexHistory
                 (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
                 (var marketSell, var marketBuy) = currentMinMaxPrices();
 
-                var requestBuy = new LimitOrderRequest() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+                var requestBuy = new PlaceLimitOrderModel() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
 
                 var responseBuy = hft.Orders.PostOrdersLimitOrder(requestBuy, ApiKey);
                 responseBuy.Validate.StatusCode(HttpStatusCode.OK);
 
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
                 // MO
-                var requestSell = new MarketOrderRequest() { AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume / 2, Asset = FirstAssetId };
+                var requestSell = new PlaceMarketOrderModel() { AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume / 2, Asset = FirstAssetId };
 
                 var responseSell = hft.Orders.PostOrdersMarket(requestSell, SecondWalletApiKey);
                 responseSell.Validate.StatusCode(HttpStatusCode.OK);
@@ -212,14 +212,14 @@ namespace AFTests.CandlexHistory
                 var candlesBid1 = lykkeApi.CandleHistory.GetCandleHistory(AssetPairId, CandlePriceType.Bid, CandleTimeInterval.Sec, fromMoment, DateTime.Now.ToUniversalTime()).GetResponseObject();
                 //
 
-                var requestSell1user = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = 0.1 };
+                var requestSell1user = new PlaceLimitOrderModel() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = 0.1 };
 
                 var responseSell1user = hft.Orders.PostOrdersLimitOrder(requestSell1user, ApiKey);
                 responseSell1user.Validate.StatusCode(HttpStatusCode.OK);
 
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
  
-                var requestSell = new MarketOrderRequest() { AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume / 2, Asset = SecondAssetId };
+                var requestSell = new PlaceMarketOrderModel() { AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume / 2, Asset = SecondAssetId };
 
                 var responseSell = hft.Orders.PostOrdersMarket(requestSell, SecondWalletApiKey);
                 responseSell.Validate.StatusCode(HttpStatusCode.OK);
@@ -257,14 +257,14 @@ namespace AFTests.CandlexHistory
             public void LOSellPartiallyExecutionTest()
             {
                 (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
-                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume * partialCount };
+                var requestSell = new PlaceLimitOrderModel() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume * partialCount };
 
                 var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
                 responseSell.Validate.StatusCode(HttpStatusCode.OK);
 
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
 
-                var requestBuy = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+                var requestBuy = new PlaceLimitOrderModel() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
 
                 for(var i=0; i < partialCount; i++) { 
                     var responseBuy = hft.Orders.PostOrdersLimitOrder(requestBuy, SecondWalletApiKey);
@@ -295,14 +295,14 @@ namespace AFTests.CandlexHistory
             public void LOSellPartiallyMarketOrderExecutionCandleTest()
             {
                 (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
-                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume * partialCount };
+                var requestSell = new PlaceLimitOrderModel() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume * partialCount };
 
                 var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
                 responseSell.Validate.StatusCode(HttpStatusCode.OK);
 
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(7));
 
-                var requestBuy = new MarketOrderRequest() {AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume, Asset = FirstAssetId };
+                var requestBuy = new PlaceMarketOrderModel() {AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume, Asset = FirstAssetId };
 
                 for (var i = 0; i < partialCount; i++)
                 {
@@ -337,7 +337,7 @@ namespace AFTests.CandlexHistory
 
                 for (var i = 0; i < partialCount; i++)
                 {
-                    var requestBuy = new LimitOrderRequest() { Price = newMaxBuyPrice + i/Math.Pow(10, 5), AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+                    var requestBuy = new PlaceLimitOrderModel() { Price = newMaxBuyPrice + i/Math.Pow(10, 5), AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
                     var responseBuy = hft.Orders.PostOrdersLimitOrder(requestBuy, ApiKey);
                     responseBuy.Validate.StatusCode(HttpStatusCode.OK);
                 }
@@ -346,7 +346,7 @@ namespace AFTests.CandlexHistory
 
                 hft.OrderBooks.GetOrderBooks(AssetPairId);
 
-                var requestSell = new MarketOrderRequest() { AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume * partialCount, Asset = FirstAssetId };
+                var requestSell = new PlaceMarketOrderModel() { AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume * partialCount, Asset = FirstAssetId };
                 
                 var responseSell = hft.Orders.PostOrdersMarket(requestSell, SecondWalletApiKey);
                 responseSell.Validate.StatusCode(HttpStatusCode.OK);
@@ -379,7 +379,7 @@ namespace AFTests.CandlexHistory
 
                 for (var i = 0; i < partialCount; i++)
                 {
-                    var requestSell = new LimitOrderRequest() { Price = newMinSellPrice + i / Math.Pow(10, 5), AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+                    var requestSell = new PlaceLimitOrderModel() { Price = newMinSellPrice + i / Math.Pow(10, 5), AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
                     var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
                     responseSell.Validate.StatusCode(HttpStatusCode.OK);
                 }
@@ -388,7 +388,7 @@ namespace AFTests.CandlexHistory
 
                 hft.OrderBooks.GetOrderBooks(AssetPairId);
 
-                var requestBuy = new MarketOrderRequest() { AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume * partialCount, Asset = FirstAssetId };
+                var requestBuy = new PlaceMarketOrderModel() { AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume * partialCount, Asset = FirstAssetId };
 
                 var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, SecondWalletApiKey);
                 responseBuy.Validate.StatusCode(HttpStatusCode.OK);
@@ -418,7 +418,7 @@ namespace AFTests.CandlexHistory
             {
                 (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
 
-                var requestSell = new LimitOrderRequest() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+                var requestSell = new PlaceLimitOrderModel() { Price = newMaxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
                 var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
                 responseSell.Validate.StatusCode(HttpStatusCode.OK);
 
@@ -445,7 +445,7 @@ namespace AFTests.CandlexHistory
             {
                 (var newMinSellPrice, var newMaxBuyPrice) = newMinMaxPrices();
 
-                var requestSell = new LimitOrderRequest() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+                var requestSell = new PlaceLimitOrderModel() { Price = newMinSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
                 var responseSell = hft.Orders.PostOrdersLimitOrder(requestSell, ApiKey);
                 responseSell.Validate.StatusCode(HttpStatusCode.OK);
 

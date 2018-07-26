@@ -6,9 +6,13 @@
 
 namespace Lykke.Client.AutorestClient.Models
 {
+    using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
 
+    /// <summary>
+    /// Model class for error responses
+    /// </summary>
     public partial class ErrorModel
     {
         /// <summary>
@@ -22,12 +26,16 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the ErrorModel class.
         /// </summary>
-        /// <param name="code">Possible values include: 'InvalidInputField',
-        /// 'LowBalance', 'AlreadyProcessed', 'UnknownAsset', 'NoLiquidity',
+        /// <param name="code">Well-known error code. Possible values include:
+        /// 'InvalidInputField', 'BadRequest', 'LowBalance',
+        /// 'AlreadyProcessed', 'UnknownAsset', 'NoLiquidity',
         /// 'NotEnoughFunds', 'Dust', 'ReservedVolumeHigherThanBalance',
         /// 'NotFound', 'BalanceLowerThanReserved', 'LeadToNegativeSpread',
-        /// 'Runtime'</param>
-        public ErrorModel(ErrorCodeType code, string field = default(string), string message = default(string))
+        /// 'InvalidFee', 'Duplicate', 'InvalidPrice', 'Replaced',
+        /// 'NotFoundPrevious', 'Runtime'</param>
+        /// <param name="field">In case ErrorCoderType = 0</param>
+        /// <param name="message">Localized Error message</param>
+        public ErrorModel(ErrorCodeType code, string field, string message)
         {
             Code = code;
             Field = field;
@@ -41,21 +49,25 @@ namespace Lykke.Client.AutorestClient.Models
         partial void CustomInit();
 
         /// <summary>
-        /// Gets or sets possible values include: 'InvalidInputField',
-        /// 'LowBalance', 'AlreadyProcessed', 'UnknownAsset', 'NoLiquidity',
+        /// Gets or sets well-known error code. Possible values include:
+        /// 'InvalidInputField', 'BadRequest', 'LowBalance',
+        /// 'AlreadyProcessed', 'UnknownAsset', 'NoLiquidity',
         /// 'NotEnoughFunds', 'Dust', 'ReservedVolumeHigherThanBalance',
         /// 'NotFound', 'BalanceLowerThanReserved', 'LeadToNegativeSpread',
-        /// 'Runtime'
+        /// 'InvalidFee', 'Duplicate', 'InvalidPrice', 'Replaced',
+        /// 'NotFoundPrevious', 'Runtime'
         /// </summary>
         [JsonProperty(PropertyName = "Code")]
         public ErrorCodeType Code { get; set; }
 
         /// <summary>
+        /// Gets or sets in case ErrorCoderType = 0
         /// </summary>
         [JsonProperty(PropertyName = "Field")]
         public string Field { get; set; }
 
         /// <summary>
+        /// Gets or sets localized Error message
         /// </summary>
         [JsonProperty(PropertyName = "Message")]
         public string Message { get; set; }
@@ -63,11 +75,19 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Validate the object.
         /// </summary>
-        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// <exception cref="ValidationException">
         /// Thrown if validation fails
         /// </exception>
         public virtual void Validate()
         {
+            if (Field == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Field");
+            }
+            if (Message == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Message");
+            }
         }
     }
 }
