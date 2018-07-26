@@ -8,9 +8,9 @@ namespace HFT.Api
 {
     public class Wallets: ApiBase
     {
-        public IResponse<ClientBalanceResponseModel> GetWallets(string apiKey)
+        public IResponse<BalanceModel> GetWallets(string apiKey)
         {
-            return Request.Get("/Wallets").Build().Execute<ClientBalanceResponseModel>();
+            return Request.Get("/Wallets").Build().Execute<BalanceModel>();
         }
     }
 }

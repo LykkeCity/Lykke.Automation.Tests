@@ -41,12 +41,12 @@ namespace AFTests.ApiRegression
                 .Validate.NoApiError();
 
             //STEP 1
-            var getClientState = walletApi.ClientState
-                .GetClientState(email, null)
-                .Validate.StatusCode(HttpStatusCode.OK)
-                .Validate.NoApiError();
-            Assert.That(getClientState.GetResponseObject().Result
-                    .IsRegistered, Is.False);
+            ////var getClientState = walletApi.ClientState
+            ////    .GetClientState(email, null)
+            ////    .Validate.StatusCode(HttpStatusCode.OK)
+            ////    .Validate.NoApiError();
+            ////Assert.That(getClientState.GetResponseObject().Result
+            ////        .IsRegistered, Is.False);
 
             //STEP 2
             var postEmailVerification = walletApi.EmailVerification
@@ -80,17 +80,17 @@ namespace AFTests.ApiRegression
             });
             token = postRegistration.GetResponseObject().Result.Token;
 
-            //STEP 5
-            getClientState = walletApi.ClientState
-                .GetClientState(email, null)
-                .Validate.StatusCode(HttpStatusCode.OK)
-                .Validate.NoApiError();
-            Assert.Multiple(() =>
-            {
-                var getClientStateData = getClientState.GetResponseObject();
-                Assert.That(getClientStateData.Result.IsRegistered, Is.True);
-                Assert.That(getClientStateData.Result.IsPwdHashed, Is.True);
-            });
+            ////STEP 5
+            //getClientState = walletApi.ClientState
+            //    .GetClientState(email, null)
+            //    .Validate.StatusCode(HttpStatusCode.OK)
+            //    .Validate.NoApiError();
+            //Assert.Multiple(() =>
+            //{
+            //    var getClientStateData = getClientState.GetResponseObject();
+            //    Assert.That(getClientStateData.Result.IsRegistered, Is.True);
+            //    Assert.That(getClientStateData.Result.IsPwdHashed, Is.True);
+            //});
 
             //STEP 6
             var getPersonalData = walletApi.PersonalData

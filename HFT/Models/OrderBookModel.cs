@@ -6,25 +6,34 @@
 
 namespace Lykke.Client.AutorestClient.Models
 {
+    using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    public partial class OrderBook
+    /// <summary>
+    /// Response model for orderbook queries.
+    /// </summary>
+    public partial class OrderBookModel
     {
         /// <summary>
-        /// Initializes a new instance of the OrderBook class.
+        /// Initializes a new instance of the OrderBookModel class.
         /// </summary>
-        public OrderBook()
+        public OrderBookModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the OrderBook class.
+        /// Initializes a new instance of the OrderBookModel class.
         /// </summary>
-        public OrderBook(bool isBuy, System.DateTime timestamp, string assetPair = default(string), IList<VolumePrice> prices = default(IList<VolumePrice>))
+        /// <param name="assetPair">The asset pair of the order.</param>
+        /// <param name="isBuy">Is the order a buy order, otherwise false in
+        /// case of a sell order.</param>
+        /// <param name="timestamp">The timestamp of the placed order.</param>
+        /// <param name="prices">The prices and volumes of the order.</param>
+        public OrderBookModel(string assetPair, bool isBuy, System.DateTime timestamp, IList<VolumePriceModel> prices)
         {
             AssetPair = assetPair;
             IsBuy = isBuy;
@@ -39,33 +48,46 @@ namespace Lykke.Client.AutorestClient.Models
         partial void CustomInit();
 
         /// <summary>
+        /// Gets or sets the asset pair of the order.
         /// </summary>
         [JsonProperty(PropertyName = "AssetPair")]
         public string AssetPair { get; set; }
 
         /// <summary>
+        /// Gets or sets is the order a buy order, otherwise false in case of a
+        /// sell order.
         /// </summary>
         [JsonProperty(PropertyName = "IsBuy")]
         public bool IsBuy { get; set; }
 
         /// <summary>
+        /// Gets or sets the timestamp of the placed order.
         /// </summary>
         [JsonProperty(PropertyName = "Timestamp")]
         public System.DateTime Timestamp { get; set; }
 
         /// <summary>
+        /// Gets or sets the prices and volumes of the order.
         /// </summary>
         [JsonProperty(PropertyName = "Prices")]
-        public IList<VolumePrice> Prices { get; set; }
+        public IList<VolumePriceModel> Prices { get; set; }
 
         /// <summary>
         /// Validate the object.
         /// </summary>
-        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// <exception cref="ValidationException">
         /// Thrown if validation fails
         /// </exception>
         public virtual void Validate()
         {
+            if (AssetPair == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "AssetPair");
+            }
+            if (Prices == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Prices");
+            }
             if (Prices != null)
             {
                 foreach (var element in Prices)

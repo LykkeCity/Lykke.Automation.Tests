@@ -35,6 +35,8 @@ namespace Lykke.Client.AutorestClient.Models
         Cancelled,
         [EnumMember(Value = "LeadToNegativeSpread")]
         LeadToNegativeSpread,
+        [EnumMember(Value = "InvalidPriceAccuracy")]
+        InvalidPriceAccuracy,
         [EnumMember(Value = "ReservedVolumeGreaterThanBalance")]
         ReservedVolumeGreaterThanBalance,
         [EnumMember(Value = "TooSmallVolume")]
@@ -71,6 +73,8 @@ namespace Lykke.Client.AutorestClient.Models
                     return "Cancelled";
                 case OrderStatus.LeadToNegativeSpread:
                     return "LeadToNegativeSpread";
+                case OrderStatus.InvalidPriceAccuracy:
+                    return "InvalidPriceAccuracy";
                 case OrderStatus.ReservedVolumeGreaterThanBalance:
                     return "ReservedVolumeGreaterThanBalance";
                 case OrderStatus.TooSmallVolume:
@@ -103,6 +107,8 @@ namespace Lykke.Client.AutorestClient.Models
                     return OrderStatus.Cancelled;
                 case "LeadToNegativeSpread":
                     return OrderStatus.LeadToNegativeSpread;
+                case "InvalidPriceAccuracy":
+                    return OrderStatus.InvalidPriceAccuracy;
                 case "ReservedVolumeGreaterThanBalance":
                     return OrderStatus.ReservedVolumeGreaterThanBalance;
                 case "TooSmallVolume":
