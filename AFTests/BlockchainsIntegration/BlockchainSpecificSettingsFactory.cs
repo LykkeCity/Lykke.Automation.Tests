@@ -142,6 +142,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletAddress = "rG1Zu2dm2Ty9pQrnGJux1RuKZA6qhjWwMc";
                 ExternalWalletKey = "ss91FvLcTaKNBAMtyfN2X3izKhNux";
                 AssetId = "XRP";
+                AssetAccuracy = 6;
             }
         }
 
