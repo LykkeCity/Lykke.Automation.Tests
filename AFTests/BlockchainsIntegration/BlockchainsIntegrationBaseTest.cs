@@ -37,7 +37,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Litecoin"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "BitcoinCash"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -59,6 +59,7 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static string AMOUT_WITH_FEE = Convert.ToInt64(0.29000001 * Math.Pow(10, ASSET_ACCURACY)).ToString();
         protected static long BLOCKCHAIN_MINING_TIME = _currentSettings.Value.BlockchainMiningTime ?? 10;
         protected static long MAX_WALLETS_FOR_CASH_IN = _currentSettings.Value.MaxWalletsForCashIn ?? 30;
+        protected static long SIGN_EXPIRATION_SECONDS = _currentSettings.Value.SignExpiration ?? 0;
 
         #endregion
 
@@ -97,7 +98,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     result = new Queue<WalletCreationResponse>();
                     BlockchainSign blockchainSign = new BlockchainSign(_currentSettings.Value.BlockchainSign);
 
-                    long maxWallets = 29;
+                    long maxWallets = 30;
                     while(maxWallets > 0)
                     {
                         var cycleWallets = new Queue<WalletCreationResponse>();
@@ -205,7 +206,21 @@ namespace AFTests.BlockchainsIntegrationTests
                     FromAddressContext = EXTERNAL_WALLET_ADDRESS_CONTEXT
                 };
 
-                var responseTransaction = api.Operations.PostTransactions(model).GetResponseObject();
+                int i = 0;
+                BuildTransactionResponse responseTransaction = new BuildTransactionResponse() { TransactionContext = null};
+
+                while (i < 5)
+                {
+                    var singleTransactionResponse = api.Operations.PostTransactions(model);
+                    if(singleTransactionResponse.StatusCode == HttpStatusCode.OK)
+                    {
+                        responseTransaction = singleTransactionResponse.GetResponseObject();
+                        break;
+                    }
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds((int)(Math.Pow(2, i))));
+                    i++;
+                }
+                
                 Assert.That(responseTransaction.TransactionContext, Is.Not.Null, "Transaction context is null");
                 string operationId = model.OperationId.ToString();
 

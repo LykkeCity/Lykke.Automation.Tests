@@ -1272,5 +1272,54 @@ namespace AFTests.BlockchainsIntegrationTests
                 Assert.That(signResponse.StatusCode, Is.Not.EqualTo(HttpStatusCode.OK), "DW DW transaction has been successfully signed with DW pkey for blockchains with address extension");
             }
         }
+
+        public class BadRequestAfterSignExpiration : BlockchainsIntegrationBaseTest
+        {
+            WalletCreationResponse wallet;
+
+            [SetUp]
+            public void SetUp()
+            {
+                wallet = Wallets().Dequeue();
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
+                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), "Unexpected balance");
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+            }
+
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void BadRequestAfterSignExpirationTest()
+            {
+                if (SIGN_EXPIRATION_SECONDS == 0)
+                    Assert.Ignore("Blockchain Does not support Sign Expiration");
+
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = AMOUNT,
+                    AssetId = ASSET_ID,
+                    FromAddress = wallet.PublicAddress,
+                    IncludeFee = false,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
+                };
+
+                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+                string operationId = model.OperationId.ToString();
+
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { wallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(SIGN_EXPIRATION_SECONDS));
+
+                var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            }
+        }
     }
 }

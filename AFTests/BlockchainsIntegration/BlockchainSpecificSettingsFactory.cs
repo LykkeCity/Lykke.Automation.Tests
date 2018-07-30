@@ -143,6 +143,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "ss91FvLcTaKNBAMtyfN2X3izKhNux";
                 AssetId = "XRP";
                 AssetAccuracy = 6;
+                SignExpiration = 90;
             }
         }
 
@@ -174,6 +175,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "5J5sD5KNh4ArR1VdJNyge2oiE9vSMs2A7VYaJQULUagHrMBXfcj";
                 AssetId = "1.3.0";
                 ExternalWallerAddressContext = "5KJBVnJaiYhVq7x3mF47f5xd6RUisnqjWCdc5fx9uhWSDdrd1MR";
+                SignExpiration = 90;
             }
         }
 
@@ -322,5 +324,6 @@ namespace AFTests.BlockchainsIntegration
         public string ExternalWallerAddressContext { get; set; }
         public long? BlockchainMiningTime { get; set; }
         public long? MaxWalletsForCashIn { get; set; }
+        public long? SignExpiration { get; set; }
     }
 }
