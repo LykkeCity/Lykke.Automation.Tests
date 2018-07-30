@@ -79,6 +79,7 @@ namespace XUnitTestCommon.Consumers
             var body = JsonUtils.SerializeObject(AuthUser);
 
             localRequest.AddParameter("application/json", body, ParameterType.RequestBody);
+            localRequest.AddHeader("Content-Type", "application/json-patch+json");
 
             var authResponse = await localClient.ExecuteAsync(localRequest);
 
@@ -86,7 +87,7 @@ namespace XUnitTestCommon.Consumers
 
             if (authResponse.StatusCode != HttpStatusCode.OK)
             {
-                throw new ArgumentException("Could not get token with the provided credentials", new ArgumentException(token.message));
+                throw new ArgumentException("Could not get token with the provided credentials", new ArgumentException(authResponse.Content));
             }
 
             return token.AccessToken;

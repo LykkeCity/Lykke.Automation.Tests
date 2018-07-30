@@ -49,11 +49,11 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
                 {
                     Id = functionParams.FunctionInstanceIdentifier,
                     Parameters = GetParamBuilder().CreateParameters()
-                    .WithParameterFunctionInstanceIdentifier(functionParams.FunctionInstanceIdentifier)
+                    //.WithParameterFunctionInstanceIdentifier(functionParams.FunctionInstanceIdentifier)
                     .WithParameterStartingDate(functionParams.StartingDate.ToString(GlobalConstants.ISO_8601_DATE_FORMAT))
                     .WithParameterEndingDate(functionParams.EndingDate.ToString(GlobalConstants.ISO_8601_DATE_FORMAT))
                     .WithParameterAssetPair(functionParams.AssetPair)
-                    .WithParameterCapacity(functionParams.Capacity)
+                    .WithParameterPeriod(functionParams.Period)
                     .WithParameterCandleOperationMode(functionParams.CandleOperationMode)
                     .WithParameterCandleTimeInterval(functionParams.CandleTimeInterval)
                     .Build()

@@ -42,6 +42,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="AlgoStore\TestData\DummyAlgo_WhileOnCandleReceived.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AlgoStore\TestData\DummyAlgo_WhileOnQuoteReceived.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AlgoStore\TestData\DummyAlgo_WhileOnStartUp.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AlgoStore\TestData\MacdTrendAlgo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AlgoStore\TestData\MovingAverageCrossAlgo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="AlgoStore\TestData\myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

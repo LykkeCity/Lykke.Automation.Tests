@@ -97,6 +97,7 @@ namespace XUnitTestCommon
         public static readonly string ALGO_STORE_UPLOAD_STRING = "/api/v1/algo/sourceCode/upload/string";
         public static readonly string ALGO_STORE_DEPLOY_BINARY = "/api/v1/management/deploy/binary";
         public static readonly string ALGO_STORE_ALGO_STOP = "/api/v1/management/stop";
+        public static readonly string ALGO_STORE_ALGO_INSTANCE_LOG = "/api/v1/management/tailLog";
         public static readonly string ALGO_STORE_ALGO_GET_ALL_INSTANCE_DATA = "/api/v1/algoInstances/getAllByAlgoIdAndClientId";
         public static readonly string ALGO_STORE_ALGO_INSTANCE_DATA = "api/v1/algoInstances/getAlgoInstance";
         public static readonly string ALGO_STORE_CLIENT_DATA_GET_ALL_ALGOS = "/api/v1/algo/getAllAlgos";

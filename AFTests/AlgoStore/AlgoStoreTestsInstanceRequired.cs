@@ -41,7 +41,7 @@ namespace AFTests.AlgoStore
             {
                 Name = $"{GlobalConstants.AutoTest}_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()}",
                 Description = $"{ GlobalConstants.AutoTest }_AlgoMetaDataName_{Helpers.GetFullUtcTimestamp()} - Description",
-                Content = Base64Helpers.EncodeToBase64(CSharpAlgoString)
+                Content = Base64Helpers.EncodeToBase64(DummyAlgoString)
             };
 
             var response = await Consumer.ExecuteRequest(metaDataPath, Helpers.EmptyDictionary, JsonUtils.SerializeObject(createAlgoDTO), Method.POST);
@@ -202,7 +202,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO stringDTO = new UploadStringDTO()
             {
                 AlgoId = responseMetaData.Id,
-                Data = CSharpAlgoString
+                Data = DummyAlgoString
             };
 
             var responsetemp = await Consumer.ExecuteRequest(uploadStringPath, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
@@ -496,7 +496,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO stringDTO = new UploadStringDTO()
             {
                 AlgoId = responseMetaData.Id,
-                Data = CSharpAlgoString
+                Data = DummyAlgoString
             };
 
             var responsetemp = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
@@ -565,7 +565,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO stringDTO = new UploadStringDTO()
             {
                 AlgoId = responseMetaData.Id,
-                Data = CSharpAlgoString
+                Data = DummyAlgoString
             };
 
             var responsetemp = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);
@@ -642,7 +642,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO stringDTO = new UploadStringDTO()
             {
                 AlgoId = responseMetaData.Id,
-                Data = CSharpAlgoString
+                Data = DummyAlgoString
             };
 
             var responsetemp = await Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);

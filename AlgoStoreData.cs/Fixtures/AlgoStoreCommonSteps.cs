@@ -5,6 +5,7 @@ using AlgoStoreData.HelpersAlgoStore;
 using ApiV2Data.DTOs;
 using NUnit.Framework;
 using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -29,20 +30,32 @@ namespace AlgoStoreData.Fixtures
         protected InstanceParameters instanceParameters = null;
 
         private string message = string.Empty;
+
         public static string TestDataPath = $"{Directory.GetCurrentDirectory()}/AlgoStore/TestData";
-        public static string CSharpAlgoStringFile = $"{TestDataPath}/DummyAlgo.txt";
+        public static string DummyAlgoFile = $"{TestDataPath}/DummyAlgo.txt";
+        public static string MacdTrendAlgoFile = $"{TestDataPath}/MacdTrendAlgo.txt";
+        public static string MovingAverageCrossAlgoFile = $"{TestDataPath}/MovingAverageCrossAlgo.txt";
+
+        public static string DummyAlgoWhileLoop = $"{TestDataPath}/DummyAlgo_While{{0}}.txt";
+
         public static string NegativeLogMessagesFile = $"{TestDataPath}/NegativeLogMessages.json";
-        public string CSharpAlgoString = File.ReadAllText(CSharpAlgoStringFile);
+
+        public string DummyAlgoString = File.ReadAllText(DummyAlgoFile);
+        public string MacdTrendAlgoString = File.ReadAllText(MacdTrendAlgoFile);
+        public string MovingAverageCrossAlgoString = File.ReadAllText(MovingAverageCrossAlgoFile);
+
         public string NegativeMessagesAsString = File.ReadAllText(NegativeLogMessagesFile);
 
-        public async Task<AlgoDataDTO> CreateAlgo()
+        public async Task<AlgoDataDTO> CreateAlgo(string algoString = null)
         {
+            algoString = algoString ?? DummyAlgoString;
+
             var algoCreationTimestamp = Helpers.GetTimestampIso8601();
             CreateAlgoDTO metadata = new CreateAlgoDTO()
             {
                 Name = $"{algoCreationTimestamp}{GlobalConstants.AutoTest}_AlgoName",
                 Description = $"{algoCreationTimestamp}{GlobalConstants.AutoTest}_AlgoName - Description",
-                Content = Base64Helpers.EncodeToBase64(CSharpAlgoString)
+                Content = Base64Helpers.EncodeToBase64(algoString)
             };
 
             var createAlgoResponse = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_CREATE_ALGO, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
@@ -246,28 +259,61 @@ namespace AlgoStoreData.Fixtures
             await DeleteCreatedAlgos();
         }
 
+        public async Task<AlgoInstanceStatus> GetInstanceStatus(string instanceId)
+        {
+            var instanceStatusUrl = String.Format(ApiPaths.ALGO_STORE_INSTANCE_STATUS, instanceId);
+
+            // Get instance status
+            var instanceStatusRequest = await Consumer.ExecuteRequest(instanceStatusUrl, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.That(instanceStatusRequest.Status, Is.EqualTo(HttpStatusCode.OK));
+
+            AlgoInstanceStatus algoInstanceStatus;
+            var cast = Enum.TryParse(instanceStatusRequest.ResponseJson, out algoInstanceStatus);
+
+            Assert.That(cast, Is.True, $"Casting response: '{instanceStatusRequest.ResponseJson}' as AlgoInstanceStatus failed! Consider adding the status to the Enum");
+
+            return algoInstanceStatus;
+        }
+
         public async Task<string> GetInstanceAuthToken(string instanceId)
         {
             ClientInstanceEntity instanceDataFromDB = await ClientInstanceRepository.TryGetAsync(t => t.Id == instanceId) as ClientInstanceEntity;
             return instanceDataFromDB.AuthToken;
         }
 
-        public async Task<List<TailLogDTO>> GetInstanceTailLog(string instanceId, int messagesToGet = 100)
+        public async Task<List<TailLogDTO>> GetInstanceTailLogFromLoggingService(InstanceDataDTO instanceData, int messagesToGet = 100)
         {
             var tailLogUrl = $"{BaseUrl.AlgoStoreLoggingApiBaseUrl}{ApiPaths.ALGO_STORE_LOGGING_API_TAIL_LOG}";
 
             // Get instance token
-            var token = await GetInstanceAuthToken(instanceId);
+            var token = await GetInstanceAuthToken(instanceData.InstanceId);
 
             // Build params
             Dictionary<string, string> queryParams = new Dictionary<string, string>();
-            queryParams.Add("InstanceId", instanceId);
+            queryParams.Add("InstanceId", instanceData.InstanceId);
             queryParams.Add("Tail", messagesToGet.ToString());
 
-            var tailLogRequest = await Consumer.ExecuteRequestCustomEndpoint(tailLogUrl, queryParams, null, Method.GET,authToken: token);
+            var tailLogRequest = await Consumer.ExecuteRequestCustomEndpoint(tailLogUrl, queryParams, null, Method.GET, authToken: token);
             Assert.That(tailLogRequest.Status, Is.EqualTo(HttpStatusCode.OK));
 
             return JsonUtils.DeserializeJson<List<TailLogDTO>>(tailLogRequest.ResponseJson);
+        }
+
+        public async Task<string> GetInstanceTailLogFromApi(InstanceDataDTO instanceData, int messagesToGet = 100)
+        {
+            // Build params
+            Dictionary<string, string> queryParams = new Dictionary<string, string>
+            {
+                { "Tail", messagesToGet.ToString() },
+                { "AlgoId", instanceData.AlgoId },
+                { "InstanceId", instanceData.InstanceId },
+                { "AlgoClientId", instanceData.AlgoClientId }
+            };
+
+            var tailLogRequest = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_ALGO_INSTANCE_LOG, queryParams, null, Method.GET);
+            Assert.That(tailLogRequest.Status, Is.EqualTo(HttpStatusCode.OK));
+
+            return tailLogRequest.ResponseJson;
         }
 
         public async Task<List<AlgoDataDTO>> GetUserAlgos()

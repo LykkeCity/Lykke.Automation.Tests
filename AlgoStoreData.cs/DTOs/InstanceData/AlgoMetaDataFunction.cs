@@ -17,12 +17,16 @@ namespace AlgoStoreData.DTOs.InstanceData
             {
                 case FunctionType.SMA_Short:
                 case FunctionType.SMA_Long:
-                    Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction";
-                    FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters";
+                    //Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaFunction";
+                    //FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.SMA.SmaParameters";
+                    Type = null;
+                    FunctionParameterType = null;
                     break;
                 case FunctionType.ADX:
-                    Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction";
-                    FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters";
+                    //Type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxFunction";
+                    //FunctionParameterType = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Functions.ADX.AdxParameters";
+                    Type = null;
+                    FunctionParameterType = null;
                     break;
                 case FunctionType.MACD:
                     throw new NotImplementedException($"{functionType} is not implemented yet");
