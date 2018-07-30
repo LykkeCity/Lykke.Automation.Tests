@@ -35,11 +35,18 @@ namespace AFTests.AlgoStore
             Assert.That(writeMessageToLogRequest.Status, Is.EqualTo(HttpStatusCode.NoContent));
 
             // Get instance log
-            var instanceLog = await GetInstanceTailLog(postInstanceData.InstanceId);
+            var instanceLog = await GetInstanceTailLogFromLoggingService(postInstanceData);
             var instanceMessages = instanceLog.Select(x => x.Message).ToList();
 
+            // Get instance log from Api
+            var instanceLogFromApi = await GetInstanceTailLogFromApi(postInstanceData);
+
             // Assert message added to log
-            Assert.That(instanceMessages.Contains(messageToInsert), Is.True);
+            Assert.Multiple(() =>
+            {
+                Assert.That(instanceMessages, Does.Contain(messageToInsert));
+                Assert.That(instanceLogFromApi, Does.Contain(messageToInsert));
+            });
         }
 
         [Test, Description("AL-524")]
@@ -65,11 +72,18 @@ namespace AFTests.AlgoStore
             Assert.That(writeMessageToLogRequest.Status, Is.EqualTo(HttpStatusCode.NoContent));
 
             // Get instance log
-            var instanceLog = await GetInstanceTailLog(postInstanceData.InstanceId);
+            var instanceLog = await GetInstanceTailLogFromLoggingService(postInstanceData);
             var instanceMessages = instanceLog.Select(x => x.Message).ToList();
 
+            // Get instance log from Api
+            var instanceLogFromApi = await GetInstanceTailLogFromApi(postInstanceData);
+
             // Assert message added to log
-            Assert.That(instanceMessages.Contains(messageToInsert), Is.True);
+            Assert.Multiple(() =>
+            {
+                Assert.That(instanceMessages, Does.Contain(messageToInsert));
+                Assert.That(instanceLogFromApi, Does.Contain(messageToInsert));
+            });
         }
 
         [Test, Description("AL-524")]
@@ -105,12 +119,22 @@ namespace AFTests.AlgoStore
             var writeMessageToLogRequest = await Consumer.ExecuteRequestCustomEndpoint(writeMessagesToLogUrl, Helpers.EmptyDictionary, requestBody, Method.POST, authToken: instanceToken);
             Assert.That(writeMessageToLogRequest.Status, Is.EqualTo(HttpStatusCode.NoContent));
 
-            // Get instance log
-            var instanceLog = await GetInstanceTailLog(postInstanceData.InstanceId);
+            // Get instance log from Logging Service
+            var instanceLog = await GetInstanceTailLogFromLoggingService(postInstanceData);
             var instanceMessages = instanceLog.Select(x => x.Message).ToList();
 
+            // Get instance log from Api
+            var instanceLogFromApi = await GetInstanceTailLogFromApi(postInstanceData);
+
             // Assert message added to log
-            Assert.That(logMessages, Is.SubsetOf(instanceMessages));
+            Assert.Multiple(() =>
+            {
+                Assert.That(logMessages, Is.SubsetOf(instanceMessages));
+                foreach (var l in logMessagesToInsert)
+                {
+                    Assert.That(instanceLogFromApi, Does.Contain(l.Message));
+                }
+            });
         }
 
         [Test, Description("AL-524")]
@@ -149,7 +173,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test, Description("AL-524")]
-        [Ignore("Enable when AL-688 is fixed")]
         public async Task CheckWriteLogsInvalidRequestBody()
         {
             var writeMessageToLogUrl = $"{BaseUrl.AlgoStoreLoggingApiBaseUrl}{ApiPaths.ALGO_STORE_LOGGING_API_WRITE_MESSAGE}";
@@ -217,7 +240,7 @@ namespace AFTests.AlgoStore
                 Assert.That(writeMultipleMessagesToSingleLogRequest.ResponseJson, Does.Match(".*Technical problem.*"));
 
                 Assert.That(writeMultipleMessagesToMultiLogRequest.Status, Is.EqualTo(HttpStatusCode.InternalServerError));
-                Assert.That(writeMultipleMessagesToMultiLogRequest.ResponseJson, Does.Match(".*Technical problem.*"));
+                Assert.That(writeMultipleMessagesToMultiLogRequest.ResponseJson, Does.Match(".*InstanceId must be the same for all logs*"));
 
                 Assert.That(nullWriteMessageToLogUrl.Status, Is.EqualTo(HttpStatusCode.InternalServerError));
                 Assert.That(nullWriteMessageToLogUrl.ResponseJson, Does.Match(".*Validation error: .* cannot be empty.*"));
@@ -228,7 +251,6 @@ namespace AFTests.AlgoStore
         }
 
         [Test, Description("AL-524")]
-        [Ignore("Enable when AL-688 is fixed")]
         public async Task CheckWriteHugeBatchOfLogs()
         {
             var writeMessagesToLogUrl = $"{BaseUrl.AlgoStoreLoggingApiBaseUrl}{ApiPaths.ALGO_STORE_LOGGING_API_WRITE_LOGS}";
@@ -261,12 +283,22 @@ namespace AFTests.AlgoStore
             Assert.That(writeMessageToLogRequest.Status, Is.EqualTo(HttpStatusCode.InternalServerError));
             Assert.That(writeMessageToLogRequest.ResponseJson, Does.Match(".*Validation error: Cannot save more then 100 log entries per batch.*"));
 
-            // Get instance log
-            var instanceLog = await GetInstanceTailLog(postInstanceData.InstanceId);
+            // Get instance log from Logging Service
+            var instanceLog = await GetInstanceTailLogFromLoggingService(postInstanceData);
             var instanceMessages = instanceLog.Select(x => x.Message).ToList();
 
+            // Get instance log from Api
+            var instanceLogFromApi = await GetInstanceTailLogFromApi(postInstanceData);
+
             // Assert message added to log
-            Assert.That(logMessages, Is.Not.SubsetOf(instanceMessages));
+            Assert.Multiple(() =>
+            {
+                Assert.That(logMessages, Is.Not.SubsetOf(instanceMessages));
+                foreach (var l in logMessagesToInsert)
+                {
+                    Assert.That(instanceLogFromApi, Does.Not.Contain(l.Message));
+                }
+            });
         }
     }
 }

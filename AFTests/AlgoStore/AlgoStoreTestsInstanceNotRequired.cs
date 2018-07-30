@@ -6,6 +6,7 @@ using NUnit.Framework;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -318,7 +319,7 @@ namespace AFTests.AlgoStore
             // Create timestamp that will be used in algo name
             var algoCreationTimestamp = Helpers.GetTimestampIso8601();
             // Replace the default namespace with an invalid one
-            var algoString = CSharpAlgoString.Replace(GlobalConstants.AlgoDefaultNamespace, invalidNamespace);
+            var algoString = DummyAlgoString.Replace(GlobalConstants.AlgoDefaultNamespace, invalidNamespace);
 
             // Create algo object
             CreateAlgoDTO algoData = new CreateAlgoDTO()
@@ -342,6 +343,51 @@ namespace AFTests.AlgoStore
                 Assert.That(createAlgoResponse.ResponseJson, Does.Contain("The provided namespace is not allowed").Or.Contains("Identifier expected"));
                 Assert.That(userAlgos, Does.Not.Contain(algoData.Name));
             });
+        }
+
+        [Test, Description("AL-690")]
+        [Category("AlgoStore")]
+        [TestCase("OnStartUp", "The instance is being stopped because OnStartUp took too long to execute.")]
+        [TestCase("OnQuoteReceived", "The instance is being stopped because OnQuoteReceived took too long to execute.")]
+        [TestCase("OnCandleReceived", "The instance is being stopped because OnCandleReceived took too long to execute.")]
+        // TODO: Add test cases for the other algos as well
+        public async Task CheckMonitoringService(string whilePosition, string message)
+        {
+            // Set algoString
+            var algoString = File.ReadAllText(String.Format(DummyAlgoWhileLoop, whilePosition));
+
+            // Create algo
+            AlgoDataDTO algoData = await CreateAlgo(algoString);
+
+            // Start an instance
+            var instanceData = await SaveInstance(algoData, AlgoInstanceType.Demo);
+
+            // Wait up to 3 minutes for the instance to start
+            await WaitAlgoInstanceToStart(instanceData.InstanceId);
+
+            // Wait for up to 5 minutes so that the algo can be stopped
+            int maxWaitTime = 5 * 60 * 1000; // 5 minutes
+            int waitTime = 5 * 1000; // 5 seconds
+
+            while (maxWaitTime > 0)
+            {
+                Wait.ForPredefinedTime(waitTime);
+                maxWaitTime -= waitTime;
+
+                var instanceStatus = await GetInstanceStatus(instanceData.InstanceId);
+
+                if (instanceStatus == AlgoInstanceStatus.Stopped)
+                {
+                    break;
+                }
+            }
+
+            // Get instance log
+            var instanceLog = await GetInstanceTailLogFromLoggingService(postInstanceData);
+            var instanceMessages = instanceLog.Select(x => x.Message).ToList();
+
+            // Assert message added to log
+            Assert.That(instanceMessages, Does.Contain(message));
         }
     }
 }

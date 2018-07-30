@@ -85,7 +85,7 @@ namespace AFTests.AlgoStore
             UploadStringDTO stringDTO = new UploadStringDTO()
             {
                 AlgoId = responseMetaData.Id,
-                Data = this.CSharpAlgoString
+                Data = this.DummyAlgoString
             };
 
             var responsetemp = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(stringDTO), Method.POST);

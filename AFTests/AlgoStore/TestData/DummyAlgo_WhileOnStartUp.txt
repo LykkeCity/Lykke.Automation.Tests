@@ -15,6 +15,11 @@ namespace Lykke.AlgoStore.CSharp.Algo.Implemention.ExecutableClass
 
         public override void OnStartUp()
         {
+            while(true)
+            {
+                
+            }
+            
             _shortSma = SMA("SMA_Short");
             _longSma = SMA("SMA_Long");
         }

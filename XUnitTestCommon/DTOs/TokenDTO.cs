@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace XUnitTestCommon.DTOs
+﻿namespace XUnitTestCommon.DTOs
 {
     public class TokenDTO
     {
         public string AccessToken { get; set; }
-        public string message { get; set; }
+        public string NotificationsId { get; set; }
     }
 }

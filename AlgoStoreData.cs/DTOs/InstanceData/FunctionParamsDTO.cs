@@ -9,33 +9,33 @@ namespace AlgoStoreData.DTOs.InstanceData
         public DateTime StartingDate { get; set; }
         public DateTime EndingDate { get; set; }
         public string AssetPair { get; set; }
-        public int Capacity { get; set; }
+        public int Period { get; set; }
         public CandleOperationMode CandleOperationMode { get; set; }
         public CandleTimeInterval CandleTimeInterval { get; set; }
 
         public FunctionParamsDTO() { }
 
         public FunctionParamsDTO(FunctionType functionType, DateTime startingDate, DateTime endingDate, 
-                                    string assetPair, int capacity, CandleOperationMode candleOperationMode, CandleTimeInterval candleTimeInterval)
+                                    string assetPair, int period, CandleOperationMode candleOperationMode, CandleTimeInterval candleTimeInterval)
         {
             FunctionInstanceIdentifier = GetFunctionIdentifierByFunctionType(functionType);
             StartingDate = startingDate;
             EndingDate = endingDate;
             AssetPair = assetPair;
-            Capacity = capacity;
+            Period = period;
             CandleOperationMode = candleOperationMode;
             CandleTimeInterval = candleTimeInterval;
         }
 
         public FunctionParamsDTO(FunctionType functionType, int startDaysOffset, int endDaysOffset, string assetPair, 
-                                    int capacity, CandleOperationMode candleOperationMode, CandleTimeInterval candleTimeInterval)
+                                    int period, CandleOperationMode candleOperationMode, CandleTimeInterval candleTimeInterval)
         {
             var dateTimeNow = DateTime.Now;
             FunctionInstanceIdentifier = GetFunctionIdentifierByFunctionType(functionType);
             StartingDate = dateTimeNow.AddDays(startDaysOffset);
             EndingDate = dateTimeNow.AddDays(endDaysOffset);
             AssetPair = assetPair;
-            Capacity = capacity;
+            Period = period;
             CandleOperationMode = candleOperationMode;
             CandleTimeInterval = candleTimeInterval;
         }
