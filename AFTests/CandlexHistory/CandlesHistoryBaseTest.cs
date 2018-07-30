@@ -69,12 +69,12 @@ namespace AFTests.CandlexHistory
 
             fromMoment = DateTime.Now.ToUniversalTime();
 
-            var limitOrderRequestBuy = new LimitOrderRequest() { Price = maxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
+            var limitOrderRequestBuy = new PlaceLimitOrderModel() { Price = maxBuyPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Buy, Volume = tradingVolume };
 
             var response = hft.Orders.PostOrdersLimitOrder(limitOrderRequestBuy, ApiKey);
             response.Validate.StatusCode(HttpStatusCode.OK);
 
-            var limitOrderRequestSell = new LimitOrderRequest() { Price = minSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
+            var limitOrderRequestSell = new PlaceLimitOrderModel() { Price = minSellPrice, AssetPairId = AssetPairId, OrderAction = OrderAction.Sell, Volume = tradingVolume };
 
             var response1 = hft.Orders.PostOrdersLimitOrder(limitOrderRequestSell, ApiKey);
             response1.Validate.StatusCode(HttpStatusCode.OK);
@@ -91,8 +91,7 @@ namespace AFTests.CandlexHistory
 
             var response = hft.Orders.GetOrders(OrderStatus.InOrderBook, skip, take, ApiKey);
             response.Validate.StatusCode(HttpStatusCode.OK);
-
-            response.GetResponseObject().ForEach(o => hft.Orders.PostOrdersCancelOrder(o.Id.ToString(), ApiKey));
+            hft.Orders.DeleteOrders(ApiKey);
         }
 
         public (double min, double max) newMinMaxPrices()

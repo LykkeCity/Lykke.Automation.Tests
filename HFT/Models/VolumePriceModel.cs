@@ -9,24 +9,28 @@ namespace Lykke.Client.AutorestClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class ClientBalanceResponseModel
+    /// <summary>
+    /// The volume and price of an order in the orderbook.
+    /// </summary>
+    public partial class VolumePriceModel
     {
         /// <summary>
-        /// Initializes a new instance of the ClientBalanceResponseModel class.
+        /// Initializes a new instance of the VolumePriceModel class.
         /// </summary>
-        public ClientBalanceResponseModel()
+        public VolumePriceModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the ClientBalanceResponseModel class.
+        /// Initializes a new instance of the VolumePriceModel class.
         /// </summary>
-        public ClientBalanceResponseModel(double balance, double reserved, string assetId = default(string))
+        /// <param name="volume">The volume of the order.</param>
+        /// <param name="price">The price of the order.</param>
+        public VolumePriceModel(double volume, double price)
         {
-            AssetId = assetId;
-            Balance = balance;
-            Reserved = reserved;
+            Volume = volume;
+            Price = price;
             CustomInit();
         }
 
@@ -36,19 +40,16 @@ namespace Lykke.Client.AutorestClient.Models
         partial void CustomInit();
 
         /// <summary>
+        /// Gets or sets the volume of the order.
         /// </summary>
-        [JsonProperty(PropertyName = "AssetId")]
-        public string AssetId { get; set; }
+        [JsonProperty(PropertyName = "Volume")]
+        public double Volume { get; set; }
 
         /// <summary>
+        /// Gets or sets the price of the order.
         /// </summary>
-        [JsonProperty(PropertyName = "Balance")]
-        public double Balance { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "Reserved")]
-        public double Reserved { get; set; }
+        [JsonProperty(PropertyName = "Price")]
+        public double Price { get; set; }
 
         /// <summary>
         /// Validate the object.

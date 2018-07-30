@@ -12,7 +12,7 @@ namespace HFT.Api
     {
         protected string URL = 
             EnvConfig.Env == Env.Test ? "https://hft-api-test.lykkex.net/api" :
-            EnvConfig.Env == Env.Dev ? "https://hft-api-test.lykkex.net/api" :
+            EnvConfig.Env == Env.Dev ? "https://hft-service-dev.lykkex.net/api" :
             throw new Exception("Undefined env");
 
         public IRequestBuilder Request => Requests.For(URL);

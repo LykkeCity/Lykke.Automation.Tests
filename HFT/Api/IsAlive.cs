@@ -8,9 +8,9 @@ namespace HFT.Api
 {
     public class IsAlive : ApiBase
     {
-        public IResponse<IsAliveResponse> GetIsAlive()
+        public IResponse<IsAliveModel> GetIsAlive()
         {
-            return Request.Get("/IsAlive").Build().Execute<IsAliveResponse>();
+            return Request.Get("/IsAlive").Build().Execute<IsAliveModel>();
         }
     }
 }

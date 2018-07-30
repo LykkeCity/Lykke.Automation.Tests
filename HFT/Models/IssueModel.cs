@@ -11,27 +11,28 @@ namespace Lykke.Client.AutorestClient.Models
     using System.Linq;
 
     /// <summary>
-    /// Response model with a result
+    /// Issue description.
     /// </summary>
-    public partial class ResponseModelDouble
+    public partial class IssueModel
     {
         /// <summary>
-        /// Initializes a new instance of the ResponseModelDouble class.
+        /// Initializes a new instance of the IssueModel class.
         /// </summary>
-        public ResponseModelDouble()
+        public IssueModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the ResponseModelDouble class.
+        /// Initializes a new instance of the IssueModel class.
         /// </summary>
-        /// <param name="result">The response result.</param>
-        /// <param name="error">The  possible error.</param>
-        public ResponseModelDouble(double result, ErrorModel error)
+        /// <param name="type">Gets or sets the issue type.</param>
+        /// <param name="value">Gets or sets the issue reason, message or
+        /// value.</param>
+        public IssueModel(string type, string value)
         {
-            Result = result;
-            Error = error;
+            Type = type;
+            Value = value;
             CustomInit();
         }
 
@@ -41,16 +42,16 @@ namespace Lykke.Client.AutorestClient.Models
         partial void CustomInit();
 
         /// <summary>
-        /// Gets or sets the response result.
+        /// Gets or sets the issue type.
         /// </summary>
-        [JsonProperty(PropertyName = "Result")]
-        public double Result { get; set; }
+        [JsonProperty(PropertyName = "Type")]
+        public string Type { get; set; }
 
         /// <summary>
-        /// Gets or sets the  possible error.
+        /// Gets or sets the issue reason, message or value.
         /// </summary>
-        [JsonProperty(PropertyName = "Error")]
-        public ErrorModel Error { get; set; }
+        [JsonProperty(PropertyName = "Value")]
+        public string Value { get; set; }
 
         /// <summary>
         /// Validate the object.
@@ -60,13 +61,13 @@ namespace Lykke.Client.AutorestClient.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (Error == null)
+            if (Type == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Error");
+                throw new ValidationException(ValidationRules.CannotBeNull, "Type");
             }
-            if (Error != null)
+            if (Value == null)
             {
-                Error.Validate();
+                throw new ValidationException(ValidationRules.CannotBeNull, "Value");
             }
         }
     }
