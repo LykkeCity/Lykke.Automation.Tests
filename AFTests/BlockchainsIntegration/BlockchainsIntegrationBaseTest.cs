@@ -206,10 +206,10 @@ namespace AFTests.BlockchainsIntegrationTests
                     FromAddressContext = EXTERNAL_WALLET_ADDRESS_CONTEXT
                 };
 
-                int i = 0;
+                int i = 1;
                 BuildTransactionResponse responseTransaction = new BuildTransactionResponse() { TransactionContext = null};
 
-                while (i < 5)
+                while (i < 6)
                 {
                     var singleTransactionResponse = api.Operations.PostTransactions(model);
                     if(singleTransactionResponse.StatusCode == HttpStatusCode.OK)
@@ -217,7 +217,7 @@ namespace AFTests.BlockchainsIntegrationTests
                         responseTransaction = singleTransactionResponse.GetResponseObject();
                         break;
                     }
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds((int)(Math.Pow(2, i))));
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds((int)(Math.Pow(3, i))));
                     i++;
                 }
                 
