@@ -1275,22 +1275,6 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public class BadRequestAfterSignExpiration : BlockchainsIntegrationBaseTest
         {
-            WalletCreationResponse wallet;
-
-            [SetUp]
-            public void SetUp()
-            {
-                wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), "Unexpected balance");
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
-            }
-
             [Test]
             [Category("BlockchainIntegration")]
             public void BadRequestAfterSignExpirationTest()
@@ -1302,17 +1286,17 @@ namespace AFTests.BlockchainsIntegrationTests
                 {
                     Amount = AMOUNT,
                     AssetId = ASSET_ID,
-                    FromAddress = wallet.PublicAddress,
+                    FromAddress = HOT_WALLET,
                     IncludeFee = false,
                     OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET,
-                    FromAddressContext = wallet.AddressContext
+                    ToAddress = EXTERNAL_WALLET,
+                    FromAddressContext = HOT_WALLET_CONTEXT
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
                 string operationId = model.OperationId.ToString();
 
-                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { wallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { HOT_WALLET_KEY }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(SIGN_EXPIRATION_SECONDS));
 
