@@ -111,6 +111,8 @@ namespace AFTests.BlockchainsIntegrationTests
                             cycleWallets.Enqueue(wallet.GetResponseObject());
                         }
 
+                        cycleWallets.ToList().ForEach(w => result.Enqueue(w));
+
                         if (!SetBalanceWIthManyOutputs(result.ToList()))
                         {
                             cycleWallets.ToList().ForEach(w => AddCyptoToBalanceFromExternal(w.PublicAddress, w.PrivateKey, false));
@@ -118,7 +120,6 @@ namespace AFTests.BlockchainsIntegrationTests
                         }
 
                         maxWallets -= MAX_WALLETS_FOR_CASH_IN;
-                        cycleWallets.ToList().ForEach(w => result.Enqueue(w));
                     }
                 }
                 result.ToList().ForEach(w =>
