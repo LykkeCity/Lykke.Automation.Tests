@@ -7,6 +7,7 @@ using Lykke.SettingsReader;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
 using XUnitTestCommon.Settings.AutomatedFunctionalTests;
@@ -48,6 +49,19 @@ namespace AlgoStoreData.Fixtures
         protected List<AlgoDataDTO> algosList;
         protected List<InstanceDataDTO> instancesList;
 
+        protected InstanceDataConfig InstanceConfig;
+
+        public static string TestDataPath = $"{Directory.GetCurrentDirectory()}/AlgoStore/TestData";
+        public static string DummyAlgoFile = $"{TestDataPath}/DummyAlgo.txt";
+        public static string MacdTrendAlgoFile = $"{TestDataPath}/MacdTrendAlgo.txt";
+        public static string MovingAverageCrossAlgoFile = $"{TestDataPath}/MovingAverageCrossAlgo.txt";
+
+        public static string DummyAlgoWhileLoop = $"{TestDataPath}/DummyAlgo_While{{0}}.txt";
+
+        public static string NegativeLogMessagesFile = $"{TestDataPath}/NegativeLogMessages.json";
+
+        public static string InstanceDataConfigFile = $"{TestDataPath}/InstanceDataConfig.json";
+
         [OneTimeSetUp]
         public void Initialize()
         {
@@ -59,6 +73,9 @@ namespace AlgoStoreData.Fixtures
             User = new OAuthConsumer(_configBuilder.ReloadingManager.CurrentValue.AutomatedFunctionalTests.AlgoStore);
             Consumer = new ApiConsumer(_configBuilder.ReloadingManager.CurrentValue.AutomatedFunctionalTests.AlgoStore, User);
             BaseUrl = _configBuilder.ReloadingManager.CurrentValue.AutomatedFunctionalTests.Services;
+
+            var instanceDataConfigString = File.ReadAllText(InstanceDataConfigFile);
+            InstanceConfig = JsonUtils.DeserializeJson<InstanceDataConfig>(instanceDataConfigString);
 
             PrepareDependencyContainer();
         }

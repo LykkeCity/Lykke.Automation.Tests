@@ -59,6 +59,9 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
                     .Build()
                 };
 
+                // Make keys for functions parametes camelCase
+                ChangeKeyToCamelCase(functionMetaData);
+
                 algoMetaDataInformation.Functions.Add(functionMetaData);
             }
             return this;
@@ -72,6 +75,24 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
             }
 
             return algoMetaDataInformation;
+        }
+
+        private void ChangeKeyToCamelCase(AlgoMetaDataFunction functionMetaData)
+        {
+            foreach (var item in functionMetaData.Parameters)
+            {
+                item.Key = FirstCharToLowerCase(item.Key);
+            }
+        }
+
+        private string FirstCharToLowerCase(string strToModify)
+        {
+            if (String.IsNullOrEmpty(strToModify) || Char.IsLower(strToModify, 0))
+            {
+                return strToModify;
+            }
+
+            return Char.ToLowerInvariant(strToModify[0]) + strToModify.Substring(1);
         }
     }
 }

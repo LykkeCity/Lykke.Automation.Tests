@@ -38,12 +38,39 @@ namespace AFTests.AlgoStore
             Assert.That(baseDate, Is.EqualTo("Lykke.AlgoStore.Api"));
         }
 
+        [Test, Description("AL-483")]
+        [Category("AlgoStore")]
+        public async Task CheckInstanceStatus()
+        {
+            // Create algo
+            var algoData = await CreateAlgo();
+
+            // Create Live instance
+            var instanceData = await SaveInstance(algoData, AlgoInstanceType.Demo, useExistingWallet: false);
+
+            // Build instance status url
+            var instanceStatusUrl = String.Format(ApiPaths.ALGO_STORE_INSTANCE_STATUS, instanceData.InstanceId);
+
+            // Get instance status before instance is started
+            var instanceStatusBeforeStarted = await Consumer.ExecuteRequest(instanceStatusUrl, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.That(instanceStatusBeforeStarted.Status, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(instanceStatusBeforeStarted.ResponseJson, Is.EqualTo("0"));
+
+            // Wait up to 3 minutes for the algo to be started
+            await WaitAlgoInstanceToStart(instanceData.InstanceId);
+
+            // Get instance status after instance is started
+            var instanceStatusAfterStarted = await Consumer.ExecuteRequest(instanceStatusUrl, Helpers.EmptyDictionary, null, Method.GET);
+            Assert.That(instanceStatusAfterStarted.Status, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(instanceStatusAfterStarted.ResponseJson, Is.EqualTo("1"));
+        }
+
         [Test]
         [Category("AlgoStore")]
         [Category("AlgoStoreSmokeTest")]
         [TestCase(AlgoInstanceType.Live)]
         [TestCase(AlgoInstanceType.Demo)]
-        //[TestCase(AlgoInstanceType.Test)] // Ignored for now due to issues when creating the function parameters
+        [TestCase(AlgoInstanceType.Test)]
         public async Task CreateAlgoWithInstanceAndCheckTrades(AlgoInstanceType algoInstanceType)
         {
             // Create algo

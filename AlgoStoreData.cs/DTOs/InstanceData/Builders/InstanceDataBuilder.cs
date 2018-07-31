@@ -22,11 +22,11 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
             return algoMetaDataBuilder;
         }
 
-        public static InstanceDataDTO BuildInstanceData(AlgoDataDTO algoData, WalletDTO walletDTO, AlgoInstanceType instanceType, InstanceParameters instanceParameters, DaysOffsetDTO daysOffsetDTO, bool withInvalidAlgoId = false, bool withoutMetadaData = false)
+        public static InstanceDataDTO BuildInstanceData(AlgoDataDTO algoData, WalletDTO walletDTO, AlgoInstanceType instanceType, InstanceParameters instanceParameters, DaysOffsetDTO daysOffsetDTO)
         {
             AlgoMetaDataInformation algoMetaDataInformation = BuildAlgoMetaDataInformation(instanceParameters, daysOffsetDTO);
 
-            if (withInvalidAlgoId)
+            if (instanceParameters.UseInvalidAlgoId)
             {
                 algoData.Id = $"NonExistingAlgoId - {Helpers.GetFullUtcTimestamp()}";
             }
@@ -49,7 +49,7 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
             if (instanceParameters.InstanceFunctions.Contains(FunctionType.SMA_Short))
             {
                 smaShortFunctionParamsDTO = new FunctionParamsDTO(FunctionType.SMA_Short, daysOffsetDTO.SmaShortStartOffset, daysOffsetDTO.SmaShortEndOffset,
-                                                                  instanceParameters.AssetPair, instanceParameters.FunctionCapacity,
+                                                                  instanceParameters.AssetPair, instanceParameters.FunctionPeriod,
                                                                   instanceParameters.FunctionCandleOperationMode, instanceParameters.FunctionCandleInterval);
 
                 // Add the function params to the functionsDictionary
@@ -60,7 +60,7 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
             if (instanceParameters.InstanceFunctions.Contains(FunctionType.SMA_Long))
             {
                 smaLongFunctionParamsDTO = new FunctionParamsDTO(FunctionType.SMA_Long, daysOffsetDTO.SmaLongStartOffset, daysOffsetDTO.SmaLongEndOffset,
-                                                                 instanceParameters.AssetPair, instanceParameters.FunctionCapacity,
+                                                                 instanceParameters.AssetPair, instanceParameters.FunctionPeriod,
                                                                  instanceParameters.FunctionCandleOperationMode, instanceParameters.FunctionCandleInterval);
 
                 // Add the function params to the functionsDictionary

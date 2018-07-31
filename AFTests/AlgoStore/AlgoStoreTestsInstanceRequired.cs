@@ -950,26 +950,6 @@ namespace AFTests.AlgoStore
             await AssertAlgoDeleted(deleteAlgoRequest, algoData);
         }
 
-        [Test, Description("AL-483")]
-        [Category("AlgoStore")]
-        public async Task CheckInstanceStatus()
-        {
-            var instanceStatusUrl = String.Format(ApiPaths.ALGO_STORE_INSTANCE_STATUS, postInstanceData.InstanceId);
-
-            // Get instance status before instance is started
-            var instanceStatusBeforeStarted = await Consumer.ExecuteRequest(instanceStatusUrl, Helpers.EmptyDictionary, null, Method.GET);
-            Assert.That(instanceStatusBeforeStarted.Status, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(instanceStatusBeforeStarted.ResponseJson, Is.EqualTo("0"));
-
-            // Wait up to 3 minutes for the algo to be started
-            await WaitAlgoInstanceToStart(postInstanceData.InstanceId);
-
-            // Get instance status after instance is started
-            var instanceStatusAfterStarted = await Consumer.ExecuteRequest(instanceStatusUrl, Helpers.EmptyDictionary, null, Method.GET);
-            Assert.That(instanceStatusAfterStarted.Status, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(instanceStatusAfterStarted.ResponseJson, Is.EqualTo("1"));
-        }
-
         [Test, Description("AL-586")]
         [Category("AlgoStore")]
         [TestCase(AlgoInstanceType.Live, true)]
