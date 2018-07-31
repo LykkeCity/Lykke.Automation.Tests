@@ -11,11 +11,11 @@ using NUnit.Framework;
 
 namespace AFTests.ApiRegression
 {
+    public enum BuyOrSell { Buy, Sell }
+    public enum Order { Limit, Market }
+
     class BuyAssetTests : ApiRegressionBaseTest
     {
-        public enum BuyOrSell { Buy, Sell }
-        public enum Order { Limit, Market }
-
         private string email = Config.BuyAssetEmail;
         private string password = Config.BuyAssetPassword;
         private string pin = Config.BuyAssetPin;
@@ -70,14 +70,7 @@ namespace AFTests.ApiRegression
             {
                 Step("Find prices", () =>
                 {
-                    var assetPairRates = walletApi.AssetPairRates.GetById(assetPair, token)
-                        .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
-                        .GetResponseObject().Result;
-                    Assert.That(assetPairRates?.Rate?.Ask, Is.Not.Null, "No Ask rate found");
-                    Assert.That(assetPairRates?.Rate?.Bid, Is.Not.Null, "No Bid rate found");
-                    assetPairPrice = buyOrSell == BuyOrSell.Buy 
-                        ? assetPairRates.Rate.Ask.Value //Buying for the highest price
-                        : assetPairRates.Rate.Bid.Value; //Selling for the lowest price
+                    assetPairPrice = steps.FindPriceInOrderBook(buyOrSell, volume, assetPair, token);
                 });
             }
 
