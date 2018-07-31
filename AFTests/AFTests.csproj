@@ -51,6 +51,9 @@
     <None Update="AlgoStore\TestData\DummyAlgo_WhileOnStartUp.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="AlgoStore\TestData\InstanceDataConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="AlgoStore\TestData\MacdTrendAlgo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

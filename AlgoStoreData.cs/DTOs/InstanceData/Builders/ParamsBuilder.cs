@@ -31,7 +31,7 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
 
         public ParamsBuilder WithParameterStartingDate(string paramValue)
         {
-            MetaDataParameter metaDataParameter = new MetaDataParameter("startingDate", paramValue, "System.DateTime");
+            MetaDataParameter metaDataParameter = new MetaDataParameter("StartingDate", paramValue, "System.DateTime");
             parameters.Add(metaDataParameter);
 
             return this;
@@ -39,7 +39,7 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
 
         public ParamsBuilder WithParameterEndingDate(string paramValue)
         {
-            MetaDataParameter metaDataParameter = new MetaDataParameter("endingDate", paramValue, "System.DateTime");
+            MetaDataParameter metaDataParameter = new MetaDataParameter("EndingDate", paramValue, "System.DateTime");
             parameters.Add(metaDataParameter);
 
             return this;
@@ -71,7 +71,7 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
 
         public ParamsBuilder WithParameterPeriod(int paramValue)
         {
-            MetaDataParameter metaDataParameter = new MetaDataParameter("period", paramValue, "System.Int32");
+            MetaDataParameter metaDataParameter = new MetaDataParameter("Period", paramValue, "System.Int32");
             parameters.Add(metaDataParameter);
 
             return this;
@@ -80,7 +80,7 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
         public ParamsBuilder WithParameterCandleOperationMode(CandleOperationMode paramValue)
         {
             var type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Abstractions.Core.Functions.FunctionParamsBase+CandleValue";
-            MetaDataParameter metaDataParameter = new MetaDataParameter("candleOperationMode", paramValue, type);
+            MetaDataParameter metaDataParameter = new MetaDataParameter("CandleOperationMode", paramValue, type);
             parameters.Add(metaDataParameter);
 
             return this;
@@ -106,7 +106,7 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
         public ParamsBuilder WithParameterCandleTimeInterval(CandleTimeInterval paramValue)
         {
             var type = "Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Enumerators.CandleTimeInterval";
-            MetaDataParameter metaDataParameter = new MetaDataParameter("candleTimeInterval", paramValue, type);
+            MetaDataParameter metaDataParameter = new MetaDataParameter("CandleTimeInterval", paramValue, type);
             parameters.Add(metaDataParameter);
 
             return this;

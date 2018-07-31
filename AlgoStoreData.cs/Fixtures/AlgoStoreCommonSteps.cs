@@ -31,15 +31,6 @@ namespace AlgoStoreData.Fixtures
 
         private string message = string.Empty;
 
-        public static string TestDataPath = $"{Directory.GetCurrentDirectory()}/AlgoStore/TestData";
-        public static string DummyAlgoFile = $"{TestDataPath}/DummyAlgo.txt";
-        public static string MacdTrendAlgoFile = $"{TestDataPath}/MacdTrendAlgo.txt";
-        public static string MovingAverageCrossAlgoFile = $"{TestDataPath}/MovingAverageCrossAlgo.txt";
-
-        public static string DummyAlgoWhileLoop = $"{TestDataPath}/DummyAlgo_While{{0}}.txt";
-
-        public static string NegativeLogMessagesFile = $"{TestDataPath}/NegativeLogMessages.json";
-
         public string DummyAlgoString = File.ReadAllText(DummyAlgoFile);
         public string MacdTrendAlgoString = File.ReadAllText(MacdTrendAlgoFile);
         public string MovingAverageCrossAlgoString = File.ReadAllText(MovingAverageCrossAlgoFile);
@@ -79,17 +70,7 @@ namespace AlgoStoreData.Fixtures
             // Build days offset
             DaysOffsetDTO daysOffsetDTO = BuildDaysOffsetByInstanceType(instanceType);
             // Build InstanceParameters
-            instanceParameters = new InstanceParameters()
-            {
-                AssetPair = "BTCUSD",
-                TradedAsset = "USD",
-                InstanceTradeVolume = 4,
-                InstanceCandleInterval = CandleTimeInterval.Minute,
-                FunctionCandleInterval = CandleTimeInterval.Day,
-                FunctionCandleOperationMode = CandleOperationMode.CLOSE,
-                FunctionCapacity = 4,
-                InstanceFunctions = new List<FunctionType>() { FunctionType.SMA_Short, FunctionType.SMA_Long }
-            };
+            instanceParameters = InstanceConfig.ValidMetaData;
 
             // Build instance request payload
             var instanceForAlgo = InstanceDataBuilder.BuildInstanceData(algoData, walletDTO, instanceType, instanceParameters, daysOffsetDTO);
