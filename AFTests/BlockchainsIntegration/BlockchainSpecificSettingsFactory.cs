@@ -137,10 +137,10 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainIntegration = "Ripple";
                 BlockchainApi = "http://ripple-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://ripple-sign-service.autotests-service.svc.cluster.local/api";
-                HotWallet = "rJ2zMCyShMsjHf7tHptVy7qCWt6dYv8B7r";
-                HotWalletKey = "sndT9kLXjNv7L1HWfr6Lo5N6pmEvU";
-                ExternalWalletAddress = "rG1Zu2dm2Ty9pQrnGJux1RuKZA6qhjWwMc";
-                ExternalWalletKey = "ss91FvLcTaKNBAMtyfN2X3izKhNux";
+                ExternalWalletAddress = "rJ2zMCyShMsjHf7tHptVy7qCWt6dYv8B7r";
+                ExternalWalletKey = "sndT9kLXjNv7L1HWfr6Lo5N6pmEvU";
+                HotWallet = "rG1Zu2dm2Ty9pQrnGJux1RuKZA6qhjWwMc";
+                HotWalletKey = "ss91FvLcTaKNBAMtyfN2X3izKhNux";
                 AssetId = "XRP";
                 AssetAccuracy = 6;
                 SignExpiration = 90;
