@@ -203,15 +203,14 @@ namespace AFTests.BlockchainsIntegrationTests
                 }
             }
 
-            static long? GetTransactionCompleteStatusTime(string operationId, string wallet)
+            long? GetTransactionCompleteStatusTime(string operationId, string wallet)
             {
                 var sw = new Stopwatch();
-                var request = new BlockchainApi(BlockchainApi);
                 long? block = -1;
                 sw.Start();
                 while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
                 {
-                    var r = request.Operations.GetOperationId(operationId);
+                    var r = blockchainApi.Operations.GetOperationId(operationId);
                     if (r.GetResponseObject().State != BroadcastedTransactionState.InProgress)
                     {
                         if (r.GetResponseObject().State == BroadcastedTransactionState.Failed)
@@ -307,20 +306,19 @@ namespace AFTests.BlockchainsIntegrationTests
                 Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Balance, Is.EqualTo(AMOUT_WITH_FEE), "Balance is not expected");           
             }
 
-            static long? GetTransactionCompleteStatusTime(string operationId, string wallet)
+            long? GetTransactionCompleteStatusTime(string operationId, string wallet)
             {
                 var sw = new Stopwatch();
-                var request = new BlockchainApi(BlockchainApi);
                 long? block = -1;
                 sw.Start();
                 while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
                 {
-                    var r = request.Operations.GetOperationId(operationId);
+                    var r = blockchainApi.Operations.GetOperationId(operationId);
                     if (r.GetResponseObject().State != BroadcastedTransactionState.InProgress)
                     {
                         if (r.GetResponseObject().State == BroadcastedTransactionState.Failed)
                             Assert.Fail("Operation got 'Failed status'");
-                        block = request.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().FirstOrDefault(a => a.Address == wallet)?.Block;
+                        block = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().FirstOrDefault(a => a.Address == wallet)?.Block;
                         break;
                     }
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
