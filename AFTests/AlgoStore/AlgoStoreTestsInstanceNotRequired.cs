@@ -505,13 +505,13 @@ namespace AFTests.AlgoStore
 
         [Test, Description("Al-649")]
         [Category("AlgoStore")]
-        public async Task CheckTailLogsForStoppedInstances()
+        [TestCase(AlgoInstanceType.Demo)]
+        [TestCase(AlgoInstanceType.Live)]
+        [TestCase(AlgoInstanceType.Test)]
+        public async Task CheckTailLogsForStoppedInstances(AlgoInstanceType algoInstanceType)
         {
             // Create an algo
             AlgoDataDTO algoData = await CreateAlgo();
-
-            Random rand = new Random();
-            var algoInstanceType = ((AlgoInstanceType)rand.Next(0, 2));
 
             // Create algo instance
             var instanceData = await SaveInstance(algoData, algoInstanceType);
@@ -544,6 +544,9 @@ namespace AFTests.AlgoStore
 
             // Create an instance
             var instanceData = await SaveInstance(algoData, algoInstanceType);
+
+            // Wait up to 3 minutes for the instance to start
+            await WaitAlgoInstanceToStart(instanceData.InstanceId);
 
             // Get the Instance
             ClientInstanceEntity instanceDataFromDB = await ClientInstanceRepository.TryGetAsync($"algo_{algoData.Id}", instanceData.InstanceId) as ClientInstanceEntity;
