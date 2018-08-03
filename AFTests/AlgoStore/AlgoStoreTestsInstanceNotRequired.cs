@@ -409,12 +409,151 @@ namespace AFTests.AlgoStore
                 }
             }
 
-            // Get instance log
-            var instanceLog = await GetInstanceTailLogFromLoggingService(postInstanceData);
+        // Get instance log
+        var instanceLog = await GetInstanceTailLogFromLoggingService(postInstanceData);
             var instanceMessages = instanceLog.Select(x => x.Message).ToList();
 
             // Assert message added to log
             Assert.That(instanceMessages, Does.Contain(message));
+        }
+
+        [Test, Description("AL-607")]
+        [Category("AlgoStore")]
+        [TestCase(AlgoInstanceType.Demo)]
+        [TestCase(AlgoInstanceType.Live)]
+        [TestCase(AlgoInstanceType.Test)]
+        public async Task AttemptToDeleteActiveAlgoInstance(AlgoInstanceType algoInstanceType)
+        {
+            // Create an algo
+            AlgoDataDTO algoData = await CreateAlgo();
+
+            // Start an instance
+            var instanceData = await SaveInstance(algoData, algoInstanceType);
+
+            // Build the body for the request
+            var model = new DeleteAlgoInstanceDTO
+            {
+                AlgoId = instanceData.AlgoId,
+                InstanceId = instanceData.InstanceId,
+                AlgoClientId = instanceData.AlgoClientId
+            };
+
+            // Send the request
+            var deleteAlgoInstance = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_DELETE_INSTANCE,
+                Helpers.EmptyDictionary, JsonUtils.SerializeObject(model), Method.DELETE);
+            Assert.That(deleteAlgoInstance.Status, Is.EqualTo(HttpStatusCode.BadRequest));
+
+            // Get instance data from DB
+            ClientInstanceEntity instanceDataFromDB = await ClientInstanceRepository.TryGetAsync($"algo_{algoData.Id}", instanceData.InstanceId) as ClientInstanceEntity;
+            Assert.That(instanceDataFromDB, Is.Not.Null);
+
+            // Wait up to 3 minutes for the instance to start
+            await WaitAlgoInstanceToStart(instanceData.InstanceId);
+
+            // Send the request
+            deleteAlgoInstance = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_DELETE_INSTANCE,
+                Helpers.EmptyDictionary, JsonUtils.SerializeObject(model), Method.DELETE);
+            Assert.That(deleteAlgoInstance.Status, Is.EqualTo(HttpStatusCode.BadRequest));
+
+            // Get instance data from DB
+            instanceDataFromDB = await ClientInstanceRepository.TryGetAsync($"algo_{algoData.Id}", instanceData.InstanceId) as ClientInstanceEntity;
+            Assert.That(instanceDataFromDB, Is.Not.Null);
+        }
+
+        [Test, Description("Al-636")]
+        [Category("AlgoStore")]
+        public async Task CheckDatePublishedOnAlgoVisibilityChange()
+        {
+            // Create an algo
+            AlgoDataDTO algoData = await CreateAlgo();
+
+            // Get the test algo
+            AlgoEntity algo = await AlgoRepository.TryGetAsync(algoData.ClientId, algoData.Id) as AlgoEntity;
+            Assert.That(algoData.AlgoVisibility, Is.EqualTo(AlgoVisibility.Private));
+            Assert.That(algoData.DatePublished, Is.Null);
+
+            // Build the body for the request
+            var model = new AddToPublicDTO
+            {
+                ClientId = algo.ClientId,
+                AlgoId = algo.AlgoId
+            };
+
+            // Change algo's visibility to 'public'
+            var changeAlgoVisibility = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_ADD_TO_PUBLIC, Helpers.EmptyDictionary, JsonUtils.SerializeObject(model), Method.POST);
+            Assert.That(changeAlgoVisibility.Status, Is.EqualTo(HttpStatusCode.OK));
+
+            // Get the test algo
+            algo = await AlgoRepository.TryGetAsync(algoData.ClientId, algoData.Id) as AlgoEntity;
+
+            // Check if the algo's visibility is successfully changed and DataPublished is available
+            Assert.That(algo.AlgoVisibility, Is.EqualTo(AlgoVisibility.Public));
+            Assert.That(algo.DatePublished.Value, Is.EqualTo(DateTime.UtcNow).Within(3).Minutes);
+
+            // Change the current algo's visibility to be 'private'
+            changeAlgoVisibility = await Consumer.ExecuteRequest(ApiPaths.ALGO_STORE_REMOVE_FROM_PUBLIC, Helpers.EmptyDictionary, JsonUtils.SerializeObject(model), Method.POST);
+            Assert.That(changeAlgoVisibility.Status, Is.EqualTo(HttpStatusCode.OK));
+
+            // Get the test algo with the changes
+            algo = await AlgoRepository.TryGetAsync(algoData.ClientId, algoData.Id) as AlgoEntity;
+
+            //Check if the algo's visibility is 'private' and DatePublished is NULL
+            Assert.That(algo.AlgoVisibility, Is.EqualTo(AlgoVisibility.Private));
+            Assert.That(algo.DatePublished, Is.Null);
+
+        }
+
+        [Test, Description("Al-649")]
+        [Category("AlgoStore")]
+        public async Task CheckTailLogsForStoppedInstances()
+        {
+            // Create an algo
+            AlgoDataDTO algoData = await CreateAlgo();
+
+            Random rand = new Random();
+            var algoInstanceType = ((AlgoInstanceType)rand.Next(0, 2));
+
+            // Create algo instance
+            var instanceData = await SaveInstance(algoData, algoInstanceType);
+
+            // Wait up to 3 minutes for the instance to start
+            await WaitAlgoInstanceToStart(instanceData.InstanceId);
+
+            // Stop the instance
+            await StopAlgoInstance(instanceData);
+
+            //Get the instance
+            ClientInstanceEntity instanceDataFromDB = await ClientInstanceRepository.TryGetAsync($"algo_{algoData.Id}", instanceData.InstanceId) as ClientInstanceEntity; 
+            Assert.That(instanceDataFromDB.AlgoInstanceStatus, Is.EqualTo(AlgoInstanceStatus.Stopped));
+
+            // Wait 30 seconds
+            Wait.ForPredefinedTime(30*1000);
+            var tailLog = await GetInstanceTailLogFromApi(instanceData);
+            Assert.That(tailLog, Is.Not.Null);
+        }
+
+        [Test, Description("Al-626")]
+        [Category("AlgoStore")]
+        [TestCase(AlgoInstanceType.Demo)]
+        [TestCase(AlgoInstanceType.Live)]
+        [TestCase(AlgoInstanceType.Test)]
+        public async Task CheckTcBuildData(AlgoInstanceType algoInstanceType)
+        {
+            // Create an algo
+            AlgoDataDTO algoData = await CreateAlgo();
+
+            // Create an instance
+            var instanceData = await SaveInstance(algoData, algoInstanceType);
+
+            // Get the Instance
+            ClientInstanceEntity instanceDataFromDB = await ClientInstanceRepository.TryGetAsync($"algo_{algoData.Id}", instanceData.InstanceId) as ClientInstanceEntity;
+            Assert.That(instanceDataFromDB, Is.Not.Null);
+
+            // Get TcBuild log
+            TcBuildEntity tcBuildDataFromDB = await TcBuildRepository.TryGetAsync("TcBuildEntity", instanceDataFromDB.TcBuildId) as TcBuildEntity;
+            Assert.That(tcBuildDataFromDB.InstanceId, Is.EqualTo(instanceDataFromDB.Id));
+            Assert.That(tcBuildDataFromDB.ClientId, Is.EqualTo(instanceDataFromDB.ClientId));
+            Assert.That(tcBuildDataFromDB.TcBuildId, Is.EqualTo(instanceDataFromDB.TcBuildId));
         }
     }
 }

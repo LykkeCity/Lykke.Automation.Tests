@@ -99,7 +99,7 @@ namespace AlgoStoreData.Fixtures
             int count = 45;
             while (instanceDataEntityExists.AlgoInstanceStatus != AlgoInstanceStatus.Started && count > 1) // TODO: Update when a health check endpoint is created
             {
-                Wait.ForPredefinedTime(5000); // Wait for five secodns before getting the algo instance data again
+                Wait.ForPredefinedTime(5000); // Wait for five seconds before getting the algo instance data again
                 instanceDataEntityExists = await ClientInstanceRepository.TryGetAsync(t => t.Id == instanceId) as ClientInstanceEntity;
                 count--;
             }

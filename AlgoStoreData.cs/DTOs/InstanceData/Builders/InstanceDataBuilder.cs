@@ -22,7 +22,7 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
             return algoMetaDataBuilder;
         }
 
-        public static InstanceDataDTO BuildInstanceData(AlgoDataDTO algoData, WalletDTO walletDTO, AlgoInstanceType instanceType, InstanceParameters instanceParameters, DaysOffsetDTO daysOffsetDTO)
+        public static InstanceDataDTO BuildInstanceData(AlgoDataDTO algoData, WalletDTO walletDTO, AlgoInstanceType instanceType, InstanceParameters instanceParameters, DaysOffsetDTO daysOffsetDTO, string instanceName = null)
         {
             AlgoMetaDataInformation algoMetaDataInformation = BuildAlgoMetaDataInformation(instanceParameters, daysOffsetDTO);
 
@@ -31,7 +31,7 @@ namespace AlgoStoreData.DTOs.InstanceData.Builders
                 algoData.Id = $"NonExistingAlgoId - {Helpers.GetFullUtcTimestamp()}";
             }
 
-            return new InstanceDataDTO(algoData, walletDTO, instanceType, algoMetaDataInformation);
+            return new InstanceDataDTO(algoData, walletDTO, instanceType, algoMetaDataInformation, instanceName);
         }
 
         private static AlgoMetaDataInformation BuildAlgoMetaDataInformation(InstanceParameters instanceParameters, DaysOffsetDTO daysOffsetDTO)

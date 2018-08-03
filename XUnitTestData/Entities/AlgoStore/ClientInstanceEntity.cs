@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using XUnitTestData.Domains.AlgoStore;
 using Microsoft.WindowsAzure.Storage.Table;
 using XUnitTestData.Enums;
@@ -21,22 +19,18 @@ namespace XUnitTestData.Entities.AlgoStore
         {
             get
             {
-                AlgoInstanceStatus type = 0;
-                Enum.TryParse(AlgoInstanceStatusValue, out type);
+                Enum.TryParse(AlgoInstanceStatusValue, out AlgoInstanceStatus type);
                 return type;
-            }
-            set => AlgoInstanceStatusValue = value.ToString();
+            }          
         }
 
         public AlgoInstanceType AlgoInstanceType
         {
             get
             {
-                AlgoInstanceType type = 0;
-                Enum.TryParse(AlgoInstanceTypeValue, out type);
+                Enum.TryParse(AlgoInstanceTypeValue, out AlgoInstanceType type);
                 return type;
             }
-            set => AlgoInstanceTypeValue = value.ToString();
         }
 
         public dynamic AlgoMetaDataInformation { get; set; }
@@ -55,5 +49,6 @@ namespace XUnitTestData.Entities.AlgoStore
         public DateTime? AlgoInstanceStopDate { get; set; }
         public string InstanceId { get; set; }
         public string WalletId { get; set; }
+        public string TcBuildId { get; set; }
     }
 }

@@ -18,6 +18,7 @@ namespace AlgoStoreData.DTOs.InstanceData
         public string InstanceName { get; set; }
         public AlgoInstanceType AlgoInstanceType { get; set; }
         public AlgoMetaDataInformation AlgoMetaDataInformation { get; set; }
+        public AlgoInstanceStatus AlgoInstanceStatusValue { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public double? FakeTradingTradingAssetBalance { get; set; }
@@ -27,11 +28,11 @@ namespace AlgoStoreData.DTOs.InstanceData
 
         public InstanceDataDTO() { }
 
-        public InstanceDataDTO(AlgoDataDTO algoData, WalletDTO wallet, AlgoInstanceType algoInstanceType, AlgoMetaDataInformation algoMetaDataInformation)
+        public InstanceDataDTO(AlgoDataDTO algoData, WalletDTO wallet, AlgoInstanceType algoInstanceType, AlgoMetaDataInformation algoMetaDataInformation, string instanceName = null)
         {
             AlgoId = algoData.Id;
             AlgoClientId = algoData.ClientId;
-            InstanceName = $"{algoInstanceType} {Helpers.GetTimestampIso8601()}{GlobalConstants.AutoTest}_IntanceName";
+            InstanceName = instanceName ?? $"{algoInstanceType} {Helpers.GetTimestampIso8601()}{GlobalConstants.AutoTest}_IntanceName";
             AlgoInstanceType = algoInstanceType;
             AlgoMetaDataInformation = algoMetaDataInformation;
 
