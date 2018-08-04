@@ -37,6 +37,12 @@ namespace Web.Utils
             _driver.FindElement(_by).Click();
         }
 
+        public void ClickByJavaScript()
+        {
+            var jsDriver = (IJavaScriptExecutor)_driver;
+            jsDriver.ExecuteScript("arguments[0].click();", _driver.FindElement(_by));
+        }
+
         public IWebElement FindElement(By by)
         {
             return _driver.FindElement(by);

@@ -30,16 +30,21 @@ namespace Web.Pages
             WebElement(txtPass).WaitForElementDisplayed().Clear();
             WebElement(txtPass).SendKeys(password);
             WebElement(btnSignIn).Click();
+            ClickRecaptchCheckBox();
+            WebElement(btnSignIn).Click();
         }
 
         public void ClickRecaptchCheckBox()
         {
             var source0 = _driver.PageSource;
-            _driver.SwitchTo().Frame(1);
+            _driver.SwitchTo().Frame(_driver.FindElement(By.CssSelector("iframe")));
             var source = _driver.PageSource;
-            ((IJavaScriptExecutor)_driver).ExecuteScript("document.querySelector(\"#recaptcha-anchor .recaptcha-checkbox-checkmark\").click()");
+            var el = WebElement(By.CssSelector("#recaptcha-anchor .recaptcha-checkbox-checkmark"));
+            var present = el.IsElementPresent();
+            el.WaitForElementPresent().ClickByJavaScript();
 
             System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
+            _driver.SwitchTo().DefaultContent();
         }
 
 

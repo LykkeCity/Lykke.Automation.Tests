@@ -18,6 +18,8 @@ namespace AFTests.Web
         protected LykkeRemoteWebDriver Driver2;
         static string HubUrl = "http://51.137.110.154:4445/wd/hub";
         //static string HubUrl = "http://127.0.0.1:8888";
+        //static string HubUrl = "http://127.0.0.1:4444/wd/hub";
+
 
         // [SetUp]
         public void SetUp()
@@ -47,6 +49,9 @@ namespace AFTests.Web
 
         private static void RemoveVideoFromDocker(string sessionId)
         {
+            if (HubUrl.Contains("127.0.0.1") || HubUrl.Contains("localhost"))
+                return;
+
             var delete = Requests.For(HubUrl.Replace("/wd/hub","")).Delete($"/video/{sessionId}").Build().Execute();
             if (delete.StatusCode != System.Net.HttpStatusCode.OK)
                 TestContext.Progress.WriteLine($"Error while deletion video for session {sessionId}");

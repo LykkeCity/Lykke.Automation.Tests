@@ -212,6 +212,9 @@ namespace XUnitTestCommon.TestsCore
 
         public void AttachVideo(string caseId, string hubUrl, string sessionId)
         {
+            if (hubUrl.Contains("127.0.0.1") || hubUrl.Contains("localhost"))
+                return;
+
             if (sessionId == null)
                 return;
 
