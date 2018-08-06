@@ -83,6 +83,10 @@ namespace AlgoStoreData.DependancyInjection
             builder.Register(c => new GenericRepository<AlgoInstanceTradesEntity, IAlgoInstanceTrades>(
                 AzureTableStorage<AlgoInstanceTradesEntity>.Create(reloadingDbManager, "AlgoInstanceTrades", _log, timespan)))
             .As<IDictionaryRepository<IAlgoInstanceTrades>>();
+
+            builder.Register(c => new GenericRepository<TcBuildEntity, ITcBuild>(
+                AzureTableStorage<TcBuildEntity>.Create(reloadingDbManager, "AlgoClientInstanceTable", _log, timespan)))
+            .As<IDictionaryRepository<ITcBuild>>();
         }
     }
 }

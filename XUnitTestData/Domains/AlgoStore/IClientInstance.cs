@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using XUnitTestData.Enums;
 
 namespace XUnitTestData.Domains.AlgoStore
 {
@@ -27,5 +24,6 @@ namespace XUnitTestData.Domains.AlgoStore
         DateTime? AlgoInstanceStopDate { get; set; }
         string InstanceId { get; set; }
         string WalletId { get; set; }
+        string TcBuildId { get; set; }
     }
 }

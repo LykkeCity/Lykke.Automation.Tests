@@ -2,11 +2,7 @@
 using AzureStorage.Blob;
 using Lykke.SettingsReader;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using XUnitTestData.Domains.AlgoStore;
 
 namespace XUnitTestData.Repositories.AlgoStore
 {

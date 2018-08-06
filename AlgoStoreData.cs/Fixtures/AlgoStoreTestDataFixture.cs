@@ -41,6 +41,7 @@ namespace AlgoStoreData.Fixtures
         public GenericRepository<StatisticsEntity, IStatisticss> StatisticsRepository;
         public GenericRepository<AlgoInstanceStatisticsEntity, IAlgoInstanceStatistics> AlgoInstanceStaticsticsRepository;
         public GenericRepository<AlgoInstanceTradesEntity, IAlgoInstanceTrades> AlgoInstanceTradesRepository;
+        public GenericRepository<TcBuildEntity, ITcBuild> TcBuildRepository;
         public List<BuilInitialDataObjectDTO> PreStoredMetadata;
         public AlgoBlobRepository BlobRepository;
         protected InstanceDataDTO postInstanceData;
@@ -101,6 +102,7 @@ namespace AlgoStoreData.Fixtures
             BlobRepository = new AlgoBlobRepository(reloadingDbManager, timespan);
             AlgoInstanceStaticsticsRepository = RepositoryUtils.ResolveGenericRepository<AlgoInstanceStatisticsEntity, IAlgoInstanceStatistics>(_container);
             AlgoInstanceTradesRepository = RepositoryUtils.ResolveGenericRepository<AlgoInstanceTradesEntity, IAlgoInstanceTrades>(_container);
+            TcBuildRepository = RepositoryUtils.ResolveGenericRepository<TcBuildEntity, ITcBuild>(_container);
         }
 
         [OneTimeTearDown]
