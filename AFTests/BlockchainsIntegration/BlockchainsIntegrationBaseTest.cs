@@ -121,9 +121,11 @@ namespace AFTests.BlockchainsIntegrationTests
                         maxWallets -= MAX_WALLETS_FOR_CASH_IN;
                     }
                 }
+                var balances = blockchainApi.Balances.GetBalances("500", null).GetResponseObject();
+
                 result.ToList().ForEach(w =>
                 {
-                    TestContext.Out.WriteLine($"wallet {w.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(wallet => wallet.Address == w.PublicAddress)?.Balance}");
+                    TestContext.Out.WriteLine($"wallet {w.PublicAddress} balance: {balances.Items.FirstOrDefault(wallet => wallet.Address == w.PublicAddress)?.Balance}");
                 });
 
                 //after all
