@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Text;
+using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 
 namespace Web.Utils
 {
     public class WebElement : IWebElement
     {
-        public string TagName { get; }
-        public string Text { get; }
-        public bool Enabled { get; }
-        public bool Selected { get; }
-        public Point Location { get; }
-        public Size Size { get; }
-        public bool Displayed { get; }
+        public string TagName { get { return _driver.FindElement(_by).TagName; } }
+        public string Text { get { return _driver.FindElement(_by).Text; } }
+        public bool Enabled { get { return _driver.FindElement(_by).Enabled; } }
+        public bool Selected { get { return _driver.FindElement(_by).Selected; } }
+        public Point Location { get { return _driver.FindElement(_by).Location; } }
+        public Size Size { get { return _driver.FindElement(_by).Size; } }
+        public bool Displayed { get { return _driver.FindElement(_by).Displayed; } }
 
         private LykkeRemoteWebDriver _driver;
         private By _by;
@@ -34,6 +36,7 @@ namespace Web.Utils
 
         public void Click()
         {
+            WaitForElementDisplayed();
             _driver.FindElement(_by).Click();
         }
 
@@ -82,8 +85,13 @@ namespace Web.Utils
         {
             var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(seconds));
             wait.IgnoreExceptionTypes(typeof(WebDriverException));
-            wait.Until(d => d.FindElements(_by).Count > 0);
-
+            try
+            {
+                wait.Until(d => d.FindElements(_by).Count > 0);
+            } catch (WebDriverTimeoutException)
+            {
+                throw new NoSuchElementException($"Element {_by} not present on page after {seconds} seconds");
+            }
             return this;
         }
 
@@ -91,14 +99,42 @@ namespace Web.Utils
         {
             var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(seconds));
             wait.IgnoreExceptionTypes(typeof(WebDriverException));
-            wait.Until(d => d.FindElement(_by).Displayed);
+            try
+            {
+                wait.Until(d => d.FindElement(_by).Displayed);
+            }
+            catch (WebDriverTimeoutException)
+            {
+                throw new NoSuchElementException($"Element {_by} not displayed on page after {seconds} seconds");
+            }
+            return this;
+        }
 
+        public WebElement WaitForElementDisplayedSafe(int seconds = 30)
+        {
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(seconds));
+            wait.IgnoreExceptionTypes(typeof(WebDriverException));
+            try
+            {
+                wait.Until(d => d.FindElement(_by).Displayed);
+            }
+            catch (WebDriverTimeoutException)
+            {
+              TestContext.Progress.WriteLine($"Element {_by} not displayed on page after {seconds} seconds");
+            }
             return this;
         }
 
         public bool IsElementPresent()
         {
             return FindElements(_by).Count > 0;
+        }
+
+        public WebElement HoverOver()
+        {
+            Actions builder = new Actions(_driver);
+            builder.MoveToElement(_driver.FindElement(_by)).Build().Perform();
+            return this;
         }
     }
 }

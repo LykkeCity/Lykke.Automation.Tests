@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using LykkeAutomationPrivate;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using OpenQA.Selenium;
@@ -19,6 +20,13 @@ namespace AFTests.Web
         static string HubUrl = "http://51.137.110.154:4445/wd/hub";
         //static string HubUrl = "http://127.0.0.1:8888";
         //static string HubUrl = "http://127.0.0.1:4444/wd/hub";
+
+        public static string WebWalletUrl { get
+            {
+                var env = EnvConfig.Env == Env.Dev ? "dev" : "test";
+
+                return $"https://webwallet-{env}.lykkex.net/";
+            } }
 
 
         // [SetUp]
