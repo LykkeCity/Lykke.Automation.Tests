@@ -186,12 +186,13 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainIntegration = "RaiBlocks";
                 BlockchainApi = "http://raiblocks-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://raiblocks-sign.autotests-service.svc.cluster.local/api";
-                HotWallet = "xrb_1ygmfkg4x394rnhpyhafs1qgwpdyiru1f393osig37qzoeiqqhpdxfa7w6kk";
-                HotWalletKey = "14DA575835310081121A8F7AA656377E5CBDBB96D8CE8672A564AF902F128FCB";
+                HotWallet = "xrb_3h4grchtxu6j1c3t9bhkh8wxgri1j8dsgp7ra3rkajexy7wszs49kwiuoc5z";
+                HotWalletKey = "1683C72CD811D066F86CA03873845EDAABA2BE1658179A5B76C699FBF9548156";
                 ExternalWalletAddress = "xrb_1e9pi3r7qa9qpsas68go55rmu7m8ku9np5pw3roeekx671joz7b1eiu1i8zk";
                 ExternalWalletKey = "4CF23CABA08F2C105DE9B80AA5CEBE37CAA3285E015258513F84E41100BDE2A9";
                 ExternalWallerAddressContext = "";
                 AssetId = "XRB";
+                BlockchainMiningTime = 10;
             }
         }
 
