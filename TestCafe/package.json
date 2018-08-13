@@ -1,0 +1,12 @@
+{
+  "name": "test-cafe",
+  "version": "0.0.0",
+  "description": "TestCafe",
+  "main": "app.js",
+  "author": {
+    "name": "Yasonau"
+  },
+  "devDependencies": {
+    "testcafe": "^0.21.1"
+  }
+}
