@@ -6,7 +6,9 @@
   "dependencies": {
     "cypress": "^3.0.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@cypress/mocha-teamcity-reporter": "^1.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

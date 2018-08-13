@@ -34,7 +34,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlgoStoreData", "AlgoStoreD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HFT", "HFT\HFT.csproj", "{17F9D45E-1F90-4C9F-99F9-4F70E91C6A30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIX", "FIX\FIX.csproj", "{06034EFE-6690-4A3A-96AF-1C2B966A041C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FIX", "FIX\FIX.csproj", "{06034EFE-6690-4A3A-96AF-1C2B966A041C}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "CypressProj", "Cypress\CypressProj.njsproj", "{5941A3B1-6732-47BB-801F-AC3B25011B56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,6 +104,10 @@ Global
 		{06034EFE-6690-4A3A-96AF-1C2B966A041C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06034EFE-6690-4A3A-96AF-1C2B966A041C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06034EFE-6690-4A3A-96AF-1C2B966A041C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5941A3B1-6732-47BB-801F-AC3B25011B56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5941A3B1-6732-47BB-801F-AC3B25011B56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5941A3B1-6732-47BB-801F-AC3B25011B56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5941A3B1-6732-47BB-801F-AC3B25011B56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
