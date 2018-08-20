@@ -21,10 +21,6 @@ namespace AFTests.ApiRegression.Steps
 
         public (string token, Key privateKey) Login(string email, string password, string pin)
         {
-            Assert.That(api.ClientState.GetClientState(email, null)
-                .Validate.StatusCode(HttpStatusCode.OK).Validate.NoApiError()
-                .GetResponseObject().Result
-                .IsRegistered, Is.True, $"Account {email} doesn't exist");
 
             string token = api.Auth.PostAuthResponse(new AuthenticateModel()
                 {

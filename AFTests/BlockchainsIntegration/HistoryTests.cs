@@ -65,8 +65,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 blockchainApi.Operations.PostHistoryFromToAddress("to", newWallet);
                 var response = blockchainApi.Operations.PostHistoryFromToAddress("to", newWallet);
                 Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.Conflict, HttpStatusCode.OK), "Unexpected status code");
-
-                blockchainApi.Operations.DeleteTranstactionsObservationToAddress(newWallet);
             }
         }
 
@@ -80,9 +78,6 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var response = blockchainApi.Operations.PostHistoryFromToAddress("to", newWallet);
                 response.Validate.StatusCode(HttpStatusCode.OK);
-
-                //disable : Raiblocks
-                blockchainApi.Operations.DeleteTranstactionsObservationToAddress(newWallet);
             }
         }
 
@@ -98,9 +93,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet);
                 var response = blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet);
                 Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.Conflict, HttpStatusCode.OK));
-
-                //disable : Raiblocks
-                blockchainApi.Operations.DeleteTranstactionsObservationToAddress(newWallet);
             }
         }
 
@@ -114,9 +106,6 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var response = blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet);
                 response.Validate.StatusCode(HttpStatusCode.OK);
-
-                //disable : Raiblocks
-                blockchainApi.Operations.DeleteTranstactionsObservationToAddress(newWallet);
             }
         }
     }

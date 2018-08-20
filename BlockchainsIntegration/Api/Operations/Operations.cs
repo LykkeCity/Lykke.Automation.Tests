@@ -19,7 +19,7 @@ namespace BlockchainsIntegration.Api
 
         public IResponse<BuildSingleReceiveTransactionResponse> PostTranstactionSingleRecieve(BuildSingleReceiveTransactionRequest model)
         {
-            return Request.Post("/transactions/single/recieve").AddJsonBody(model).Build().Execute<BuildSingleReceiveTransactionResponse>();
+            return Request.Post("/transactions/single/receive").AddJsonBody(model).Build().Execute<BuildSingleReceiveTransactionResponse>();
         }
 
         public IResponse PostTransactionsBroadcast(BroadcastTransactionRequest model)
@@ -67,15 +67,15 @@ namespace BlockchainsIntegration.Api
             return Request.Put("/transactions").AddJsonBody(model).Build().Execute<PutTransactionsResponse>();
         }
 
-        public IResponse DeleteTranstactionsObservationFromAddress(string address)
-        {
-            return Request.Delete($"/transactions/history/from/{address}/observation").Build().Execute();
-        }
+        //public IResponse DeleteTranstactionsObservationFromAddress(string address)
+        //{
+        //    return Request.Delete($"/transactions/history/from/{address}/observation").Build().Execute();
+        //}
 
-        public IResponse DeleteTranstactionsObservationToAddress(string address)
-        {
-            return Request.Delete($"/transactions/history/to/{address}/observation").Build().Execute();
-        }
+        //public IResponse DeleteTranstactionsObservationToAddress(string address)
+        //{
+        //    return Request.Delete($"/transactions/history/to/{address}/observation").Build().Execute();
+        //}
 
         public IResponse<TransactionHistory[]> GetTransactionHistorFromAddress(string address, string take, string afterHash = null)
         {
