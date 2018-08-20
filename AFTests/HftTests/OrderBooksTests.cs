@@ -39,6 +39,7 @@ namespace AFTests.HftTests
             }
         }
 
+        [NonParallelizable]
         public class GetOrderBooksGetNewOrder : HftBaseTest
         {
             [Test]
@@ -54,8 +55,8 @@ namespace AFTests.HftTests
                 HttpStatusCode code = HttpStatusCode.BadRequest;
                 do
                 {
-                    price = double.Parse(TestData.GenerateNumbers(3)) / Math.Pow(10, 3);
-                    var request = new LimitOrderRequest() { Price = price, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = volume };
+                    price = double.Parse(TestData.GenerateNumbers(3)) / Math.Pow(10, 2);
+                    var request = new PlaceLimitOrderModel() { Price = price, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = volume };
 
                     var response = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
                     code = response.StatusCode;

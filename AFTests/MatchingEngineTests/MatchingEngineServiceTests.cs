@@ -28,7 +28,7 @@ namespace AFTMatchingEngine
         {
             AccountEntity testAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
             Assert.NotNull(testAccount);
-            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalance);
 
             double realBallance = accountBalance.Balance - accountBalance.Reserved;
@@ -39,7 +39,7 @@ namespace AFTMatchingEngine
             double badCashOutAmmount = (realBallance + 0.1) * -1;
 
             MeResponseModel meBadCashOutResponse = await this.Consumer.Client.CashInOutAsync(
-                Guid.NewGuid().ToString(), testAccount.Id, accountBalance.Asset, badCashOutAmmount);
+                Guid.NewGuid().ToString(), testAccount.Id, accountBalance.AssetId, badCashOutAmmount);
 
 
             Assert.True(meBadCashOutResponse.Status == MeStatusCodes.LowBalance);
@@ -52,7 +52,7 @@ namespace AFTMatchingEngine
             double goodCashOutAmmount = Math.Round((realBallance / 10) * -1, this.AssetPrecission);
 
             MeResponseModel meGoodCashOutResponse = await this.Consumer.Client.CashInOutAsync(
-                goodCashOutID, testAccount.Id, accountBalance.Asset, goodCashOutAmmount);
+                goodCashOutID, testAccount.Id, accountBalance.AssetId, goodCashOutAmmount);
 
             Assert.True(meGoodCashOutResponse.Status == MeStatusCodes.Ok);
 
@@ -61,7 +61,7 @@ namespace AFTMatchingEngine
             Assert.NotNull(message);
 
             Assert.True(message.clientId == testAccount.Id);
-            Assert.True(message.asset == accountBalance.Asset);
+            Assert.True(message.asset == accountBalance.AssetId);
 
             if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedVolume))
             {
@@ -69,7 +69,7 @@ namespace AFTMatchingEngine
             }
 
             AccountEntity testAccountCheck = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            BalanceDTO balanceCheck = testAccountCheck.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO balanceCheck = testAccountCheck.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
 
             Assert.True(Math.Round(balanceCheck.Balance, this.AssetPrecission) == Math.Round(accountBalance.Balance + goodCashOutAmmount, this.AssetPrecission)); // TODO get asset accuracy
 
@@ -86,7 +86,7 @@ namespace AFTMatchingEngine
             Assert.NotNull(message);
 
             Assert.True(message.clientId == testAccount.Id);
-            Assert.True(message.asset == accountBalance.Asset);
+            Assert.True(message.asset == accountBalance.AssetId);
 
             if (Double.TryParse(message.volume, NumberStyles.Float, CultureInfo.InvariantCulture, out parsedVolume))
             {
@@ -99,7 +99,7 @@ namespace AFTMatchingEngine
             AccountEntity testAccountAfter = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
             Assert.NotNull(testAccountAfter);
 
-            BalanceDTO accountBalanceAfter = testAccountAfter.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO accountBalanceAfter = testAccountAfter.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalanceAfter);
 
             Assert.True(accountBalance.Balance == accountBalanceAfter.Balance);
@@ -112,12 +112,12 @@ namespace AFTMatchingEngine
         {
             AccountEntity testAccount1 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
             Assert.NotNull(testAccount1);
-            BalanceDTO accountBalance1 = testAccount1.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO accountBalance1 = testAccount1.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalance1);
 
             AccountEntity testAccount2 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId2);
             Assert.NotNull(testAccount2);
-            BalanceDTO accountBalance2 = testAccount2.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO accountBalance2 = testAccount2.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalance2);
 
             //Attempt invalid transfer
@@ -153,9 +153,9 @@ namespace AFTMatchingEngine
             Assert.True(checkCashSwapOperation.ToClientId == testAccount2.Id);
 
             AccountEntity checkTestAccount1 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            BalanceDTO checkAccountBalance1 = checkTestAccount1.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO checkAccountBalance1 = checkTestAccount1.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             AccountEntity checkTestAccount2 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId2);
-            BalanceDTO checkAccountBalance2 = checkTestAccount2.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO checkAccountBalance2 = checkTestAccount2.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
 
             Assert.True(Math.Round(checkAccountBalance1.Balance, this.AssetPrecission) == Math.Round(accountBalance1.Balance - transferAmount, this.AssetPrecission)); // TODO get asset accuracy
             Assert.True(Math.Round(checkAccountBalance2.Balance, this.AssetPrecission) == Math.Round(accountBalance2.Balance + transferAmount, this.AssetPrecission)); // TODO get asset accuracy
@@ -184,9 +184,9 @@ namespace AFTMatchingEngine
             Assert.True(checkCashSwapBackOperation.ToClientId == testAccount1.Id);
 
             checkTestAccount1 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            checkAccountBalance1 = checkTestAccount1.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            checkAccountBalance1 = checkTestAccount1.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             checkTestAccount2 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId2);
-            checkAccountBalance2 = checkTestAccount2.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            checkAccountBalance2 = checkTestAccount2.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
 
             //balances should be back to their initial state after 2 transfers back and forward
             Assert.True(accountBalance1.Balance == checkAccountBalance1.Balance);
@@ -200,16 +200,16 @@ namespace AFTMatchingEngine
         {
             AccountEntity testAccount1 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
             Assert.NotNull(testAccount1);
-            BalanceDTO accountBalance1Asset1 = testAccount1.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO accountBalance1Asset1 = testAccount1.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalance1Asset1);
-            BalanceDTO accountBalance1Asset2 = testAccount1.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            BalanceDTO accountBalance1Asset2 = testAccount1.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
             Assert.NotNull(accountBalance1Asset2);
 
             AccountEntity testAccount2 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId2);
             Assert.NotNull(testAccount2);
-            BalanceDTO accountBalance2Asset1 = testAccount2.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO accountBalance2Asset1 = testAccount2.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalance2Asset1);
-            BalanceDTO accountBalance2Asset2 = testAccount2.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            BalanceDTO accountBalance2Asset2 = testAccount2.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
             Assert.NotNull(accountBalance2Asset2);
 
 
@@ -257,12 +257,12 @@ namespace AFTMatchingEngine
             Assert.True(checkCashSwapOperation.Amount2 == swapAmount2);
 
             AccountEntity checkTestAccount1 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            BalanceDTO checkAccountBalance1Asset1 = checkTestAccount1.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
-            BalanceDTO checkAccountBalance1Asset2 = checkTestAccount1.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            BalanceDTO checkAccountBalance1Asset1 = checkTestAccount1.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
+            BalanceDTO checkAccountBalance1Asset2 = checkTestAccount1.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
 
             AccountEntity checkTestAccount2 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId2);
-            BalanceDTO checkAccountBalance2Asset1 = checkTestAccount2.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
-            BalanceDTO checkAccountBalance2Asset2 = checkTestAccount2.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            BalanceDTO checkAccountBalance2Asset1 = checkTestAccount2.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
+            BalanceDTO checkAccountBalance2Asset2 = checkTestAccount2.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
 
             Assert.True(Math.Round(checkAccountBalance1Asset1.Balance, this.AssetPrecission) == Math.Round(accountBalance1Asset1.Balance - swapAmount1, this.AssetPrecission));
             Assert.True(Math.Round(checkAccountBalance2Asset1.Balance, this.AssetPrecission) == Math.Round(accountBalance2Asset1.Balance + swapAmount1, this.AssetPrecission));
@@ -301,12 +301,12 @@ namespace AFTMatchingEngine
             Assert.True(checkCashSwapOperation.Amount2 == swapAmount2);
 
             checkTestAccount1 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            checkAccountBalance1Asset1 = checkTestAccount1.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
-            checkAccountBalance1Asset2 = checkTestAccount1.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            checkAccountBalance1Asset1 = checkTestAccount1.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
+            checkAccountBalance1Asset2 = checkTestAccount1.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
 
             checkTestAccount2 = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId2);
-            checkAccountBalance2Asset1 = checkTestAccount2.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
-            checkAccountBalance2Asset2 = checkTestAccount2.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            checkAccountBalance2Asset1 = checkTestAccount2.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
+            checkAccountBalance2Asset2 = checkTestAccount2.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
 
             // balances should be back to their initial state
             Assert.True(accountBalance1Asset1.Balance == checkAccountBalance1Asset1.Balance);
@@ -322,7 +322,7 @@ namespace AFTMatchingEngine
         {
             AccountEntity testAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
             Assert.NotNull(testAccount);
-            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalance);
 
 
@@ -343,7 +343,7 @@ namespace AFTMatchingEngine
             Assert.True(balance.oldReserved == balance.newReserved);
 
             AccountEntity checkTestAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            BalanceDTO checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
 
             Assert.True(checkAccountBalance.Balance == newBalance);
 
@@ -362,7 +362,7 @@ namespace AFTMatchingEngine
             Assert.True(balance.oldReserved == balance.newReserved);
 
             checkTestAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
 
             Assert.True(checkAccountBalance.Balance == accountBalance.Balance);
         }
@@ -374,7 +374,7 @@ namespace AFTMatchingEngine
         {
             AccountEntity testAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
             Assert.NotNull(testAccount);
-            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalance);
 
             string limitOrderID = Guid.NewGuid().ToString();
@@ -406,7 +406,7 @@ namespace AFTMatchingEngine
             Assert.True(LimitOrderResponse.Status == MeStatusCodes.Ok);
 
             AccountEntity checkTestAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            BalanceDTO checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
 
             Assert.True(Math.Round(checkAccountBalance.Reserved, this.AssetPrecission) == Math.Round(accountBalance.Reserved + amount, this.AssetPrecission));
 
@@ -438,7 +438,7 @@ namespace AFTMatchingEngine
             Assert.True(LimitOrderCancelResponse.Status == MeStatusCodes.Ok);
 
             checkTestAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
 
             Assert.True(checkAccountBalance.Reserved == accountBalance.Reserved);
 
@@ -461,7 +461,7 @@ namespace AFTMatchingEngine
         {
             AccountEntity testAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
             Assert.NotNull(testAccount);
-            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            BalanceDTO accountBalance = testAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
             Assert.NotNull(accountBalance);
 
             string limitOrderID = Guid.NewGuid().ToString();
@@ -493,7 +493,7 @@ namespace AFTMatchingEngine
             Assert.True(LimitOrderResponse.Status == MeStatusCodes.Ok);
 
             AccountEntity checkTestAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            BalanceDTO checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            BalanceDTO checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
 
             Assert.True(Math.Round(checkAccountBalance.Reserved, this.AssetPrecission) == Math.Round(accountBalance.Reserved + amount, this.AssetPrecission));
 
@@ -514,7 +514,7 @@ namespace AFTMatchingEngine
             Assert.True(LimitOrderCancelResponse.Status == MeStatusCodes.Ok);
 
             checkTestAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            checkAccountBalance = checkTestAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
 
             Assert.True(checkAccountBalance.Reserved == accountBalance.Reserved);
 
@@ -538,9 +538,9 @@ namespace AFTMatchingEngine
         {
             AccountEntity testAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
             Assert.NotNull(testAccount);
-            BalanceDTO accountBalance1 = testAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO accountBalance1 = testAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalance1);
-            BalanceDTO accountBalance2 = testAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            BalanceDTO accountBalance2 = testAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
             Assert.NotNull(accountBalance2);
 
             string badMarketOrderId = Guid.NewGuid().ToString();
@@ -628,8 +628,8 @@ namespace AFTMatchingEngine
 
             //check account balance change
             AccountEntity checkTestAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            BalanceDTO checkAccountBalance1 = checkTestAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
-            BalanceDTO checkAccountBalance2 = checkTestAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            BalanceDTO checkAccountBalance1 = checkTestAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
+            BalanceDTO checkAccountBalance2 = checkTestAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
 
             Assert.True(Math.Round(checkAccountBalance1.Balance - accountBalance1.Balance, this.AssetPrecission) == Math.Round(sumOfLimitVolumes, this.AssetPrecission));
             Assert.True(Math.Round(checkAccountBalance2.Balance - accountBalance2.Balance, this.AssetPrecission) == Math.Round(sumOfMarketVolumes * -1, this.AssetPrecission));
@@ -643,9 +643,9 @@ namespace AFTMatchingEngine
         {
             AccountEntity testAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
             Assert.NotNull(testAccount);
-            BalanceDTO accountBalance1 = testAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
+            BalanceDTO accountBalance1 = testAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
             Assert.NotNull(accountBalance1);
-            BalanceDTO accountBalance2 = testAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            BalanceDTO accountBalance2 = testAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
             Assert.NotNull(accountBalance2);
 
             string badMarketOrderId = Guid.NewGuid().ToString();
@@ -732,8 +732,8 @@ namespace AFTMatchingEngine
 
             //check accoutn balance change
             AccountEntity checkTestAccount = (AccountEntity)await this.AccountRepository.TryGetAsync(this.TestAccountId1);
-            BalanceDTO checkAccountBalance1 = checkTestAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset1).FirstOrDefault();
-            BalanceDTO checkAccountBalance2 = checkTestAccount.BalancesParsed.Where(b => b.Asset == this.TestAsset2).FirstOrDefault();
+            BalanceDTO checkAccountBalance1 = checkTestAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset1).FirstOrDefault();
+            BalanceDTO checkAccountBalance2 = checkTestAccount.BalancesParsed.Where(b => b.AssetId == this.TestAsset2).FirstOrDefault();
 
             Assert.True(Math.Round(checkAccountBalance1.Balance - accountBalance1.Balance, this.AssetPrecission) == Math.Round(sumOfMarketVolumes * -1, this.AssetPrecission));
             Assert.True(Math.Round(checkAccountBalance2.Balance - accountBalance2.Balance, this.AssetPrecission) == Math.Round(sumOfLimitVolumes, this.AssetPrecission));

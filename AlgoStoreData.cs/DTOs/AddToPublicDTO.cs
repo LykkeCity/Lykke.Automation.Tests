@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AlgoStoreData.DTOs
+﻿namespace AlgoStoreData.DTOs
 {
+    //Add to public and Remove from public
     public class AddToPublicDTO
     {
         public string ClientId { get; set; }

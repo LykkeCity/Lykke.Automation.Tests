@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using AzureStorage.Tables;
-using XUnitTestCommon;
+using Common.Log;
+using Lykke.SettingsReader;
+using XUnitTestCommon.Settings;
 using XUnitTestData.Domains;
 using XUnitTestData.Domains.ApiV2;
 using XUnitTestData.Domains.BlueApi;
@@ -13,33 +15,41 @@ namespace BlueApiData.DependencyInjection
 {
     public class BlueApiTestModule : Module
     {
-        private readonly ConfigBuilder _configBuilder;
+        private readonly AppSettings _appSettings;
 
-        public BlueApiTestModule(ConfigBuilder configBuilder)
+        private readonly IReloadingManager<AppSettings> _settings;
+        private readonly ILog _log;
+
+        public BlueApiTestModule(AppSettings appSettings)
         {
-            _configBuilder = configBuilder;
+            _appSettings = appSettings;
+            _log = null;
+        }
+
+        public BlueApiTestModule(IReloadingManager<AppSettings> settings)
+        {
+            _settings = settings;
+            _log = null;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
+            var reloadingDbManager = _settings.ConnectionString(x => x.AlgoApi.Db.TableStorageConnectionString);
+
             builder.Register(c => new GenericRepository<PledgeEntity, IPledgeEntity>(
-                    new AzureTableStorage<PledgeEntity>(
-                        _configBuilder.Config["MainConnectionString"], "Pledges", null), "Pledge"))
+                    AzureTableStorage<PledgeEntity>.Create(reloadingDbManager, "Pledges", _log), "Pledge"))
                 .As<IDictionaryRepository<IPledgeEntity>>();
 
             builder.Register(c => new GenericRepository<AccountEntity, IAccount>(
-                    new AzureTableStorage<AccountEntity>(
-                        _configBuilder.Config["MainConnectionString"], "Accounts", null), "ClientBalance"))
+                    AzureTableStorage<AccountEntity>.Create(reloadingDbManager, "Accounts", _log), "ClientBalance"))
                 .As<IDictionaryRepository<IAccount>>();
 
             builder.Register(c => new GenericRepository<PersonalDataEntity, IPersonalData>(
-                   new AzureTableStorage<PersonalDataEntity>(
-                       _configBuilder.Config["MainConnectionString"], "PersonalData", null), "PD"))
+                    AzureTableStorage<PersonalDataEntity>.Create(reloadingDbManager, "PersonalData", _log), "PD"))
                .As<IDictionaryRepository<IPersonalData>>();
 
             builder.Register(c => new GenericRepository<ReferralLinkEntity, IReferralLink>(
-                    new AzureTableStorage<ReferralLinkEntity>(
-                        _configBuilder.Config["MainConnectionString"], "ReferralLinks", null), "ReferallLink"))
+                    AzureTableStorage<ReferralLinkEntity>.Create(reloadingDbManager, "ReferralLinks", _log), "ReferallLink"))
                 .As<IDictionaryRepository<IReferralLink>>();
         }
     }

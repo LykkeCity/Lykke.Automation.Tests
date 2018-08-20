@@ -9,14 +9,14 @@ namespace HFT.Api
     public class OrderBooks : ApiBase
     {
 
-        public IResponse<List<OrderBook>> GetOrderBooks()
+        public IResponse<List<OrderBookModel>> GetOrderBooks()
         {
-            return Request.Get("/OrderBooks").Build().Execute<List<OrderBook>>();
+            return Request.Get("/OrderBooks").Build().Execute<List<OrderBookModel>>();
         }
 
-        public IResponse<List<OrderBook>> GetOrderBooks(string assetPairId)
+        public IResponse<List<OrderBookModel>> GetOrderBooks(string assetPairId)
         {
-            return Request.Get($"/OrderBooks/{assetPairId}").Build().Execute<List<OrderBook>>();
+            return Request.Get($"/OrderBooks/{assetPairId}").Build().Execute<List<OrderBookModel>>();
         }
     }
 }

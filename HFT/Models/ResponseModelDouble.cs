@@ -6,9 +6,13 @@
 
 namespace Lykke.Client.AutorestClient.Models
 {
+    using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
 
+    /// <summary>
+    /// Response model with a result
+    /// </summary>
     public partial class ResponseModelDouble
     {
         /// <summary>
@@ -22,7 +26,9 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the ResponseModelDouble class.
         /// </summary>
-        public ResponseModelDouble(double result, ErrorModel error = default(ErrorModel))
+        /// <param name="result">The response result.</param>
+        /// <param name="error">The  possible error.</param>
+        public ResponseModelDouble(double result, ErrorModel error)
         {
             Result = result;
             Error = error;
@@ -35,11 +41,13 @@ namespace Lykke.Client.AutorestClient.Models
         partial void CustomInit();
 
         /// <summary>
+        /// Gets or sets the response result.
         /// </summary>
         [JsonProperty(PropertyName = "Result")]
         public double Result { get; set; }
 
         /// <summary>
+        /// Gets or sets the  possible error.
         /// </summary>
         [JsonProperty(PropertyName = "Error")]
         public ErrorModel Error { get; set; }
@@ -47,11 +55,15 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Validate the object.
         /// </summary>
-        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// <exception cref="ValidationException">
         /// Thrown if validation fails
         /// </exception>
         public virtual void Validate()
         {
+            if (Error == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Error");
+            }
             if (Error != null)
             {
                 Error.Validate();

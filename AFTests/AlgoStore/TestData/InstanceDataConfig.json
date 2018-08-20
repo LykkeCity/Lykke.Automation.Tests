@@ -1,0 +1,74 @@
+﻿{
+  "ValidMetaData": {
+    "AssetPair": "BTCUSD",
+    "TradedAsset": "USD",
+    "InstanceTradeVolume": 4,
+    "InstanceCandleInterval": "60",
+    "FunctionCandleInterval": "86400",
+    "FunctionCandleOperationMode": "1",
+    "FunctionPeriod": 4,
+    "InstanceFunctions": [ "SMA_Short", "SMA_Long" ],
+    "UseInvalidAlgoId": null,
+    "WithoutMetadata": null
+  },
+  "InvalidInstanceAssetPair": {
+    "AssetPair": "BTCBTC",
+    "TradedAsset": "USD",
+    "InstanceTradeVolume": 2,
+    "InstanceCandleInterval": "60",
+    "FunctionCandleInterval": "86400",
+    "FunctionCandleOperationMode": "1",
+    "FunctionPeriod": 4,
+    "InstanceFunctions": [ "SMA_Short", "SMA_Long" ],
+    "UseInvalidAlgoId": null,
+    "WithoutMetadata": null
+  },
+  "InvalidInstanceTradedAsset": {
+    "AssetPair": "BTCUSD",
+    "TradedAsset": "EUR",
+    "InstanceTradeVolume": 4,
+    "InstanceCandleInterval": "60",
+    "FunctionCandleInterval": "86400",
+    "FunctionCandleOperationMode": "1",
+    "FunctionPeriod": 4,
+    "InstanceFunctions": [ "SMA_Short", "SMA_Long" ],
+    "UseInvalidAlgoId": null,
+    "WithoutMetadata": null
+  },
+  "UseInvalidAlgoId": {
+    "AssetPair": "BTCUSD",
+    "TradedAsset": "USD",
+    "InstanceTradeVolume": 4,
+    "InstanceCandleInterval": "60",
+    "FunctionCandleInterval": "86400",
+    "FunctionCandleOperationMode": "1",
+    "FunctionPeriod": 4,
+    "InstanceFunctions": [ "SMA_Short", "SMA_Long" ],
+    "UseInvalidAlgoId": true,
+    "WithoutMetadata": null
+  },
+  "NegativeTradeVolume": {
+    "AssetPair": "BTCUSD",
+    "TradedAsset": "USD",
+    "InstanceTradeVolume": -2,
+    "InstanceCandleInterval": "60",
+    "FunctionCandleInterval": "86400",
+    "FunctionCandleOperationMode": "1",
+    "FunctionPeriod": 4,
+    "InstanceFunctions": [ "SMA_Short", "SMA_Long" ],
+    "UseInvalidAlgoId": null,
+    "WithoutMetadata": null
+  },
+  "ZeroTradedVolume": {
+    "AssetPair": "BTCUSD",
+    "TradedAsset": "USD",
+    "InstanceTradeVolume": 0,
+    "InstanceCandleInterval": "60",
+    "FunctionCandleInterval": "86400",
+    "FunctionCandleOperationMode": "1",
+    "FunctionPeriod": 4,
+    "InstanceFunctions": [ "SMA_Short", "SMA_Long" ],
+    "UseInvalidAlgoId": null,
+    "WithoutMetadata": null
+  }
+}

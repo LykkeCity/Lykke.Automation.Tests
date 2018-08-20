@@ -1,32 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 using AutoMapper;
 using BlueApiData.DependencyInjection;
 using BlueApiData.DTOs;
+using Lykke.Service.Balances.Client;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
-using XUnitTestData.Domains.Authentication;
-using XUnitTestData.Domains.BlueApi;
-using XUnitTestCommon.Utils;
-using XUnitTestData.Repositories;
-using XUnitTestData.Entities.BlueApi;
-using XUnitTestData.Domains.ApiV2;
-using XUnitTestData.Entities.ApiV2;
-using NUnit.Framework;
-using XUnitTestCommon.Tests;
 using XUnitTestCommon.DTOs;
 using XUnitTestCommon.GlobalActions;
-using Lykke.Service.Balances.Client;
+using XUnitTestCommon.Settings;
+using XUnitTestCommon.Settings.AutomatedFunctionalTests;
+using XUnitTestCommon.Tests;
+using XUnitTestCommon.Utils;
+using XUnitTestData.Domains.ApiV2;
+using XUnitTestData.Domains.BlueApi;
+using XUnitTestData.Entities.ApiV2;
+using XUnitTestData.Entities.BlueApi;
+using XUnitTestData.Repositories;
 
 namespace BlueApiData.Fixtures
 {
     [TestFixture]
     public partial class BlueApiTestDataFixture : BaseTest
     {
-        private ConfigBuilder _configBuilder;
-        private ConfigBuilder _clientAccountConfigBuilder;
+        private AppSettings _appSettings;
+        private BlueApiSettings _blueApiAppSettings;
+        private ClientAccountSettings _clientAccountAppSettings;
         private IContainer _container;
         public IMapper Mapper;
 
@@ -66,8 +67,9 @@ namespace BlueApiData.Fixtures
         [OneTimeSetUp]
         public void Initialize()
         {
-            _configBuilder = new ConfigBuilder("BlueApi");
-            _clientAccountConfigBuilder = new ConfigBuilder("ClientAccount");
+            _appSettings = new ConfigBuilder().ReloadingManager.CurrentValue;
+            _blueApiAppSettings = _appSettings.AutomatedFunctionalTests.BlueApi;
+            _clientAccountAppSettings = _appSettings.AutomatedFunctionalTests.ClientAccount;
 
             PrepareDependencyContainer();
             PrepareApiConsumers().Wait();
@@ -77,17 +79,17 @@ namespace BlueApiData.Fixtures
 
         private async Task PrepareApiConsumers()
         {
-            Consumer = new ApiConsumer(_configBuilder);
+            Consumer = new ApiConsumer(_blueApiAppSettings);
 
             PledgeApiConsumers = new Dictionary<string, ApiConsumer>();
-            this.BalancesClient = new BalancesClient(_configBuilder.Config["BalancesServiceUrl"], null);
-            ClientAccountConsumer = new ApiConsumer(_clientAccountConfigBuilder);
+            this.BalancesClient = new BalancesClient(_blueApiAppSettings.BalancesServiceUrl, null);
+            ClientAccountConsumer = new ApiConsumer(_clientAccountAppSettings);
             
         }
 
         public async Task CreatePledgeClientAndApiConsumer(string purpose)
         {
-            ApiConsumer consumer = new ApiConsumer(_configBuilder);
+            ApiConsumer consumer = new ApiConsumer(_blueApiAppSettings);
             await consumer.RegisterNewUser();
             AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.Account.Id));
             PledgeApiConsumers.Add(purpose, consumer);
@@ -99,7 +101,7 @@ namespace BlueApiData.Fixtures
 
             for (int i = 0; i < n; i++)
             {
-                ApiConsumer consumer = new ApiConsumer(_configBuilder);
+                ApiConsumer consumer = new ApiConsumer(_blueApiAppSettings);
                 await consumer.RegisterNewUser();
                 AddOneTimeCleanupAction(async () => await ClientAccounts.DeleteClientAccount(consumer.ClientInfo.Account.Id));
                 result.Add(consumer);
@@ -111,7 +113,7 @@ namespace BlueApiData.Fixtures
         private void PrepareDependencyContainer()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new BlueApiTestModule(_configBuilder));
+            builder.RegisterModule(new BlueApiTestModule(_appSettings));
             _container = builder.Build();
             
             PledgeRepository = RepositoryUtils.ResolveGenericRepository<PledgeEntity, IPledgeEntity>(this._container);
@@ -127,7 +129,7 @@ namespace BlueApiData.Fixtures
 
         public async Task CreateLykkeBluePartnerClientAndApiConsumer()
         {
-            var consumer = new ApiConsumer(_configBuilder);
+            var consumer = new ApiConsumer(_blueApiAppSettings);
 
             await consumer.RegisterNewUser(
                 new ClientRegisterDTO
@@ -137,7 +139,7 @@ namespace BlueApiData.Fixtures
                     ContactPhone = Helpers.Random.Next(1000000, 9999999).ToString(),
                     Password = Helpers.RandomString(10),
                     Hint = Helpers.RandomString(3),
-                    PartnerId = _configBuilder.Config["LykkeBluePartnerId"] // "Lykke.blue"
+                    PartnerId = _blueApiAppSettings.LykkeBluePartnerId // "Lykke.blue"
                 }
             );
 
@@ -154,7 +156,7 @@ namespace BlueApiData.Fixtures
                     ContactPhone = Helpers.Random.Next(1000000, 9999999).ToString(),
                     Password = Helpers.RandomString(10),
                     Hint = Helpers.RandomString(3),
-                    PartnerId = _configBuilder.Config["TestPartnerId"] //  "NewTestPartner"
+                    PartnerId = _blueApiAppSettings.TestPartnerId //  "NewTestPartner"
                 }
             );
 

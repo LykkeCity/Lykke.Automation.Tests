@@ -15,6 +15,7 @@ namespace AFTests.HftTests
     {
         protected Hft hft = new Hft();
         protected string ApiKey = HFTSettings.GetHFTSettings().ApiKey;
+        protected string SecondWalletApiKey = HFTSettings.GetHFTSettings().SecondApiKey;
         protected string FirstAssetId = HFTSettings.GetHFTSettings().FirstAssetId;
         protected string SecondAssetId = HFTSettings.GetHFTSettings().SecondAssetId;
         protected string AssetPair = HFTSettings.GetHFTSettings().AssetPair;
@@ -34,8 +35,7 @@ namespace AFTests.HftTests
 
             var response = hft.Orders.GetOrders(OrderStatus.InOrderBook, skip, take, ApiKey);
             response.Validate.StatusCode(HttpStatusCode.OK);
-
-            response.GetResponseObject().ForEach(o => hft.Orders.PostOrdersCancelOrder(o.Id.ToString(), ApiKey));
+            hft.Orders.DeleteOrders(ApiKey);
         }
 
         [OneTimeTearDown]

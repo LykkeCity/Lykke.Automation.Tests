@@ -6,9 +6,13 @@
 
 namespace Lykke.Client.AutorestClient.Models
 {
+    using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
 
+    /// <summary>
+    /// Asset pair response model for asset pairs requests.
+    /// </summary>
     public partial class AssetPairModel
     {
         /// <summary>
@@ -22,14 +26,28 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the AssetPairModel class.
         /// </summary>
-        public AssetPairModel(int accuracy, int invertedAccuracy, double minVolume, double minInvertedVolume, string id = default(string), string name = default(string), string baseAssetId = default(string), string quotingAssetId = default(string))
+        /// <param name="id">The asset-pair identifier, eg BTCUSD.</param>
+        /// <param name="baseAssetId">The base asset id, eg BTC in case of
+        /// BTC/USD.</param>
+        /// <param name="quotingAssetId">The quoting asset id, eg USD in case
+        /// of BTC/USD.</param>
+        /// <param name="name">The name of the asset pair, eg. BTC/USD.</param>
+        /// <param name="accuracy">The decimal accuracy of the asset
+        /// pair.</param>
+        /// <param name="invertedAccuracy">The inverted decimal accuracy of the
+        /// asset pair.</param>
+        /// <param name="minVolume">The minimum required volume when placing an
+        /// order.</param>
+        /// <param name="minInvertedVolume">The inverted minimum required
+        /// volume when placing an order.</param>
+        public AssetPairModel(string id, string baseAssetId, string quotingAssetId, string name, int accuracy, int invertedAccuracy, double minVolume, double minInvertedVolume)
         {
             Id = id;
+            BaseAssetId = baseAssetId;
+            QuotingAssetId = quotingAssetId;
             Name = name;
             Accuracy = accuracy;
             InvertedAccuracy = invertedAccuracy;
-            BaseAssetId = baseAssetId;
-            QuotingAssetId = quotingAssetId;
             MinVolume = minVolume;
             MinInvertedVolume = minInvertedVolume;
             CustomInit();
@@ -41,41 +59,50 @@ namespace Lykke.Client.AutorestClient.Models
         partial void CustomInit();
 
         /// <summary>
+        /// Gets or sets the asset-pair identifier, eg BTCUSD.
         /// </summary>
         [JsonProperty(PropertyName = "Id")]
         public string Id { get; set; }
 
         /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "Name")]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "Accuracy")]
-        public int Accuracy { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "InvertedAccuracy")]
-        public int InvertedAccuracy { get; set; }
-
-        /// <summary>
+        /// Gets or sets the base asset id, eg BTC in case of BTC/USD.
         /// </summary>
         [JsonProperty(PropertyName = "BaseAssetId")]
         public string BaseAssetId { get; set; }
 
         /// <summary>
+        /// Gets or sets the quoting asset id, eg USD in case of BTC/USD.
         /// </summary>
         [JsonProperty(PropertyName = "QuotingAssetId")]
         public string QuotingAssetId { get; set; }
 
         /// <summary>
+        /// Gets or sets the name of the asset pair, eg. BTC/USD.
+        /// </summary>
+        [JsonProperty(PropertyName = "Name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the decimal accuracy of the asset pair.
+        /// </summary>
+        [JsonProperty(PropertyName = "Accuracy")]
+        public int Accuracy { get; set; }
+
+        /// <summary>
+        /// Gets or sets the inverted decimal accuracy of the asset pair.
+        /// </summary>
+        [JsonProperty(PropertyName = "InvertedAccuracy")]
+        public int InvertedAccuracy { get; set; }
+
+        /// <summary>
+        /// Gets or sets the minimum required volume when placing an order.
         /// </summary>
         [JsonProperty(PropertyName = "MinVolume")]
         public double MinVolume { get; set; }
 
         /// <summary>
+        /// Gets or sets the inverted minimum required volume when placing an
+        /// order.
         /// </summary>
         [JsonProperty(PropertyName = "MinInvertedVolume")]
         public double MinInvertedVolume { get; set; }
@@ -83,12 +110,27 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Validate the object.
         /// </summary>
-        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// <exception cref="ValidationException">
         /// Thrown if validation fails
         /// </exception>
         public virtual void Validate()
         {
-            //Nothing to validate
+            if (Id == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Id");
+            }
+            if (BaseAssetId == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "BaseAssetId");
+            }
+            if (QuotingAssetId == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "QuotingAssetId");
+            }
+            if (Name == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Name");
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ApiV2Data.DTOs
 {
@@ -8,8 +7,11 @@ namespace ApiV2Data.DTOs
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Type { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Description { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string ApiKey { get; set; }
     }
 

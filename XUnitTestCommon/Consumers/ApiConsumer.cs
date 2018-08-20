@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
 using System.Threading.Tasks;
 using XUnitTestCommon.TestsCore;
 using XUnitTestCommon.DTOs;
+using XUnitTestCommon.Settings;
 
 namespace XUnitTestCommon.Consumers
 {
@@ -43,11 +43,11 @@ namespace XUnitTestCommon.Consumers
                 _oAuthConsumer.Authenticate().Wait();
         }
 
-        public ApiConsumer(ConfigBuilder configBuilder, OAuthConsumer oAuthConsumer)
-            : this(configBuilder.Config["UrlPefix"], configBuilder.Config["BaseUrl"], Boolean.Parse(configBuilder.Config["IsHttps"]), oAuthConsumer)
+        public ApiConsumer(IAppSettings configBuilder, OAuthConsumer oAuthConsumer)
+            : this(configBuilder.UrlPefix, configBuilder.BaseUrl, configBuilder.IsHttps, oAuthConsumer)
         { }
 
-        public ApiConsumer(ConfigBuilder configBuilder) : this(configBuilder, new OAuthConsumer(configBuilder))
+        public ApiConsumer(IAppSettings configBuilder) : this(configBuilder, new OAuthConsumer(configBuilder))
         {
 
         }
@@ -69,6 +69,33 @@ namespace XUnitTestCommon.Consumers
             {
                 await _oAuthConsumer.UpdateToken();
                 _request.AddParameter("Authorization", "Bearer " + _oAuthConsumer.AuthToken, ParameterType.HttpHeader);
+            }
+
+            var response = await _client.ExecuteAsync(_request);
+
+            Log(response);
+
+            return new Response(response.StatusCode, response.Content);
+        }
+
+        public async Task<Response> ExecuteRequestCustomEndpoint(string url, Dictionary<string, string> queryParams, string body, Method method, string authToken = null, Dictionary<string, string> headers = null)
+        {
+            _client = new RestClient(url);
+            _request = new RestRequest(method);
+
+            AddQueryParams(queryParams);
+            AddHeaders(headers);
+
+            if (body != null)
+            {
+                _request.AddParameter("application/json", body, ParameterType.RequestBody);
+            }
+
+            if (_oAuthConsumer != null)
+            {
+                await _oAuthConsumer.UpdateToken();
+                authToken = authToken ?? _oAuthConsumer.AuthToken;
+                _request.AddParameter("Authorization", "Bearer " + authToken, ParameterType.HttpHeader);
             }
 
             var response = await _client.ExecuteAsync(_request);
@@ -104,9 +131,9 @@ namespace XUnitTestCommon.Consumers
 
         public async Task<ClientRegisterResponseDTO> RegisterNewUser(ClientRegisterDTO registerInfo = null)
         {
-            if (this._oAuthConsumer != null)
+            if (_oAuthConsumer != null)
             {
-                return await this._oAuthConsumer.RegisterNewUser(registerInfo);
+                return await _oAuthConsumer.RegisterNewUser(registerInfo);
             }
             return null;
         }
@@ -116,6 +143,17 @@ namespace XUnitTestCommon.Consumers
             foreach (var param in queryParams)
             {
                 _request.AddQueryParameter(param.Key, param.Value);
+            }
+        }
+
+        private void AddHeaders(Dictionary<string, string> headers)
+        {
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                {
+                    _request.AddHeader(header.Key, header.Value);
+                }
             }
         }
 

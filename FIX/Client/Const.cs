@@ -1,6 +1,6 @@
 ﻿namespace FIX.Client
 {
-    internal static class Const
+    public static class Const
     {
         public const int Port = 12358;
         public const string Uri = @"localhost";

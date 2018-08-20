@@ -17,7 +17,7 @@ namespace AFTests.AlgoStore
 {
     [Category("FullRegression")]
     [Category("AlgoStore")]
-    public partial class AlgoStoreTests : AlgoStoreTestDataFixture
+    public partial class AlgoStoreTestsInstanceRequired : CreateAlgoWithInstanceFixture
     {
 
         [Category("AlgoStore")]
@@ -29,7 +29,7 @@ namespace AFTests.AlgoStore
 
             string url = ApiPaths.ALGO_STORE_METADATA;
 
-            MetaDataDTO metadata = new MetaDataDTO()
+            CreateAlgoDTO metadata = new CreateAlgoDTO()
             {
                 Name = badName,
                 Description = badName
@@ -48,7 +48,7 @@ namespace AFTests.AlgoStore
 
             string url = ApiPaths.ALGO_STORE_METADATA;
 
-            MetaDataDTO metadata = new MetaDataDTO()
+            CreateAlgoDTO metadata = new CreateAlgoDTO()
             {
                 Name = Helpers.RandomString(8),
                 Description = Helpers.RandomString(8)
@@ -56,13 +56,13 @@ namespace AFTests.AlgoStore
 
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
             Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK));
-            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
+            AlgoDataDTO responseMetaData = JsonUtils.DeserializeJson<AlgoDataDTO>(response.ResponseJson);
 
             url = ApiPaths.ALGO_STORE_METADATA;
 
-            MetaDataEditDTO editMetaData = new MetaDataEditDTO()
+            EditAlgoDTO editMetaData = new EditAlgoDTO()
             {
-                Id = responceMetaData.Id,
+                Id = responseMetaData.Id,
                 Name = badName,
                 Description = badName
             };
@@ -79,7 +79,7 @@ namespace AFTests.AlgoStore
         {
             string url = ApiPaths.ALGO_STORE_METADATA;
 
-            MetaDataDTO metadata = new MetaDataDTO()
+            CreateAlgoDTO metadata = new CreateAlgoDTO()
             {
                 Name = Helpers.RandomString(8),
                 Description = Helpers.RandomString(8)
@@ -87,12 +87,12 @@ namespace AFTests.AlgoStore
 
             var response = await this.Consumer.ExecuteRequest(url, Helpers.EmptyDictionary, JsonUtils.SerializeObject(metadata), Method.POST);
             Assert.That(response.Status, Is.EqualTo(HttpStatusCode.OK));
-            MetaDataResponseDTO responceMetaData = JsonUtils.DeserializeJson<MetaDataResponseDTO>(response.ResponseJson);
+            AlgoDataDTO responseMetaData = JsonUtils.DeserializeJson<AlgoDataDTO>(response.ResponseJson);
 
             CascadeDeleteDTO editMetaData = new CascadeDeleteDTO()
             {
                 AlgoId = badID,
-                InstanceId = responceMetaData.Name
+                InstanceId = responseMetaData.Name
             };
 
             url = ApiPaths.ALGO_STORE_CASCADE_DELETE;
@@ -106,7 +106,7 @@ namespace AFTests.AlgoStore
         [TestCase(null, null)]
         public async Task GetTailLogBadRequest(string AlgoID, string tail)
         {
-            var url = ApiPaths.ALGO_STORE_ALGO_TAIL_LOG;
+            var url = ApiPaths.ALGO_STORE_LOGGING_API_TAIL_LOG;
 
             Dictionary<string, string> algoIDTailLog = new Dictionary<string, string>()
             {

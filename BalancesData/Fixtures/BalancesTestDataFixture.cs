@@ -7,6 +7,7 @@ using XUnitTestCommon;
 using XUnitTestCommon.Consumers;
 using XUnitTestCommon.DTOs;
 using XUnitTestCommon.GlobalActions;
+using XUnitTestCommon.Settings.AutomatedFunctionalTests;
 using XUnitTestCommon.Tests;
 
 namespace BalancesData.Fixtures
@@ -14,7 +15,8 @@ namespace BalancesData.Fixtures
     [TestFixture]
     public class BalancesTestDataFixture : BaseTest
     {
-        private ConfigBuilder _configBuilder;
+        private BalancesSettings _balancesSettings;
+        private BlueApiSettings _blueApiSettings;
         public ApiConsumer Consumer;
         public ClientRegisterResponseDTO TestClient;
 
@@ -22,15 +24,16 @@ namespace BalancesData.Fixtures
         [OneTimeSetUp]
         public void Initialize()
         {
-            _configBuilder = new ConfigBuilder("Balances");
-            Consumer = new ApiConsumer(_configBuilder, null);
+            _balancesSettings = new ConfigBuilder().ReloadingManager.CurrentValue.AutomatedFunctionalTests.Balances;
+            _blueApiSettings = new ConfigBuilder().ReloadingManager.CurrentValue.AutomatedFunctionalTests.BlueApi;
+            Consumer = new ApiConsumer(_balancesSettings, null);
 
             prepareTestData().Wait();
         }
 
         private async Task prepareTestData()
         {
-            ApiConsumer registerConsumer = new ApiConsumer(new ConfigBuilder("BlueApi"));
+            ApiConsumer registerConsumer = new ApiConsumer(_blueApiSettings);
             this.TestClient = await registerConsumer.RegisterNewUser();
 
             await ClientAccounts.FillWalletWithAsset(TestClient.Account.Id, Constants.BALANCES_ASSET_ID, Constants.BALANCES_ASSET_AMOUNT);

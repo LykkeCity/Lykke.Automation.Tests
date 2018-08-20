@@ -15,10 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="6.1.1" />
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="dotnet-test-nunit" Version="3.4.0-beta-3" />
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="Lykke.Fix" Version="1.0.9" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="NBitcoin" Version="4.0.0.54" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
@@ -31,6 +32,7 @@
     <ProjectReference Include="..\BalancesData\BalancesData.csproj" />
     <ProjectReference Include="..\BlockchainsIntegration\BlockchainsIntegration.csproj" />
     <ProjectReference Include="..\BlueApiData\BlueApiData.csproj" />
+    <ProjectReference Include="..\FIX\FIX.csproj" />
     <ProjectReference Include="..\HFT\HFT.csproj" />
     <ProjectReference Include="..\LykkePay\LykkePay.csproj" />
     <ProjectReference Include="..\MatchingEngineData\MatchingEngineData.csproj" />
@@ -40,6 +42,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="AlgoStore\TestData\DummyAlgo_WhileOnCandleReceived.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AlgoStore\TestData\DummyAlgo_WhileOnQuoteReceived.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AlgoStore\TestData\DummyAlgo_WhileOnStartUp.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AlgoStore\TestData\InstanceDataConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AlgoStore\TestData\MacdTrendAlgo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AlgoStore\TestData\MovingAverageCrossAlgo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="AlgoStore\TestData\myalgo-1.0-SNAPSHOT-jar-with-dependencies-fil-01.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -49,14 +69,18 @@
     <None Update="AlgoStore\TestData\DummyAlgo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="AlgoStore\TestData\NegativeLogMessages.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Dockerfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="AlgoStore\TestData\" />
-    <Folder Include="FIX\" />
+    <None Update="FIX\appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="FIX\ClientFIX44.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

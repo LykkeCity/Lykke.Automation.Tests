@@ -1,14 +1,16 @@
 ﻿using Autofac;
-using XUnitTestCommon;
-using XUnitTestData.Domains;
-using XUnitTestData.Repositories;
-using XUnitTestCommon.Utils;
 using AzureStorage.Tables;
-using XUnitTestData.Entities.MatchingEngine;
-using XUnitTestData.Domains.MatchingEngine;
+using Common.Log;
+using Lykke.SettingsReader;
+using XUnitTestCommon;
+using XUnitTestCommon.Settings;
+using XUnitTestData.Domains;
 using XUnitTestData.Domains.Assets;
+using XUnitTestData.Domains.MatchingEngine;
 using XUnitTestData.Entities;
 using XUnitTestData.Entities.Assets;
+using XUnitTestData.Entities.MatchingEngine;
+using XUnitTestData.Repositories;
 
 namespace MatchingEngineData.DependencyInjection
 {
@@ -16,42 +18,39 @@ namespace MatchingEngineData.DependencyInjection
     {
         private ConfigBuilder _configBuilder;
 
-        public MatchingEngineTestModule(ConfigBuilder configBuilder)
+        private readonly IReloadingManager<AppSettings> _settings;
+        private readonly ILog _log;
+
+        public MatchingEngineTestModule(IReloadingManager<AppSettings> settings)
         {
-            this._configBuilder = configBuilder;
+            _settings = settings;
+            _log = null;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
+            var reloadingDbManager = _settings.ConnectionString(x => x.AlgoApi.Db.TableStorageConnectionString);
+
             builder.Register(c => new GenericRepository<AccountEntity, IAccount>(
-                    new AzureTableStorage<AccountEntity>(
-                        _configBuilder.Config["BalancesInfoConnectionString"], "Accounts", null), "ClientBalance"))
-                .As<IDictionaryRepository<IAccount>>();
+                    AzureTableStorage<AccountEntity>.Create(reloadingDbManager, "Accounts", _log), "ClientBalance"))
+                    .As<IDictionaryRepository<IAccount>>();
 
             builder.Register(c => new GenericRepository<CashSwapEntity, ICashSwap>(
-                    new AzureTableStorage<CashSwapEntity>(
-                        _configBuilder.Config["BalancesInfoConnectionString"], "SwapOperationsCash", null)))
-                .As<IDictionaryRepository<ICashSwap>>();
+                    AzureTableStorage<CashSwapEntity>.Create(reloadingDbManager, "SwapOperationsCash", _log)))
+                    .As<IDictionaryRepository<ICashSwap>>();
 
             builder.Register(c =>
                 new GenericRepository<AssetPairEntity, IAssetPair>(
-                    new AzureTableStorage<AssetPairEntity>(_configBuilder.Config["DictionariesConnectionString"], "Dictionaries", null),
-                    "AssetPair"
-                )
-            )
-            .As<IDictionaryRepository<IAssetPair>>();
+                    AzureTableStorage<AssetPairEntity>.Create(reloadingDbManager, "Dictionaries", _log), "AssetPair"))
+                    .As<IDictionaryRepository<IAssetPair>>();
 
             builder.Register(c => new GenericRepository<MarketOrderEntity, IMarketOrderEntity>(
-                    new AzureTableStorage<MarketOrderEntity>(
-                        _configBuilder.Config["LimitOrdersConnectionString"], "MarketOrders", null), "OrderId"))
-                .As<IDictionaryRepository<IMarketOrderEntity>>();
+                    AzureTableStorage<MarketOrderEntity>.Create(reloadingDbManager, "MarketOrders", _log), "OrderId"))
+                    .As<IDictionaryRepository<IMarketOrderEntity>>();
 
             builder.Register(c => new GenericRepository<LimitOrderEntity, ILimitOrderEntity>(
-                new AzureTableStorage<LimitOrderEntity>(
-                    _configBuilder.Config["LimitOrdersConnectionString"], "LimitOrders", null)))
-                .As<IDictionaryRepository<ILimitOrderEntity>>();
-
-
+                    AzureTableStorage<LimitOrderEntity>.Create(reloadingDbManager, "LimitOrders", _log), "LimitOrders"))
+                    .As<IDictionaryRepository<ILimitOrderEntity>>();
         }
     }
 }

@@ -35,7 +35,17 @@ namespace XUnitTestCommon.AzureUtils
         public EntityProperty GetCellByKnowRowKeyAndKnownCellValue(string cellRowName, string knownRowKeyValue)
         {
             return tableSegment.Results.ToList().Find(r => r.RowKey == knownRowKeyValue)
-                .Properties.ToList().Find(cell => cell.Key == cellRowName).Value;
+                ?.Properties.ToList().Find(cell => cell.Key == cellRowName).Value;
+        }
+
+        public List<EntityProperty> GetCellsByKnownCellName(string cellRowName)
+        {
+            var result = new List<EntityProperty>();
+            tableSegment.Results.ToList().ForEach(r =>
+            {
+                r.Properties.ToList().FindAll(c => c.Key == cellRowName).ForEach(c => result.Add(c.Value));
+            });
+            return result;
         }
     }
 }
