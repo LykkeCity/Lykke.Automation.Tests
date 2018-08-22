@@ -1303,6 +1303,17 @@ namespace AFTests.BlockchainsIntegrationTests
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(response.Content, Does.Contain("buildingShouldBeRepeated"));
+
+                // ok
+                model.OperationId = Guid.NewGuid();
+                responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+                operationId = model.OperationId.ToString();
+
+                signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { HOT_WALLET_KEY }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+                response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
         }
     }
