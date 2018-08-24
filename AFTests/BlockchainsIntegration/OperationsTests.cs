@@ -78,6 +78,59 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
+        public class GetOperationIdGuidId : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void GetOperationIdGuidIdTest()
+            {
+                var operationId = Guid.NewGuid().ToString();
+                blockchainApi.Operations.DeleteOperationId(operationId);
+
+                var response = blockchainApi.Operations.GetOperationId(operationId);
+
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent), "Response for request GET /transactions/broadcast/single/{operationId} with deleted operationId does not equal NoContent(204)");
+            }
+        }
+
+        public class GetOperationIdGuidIdManyInputs : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void GetOperationIdGuidIdManyInputsTest()
+            {
+                var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyInputsSupported;
+                if (!run.Value)
+                    Assert.Ignore("Many inputs are not supported by blockchain");
+
+                var operationId = Guid.NewGuid().ToString();
+                blockchainApi.Operations.DeleteOperationId(operationId);
+
+                var response = blockchainApi.Operations.GetTransactionsManyInputs(operationId);
+
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent), "Response for request GET /transactions/broadcast/many-inputs/ with deleted operationId does not equal NoContent(204)");
+            }
+        }
+
+        public class GetOperationIdGuidIdManyOutputs : BlockchainsIntegrationBaseTest
+        {
+            [Test]
+            [Category("BlockchainIntegration")]
+            public void GetOperationIdGuidIdManyOutputsTest()
+            {
+                var run = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().AreManyOutputsSupported;
+                if (!run.Value)
+                    Assert.Ignore("Many outputs are not supported by blockchain");
+
+                var operationId = Guid.NewGuid().ToString();
+                blockchainApi.Operations.DeleteOperationId(operationId);
+
+                var response = blockchainApi.Operations.GetTransactionsManyOutputs(operationId);
+
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent), "Response for request GET /transactions/broadcast/many-outputs/ with deleted operationId does not equal NoContent(204)");
+            }
+        }
+
         public class PostTransactionsInvalidAddress : BlockchainsIntegrationBaseTest
         {
             [Test]
