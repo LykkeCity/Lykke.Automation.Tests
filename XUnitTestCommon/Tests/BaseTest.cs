@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using XUnitTestCommon.ServiceSettings;
 using Allure.Commons;
 using System.Threading;
+using NUnit.Framework.Internal;
 
 namespace XUnitTestCommon.Tests
 {
@@ -35,7 +36,7 @@ namespace XUnitTestCommon.Tests
         private readonly List<Func<Task>> _cleanupActions = new List<Func<Task>>();
         private readonly List<Func<Task>> _oneTimeCleanupActions = new List<Func<Task>>();
 
-        private Allure2Report allure = new Allure2Report();
+        protected Allure2Report allure = new Allure2Report();
 
         protected static JObject cfg = NewServiceSettings.Settings();
 
@@ -47,6 +48,7 @@ namespace XUnitTestCommon.Tests
             stepUID.Value = Guid.NewGuid().ToString();
             Console.WriteLine(name);
             StepAttachments.Clear();
+            var result = TestExecutionContext.CurrentContext.CurrentTest.MakeTestResult();
             isStepOpened.Value = true; // need to know where attach log - in step or test
             allure.AddStep(new StepResult{status = Status.passed, name = $"{stepNumber++}: {name}" }, stepUID.Value);
             try
