@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using XUnitTestCommon.Tests;
 
 namespace XUnitTestCommon.TestsCore
 {
@@ -11,6 +12,24 @@ namespace XUnitTestCommon.TestsCore
     {
         private static AllureLifecycle allure => AllureLifecycle.Instance;
         private static ConcurrentDictionary<string, List<Attachment>> attachmens = new ConcurrentDictionary<string, List<Attachment>>();
+
+        public static void UpdateStep(List<Attachment> attachments)
+        {
+            allure.UpdateStep(x => { new StepResult
+            {
+                attachments = attachments
+            }; });
+        }
+
+        public static void UpdateStep(Attachment attachment)
+        {
+            allure.UpdateStep(x => {
+                new StepResult
+                {
+                    attachments = new List<Attachment> { attachment }
+                };
+            });
+        }
 
         public static void AttachText(string name, string text) => MakeTextAttach(name, text, "text/plain");
 
@@ -73,7 +92,10 @@ namespace XUnitTestCommon.TestsCore
             };
 
             string caseId = TestContext.CurrentContext.Test.ID;
-            attachmens.AddOrUpdate(caseId, new List<Attachment> { attach }, (k, v) => { v.Add(attach); return v; });
+            if (BaseTest.isStepOpened.Value)
+                BaseTest.StepAttachments.Add(attach);
+            else
+                attachmens.AddOrUpdate(caseId, new List<Attachment> { attach }, (k, v) => { v.Add(attach); return v; });
         }
 
         public static List<Attachment> GetAttaches()

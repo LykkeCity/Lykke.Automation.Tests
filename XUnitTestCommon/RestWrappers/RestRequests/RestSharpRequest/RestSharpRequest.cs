@@ -127,5 +127,28 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
             attachContext.AppendLine(response.Content);
             Allure2Helper.AttachJson(attachName, attachContext.ToString());
         }
+
+        private void LogToStep(IRestResponse response)
+        {
+            var requestBody = response.Request.Parameters.FirstOrDefault(p => p.Type == ParameterType.RequestBody);
+
+            var requestHeaders = response.Request.Parameters.FindAll(p => p.Type == ParameterType.HttpHeader);
+            string attachName = $"{DateTime.UtcNow.ToString("s")}(UTC) {response.Request.Method} {response.Request.Resource}";
+            var attachContext = new StringBuilder();
+            attachContext.AppendLine($"Executing {response.Request.Method} {response.ResponseUri}");
+            if (requestBody != null)
+            {
+                attachContext.AppendLine($"Content-Type: {requestBody.ContentType}").AppendLine();
+                attachContext.AppendLine(requestBody.Value.ToString());
+            }
+            requestHeaders.ForEach(h => attachContext.AppendLine(h.Name + ": " + h.Value));
+
+            attachContext.AppendLine().AppendLine();
+            attachContext.AppendLine($"Response: {response.StatusCode}");
+            if (response.ErrorMessage != null)
+                attachContext.AppendLine(response.ErrorMessage);
+            attachContext.AppendLine(response.Content);
+            Allure2Helper.AttachJson(attachName, attachContext.ToString());
+        }
     }
 }

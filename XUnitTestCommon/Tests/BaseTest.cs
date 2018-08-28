@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 using XUnitTestCommon.TestsCore;
 using Newtonsoft.Json.Linq;
 using XUnitTestCommon.ServiceSettings;
+using Allure.Commons;
+using System.Threading;
 
 namespace XUnitTestCommon.Tests
 {
@@ -15,6 +17,19 @@ namespace XUnitTestCommon.Tests
     public class BaseTest
     {
         public IList<string> schemesError;
+        private int stepNumber = 0;
+
+        private static ThreadLocal<List<Attachment>> stepAttachments; 
+        public static ThreadLocal<bool> isStepOpened = new ThreadLocal<bool>(() => { return false; });
+        public static ThreadLocal<string> stepUID = new ThreadLocal<string>(() => { return ""; });
+        public static List<Attachment> StepAttachments
+        {
+            get
+            {
+                return stepAttachments.Value;
+            }
+        }
+        private Exception stepException = null;
 
         public static Dictionary<string, List<Response>> responses;
         private readonly List<Func<Task>> _cleanupActions = new List<Func<Task>>();
@@ -28,8 +43,32 @@ namespace XUnitTestCommon.Tests
 
         protected void Step(string name, Action action)
         {
+            stepAttachments = new ThreadLocal<List<Attachment>>(() => new List<Attachment>());
+            stepUID.Value = Guid.NewGuid().ToString();
             Console.WriteLine(name);
-            action.Invoke();
+            StepAttachments.Clear();
+            isStepOpened.Value = true; // need to know where attach log - in step or test
+            allure.AddStep(new StepResult{status = Status.passed, name = $"{stepNumber++}: {name}" }, stepUID.Value);
+            try
+            {
+                action.Invoke();
+            }
+            catch (Exception e)
+            {
+                stepException = e;
+            }
+            finally
+            {
+                if (stepException != null)
+                    allure.StopStep(stepUID.Value, true);
+                else
+                    allure.StopStep(stepUID.Value, false);
+            }
+
+            if (stepException != null)
+                Assert.Fail($"{stepException.Message} ");
+
+            isStepOpened.Value = false;
         }
 
         #region response info
@@ -44,7 +83,6 @@ namespace XUnitTestCommon.Tests
 
         public static void AreEqualByJson(object expected, object actual, string message = "")
         {
-
             var expectedJson = JsonConvert.SerializeObject(expected);
             var actualJson = JsonConvert.SerializeObject(actual);
             var errorMessage = string.IsNullOrEmpty(message) ? "Objects are not equals" : message;
@@ -82,8 +120,7 @@ namespace XUnitTestCommon.Tests
 
         [TearDown]
         public void TearDown()
-        {
-            
+        {  
             Console.WriteLine("TearDown");
             allure.AllureAfterTest();
         }
@@ -100,8 +137,7 @@ namespace XUnitTestCommon.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            allure.AllureBeforeAllTestsInClass();
-            
+            allure.AllureBeforeAllTestsInClass(); 
         }
 
         [OneTimeTearDown]
@@ -163,7 +199,6 @@ namespace XUnitTestCommon.Tests
             _oneTimeCleanupActions.Add(cleanupAction);
         }
         #endregion
-
     }
 
     [SetUpFixture]

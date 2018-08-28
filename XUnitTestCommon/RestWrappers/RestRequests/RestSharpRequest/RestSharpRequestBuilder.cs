@@ -33,6 +33,12 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
             return this;
         }
 
+        public IRequestBuilder Patch(string resourse)
+        {
+            request = new RestSharpRequest(Method.PATCH, baseUrl, resourse);
+            return this;
+        }
+
         public IRequestBuilder Get(string resourse)
         {
             request = new RestSharpRequest(Method.GET, baseUrl, resourse);

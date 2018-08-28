@@ -1,4 +1,5 @@
 ﻿using Allure.Commons;
+using Common;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using XUnitTestCommon.Tests;
 
 namespace XUnitTestCommon.TestsCore
 {
@@ -73,6 +75,29 @@ namespace XUnitTestCommon.TestsCore
             AllurePropertiesBuilder.Instance.AddPropertyPair("Date", DateTime.Now.ToString());
             
             AllurePropertiesBuilder.Instance.SaveAllureProperties(propertiesPath);
+        }
+
+        public void AddStep(StepResult result, string guid)
+        {
+            if (guid == null)
+                guid = Guid.NewGuid().ToString();
+
+            Allure.StartStep(guid, result);
+        }
+
+        public void StopStep(string id, bool failed = false)
+        {
+            Allure.UpdateStep(id, x =>
+            {
+                x.attachments = BaseTest.StepAttachments;
+                x.status = failed ? Status.failed : Status.passed;
+            });
+            Allure.StopStep(id);
+        }
+
+        public void UpdateStep(Action<StepResult> stepResult)
+        {
+            Allure.UpdateStep(stepResult);
         }
 
         private void AddMissedTest(ITestResult result)

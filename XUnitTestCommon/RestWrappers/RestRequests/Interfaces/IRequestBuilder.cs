@@ -7,6 +7,7 @@ namespace XUnitTestCommon.RestRequests.Interfaces
     public interface IRequestBuilder
     {
         IRequestBuilder Post(string resourse);
+        IRequestBuilder Patch(string resourse);
         IRequestBuilder Get(string resourse);
         IRequestBuilder Delete(string resourse);
         IRequestBuilder Put(string resourse);
