@@ -1,14 +1,9 @@
 ﻿using Lykke.AlgoStore.Algo;
 using Lykke.AlgoStore.Algo.Indicators;
-using System;
 
 namespace Lykke.AlgoStore.CSharp.Algo.Implemention.ExecutableClass
 {
-    /// <summary>
-    /// REMARK: Just a dummy algo implementation for future reference.
-    /// We can and will remove this when first algo is implemented :)
-    /// </summary>
-    public sealed class DummyAlgo : BaseAlgo
+    sealed class AlgoWithOrderEvents : BaseAlgo
     {
         public SMA _shortSma { get; set; }
         public SMA _longSma { get; set; }
@@ -21,48 +16,57 @@ namespace Lykke.AlgoStore.CSharp.Algo.Implemention.ExecutableClass
 
         public override void OnQuoteReceived(IQuoteContext context)
         {
-            context.Actions.Log($"Volume value: {Volume}");
+            // Create a buy order
+            var order = context.Orders.Market.Create(OrderAction.Buy, Volume);
 
-            var quote = context.Data.Quote;
-            context.Actions.Log($"Receiving quote at {DateTime.UtcNow} " +
-                $"{{quote.Price: {quote.Price}}}, {{quote.Timestamp: {quote.Timestamp}}}, " +
-                $"{{quote.IsBuy: {quote.IsBuy}}}, {{quote.IsOnline: {quote.IsOnline}}}");
-
-            var smaShort = _shortSma.Value;
-            var smaLong = _longSma.Value;
-            context.Actions.Log($"Function values are: SMA_Short: {smaShort}, SMA_Long: {smaLong}");
-
-            if (quote.Price < 10000)
-            {
-                context.Actions.Buy(quote, Volume);
-            }
-
-            if (quote.Price > 8000)
-            {
-                context.Actions.Sell(quote, Volume);
-            }
+            // Bind events
+            order.OnFulfilled += OnOrderCompleted;
+            order.OnErrored += OnOrderErrored;
         }
 
         public override void OnCandleReceived(ICandleContext context)
         {
-            context.Actions.Log($"Volume value: {Volume}");
-
             var candle = context.Data.Candle;
-            context.Actions.Log($"Receiving candle at {candle.DateTime} candle close Price {candle.Close}");
 
-            var smaShort = _shortSma.Value;
-            var smaLong = _longSma.Value;
-            context.Actions.Log($"Function values are: SMA_Short: {smaShort}, SMA_Long: {smaLong}");
+            if (candle.Close < 500)
+            {
+                var order = context.Orders.Market.Create(OrderAction.Buy, Volume);
 
-            //if (quote.Price < 10000)
-            //{
-            //    context.Actions.Buy(context.Data.Candle, Volume);
-            //}
+                context.Actions.Log($"Function values are: SMA_Short: {_shortSma.Value}, SMA_Long: {_longSma.Value}");
 
-            //if (quote.Price > 7000)
-            //{
-            context.Actions.Sell(context.Data.Candle, Volume);
-            //}
+                // Bind events
+                order.OnFulfilled += OnOrderCompleted;
+                order.OnErrored += OnOrderErrored;
+            }
+
+            if (candle.Close > 500)
+            {
+                var order = context.Orders.Market.Create(OrderAction.Sell, Volume);
+
+                context.Actions.Log($"Function values are: SMA_Short: {_shortSma.Value}, SMA_Long: {_longSma.Value}");
+
+                // Bind events
+                order.OnFulfilled += OnOrderCompleted;
+                order.OnErrored += OnOrderErrored;
+            }
+        }
+
+        private void OnOrderCompleted(IMarketOrder order)
+        {
+            // do something here
+            var volumeSold = order.Volume;
+        }
+
+        private void OnOrderErrored(IMarketOrder order, TradeErrorCode errorCode,
+            string message)
+        {
+            // handle error here
+            var status = order.Status;
+
+            if (errorCode == TradeErrorCode.RequestTimeout)
+            {
+                // ...
+            }
         }
     }
 }
