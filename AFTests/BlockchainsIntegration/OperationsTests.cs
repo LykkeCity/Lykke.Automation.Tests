@@ -867,8 +867,8 @@ namespace AFTests.BlockchainsIntegrationTests
                 var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
 
                 var startBlock = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Block;
-
-                var partialBalance = Math.Round(long.Parse(currentBalance) * 0.9).ToString();
+//
+                var partialBalance = Math.Round(long.Parse(currentBalance) * 0.4).ToString();
 
                 var model = new BuildSingleTransactionRequest()
                 {
@@ -899,7 +899,41 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var balanceAfterTransaction = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
 
-                Assert.That(balanceAfterTransaction, Is.EqualTo(Math.Round(long.Parse(currentBalance) * 0.1).ToString()), "Unexpected Balance after partial transaction");
+                Assert.That(balanceAfterTransaction, Is.EqualTo(Math.Round(long.Parse(currentBalance) * 0.6).ToString()), "Unexpected Balance after partial transaction");
+
+                // step 2
+                partialBalance = Math.Round(long.Parse(currentBalance) * 0.4).ToString();
+
+                model = new BuildSingleTransactionRequest()
+                {
+                    Amount = partialBalance,
+                    AssetId = ASSET_ID,
+                    FromAddress = wallet.PublicAddress,
+                    IncludeFee = true,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = HOT_WALLET,
+                    FromAddressContext = wallet.AddressContext
+                };
+
+                responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
+                operationId = model.OperationId.ToString();
+
+                signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { wallet.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+                response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+                response.Validate.StatusCode(HttpStatusCode.OK);
+
+                response1 = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+                response1.Validate.StatusCode(HttpStatusCode.Conflict);
+
+                WaitForOperationGotCompleteStatus(model.OperationId.ToString());
+
+                WaitForBalanceBlockIncreased(wallet.PublicAddress, startBlock.Value);
+
+                balanceAfterTransaction = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
+
+                Assert.That(balanceAfterTransaction, Is.EqualTo(Math.Round(long.Parse(currentBalance) * 0.2).ToString()), "Unexpected Balance after partial transaction");
             }
         }
 
