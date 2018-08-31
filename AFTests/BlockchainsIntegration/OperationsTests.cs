@@ -867,12 +867,12 @@ namespace AFTests.BlockchainsIntegrationTests
                 var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
 
                 var startBlock = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Block;
-//
-                var partialBalance = Math.Round(long.Parse(currentBalance) * 0.4).ToString();
+                //
+                var partialBalance = Math.Round(Decimal.Parse(currentBalance) * 0.4m);
 
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = partialBalance,
+                    Amount = partialBalance.ToString(),
                     AssetId = ASSET_ID,
                     FromAddress = wallet.PublicAddress,
                     IncludeFee = true,
@@ -899,14 +899,13 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var balanceAfterTransaction = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
 
-                Assert.That(balanceAfterTransaction, Is.EqualTo(Math.Round(long.Parse(currentBalance) * 0.6).ToString()), "Unexpected Balance after partial transaction");
+                Assert.That(balanceAfterTransaction, Is.EqualTo((decimal.Parse(currentBalance) - partialBalance).ToString()), "Unexpected Balance after partial transaction");
 
                 // step 2
-                partialBalance = Math.Round(long.Parse(currentBalance) * 0.4).ToString();
-
+               
                 model = new BuildSingleTransactionRequest()
                 {
-                    Amount = partialBalance,
+                    Amount = partialBalance.ToString(),
                     AssetId = ASSET_ID,
                     FromAddress = wallet.PublicAddress,
                     IncludeFee = true,
@@ -933,7 +932,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 balanceAfterTransaction = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
 
-                Assert.That(balanceAfterTransaction, Is.EqualTo(Math.Round(long.Parse(currentBalance) * 0.2).ToString()), "Unexpected Balance after partial transaction");
+                Assert.That(balanceAfterTransaction, Is.EqualTo(Math.Round(decimal.Parse(currentBalance) - partialBalance*2m).ToString()), "Unexpected Balance after partial transaction");
             }
         }
 
