@@ -79,20 +79,18 @@ namespace XUnitTestCommon.TestsCore
 
         public void AddStep(StepResult result, string guid)
         {
-            if (guid == null)
-                guid = Guid.NewGuid().ToString();
-
             Allure.StartStep(guid, result);
         }
 
-        public void StopStep(string id, bool failed = false)
+        public void StopStep(string guid, bool failed = false)
         {
-            Allure.UpdateStep(id, x =>
+            Allure.UpdateStep(guid, x =>
             {
-                x.attachments = BaseTest.StepAttachments;
+                if(BaseTest.attaches.Value.ContainsKey(guid))
+                    x.attachments = BaseTest.attaches.Value[guid];
                 x.status = failed ? Status.failed : Status.passed;
             });
-            Allure.StopStep(id);
+            Allure.StopStep(guid);
         }
 
         public void UpdateStep(Action<StepResult> stepResult)

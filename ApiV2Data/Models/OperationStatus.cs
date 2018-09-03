@@ -26,7 +26,9 @@ namespace Lykke.Client.ApiV2.Models
         [EnumMember(Value = "Failed")]
         Failed,
         [EnumMember(Value = "Created")]
-        Created
+        Created,
+        [EnumMember(Value = "Confirmed")]
+        Confirmed
     }
     internal static class OperationStatusEnumExtension
     {
