@@ -26,12 +26,13 @@ namespace Lykke.Client.AutorestClient.Models
         /// Initializes a new instance of the
         /// BuildTransactionWithManyOutputsRequest class.
         /// </summary>
-        public BuildTransactionWithManyOutputsRequest(System.Guid operationId, string fromAddress = default(string), IList<TransactionOutputContract> outputs = default(IList<TransactionOutputContract>), string assetId = default(string))
+        public BuildTransactionWithManyOutputsRequest(System.Guid operationId, string fromAddress = default(string), IList<TransactionOutputContract> outputs = default(IList<TransactionOutputContract>), string assetId = default(string), string fromAddressContext = default(string))
         {
             OperationId = operationId;
             FromAddress = fromAddress;
             Outputs = outputs;
             AssetId = assetId;
+            FromAddressContext = fromAddressContext;
             CustomInit();
         }
 
@@ -59,6 +60,10 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "assetId")]
         public string AssetId { get; set; }
+
+
+        [JsonProperty(PropertyName = "fromAddressContext")]
+        public string FromAddressContext { get; set; }
 
         /// <summary>
         /// Validate the object.

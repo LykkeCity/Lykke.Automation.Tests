@@ -78,6 +78,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "eos")
                 _settings = new EosSettings();
 
+            if (blockchain == "bitcoin")
+                _settings = new BitcoinSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -297,6 +300,25 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletAddress = "insect";
                 ExternalWalletKey = "5JKyVNU65er9y5xLKprVPcdYzqULkMwDKWDX6zokgX5dAAj7dVv";
                 BlockchainMiningTime = 10;
+            }
+        }
+
+        class BitcoinSettings : BlockchainSpecificModel
+        {
+            public BitcoinSettings()
+            {
+                BlockchainIntegration = "Bitcoin";
+                BlockchainApi = "http://bitcoin-bil-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://bitcoin-bil-sign.autotests-service.svc.cluster.local/api";
+                HotWallet = "2MwsEPnRBsYcqqvLSHkKodFEmn4sotLikf3";
+                HotWalletKey = "cNfGePxvd13CFh5iGwUWStkJ2tLefs8Q1ZQipKc9XL198bYrFjz3";
+                HotWalletAddressContext = "{\"PubKey\":\"02952dce2922b6e3638d9118541e2b2d50765d35691a8d4885396278f6f6d4a4cc\"}";
+                AssetId = "BTC";
+                ExternalWalletAddress = "2N3iTtRKvqqj1U77hLs9cEjttsXLK32zZPY";
+                ExternalWalletKey = "cQG5HXZW2viTFDPsyPHS73fNN7gVJYmxPVQsMYG4j1XNWzD2fU6Z";
+                ExternalWallerAddressContext = "{\"PubKey\":\"03dd1001f94328682857ac038d7ab5e2d97ad7cdeab07483de6eb6d678df5bfa42\"}";
+                BlockchainMiningTime = 20;
+                MaxWalletsForCashIn = 10;
             }
         }
 

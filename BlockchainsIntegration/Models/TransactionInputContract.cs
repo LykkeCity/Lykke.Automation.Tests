@@ -22,9 +22,10 @@ namespace Lykke.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the TransactionInputContract class.
         /// </summary>
-        public TransactionInputContract(string fromAddress = default(string), string amount = default(string))
+        public TransactionInputContract(string fromAddress = default(string), string amount = default(string), string fromAddressContext = default(string))
         {
             FromAddress = fromAddress;
+            FromAddressContext = fromAddressContext;
             Amount = amount;
             CustomInit();
         }
@@ -44,5 +45,7 @@ namespace Lykke.Client.AutorestClient.Models
         [JsonProperty(PropertyName = "amount")]
         public string Amount { get; set; }
 
+        [JsonProperty(PropertyName = "fromAddressContext")]
+        public string FromAddressContext { get; set; }
     }
 }

@@ -383,6 +383,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     AssetId = ASSET_ID,
                     OperationId = model.OperationId,
                     FromAddress = wallet.PublicAddress,
+                    FromAddressContext = wallet.AddressContext,
                     Outputs = new List<TransactionOutputContract>() { new TransactionOutputContract() { Amount = AMOUNT, ToAddress = HOT_WALLET } }
                 };
 
@@ -467,7 +468,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     ToAddress = HOT_WALLET,
                     Inputs = new List<TransactionInputContract>() { new TransactionInputContract()
                     {
-                        Amount = AMOUNT, FromAddress = wallet.PublicAddress
+                        Amount = AMOUNT, FromAddress = wallet.PublicAddress,
+                        FromAddressContext = wallet.AddressContext
                     } }
                 };
 
@@ -524,7 +526,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     Inputs = new List<TransactionInputContract>() { new TransactionInputContract()
                     {
                         Amount = AMOUNT,
-                        FromAddress = wallet.PublicAddress
+                        FromAddress = wallet.PublicAddress,
+                        FromAddressContext = wallet.AddressContext
                     } }
                 };
 
@@ -1098,7 +1101,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     AssetId = ASSET_ID,
                     OperationId = operationId,
                     ToAddress = EXTERNAL_WALLET,
-                    Inputs = new List<TransactionInputContract> { new TransactionInputContract { Amount = AMOUNT, FromAddress = HOT_WALLET } }
+                    Inputs = new List<TransactionInputContract> { new TransactionInputContract { Amount = AMOUNT, FromAddress = HOT_WALLET, FromAddressContext = HOT_WALLET_CONTEXT } }
                 };
 
                 var responseTransaction = blockchainApi.Operations.PostTransactionsManyInputs(model);
@@ -1156,6 +1159,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     AssetId = ASSET_ID,
                     OperationId = operationId,
                     FromAddress = HOT_WALLET,
+                    FromAddressContext = HOT_WALLET_CONTEXT,
                     Outputs = new List<TransactionOutputContract> { new TransactionOutputContract { Amount = AMOUNT, ToAddress = HOT_WALLET } }
                 };
 

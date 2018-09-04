@@ -157,6 +157,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 AssetId = ASSET_ID,
                 OperationId = Guid.NewGuid(),
                 FromAddress = EXTERNAL_WALLET,
+                FromAddressContext = EXTERNAL_WALLET_ADDRESS_CONTEXT,
                 Outputs = transactions
             };
 
