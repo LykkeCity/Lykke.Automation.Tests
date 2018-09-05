@@ -112,7 +112,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                         cycleWallets.ToList().ForEach(w => result.Enqueue(w));
 
-                        if (!SetBalanceWIthManyOutputs(result.ToList()))
+                        if (!SetBalanceWIthManyOutputs(cycleWallets.ToList()))
                         {
                             cycleWallets.ToList().ForEach(w => AddCyptoToBalanceFromExternal(w.PublicAddress, w.PrivateKey, false));
                             cycleWallets.ToList().ForEach(w => WaitForBalance(w.PublicAddress));
