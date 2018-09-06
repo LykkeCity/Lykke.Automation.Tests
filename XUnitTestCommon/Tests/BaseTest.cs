@@ -34,7 +34,7 @@ namespace XUnitTestCommon.Tests
 
         protected virtual void Initialize() { }
 
-        protected void Step(string name, Action action)
+        protected void Step(string name, Action action, bool throwException = true)
         {
             Exception stepException = null;
             string guid = Guid.NewGuid().ToString();
@@ -60,8 +60,8 @@ namespace XUnitTestCommon.Tests
 
             isStepOpened.Value--;
 
-            if (stepException != null)
-                throw stepException; 
+            if (throwException && stepException != null )
+                throw stepException;      
         }
 
         #region response info

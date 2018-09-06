@@ -27,8 +27,7 @@ namespace AFTests.ApiV2
                 {
                     for (var i = 0; i < blockchainsCount; i++)
                     {
-                        try
-                        {
+                        
                             var (assetId, address, addressExtension, minCashOut) = GetBlockchainCashoutData(blockchains[i]);
                             if (minCashOut == 0)
                             {
@@ -48,10 +47,12 @@ namespace AFTests.ApiV2
                                     Volume = (minCashOut / 2)
                                 }, id, token);
 
-                                Assert.That(() => apiV2.Operations.GetOperationById(currentOperation.Content.Replace("\"", ""), token).GetResponseObject().Status, Is.EqualTo(OperationStatus.Failed).After(60).Seconds.PollEvery(2).Seconds);
-                            });
-                        }
-                        catch (Exception) { };
+                                Assert.That(currentOperation.StatusCode, Is.Not.EqualTo(HttpStatusCode.BadRequest).And.Not.EqualTo(HttpStatusCode.NotFound), "Cashout Failed");
+
+                                Assert.That(() => apiV2.Operations.GetOperationById(currentOperation.Content.Replace("\"", ""), token).GetResponseObject().Status, Is.Not.EqualTo(OperationStatus.Confirmed).After(10).Seconds.PollEvery(2).Seconds, "Cashout confirmed instead of Failed");
+
+                                Assert.That(() => apiV2.Operations.GetOperationById(currentOperation.Content.Replace("\"", ""), token).GetResponseObject().Status, Is.EqualTo(OperationStatus.Failed).After(50).Seconds.PollEvery(2).Seconds);
+                            }, false);
                     }
                 });
             }
@@ -74,8 +75,6 @@ namespace AFTests.ApiV2
                 {
                     blockchains.ForEach(blockchain =>
                     {
-                        try
-                        {
                             var (assetId, address, addressExtension, minCashOut) = GetBlockchainCashoutData(blockchain);
 
                             Step($"Check cashOut in case of asset's {assetId} volume is greater than asset's balance on the wallet", () =>
@@ -83,7 +82,7 @@ namespace AFTests.ApiV2
                                 var operationId = Guid.NewGuid().ToString();
 
                                 var maxBalance = apiV2.wallets.GetWalletsBalanceAssetId(walletId.GetResponseObject()[0].Id, "", token);
-                                
+
                                 var balances = maxBalance.GetResponseObject();
 
                                 var assetIdBalance = balances.FirstOrDefault(b => b.AssetId == assetId);
@@ -104,10 +103,13 @@ namespace AFTests.ApiV2
                                     Volume = balance * 2
                                 }, operationId, token);
 
-                                Assert.That(() => apiV2.Operations.GetOperationById(cashOut.Content.Replace("\"", ""), token).GetResponseObject().Status, Is.EqualTo(OperationStatus.Failed).After(60).Seconds.PollEvery(2).Seconds);
-                            });
-                        }
-                        catch (Exception) { }
+                                Assert.That(cashOut.StatusCode, Is.Not.EqualTo(HttpStatusCode.BadRequest).And.Not.EqualTo(HttpStatusCode.NotFound), "Cashout Failed");
+
+                                OperationStatus status() { return apiV2.Operations.GetOperationById(cashOut.Content.Replace("\"", ""), token).GetResponseObject().Status; }
+
+                                Assert.That(() => status(), Is.Not.EqualTo(OperationStatus.Confirmed).After(10).Seconds.PollEvery(1).Seconds);
+                                Assert.That(() => status(), Is.EqualTo(OperationStatus.Failed).After(50).Seconds.PollEvery(2).Seconds);
+                            }, false);
                     });
                 });
             }
@@ -123,27 +125,25 @@ namespace AFTests.ApiV2
                 var blockchains = JsonConvert.DeserializeObject<List<BlockchainSettings>>(cfg["BlockchainsIntegration"]["Blockchains"].ToString());
 
                 var blockchainsCount = blockchains.Count;
- 
+
                 Step($"Validate CashOut to External wallets for {blockchainsCount} blockchains", () =>
                 {
-                        blockchains.ForEach(blockchain =>
-                        {
-                            try
-                            {
-                                var (assetId, address, addressExtension, minCashOut) = GetBlockchainCashoutData(blockchain);
+                    blockchains.ForEach(blockchain =>
+                    {
 
-                                Step($"Add 2 asset '{assetId}' to wallet", () =>
-                            {
-                                FillWalletWithAsset(wallet.WalletAddress, assetId);
-                            });
+                        var (assetId, address, addressExtension, minCashOut) = GetBlockchainCashoutData(blockchain);
 
-                                Step($"Make valid cashout of asset {assetId}", () =>
-                            {
-                                MakeCashOut(assetId, address, addressExtension, 1, token);
-                            });
-                            }
-                            catch (AssertionException) { }
-                        });
+                        Step($"Add 2 asset '{assetId}' to wallet", () =>
+                    {
+                        FillWalletWithAsset(wallet.WalletAddress, assetId);
+                    }, false);
+
+                        Step($"Make valid cashout of asset {assetId}", () =>
+                    {
+                        MakeCashOut(assetId, address, addressExtension, 1, token);
+                    }, false);
+
+                    });
                 });
             } 
         }
