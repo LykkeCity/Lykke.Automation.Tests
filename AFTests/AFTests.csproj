@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="7.0.1" />
+    <PackageReference Include="Appium.WebDriver" Version="3.0.0.2" />
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="dotnet-test-nunit" Version="3.4.0-beta-3" />
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
     <PackageReference Include="Lykke.Fix" Version="1.0.9" />
@@ -36,8 +38,10 @@
     <ProjectReference Include="..\HFT\HFT.csproj" />
     <ProjectReference Include="..\LykkePay\LykkePay.csproj" />
     <ProjectReference Include="..\MatchingEngineData\MatchingEngineData.csproj" />
+    <ProjectReference Include="..\Mobile\Mobile.csproj" />
     <ProjectReference Include="..\PrivateServices\PrivateServices.csproj" />
     <ProjectReference Include="..\WalletApi\WalletApi.csproj" />
+    <ProjectReference Include="..\Web\Web.csproj" />
     <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
   </ItemGroup>
 

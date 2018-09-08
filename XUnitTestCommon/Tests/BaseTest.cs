@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using XUnitTestCommon.ServiceSettings;
 using Allure.Commons;
 using System.Threading;
+using NUnit.Framework.Internal;
 
 namespace XUnitTestCommon.Tests
 {
@@ -28,7 +29,7 @@ namespace XUnitTestCommon.Tests
         private readonly List<Func<Task>> _cleanupActions = new List<Func<Task>>();
         private readonly List<Func<Task>> _oneTimeCleanupActions = new List<Func<Task>>();
 
-        private Allure2Report allure = new Allure2Report();
+        protected Allure2Report allure = new Allure2Report();
 
         protected static JObject cfg = NewServiceSettings.Settings();
 
