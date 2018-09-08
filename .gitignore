@@ -36,3 +36,4 @@ XUnitTestCommon/Config.json
 #allure binaries
 
 !XUnitTestCommon/Reports/allure-cli/bin
+TestResults/

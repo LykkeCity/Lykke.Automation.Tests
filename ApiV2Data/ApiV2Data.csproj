@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AssetsData\AssetsData.csproj" />
+    <ProjectReference Include="..\PrivateServices\PrivateServices.csproj" />
     <ProjectReference Include="..\XUnitTestCommon\XUnitTestCommon.csproj" />
   </ItemGroup>
 

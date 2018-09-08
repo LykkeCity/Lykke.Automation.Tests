@@ -4,28 +4,27 @@
 // regenerated.
 // </auto-generated>
 
-namespace Lykke.Client.AutorestClient.Models
+namespace Lykke.Client.ApiV2.Models
 {
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class IsAliveResponse
+    public partial class FxPaygateFeeModel
     {
         /// <summary>
-        /// Initializes a new instance of the IsAliveResponse class.
+        /// Initializes a new instance of the FxPaygateFeeModel class.
         /// </summary>
-        public IsAliveResponse()
+        public FxPaygateFeeModel()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the IsAliveResponse class.
+        /// Initializes a new instance of the FxPaygateFeeModel class.
         /// </summary>
-        public IsAliveResponse(string version = default(string), string env = default(string))
+        public FxPaygateFeeModel(double amount)
         {
-            Version = version;
-            Env = env;
+            Amount = amount;
             CustomInit();
         }
 
@@ -36,13 +35,18 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "version")]
-        public string Version { get; set; }
+        [JsonProperty(PropertyName = "Amount")]
+        public double Amount { get; set; }
 
         /// <summary>
+        /// Validate the object.
         /// </summary>
-        [JsonProperty(PropertyName = "env")]
-        public string Env { get; set; }
-
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+            //Nothing to validate
+        }
     }
 }

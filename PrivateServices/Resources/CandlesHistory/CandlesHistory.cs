@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Lykke.Client.AutorestClient.Models;
+using Lykke.Common.Api.Contract.Responses;
 using RestSharp;
 using XUnitTestCommon.RestRequests;
 using XUnitTestCommon.RestRequests.Interfaces;

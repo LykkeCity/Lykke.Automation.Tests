@@ -1,0 +1,5 @@
+{
+  "SettingsServiceURL": "https://settings-dev-k8s.lykkex.net/",
+  "SettingsServiceAccessToken": "c2da84a8-64f4-4af8-a2c2-a14607ce4ecb_AFT",
+  "SettingsServiceRootItemName": "AutomatedFunctionalTests"
+}

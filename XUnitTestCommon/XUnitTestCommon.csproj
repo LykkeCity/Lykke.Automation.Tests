@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Web\Web.csproj" />
     <ProjectReference Include="..\XUnitTestData\XUnitTestData.csproj" />
   </ItemGroup>
 
