@@ -20,17 +20,10 @@ namespace XUnitTestCommon.Tests
         public IList<string> schemesError;
         private int stepNumber = 0;
 
-        private static ThreadLocal<List<Attachment>> stepAttachments; 
-        public static ThreadLocal<bool> isStepOpened = new ThreadLocal<bool>(() => { return false; });
-        public static ThreadLocal<string> stepUID = new ThreadLocal<string>(() => { return ""; });
-        public static List<Attachment> StepAttachments
-        {
-            get
-            {
-                return stepAttachments.Value;
-            }
-        }
-        private Exception stepException = null;
+        public static ThreadLocal<int> isStepOpened = new ThreadLocal<int>(() => { return 0; });
+        public static ThreadLocal<Stack<string>> stepUID = new ThreadLocal<Stack<string>>(() => { return new Stack<string>(); });
+
+        public static ThreadLocal<Dictionary<string, List<Attachment>>> attaches = new ThreadLocal<Dictionary<string, List<Attachment>>>(() => new Dictionary<string, List<Attachment>>());
 
         public static Dictionary<string, List<Response>> responses;
         private readonly List<Func<Task>> _cleanupActions = new List<Func<Task>>();
@@ -42,15 +35,14 @@ namespace XUnitTestCommon.Tests
 
         protected virtual void Initialize() { }
 
-        protected void Step(string name, Action action)
+        protected void Step(string name, Action action, bool throwException = true)
         {
-            stepAttachments = new ThreadLocal<List<Attachment>>(() => new List<Attachment>());
-            stepUID.Value = Guid.NewGuid().ToString();
+            Exception stepException = null;
+            string guid = Guid.NewGuid().ToString();
             Console.WriteLine(name);
-            StepAttachments.Clear();
-            var result = TestExecutionContext.CurrentContext.CurrentTest.MakeTestResult();
-            isStepOpened.Value = true; // need to know where attach log - in step or test
-            allure.AddStep(new StepResult{status = Status.passed, name = $"{stepNumber++}: {name}" }, stepUID.Value);
+            isStepOpened.Value++; // need to know where attach log - in step or test
+            allure.AddStep(new StepResult{status = Status.passed, name = $"{stepNumber++}: {name}" }, guid);
+            stepUID.Value.Push(guid);
             try
             {
                 action.Invoke();
@@ -62,15 +54,15 @@ namespace XUnitTestCommon.Tests
             finally
             {
                 if (stepException != null)
-                    allure.StopStep(stepUID.Value, true);
+                    allure.StopStep(stepUID.Value.Pop(), true);
                 else
-                    allure.StopStep(stepUID.Value, false);
+                    allure.StopStep(stepUID.Value.Pop(), false);
             }
 
-            if (stepException != null)
-                Assert.Fail($"{stepException.Message} ");
+            isStepOpened.Value--;
 
-            isStepOpened.Value = false;
+            if (throwException && stepException != null )
+                throw stepException;      
         }
 
         #region response info

@@ -92,8 +92,13 @@ namespace XUnitTestCommon.TestsCore
             };
 
             string caseId = TestContext.CurrentContext.Test.ID;
-            if (BaseTest.isStepOpened.Value)
-                BaseTest.StepAttachments.Add(attach);
+            if (BaseTest.isStepOpened.Value > 0)
+            {
+                if(BaseTest.attaches.Value.ContainsKey(BaseTest.stepUID.Value.Peek()))
+                    BaseTest.attaches.Value[BaseTest.stepUID.Value.Peek()].Add(attach);
+                else
+                    BaseTest.attaches.Value.Add(BaseTest.stepUID.Value.Peek(), new List<Attachment> { attach });
+            }
             else
                 attachmens.AddOrUpdate(caseId, new List<Attachment> { attach }, (k, v) => { v.Add(attach); return v; });
         }

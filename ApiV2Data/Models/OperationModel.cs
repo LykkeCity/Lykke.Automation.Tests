@@ -58,6 +58,5 @@ namespace Lykke.Client.ApiV2.Models
         /// </summary>
         [JsonProperty(PropertyName = "Status")]
         public OperationStatus Status { get; set; }
-
     }
 }
