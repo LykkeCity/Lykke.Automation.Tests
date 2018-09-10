@@ -15,9 +15,12 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetCapabilitiesTest()
             {
-                var response = blockchainApi.Capabilities.GetCapabilities();
-                response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().IsTransactionsRebuildingSupported, Is.False.Or.False);
+                Step("Make GET /cpabilities. Validate response status code is OK", () =>
+                {
+                    var response = blockchainApi.Capabilities.GetCapabilities();
+                    response.Validate.StatusCode(HttpStatusCode.OK);
+                    Assert.That(response.GetResponseObject().IsTransactionsRebuildingSupported, Is.False.Or.False);
+                }); 
             }
         }
 
@@ -31,12 +34,17 @@ namespace AFTests.BlockchainsIntegrationTests
                 if (canReturnExplorerUrl == null || !canReturnExplorerUrl.Value)
                     Assert.Ignore($"Blockchain {BlockChainName} does not support canReturnExplorerUrl");
 
-                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                string newWallet = "";
 
-                var explorerUrlResponse = blockchainApi.Address.GetAddressExplorerUrl(newWallet);
-                explorerUrlResponse.Validate.StatusCode(HttpStatusCode.OK);
+                Step("Create new wallet", () => { newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress; });
 
-                Assert.That(explorerUrlResponse.GetResponseObject().Length, Is.GreaterThan(0), "response returned an empty array");
+                Step($"Make GET /addresses/{newWallet}/explorer-url and Validate response contains not empty content", () => 
+                {
+                    var explorerUrlResponse = blockchainApi.Address.GetAddressExplorerUrl(newWallet);
+                    explorerUrlResponse.Validate.StatusCode(HttpStatusCode.OK);
+
+                    Assert.That(explorerUrlResponse.GetResponseObject().Length, Is.GreaterThan(0), "response returned an empty array");
+                });               
             }
         }
 
@@ -50,14 +58,19 @@ namespace AFTests.BlockchainsIntegrationTests
                 if (canReturnExplorerUrl == null || !canReturnExplorerUrl.Value)
                     Assert.Ignore($"Blockchain {BlockChainName} does not support public address extension");
 
-                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                string newWallet = "";
 
-                var constantsResponse = blockchainApi.Constants.GetConstants();
-                constantsResponse.Validate.StatusCode(HttpStatusCode.OK);
+                Step("Create new wallet", () => { newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress; });
 
-                Assert.That(constantsResponse.GetResponseObject().publicAddressExtension.separator, Is.Not.Null.Or.Empty, "Public address separator is null or empty");
-                Assert.That(constantsResponse.GetResponseObject().publicAddressExtension.displayName, Is.Not.Null.Or.Empty, "Display name is null or empty");
-                Assert.That(newWallet, Does.Contain(constantsResponse.GetResponseObject().publicAddressExtension.separator), $"Wallet {newWallet} does not contain separator {constantsResponse.GetResponseObject().publicAddressExtension.separator}");
+                Step("Make GET /constants request and validate new wallet address contains AddressExtension Separator", () => 
+                {
+                    var constantsResponse = blockchainApi.Constants.GetConstants();
+                    constantsResponse.Validate.StatusCode(HttpStatusCode.OK);
+
+                    Assert.That(constantsResponse.GetResponseObject().publicAddressExtension.separator, Is.Not.Null.Or.Empty, "Public address separator is null or empty");
+                    Assert.That(constantsResponse.GetResponseObject().publicAddressExtension.displayName, Is.Not.Null.Or.Empty, "Display name is null or empty");
+                    Assert.That(newWallet, Does.Contain(constantsResponse.GetResponseObject().publicAddressExtension.separator), $"Wallet {newWallet} does not contain separator {constantsResponse.GetResponseObject().publicAddressExtension.separator}");
+                });
             }
         }
     }

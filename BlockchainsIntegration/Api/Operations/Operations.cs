@@ -67,16 +67,6 @@ namespace BlockchainsIntegration.Api
             return Request.Put("/transactions").AddJsonBody(model).Build().Execute<PutTransactionsResponse>();
         }
 
-        //public IResponse DeleteTranstactionsObservationFromAddress(string address)
-        //{
-        //    return Request.Delete($"/transactions/history/from/{address}/observation").Build().Execute();
-        //}
-
-        //public IResponse DeleteTranstactionsObservationToAddress(string address)
-        //{
-        //    return Request.Delete($"/transactions/history/to/{address}/observation").Build().Execute();
-        //}
-
         public IResponse<TransactionHistory[]> GetTransactionHistorFromAddress(string address, string take, string afterHash = null)
         {
             return Request.Get($"/transactions/history/to/{address}").AddQueryParameterIfNotNull("take", take)

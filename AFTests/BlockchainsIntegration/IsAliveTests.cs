@@ -14,8 +14,11 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetIsAliveTest()
             {
-                var response = blockchainApi.IsAlive.GetIsAlive();
-                response.Validate.StatusCode(HttpStatusCode.OK);
+                Step("Make GET /isalive and validate response status code is OK ", () => 
+                {
+                    var response = blockchainApi.IsAlive.GetIsAlive();
+                    response.Validate.StatusCode(HttpStatusCode.OK);
+                });
             }
         }
     }

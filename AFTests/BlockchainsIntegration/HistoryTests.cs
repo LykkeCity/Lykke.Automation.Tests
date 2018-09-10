@@ -18,9 +18,12 @@ namespace AFTests.BlockchainsIntegrationTests
             [Description("take is requered!")]
             public void GetHistoryFromTakeIsRequiredTest()
             {
-                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
-                var response = blockchainApi.Operations.GetTransactionHistorFromAddress(newWallet, null);
-                response.Validate.StatusCode(HttpStatusCode.BadRequest, "Take is required, Should be BadRequest");
+                Step($"Make GT /transactions/history/to/<address> without take and validate response status is BadRequest", ()=>
+                {
+                    var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                    var response = blockchainApi.Operations.GetTransactionHistorFromAddress(newWallet, null);
+                    response.Validate.StatusCode(HttpStatusCode.BadRequest, "Take is required, Should be BadRequest");
+                });
             }
         }
 
@@ -30,10 +33,13 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetHistoryFromTest()
             {
-                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                Step("Make GET /transactions/history/to/{address} with valid parameters and validate Status code is OK", () => 
+                {
+                    var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
 
-                var response = blockchainApi.Operations.GetTransactionHistorFromAddress(newWallet, "1");
-                response.Validate.StatusCode(HttpStatusCode.OK);
+                    var response = blockchainApi.Operations.GetTransactionHistorFromAddress(newWallet, "1");
+                    response.Validate.StatusCode(HttpStatusCode.OK);
+                });
             }
         }
 
@@ -43,13 +49,16 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetHistoryToTest()
             {
-                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                Step("Make GET /transactions/history/to/{address} to wallet without transaction and validate response", () => 
+                {
+                    var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
 
-                var response = blockchainApi.Operations.GetTransactionHistorToAddress(newWallet, "10");
-                response.Validate.StatusCode(HttpStatusCode.OK);
+                    var response = blockchainApi.Operations.GetTransactionHistorToAddress(newWallet, "10");
+                    response.Validate.StatusCode(HttpStatusCode.OK);
 
-                var empty = JsonConvert.DeserializeObject<TransactionHistory[]>("[]");
-                Assert.That(JsonConvert.DeserializeObject<TransactionHistory[]>(response.Content), Is.EqualTo(empty), "Unexpected count for invalid address");
+                    var empty = JsonConvert.DeserializeObject<TransactionHistory[]>("[]");
+                    Assert.That(JsonConvert.DeserializeObject<TransactionHistory[]>(response.Content), Is.EqualTo(empty), "Unexpected count for invalid address");
+                });
             }
         }
 
@@ -59,12 +68,14 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostHistoryToConflictTest()
             {
-                //enabled if disabled
-                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                Step("Validate, that double POST /transactions/history/{To}/{address}/observation produce status code Conflict or OK", () => 
+                {
+                    var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
 
-                blockchainApi.Operations.PostHistoryFromToAddress("to", newWallet);
-                var response = blockchainApi.Operations.PostHistoryFromToAddress("to", newWallet);
-                Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.Conflict, HttpStatusCode.OK), "Unexpected status code");
+                    blockchainApi.Operations.PostHistoryFromToAddress("to", newWallet);
+                    var response = blockchainApi.Operations.PostHistoryFromToAddress("to", newWallet);
+                    Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.Conflict, HttpStatusCode.OK), "Unexpected status code");
+                });
             }
         }
 
@@ -74,10 +85,13 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostHistoryToTest()
             {
-                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                Step("Validate POST /transactions/history/To/{address}/observation with valid parameters and validate response status code is OK", () => 
+                {
+                    var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
 
-                var response = blockchainApi.Operations.PostHistoryFromToAddress("to", newWallet);
-                response.Validate.StatusCode(HttpStatusCode.OK);
+                    var response = blockchainApi.Operations.PostHistoryFromToAddress("to", newWallet);
+                    response.Validate.StatusCode(HttpStatusCode.OK);
+                });
             }
         }
 
@@ -87,12 +101,14 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostHistoryFromConflictTest()
             {
-                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                Step("Validate Double POST /transactions/history/from/{address}/observation with valid parameters and validate response status code is Conflict or OK", () =>
+                {
+                    var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
 
-                //enable if disabled
-                blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet);
-                var response = blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet);
-                Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.Conflict, HttpStatusCode.OK));
+                    blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet);
+                    var response = blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet);
+                    Assert.That(response.StatusCode, Is.AnyOf(HttpStatusCode.Conflict, HttpStatusCode.OK));
+                }); 
             }
         }
 
@@ -102,10 +118,13 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostHistoryFromTest()
             {
-                var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
+                Step("Validate POST /transactions/history/from/{address}/observation with valid parameters and validate response status code is OK", () =>
+                {
+                    var newWallet = blockchainSign.PostWallet().GetResponseObject().PublicAddress;
 
-                var response = blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet);
-                response.Validate.StatusCode(HttpStatusCode.OK);
+                    var response = blockchainApi.Operations.PostHistoryFromToAddress("from", newWallet);
+                    response.Validate.StatusCode(HttpStatusCode.OK);
+                });      
             }
         }
     }

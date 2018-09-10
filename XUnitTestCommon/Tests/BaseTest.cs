@@ -114,7 +114,8 @@ namespace XUnitTestCommon.Tests
 
         [TearDown]
         public void TearDown()
-        {  
+        {
+            stepNumber = 0;
             Console.WriteLine("TearDown");
             allure.AllureAfterTest();
         }

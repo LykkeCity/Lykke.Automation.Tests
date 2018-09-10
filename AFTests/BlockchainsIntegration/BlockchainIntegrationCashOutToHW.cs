@@ -47,7 +47,7 @@ namespace AFTests.BlockchainsIntegrationTests
             string clientInfo = "iPhone; Model:6 Plus; Os:9.3.5; Screen:414x736";
             string hint = "qwe";
 
-            [Test]
+            //[Test]
           //  [Category("BlockchainIntegration")]
             public void ProhibotCashOutsToHWTest()
             {

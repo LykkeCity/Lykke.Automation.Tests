@@ -11,30 +11,19 @@ namespace AFTests.BlockchainsIntegrationTests
 {
     class BlockchainsIntegrationSignTests
     {
-        public class GetBlockchainSignAlive : BlockchainsIntegrationBaseTest
-        {
-            [Test]
-            [Category("BlockchainIntegration")]
-            public void GetBlockchainSignAliveTest()
-            {
-                var response = blockchainSign.GetIsAlive();
-                response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().Name, Does.Contain("Sign"));
-                Assert.That(response.GetResponseObject().Version, Is.Not.Null);
-            }
-        }
-
-
         public class PostWallet : BlockchainsIntegrationBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]
             public void PostWalletTest()
             {
-                var response = blockchainSign.PostWallet();
-                response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().PublicAddress, Is.Not.Empty);
-                Assert.That(response.GetResponseObject().PrivateKey, Is.Not.Empty);
+                Step("Perform POST /wallets and validate response contains PublicAddress and PrivateKey", () => 
+                {
+                    var response = blockchainSign.PostWallet();
+                    response.Validate.StatusCode(HttpStatusCode.OK);
+                    Assert.That(response.GetResponseObject().PublicAddress, Is.Not.Empty);
+                    Assert.That(response.GetResponseObject().PrivateKey, Is.Not.Empty);
+                });
             }
         }
 
@@ -44,16 +33,19 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void PostSignTest()
             {
-                var wallet = blockchainSign.PostWallet().GetResponseObject();
-
-                var req = new SignRequest()
+                Step("Create new wallet. Perform Sign request with invalid transactionContext. Validate statuscode is BadRequest", () => 
                 {
-                    PrivateKeys = new List<string>() { wallet.PrivateKey },
-                    TransactionContext = "testHex"
-                };
+                    var wallet = blockchainSign.PostWallet().GetResponseObject();
 
-                var response = blockchainSign.PostSign(req);
-                response.Validate.StatusCode(HttpStatusCode.BadRequest);
+                    var req = new SignRequest()
+                    {
+                        PrivateKeys = new List<string>() { wallet.PrivateKey },
+                        TransactionContext = "testHex"
+                    };
+
+                    var response = blockchainSign.PostSign(req);
+                    response.Validate.StatusCode(HttpStatusCode.BadRequest);
+                }); 
             }
         }
     }
