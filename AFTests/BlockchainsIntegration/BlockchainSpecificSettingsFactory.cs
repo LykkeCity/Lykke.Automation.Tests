@@ -81,6 +81,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "bitcoin")
                 _settings = new BitcoinSettings();
 
+            if (blockchain == "qtum")
+                _settings = new QtumSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
