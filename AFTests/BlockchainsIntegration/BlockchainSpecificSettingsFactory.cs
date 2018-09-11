@@ -81,6 +81,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "bitcoin")
                 _settings = new BitcoinSettings();
 
+            if (blockchain == "qtum")
+                _settings = new QtumSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -319,6 +322,24 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWallerAddressContext = "{\"PubKey\":\"03dd1001f94328682857ac038d7ab5e2d97ad7cdeab07483de6eb6d678df5bfa42\"}";
                 BlockchainMiningTime = 20;
                 MaxWalletsForCashIn = 10;
+            }
+        }
+
+        class QtumSettings : BlockchainSpecificModel
+        {
+            public QtumSettings()
+            {
+                BlockchainIntegration = "QTUM";
+                BlockchainApi = "http://qtum-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://qtum-sign.autotests-service.svc.cluster.local/api";
+                HotWallet = "qg3uFoqA5nFFvx4N6avNUaRw6ppdRpXfwg";
+                HotWalletKey = "cUfNTJiPcsCbj4RdxLWE1vnBBn8k5fwem14JBSBnSWoAzKhTzGVa";
+                HotWalletAddressContext = "";
+                ExternalWalletAddress = "qL6XDDTKmoPYeK6QLq83tosygptN85Sehd";
+                ExternalWalletKey = "cNXQfnthkJfBzzntW4Hq2EL4E43GRXjjqx66Eh5JKRcUY999KEC9";
+                ExternalWallerAddressContext = "";
+                AssetId = "QTUM";
+                BlockchainMiningTime = 10;
             }
         }
 
