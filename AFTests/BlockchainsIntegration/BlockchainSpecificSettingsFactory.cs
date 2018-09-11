@@ -322,6 +322,24 @@ namespace AFTests.BlockchainsIntegration
             }
         }
 
+        class QtumSettings : BlockchainSpecificModel
+        {
+            public QtumSettings()
+            {
+                BlockchainIntegration = "QTUM";
+                BlockchainApi = "http://qtum-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://qtum-sign.autotests-service.svc.cluster.local/api";
+                HotWallet = "qg3uFoqA5nFFvx4N6avNUaRw6ppdRpXfwg";
+                HotWalletKey = "cUfNTJiPcsCbj4RdxLWE1vnBBn8k5fwem14JBSBnSWoAzKhTzGVa";
+                HotWalletAddressContext = "";
+                ExternalWalletAddress = "qL6XDDTKmoPYeK6QLq83tosygptN85Sehd";
+                ExternalWalletKey = "cNXQfnthkJfBzzntW4Hq2EL4E43GRXjjqx66Eh5JKRcUY999KEC9";
+                ExternalWallerAddressContext = "";
+                AssetId = "QTUM";
+                BlockchainMiningTime = 10;
+            }
+        }
+
         public class LocalConfig : BlockchainSpecificModel
         {
             public static BlockchainSpecificModel LocalConfigModel()
