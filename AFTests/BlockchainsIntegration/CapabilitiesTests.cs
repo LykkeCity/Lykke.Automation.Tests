@@ -18,8 +18,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 Step("Make GET /cpabilities. Validate response status code is OK", () =>
                 {
                     var response = blockchainApi.Capabilities.GetCapabilities();
-                    response.Validate.StatusCode(HttpStatusCode.OK);
-                    Assert.That(response.GetResponseObject().IsTransactionsRebuildingSupported, Is.False.Or.False);
+                    response.Validate.StatusCode(HttpStatusCode.OK);    
                 }); 
             }
         }
