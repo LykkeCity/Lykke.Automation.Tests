@@ -84,6 +84,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "qtum")
                 _settings = new QtumSettings();
 
+            if (blockchain == "steem")
+                _settings = new SteemSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -339,6 +342,23 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "cNXQfnthkJfBzzntW4Hq2EL4E43GRXjjqx66Eh5JKRcUY999KEC9";
                 ExternalWallerAddressContext = "";
                 AssetId = "QTUM";
+                BlockchainMiningTime = 10;
+            }
+        }
+
+        class SteemSettings : BlockchainSpecificModel
+        {
+            public SteemSettings()
+            {
+                BlockchainIntegration = "Steem";
+                BlockchainApi = "http://steem-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://steem-signservice.autotests-service.svc.cluster.local/api";
+                AssetId = "STEEM";
+                AssetAccuracy = 3;
+                HotWallet = "lykke.auto.hot";
+                HotWalletKey = "5JWxJ2PJg4h5W4d4kxso6Yuji49PjrvsHkUwNRhG4vA27uDE8p9";
+                ExternalWalletAddress = "lykke.auto.ext";
+                ExternalWalletKey = "5K9Gn8i2W7LXcUvJtzZvA91TA7JDERT9iMVHmDsczYF3i9XNbWd";
                 BlockchainMiningTime = 10;
             }
         }
