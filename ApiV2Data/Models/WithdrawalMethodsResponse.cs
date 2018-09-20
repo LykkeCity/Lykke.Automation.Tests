@@ -8,25 +8,26 @@ namespace Lykke.Client.ApiV2.Models
 {
     using Microsoft.Rest;
     using Newtonsoft.Json;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
 
-    public partial class BaseAssetUpdateModel
+    public partial class WithdrawalMethodsResponse
     {
         /// <summary>
-        /// Initializes a new instance of the BaseAssetUpdateModel class.
+        /// Initializes a new instance of the WithdrawalMethodsResponse class.
         /// </summary>
-        public BaseAssetUpdateModel()
+        public WithdrawalMethodsResponse()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the BaseAssetUpdateModel class.
+        /// Initializes a new instance of the WithdrawalMethodsResponse class.
         /// </summary>
-        public BaseAssetUpdateModel(string baseAsssetId, string baseAssetId)
+        public WithdrawalMethodsResponse(IList<WithdrawalMethod> withdrawalMethods)
         {
-            BaseAsssetId = baseAsssetId;
-            BaseAssetId = baseAssetId;
+            WithdrawalMethods = withdrawalMethods;
             CustomInit();
         }
 
@@ -37,13 +38,8 @@ namespace Lykke.Client.ApiV2.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "BaseAsssetId")]
-        public string BaseAsssetId { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "BaseAssetId")]
-        public string BaseAssetId { get; set; }
+        [JsonProperty(PropertyName = "WithdrawalMethods")]
+        public IList<WithdrawalMethod> WithdrawalMethods { get; set; }
 
         /// <summary>
         /// Validate the object.
@@ -53,13 +49,19 @@ namespace Lykke.Client.ApiV2.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (BaseAsssetId == null)
+            if (WithdrawalMethods == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "BaseAsssetId");
+                throw new ValidationException(ValidationRules.CannotBeNull, "WithdrawalMethods");
             }
-            if (BaseAssetId == null)
+            if (WithdrawalMethods != null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "BaseAssetId");
+                foreach (var element in WithdrawalMethods)
+                {
+                    if (element != null)
+                    {
+                        element.Validate();
+                    }
+                }
             }
         }
     }

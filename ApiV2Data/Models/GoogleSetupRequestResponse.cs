@@ -10,23 +10,22 @@ namespace Lykke.Client.ApiV2.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class BaseAssetUpdateModel
+    public partial class GoogleSetupRequestResponse
     {
         /// <summary>
-        /// Initializes a new instance of the BaseAssetUpdateModel class.
+        /// Initializes a new instance of the GoogleSetupRequestResponse class.
         /// </summary>
-        public BaseAssetUpdateModel()
+        public GoogleSetupRequestResponse()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the BaseAssetUpdateModel class.
+        /// Initializes a new instance of the GoogleSetupRequestResponse class.
         /// </summary>
-        public BaseAssetUpdateModel(string baseAsssetId, string baseAssetId)
+        public GoogleSetupRequestResponse(string manualEntryKey)
         {
-            BaseAsssetId = baseAsssetId;
-            BaseAssetId = baseAssetId;
+            ManualEntryKey = manualEntryKey;
             CustomInit();
         }
 
@@ -37,13 +36,8 @@ namespace Lykke.Client.ApiV2.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "BaseAsssetId")]
-        public string BaseAsssetId { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "BaseAssetId")]
-        public string BaseAssetId { get; set; }
+        [JsonProperty(PropertyName = "ManualEntryKey")]
+        public string ManualEntryKey { get; set; }
 
         /// <summary>
         /// Validate the object.
@@ -53,13 +47,9 @@ namespace Lykke.Client.ApiV2.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (BaseAsssetId == null)
+            if (ManualEntryKey == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "BaseAsssetId");
-            }
-            if (BaseAssetId == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "BaseAssetId");
+                throw new ValidationException(ValidationRules.CannotBeNull, "ManualEntryKey");
             }
         }
     }

@@ -30,10 +30,9 @@ namespace Lykke.Client.ApiV2.Models
         /// </summary>
         /// <param name="stateToken">JWE token containing current state of
         /// recovery process.</param>
-        /// <param name="action">What action to perform on challenge. Possible
-        /// values include: 'Undefined', 'Complete', 'Restart', 'Skip'</param>
+        /// <param name="action">What action to perform on challenge.</param>
         /// <param name="value">Value for submitting the challenge.</param>
-        public RecoverySubmitChallengeRequestModel(string stateToken, Action action, string value)
+        public RecoverySubmitChallengeRequestModel(string stateToken, string action, string value)
         {
             StateToken = stateToken;
             Action = action;
@@ -54,11 +53,10 @@ namespace Lykke.Client.ApiV2.Models
         public string StateToken { get; set; }
 
         /// <summary>
-        /// Gets or sets what action to perform on challenge. Possible values
-        /// include: 'Undefined', 'Complete', 'Restart', 'Skip'
+        /// Gets or sets what action to perform on challenge.
         /// </summary>
         [JsonProperty(PropertyName = "Action")]
-        public Action Action { get; set; }
+        public string Action { get; set; }
 
         /// <summary>
         /// Gets or sets value for submitting the challenge.
@@ -77,6 +75,10 @@ namespace Lykke.Client.ApiV2.Models
             if (StateToken == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "StateToken");
+            }
+            if (Action == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Action");
             }
             if (Value == null)
             {

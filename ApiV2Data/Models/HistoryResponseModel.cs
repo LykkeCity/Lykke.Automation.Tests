@@ -24,12 +24,12 @@ namespace Lykke.Client.ApiV2.Models
         /// Initializes a new instance of the HistoryResponseModel class.
         /// </summary>
         /// <param name="type">Possible values include: 'CashIn', 'CashOut',
-        /// 'Trade', 'LimitTrade', 'LimitOrderEvent'</param>
-        /// <param name="state">Possible values include: 'InProgress',
+        /// 'Trade', 'OrderEvent'</param>
+        /// <param name="state">Possible values include: 'None', 'InProgress',
         /// 'Finished', 'Canceled', 'Failed'</param>
         /// <param name="feeType">Possible values include: 'Unknown',
         /// 'Absolute', 'Relative'</param>
-        public HistoryResponseModel(string id, System.DateTime dateTime, HistoryOperationType type, HistoryOperationState state, double amount, string asset, string assetPair, double price, double feeSize, FeeType feeType)
+        public HistoryResponseModel(string id, System.DateTime dateTime, HistoryType type, HistoryState state, double amount, string asset, string assetPair, double price, double feeSize, FeeType feeType)
         {
             Id = id;
             DateTime = dateTime;
@@ -61,17 +61,17 @@ namespace Lykke.Client.ApiV2.Models
 
         /// <summary>
         /// Gets or sets possible values include: 'CashIn', 'CashOut', 'Trade',
-        /// 'LimitTrade', 'LimitOrderEvent'
+        /// 'OrderEvent'
         /// </summary>
         [JsonProperty(PropertyName = "Type")]
-        public HistoryOperationType Type { get; set; }
+        public HistoryType Type { get; set; }
 
         /// <summary>
-        /// Gets or sets possible values include: 'InProgress', 'Finished',
-        /// 'Canceled', 'Failed'
+        /// Gets or sets possible values include: 'None', 'InProgress',
+        /// 'Finished', 'Canceled', 'Failed'
         /// </summary>
         [JsonProperty(PropertyName = "State")]
-        public HistoryOperationState State { get; set; }
+        public HistoryState State { get; set; }
 
         /// <summary>
         /// </summary>

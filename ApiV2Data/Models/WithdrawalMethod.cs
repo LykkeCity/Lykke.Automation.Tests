@@ -8,25 +8,27 @@ namespace Lykke.Client.ApiV2.Models
 {
     using Microsoft.Rest;
     using Newtonsoft.Json;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
 
-    public partial class BaseAssetUpdateModel
+    public partial class WithdrawalMethod
     {
         /// <summary>
-        /// Initializes a new instance of the BaseAssetUpdateModel class.
+        /// Initializes a new instance of the WithdrawalMethod class.
         /// </summary>
-        public BaseAssetUpdateModel()
+        public WithdrawalMethod()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the BaseAssetUpdateModel class.
+        /// Initializes a new instance of the WithdrawalMethod class.
         /// </summary>
-        public BaseAssetUpdateModel(string baseAsssetId, string baseAssetId)
+        public WithdrawalMethod(string name, IList<string> assets)
         {
-            BaseAsssetId = baseAsssetId;
-            BaseAssetId = baseAssetId;
+            Name = name;
+            Assets = assets;
             CustomInit();
         }
 
@@ -37,13 +39,13 @@ namespace Lykke.Client.ApiV2.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "BaseAsssetId")]
-        public string BaseAsssetId { get; set; }
+        [JsonProperty(PropertyName = "Name")]
+        public string Name { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "BaseAssetId")]
-        public string BaseAssetId { get; set; }
+        [JsonProperty(PropertyName = "Assets")]
+        public IList<string> Assets { get; set; }
 
         /// <summary>
         /// Validate the object.
@@ -53,13 +55,13 @@ namespace Lykke.Client.ApiV2.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (BaseAsssetId == null)
+            if (Name == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "BaseAsssetId");
+                throw new ValidationException(ValidationRules.CannotBeNull, "Name");
             }
-            if (BaseAssetId == null)
+            if (Assets == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "BaseAssetId");
+                throw new ValidationException(ValidationRules.CannotBeNull, "Assets");
             }
         }
     }

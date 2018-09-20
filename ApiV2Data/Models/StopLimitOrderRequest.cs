@@ -10,34 +10,30 @@ namespace Lykke.Client.ApiV2.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class LimitOrderResponseModel
+    public partial class StopLimitOrderRequest
     {
         /// <summary>
-        /// Initializes a new instance of the LimitOrderResponseModel class.
+        /// Initializes a new instance of the StopLimitOrderRequest class.
         /// </summary>
-        public LimitOrderResponseModel()
+        public StopLimitOrderRequest()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the LimitOrderResponseModel class.
+        /// Initializes a new instance of the StopLimitOrderRequest class.
         /// </summary>
-        public LimitOrderResponseModel(System.Guid id, string assetPairId, double volume, double price, double lowerLimitPrice, double lowerPrice, double upperLimitPrice, double upperPrice, System.DateTime createDateTime, string orderAction, string status, string type, double remainingVolume)
+        /// <param name="orderAction">Possible values include: 'Buy',
+        /// 'Sell'</param>
+        public StopLimitOrderRequest(string assetPairId, double volume, double lowerLimitPrice, double lowerPrice, double upperLimitPrice, double upperPrice, OrderAction orderAction)
         {
-            Id = id;
             AssetPairId = assetPairId;
             Volume = volume;
-            Price = price;
             LowerLimitPrice = lowerLimitPrice;
             LowerPrice = lowerPrice;
             UpperLimitPrice = upperLimitPrice;
             UpperPrice = upperPrice;
-            CreateDateTime = createDateTime;
             OrderAction = orderAction;
-            Status = status;
-            Type = type;
-            RemainingVolume = remainingVolume;
             CustomInit();
         }
 
@@ -48,11 +44,6 @@ namespace Lykke.Client.ApiV2.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "Id")]
-        public System.Guid Id { get; set; }
-
-        /// <summary>
-        /// </summary>
         [JsonProperty(PropertyName = "AssetPairId")]
         public string AssetPairId { get; set; }
 
@@ -60,11 +51,6 @@ namespace Lykke.Client.ApiV2.Models
         /// </summary>
         [JsonProperty(PropertyName = "Volume")]
         public double Volume { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "Price")]
-        public double Price { get; set; }
 
         /// <summary>
         /// </summary>
@@ -87,29 +73,10 @@ namespace Lykke.Client.ApiV2.Models
         public double UpperPrice { get; set; }
 
         /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "CreateDateTime")]
-        public System.DateTime CreateDateTime { get; set; }
-
-        /// <summary>
+        /// Gets or sets possible values include: 'Buy', 'Sell'
         /// </summary>
         [JsonProperty(PropertyName = "OrderAction")]
-        public string OrderAction { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "Status")]
-        public string Status { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "Type")]
-        public string Type { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "RemainingVolume")]
-        public double RemainingVolume { get; set; }
+        public OrderAction OrderAction { get; set; }
 
         /// <summary>
         /// Validate the object.
@@ -122,18 +89,6 @@ namespace Lykke.Client.ApiV2.Models
             if (AssetPairId == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "AssetPairId");
-            }
-            if (OrderAction == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "OrderAction");
-            }
-            if (Status == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Status");
-            }
-            if (Type == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Type");
             }
         }
     }

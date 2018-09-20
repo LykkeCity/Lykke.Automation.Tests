@@ -10,23 +10,22 @@ namespace Lykke.Client.ApiV2.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    public partial class BaseAssetUpdateModel
+    public partial class GoogleSetupVerifyRequest
     {
         /// <summary>
-        /// Initializes a new instance of the BaseAssetUpdateModel class.
+        /// Initializes a new instance of the GoogleSetupVerifyRequest class.
         /// </summary>
-        public BaseAssetUpdateModel()
+        public GoogleSetupVerifyRequest()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the BaseAssetUpdateModel class.
+        /// Initializes a new instance of the GoogleSetupVerifyRequest class.
         /// </summary>
-        public BaseAssetUpdateModel(string baseAsssetId, string baseAssetId)
+        public GoogleSetupVerifyRequest(string code)
         {
-            BaseAsssetId = baseAsssetId;
-            BaseAssetId = baseAssetId;
+            Code = code;
             CustomInit();
         }
 
@@ -37,13 +36,8 @@ namespace Lykke.Client.ApiV2.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "BaseAsssetId")]
-        public string BaseAsssetId { get; set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "BaseAssetId")]
-        public string BaseAssetId { get; set; }
+        [JsonProperty(PropertyName = "Code")]
+        public string Code { get; set; }
 
         /// <summary>
         /// Validate the object.
@@ -53,13 +47,9 @@ namespace Lykke.Client.ApiV2.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (BaseAsssetId == null)
+            if (Code == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "BaseAsssetId");
-            }
-            if (BaseAssetId == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "BaseAssetId");
+                throw new ValidationException(ValidationRules.CannotBeNull, "Code");
             }
         }
     }

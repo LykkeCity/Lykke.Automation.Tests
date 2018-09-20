@@ -29,14 +29,12 @@ namespace Lykke.Client.ApiV2.Models
         /// Initializes a new instance of the RecoveryStatusResponseModel
         /// class.
         /// </summary>
-        /// <param name="challenge">Current challenge provided for client.
-        /// Possible values include: 'Unknown', 'Sms', 'Email', 'Selfie',
-        /// 'Words', 'Device', 'Pin', 'Undefined'</param>
+        /// <param name="challenge">Current challenge provided for
+        /// client.</param>
         /// <param name="overallProgress">Overall progress status of password
-        /// recovery. Possible values include: 'Ongoing', 'WaitingForSupport',
-        /// 'Frozen', 'Suspended', 'Allowed', 'Undefined'</param>
+        /// recovery.</param>
         /// <param name="challengeInfo">Information about challenge.</param>
-        public RecoveryStatusResponseModel(Challenge challenge, Progress overallProgress, string challengeInfo)
+        public RecoveryStatusResponseModel(string challenge, string overallProgress, string challengeInfo)
         {
             Challenge = challenge;
             OverallProgress = overallProgress;
@@ -50,20 +48,16 @@ namespace Lykke.Client.ApiV2.Models
         partial void CustomInit();
 
         /// <summary>
-        /// Gets or sets current challenge provided for client. Possible values
-        /// include: 'Unknown', 'Sms', 'Email', 'Selfie', 'Words', 'Device',
-        /// 'Pin', 'Undefined'
+        /// Gets or sets current challenge provided for client.
         /// </summary>
         [JsonProperty(PropertyName = "Challenge")]
-        public Challenge Challenge { get; set; }
+        public string Challenge { get; set; }
 
         /// <summary>
-        /// Gets or sets overall progress status of password recovery. Possible
-        /// values include: 'Ongoing', 'WaitingForSupport', 'Frozen',
-        /// 'Suspended', 'Allowed', 'Undefined'
+        /// Gets or sets overall progress status of password recovery.
         /// </summary>
         [JsonProperty(PropertyName = "OverallProgress")]
-        public Progress OverallProgress { get; set; }
+        public string OverallProgress { get; set; }
 
         /// <summary>
         /// Gets or sets information about challenge.
@@ -79,6 +73,14 @@ namespace Lykke.Client.ApiV2.Models
         /// </exception>
         public virtual void Validate()
         {
+            if (Challenge == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Challenge");
+            }
+            if (OverallProgress == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "OverallProgress");
+            }
             if (ChallengeInfo == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "ChallengeInfo");
