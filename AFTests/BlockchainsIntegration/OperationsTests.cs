@@ -779,7 +779,21 @@ namespace AFTests.BlockchainsIntegrationTests
                         //validate balance is 0 or null
                         Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.EqualTo("0").Or.Null.After((int)BLOCKCHAIN_MINING_TIME * 60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
                     }
-                }); 
+                });
+
+                Step($"Validate that Amount is > 0 in '/transactions/broadcast/single/{operationId}' response", () => 
+                {
+                    getResponse = blockchainApi.Operations.GetOperationId(operationId.ToString());
+                    var amountInDecimal = decimal.Parse(getResponse.GetResponseObject().Amount);
+                    Assert.That(amountInDecimal, Is.GreaterThan(0), $"current amount '{amountInDecimal}' is not greater than 0");
+                });
+
+                Step($"Validate that Fee is > 0 in '/transactions/broadcast/single/{operationId}' response", () =>
+                {
+                    getResponse = blockchainApi.Operations.GetOperationId(operationId.ToString());
+                    var feeInDecimal = decimal.Parse(getResponse.GetResponseObject().Fee);
+                    Assert.That(feeInDecimal, Is.GreaterThan(0), $"current fee '{feeInDecimal}' is not greater than 0");
+                });
             }
         }
 
