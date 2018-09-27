@@ -570,92 +570,7 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class EWDWTransfer : BlockchainsIntegrationBaseTest
-        {
-            WalletCreationResponse wallet;
 
-            [SetUp]
-            public void SetUp()
-            {
-                wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
-            }
-
-            [Test]
-            [Category("BlockchainIntegration")]
-            public void EWDWTransferTest()
-            {
-                Assert.That(EXTERNAL_WALLET, Is.Not.Null.Or.Empty, "External wallet address and key are empty!");
-
-                var transferSupported = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
-                if (transferSupported!= null && transferSupported.Value)
-                {
-                    Step("Make EW - Dw transfer using /testing/transfers", () => 
-                    {
-                        TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUNT, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = wallet.PublicAddress };
-                        var response = blockchainApi.Testing.PostTestingTransfer(request);
-                    });
-                }
-                else
-                {
-                    var usedOperationId = Guid.NewGuid();
-
-                    Step("Make POST /transactions/broadcast and validate response status", () =>
-                    {
-                        var (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(EXTERNAL_WALLET, EXTERNAL_WALLET_ADDRESS_CONTEXT, EXTERNAL_WALLET_KEY, wallet.PublicAddress);
-
-                        while (response.StatusCode == HttpStatusCode.BadRequest && response.Content.Contains("buildingShouldBeRepeated") && REBUILD_ATTEMPT_COUNT > 0)
-                        {
-                            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
-                            REBUILD_ATTEMPT_COUNT--;
-                            (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(wallet.PublicAddress, wallet.AddressContext, wallet.PrivateKey, HOT_WALLET);
-                        }
-                        response.Validate.StatusCode(HttpStatusCode.OK);
-                        usedOperationId = operationId;
-                    });
-
-                    Step("Make GET /transactions/broadcast/single/{operationId} and validate response", () => 
-                    {
-                        var getResponse = blockchainApi.Operations.GetOperationId(usedOperationId.ToString());
-
-                        Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(usedOperationId));
-                    }); 
-                }
-            }
-        }
-
-        public class HwEwTransfer : BlockchainsIntegrationBaseTest
-        {
-            [Test]
-            [Category("BlockchainIntegration")]
-            public void HwEwTransferTest()
-            {
-                Assert.That(EXTERNAL_WALLET, Is.Not.Null.Or.Empty, "External wallet address and key are empty!");
-
-                Step("Make BUILD, SIGN, BROADCAST HW-EW operation", () => 
-                {
-                    var (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(HOT_WALLET, HOT_WALLET_CONTEXT, HOT_WALLET_KEY, EXTERNAL_WALLET);
-
-                    while (response.StatusCode == HttpStatusCode.BadRequest && response.Content.Contains("buildingShouldBeRepeated") && REBUILD_ATTEMPT_COUNT >0)
-                    {
-                        System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
-                        REBUILD_ATTEMPT_COUNT--;
-                        (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(HOT_WALLET, HOT_WALLET_CONTEXT, HOT_WALLET_KEY, EXTERNAL_WALLET);
-                    }
-                    response.Validate.StatusCode(HttpStatusCode.OK);
-
-                    var getResponse = blockchainApi.Operations.GetOperationId(operationId.ToString());
-                    Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(operationId));
-                });
-            }
-        }
 
         public class SameOperationIdFoDifferentTransactions : BlockchainsIntegrationBaseTest
         {
@@ -850,57 +765,6 @@ namespace AFTests.BlockchainsIntegrationTests
                 Step("Repeat BROADCAST operation and validate status code is Conflict", () => 
                 {
                     var response1 = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signedTransaction });
-
-                    response1.Validate.StatusCode(HttpStatusCode.Conflict);
-                });
-            }
-        }
-
-        public class HWEWTransferDoubleBroadcast : BlockchainsIntegrationBaseTest
-        {
-            WalletCreationResponse wallet;
-
-            [SetUp]
-            public void SetUp()
-            {
-                wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
-            }
-
-            [TearDown]
-            public void TearDown()
-            {
-                blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
-            }
-
-            [Test]
-            [Category("BlockchainIntegration")]
-            public void HWEWTransferDoubleBroadcastTest()
-            {
-                var usedOperationId = Guid.NewGuid();
-                var usedSignedTransaction = "";
-
-                Step("Perform BUILD, SIGN, BROADCAST HW - EW transaction", () => 
-                {
-                    var (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(HOT_WALLET, HOT_WALLET_CONTEXT, HOT_WALLET_KEY, EXTERNAL_WALLET);
-
-                    while (response.StatusCode == HttpStatusCode.BadRequest && response.Content.Contains("buildingShouldBeRepeated") && REBUILD_ATTEMPT_COUNT > 0)
-                    {
-                        System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
-                        REBUILD_ATTEMPT_COUNT--;
-                        (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(HOT_WALLET, HOT_WALLET_CONTEXT, HOT_WALLET_KEY, EXTERNAL_WALLET);
-                    }
-                    response.Validate.StatusCode(HttpStatusCode.OK);
-
-                    response.Validate.StatusCode(HttpStatusCode.OK);
-                    usedSignedTransaction = signedTransaction;
-                    usedOperationId = operationId;
-                });
-
-                Step("Repeat Broadcast transaction with same parameters and validate status code is Conflict", () => 
-                {
-                    var response1 = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = usedOperationId, SignedTransaction = usedSignedTransaction });
 
                     response1.Validate.StatusCode(HttpStatusCode.Conflict);
                 });
@@ -1496,6 +1360,248 @@ namespace AFTests.BlockchainsIntegrationTests
                     }
                     result.response.Validate.StatusCode(HttpStatusCode.OK);
                 });            
+            }
+        }
+
+        public class InvalidXmlSymbol : BlockchainsIntegrationBaseTest
+        {
+            [TestCase("\\")]
+            [TestCase("/")]
+            [TestCase("#")]
+            [TestCase("\\")]
+            [TestCase("?")]
+            [TestCase("\t")]
+            [TestCase("\r")]
+            [TestCase("\n")]
+            [TestCase("\0")]
+            [TestCase("\a")]
+            [TestCase("\b")]
+            [Category("BlockchainIntegration")]
+            public void InvalidXmlSymbolTest(string symbol)
+            {
+                if (!blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsPublicAddressExtensionRequired.HasValue ||
+                    !blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsPublicAddressExtensionRequired.Value)
+                    Assert.Ignore($"Blockchain {BlockChainName} does not support public address extension");
+
+                WalletCreationResponse wallet = null;
+                var separator = blockchainApi.Constants.GetConstants().GetResponseObject().publicAddressExtension.separator;
+                var wrongWalletAddressWithInvalidSymbol = $"{HOT_WALLET}{separator}{symbol}";
+
+                Step("Create wallet", () => 
+                {
+                    var walletResponse = blockchainSign.PostWallet();
+                    Assert.That(walletResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    wallet = walletResponse.GetResponseObject();
+                });
+
+                Step($"Create transaction from EW to wrong wallet address {wrongWalletAddressWithInvalidSymbol}", () => 
+                {
+                    blockchainApi.Balances.PostBalances(wallet.PublicAddress);
+                    var model = new BuildSingleTransactionRequest()
+                    {
+                        Amount = AMOUT_WITH_FEE,
+                        AssetId = ASSET_ID,
+                        FromAddress = EXTERNAL_WALLET,
+                        IncludeFee = false,
+                        OperationId = Guid.NewGuid(),
+                        ToAddress = wrongWalletAddressWithInvalidSymbol,
+                        FromAddressContext = EXTERNAL_WALLET_ADDRESS_CONTEXT
+                    };
+                       
+                    var singleTransactionResponse = blockchainApi.Operations.PostTransactions(model);
+                    var responseTransaction = singleTransactionResponse.GetResponseObject();
+
+                    string operationId = model.OperationId.ToString();
+
+                    var signResponse = blockchainSign.PostSign(new SignRequest()
+                    {
+                        PrivateKeys = new List<string>() { EXTERNAL_WALLET_KEY },
+                        TransactionContext = responseTransaction.TransactionContext }
+                    ).GetResponseObject();
+
+                    var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+                });
+
+                var transferSupported = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
+                if (transferSupported != null && transferSupported.Value)
+                {
+                    Step("Make EW - Dw transfer using /testing/transfers", () =>
+                    {
+                        TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUNT, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = wallet.PublicAddress };
+                        var response = blockchainApi.Testing.PostTestingTransfer(request);
+                    });
+                }
+                else
+                {
+                    var usedOperationId = Guid.NewGuid();
+
+                    Step("Make POST /transactions/broadcast and validate response status", () =>
+                    {
+                        var (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(EXTERNAL_WALLET, EXTERNAL_WALLET_ADDRESS_CONTEXT, EXTERNAL_WALLET_KEY, wallet.PublicAddress);
+
+                        while (response.StatusCode == HttpStatusCode.BadRequest && response.Content.Contains("buildingShouldBeRepeated") && REBUILD_ATTEMPT_COUNT > 0)
+                        {
+                            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
+                            REBUILD_ATTEMPT_COUNT--;
+                            (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(wallet.PublicAddress, wallet.AddressContext, wallet.PrivateKey, HOT_WALLET);
+                        }
+                        response.Validate.StatusCode(HttpStatusCode.OK);
+                        usedOperationId = operationId;
+                    });
+
+                    Step("Make GET /transactions/broadcast/single/{operationId} and validate response", () =>
+                    {
+                        var getResponse = blockchainApi.Operations.GetOperationId(usedOperationId.ToString());
+
+                        Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(usedOperationId));
+                    });
+                }
+            }
+        }
+
+        [NonParallelizable]
+        public class HWTransactionsContainer
+        {
+            public class HWEWTransferDoubleBroadcast : BlockchainsIntegrationBaseTest
+            {
+                WalletCreationResponse wallet;
+
+                [SetUp]
+                public void SetUp()
+                {
+                    wallet = Wallets().Dequeue();
+                    TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
+                    Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                }
+
+                [TearDown]
+                public void TearDown()
+                {
+                    blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+                }
+
+                [Test]
+                [Category("BlockchainIntegration")]
+                public void HWEWTransferDoubleBroadcastTest()
+                {
+                    var usedOperationId = Guid.NewGuid();
+                    var usedSignedTransaction = "";
+
+                    Step("Perform BUILD, SIGN, BROADCAST HW - EW transaction", () =>
+                    {
+                        var (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(HOT_WALLET, HOT_WALLET_CONTEXT, HOT_WALLET_KEY, EXTERNAL_WALLET);
+
+                        while (response.StatusCode == HttpStatusCode.BadRequest && response.Content.Contains("buildingShouldBeRepeated") && REBUILD_ATTEMPT_COUNT > 0)
+                        {
+                            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
+                            REBUILD_ATTEMPT_COUNT--;
+                            (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(HOT_WALLET, HOT_WALLET_CONTEXT, HOT_WALLET_KEY, EXTERNAL_WALLET);
+                        }
+                        response.Validate.StatusCode(HttpStatusCode.OK);
+
+                        response.Validate.StatusCode(HttpStatusCode.OK);
+                        usedSignedTransaction = signedTransaction;
+                        usedOperationId = operationId;
+                    });
+
+                    Step("Repeat Broadcast transaction with same parameters and validate status code is Conflict", () =>
+                    {
+                        var response1 = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = usedOperationId, SignedTransaction = usedSignedTransaction });
+
+                        response1.Validate.StatusCode(HttpStatusCode.Conflict);
+                    });
+                }
+            }
+
+            public class HwEwTransfer : BlockchainsIntegrationBaseTest
+            {
+                [Test]
+                [Category("BlockchainIntegration")]
+                public void HwEwTransferTest()
+                {
+                    Assert.That(EXTERNAL_WALLET, Is.Not.Null.Or.Empty, "External wallet address and key are empty!");
+
+                    Step("Make BUILD, SIGN, BROADCAST HW-EW operation", () =>
+                    {
+                        var (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(HOT_WALLET, HOT_WALLET_CONTEXT, HOT_WALLET_KEY, EXTERNAL_WALLET);
+
+                        while (response.StatusCode == HttpStatusCode.BadRequest && response.Content.Contains("buildingShouldBeRepeated") && REBUILD_ATTEMPT_COUNT > 0)
+                        {
+                            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
+                            REBUILD_ATTEMPT_COUNT--;
+                            (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(HOT_WALLET, HOT_WALLET_CONTEXT, HOT_WALLET_KEY, EXTERNAL_WALLET);
+                        }
+                        response.Validate.StatusCode(HttpStatusCode.OK);
+
+                        var getResponse = blockchainApi.Operations.GetOperationId(operationId.ToString());
+                        Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(operationId));
+                    });
+                }
+            }
+        }
+
+        [NonParallelizable]
+        public class EWTransactionContainer
+        {
+            public class EWDWTransfer : BlockchainsIntegrationBaseTest
+            {
+                WalletCreationResponse wallet;
+
+                [SetUp]
+                public void SetUp()
+                {
+                    wallet = Wallets().Dequeue();
+                    TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
+                    Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                }
+
+                [TearDown]
+                public void TearDown()
+                {
+                    blockchainApi.Balances.DeleteBalances(wallet.PublicAddress);
+                }
+
+                [Test]
+                [Category("BlockchainIntegration")]
+                public void EWDWTransferTest()
+                {
+                    Assert.That(EXTERNAL_WALLET, Is.Not.Null.Or.Empty, "External wallet address and key are empty!");
+
+                    var transferSupported = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
+                    if (transferSupported != null && transferSupported.Value)
+                    {
+                        Step("Make EW - Dw transfer using /testing/transfers", () =>
+                        {
+                            TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUNT, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = wallet.PublicAddress };
+                            var response = blockchainApi.Testing.PostTestingTransfer(request);
+                        });
+                    }
+                    else
+                    {
+                        var usedOperationId = Guid.NewGuid();
+
+                        Step("Make POST /transactions/broadcast and validate response status", () =>
+                        {
+                            var (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(EXTERNAL_WALLET, EXTERNAL_WALLET_ADDRESS_CONTEXT, EXTERNAL_WALLET_KEY, wallet.PublicAddress);
+
+                            while (response.StatusCode == HttpStatusCode.BadRequest && response.Content.Contains("buildingShouldBeRepeated") && REBUILD_ATTEMPT_COUNT > 0)
+                            {
+                                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
+                                REBUILD_ATTEMPT_COUNT--;
+                                (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(wallet.PublicAddress, wallet.AddressContext, wallet.PrivateKey, HOT_WALLET);
+                            }
+                            response.Validate.StatusCode(HttpStatusCode.OK);
+                            usedOperationId = operationId;
+                        });
+
+                        Step("Make GET /transactions/broadcast/single/{operationId} and validate response", () =>
+                        {
+                            var getResponse = blockchainApi.Operations.GetOperationId(usedOperationId.ToString());
+
+                            Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(usedOperationId));
+                        });
+                    }
+                }
             }
         }
     }
