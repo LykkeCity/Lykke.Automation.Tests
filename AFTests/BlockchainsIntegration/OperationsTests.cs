@@ -820,8 +820,10 @@ namespace AFTests.BlockchainsIntegrationTests
                 Step("Wait for operation got Complete status and for Balance block will be increased", () => 
                 {
                     WaitForOperationGotCompleteStatus(usedOperationId.ToString());
-
-                    WaitForBalanceBlockIncreased(wallet.PublicAddress, startBlock.Value);
+                    
+                    var txBlock = blockchainApi.Operations.GetOperationId(usedOperationId.ToString()).GetResponseObject().Block;
+                    
+                    WaitForBalanceBlockIncreased(wallet.PublicAddress, txBlock - 1);
                 });
 
                 Step("Validate DW balance after transaction", () => 
@@ -848,8 +850,10 @@ namespace AFTests.BlockchainsIntegrationTests
                 Step("Wait for operation got Complete status and wait for Balance block will be increased", () => 
                 {
                     WaitForOperationGotCompleteStatus(usedOperationId.ToString());
-
-                    WaitForBalanceBlockIncreased(wallet.PublicAddress, startBlock.Value);
+                    
+                    var txBlock = blockchainApi.Operations.GetOperationId(usedOperationId.ToString()).GetResponseObject().Block;
+                    
+                    WaitForBalanceBlockIncreased(wallet.PublicAddress, txBlock - 1);
                 });
 
                 Step("Validate balance after second DW - HW transaction", () => 
