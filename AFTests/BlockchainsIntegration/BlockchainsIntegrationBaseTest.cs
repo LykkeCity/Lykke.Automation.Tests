@@ -38,7 +38,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "BitcoinGold"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Ripple"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -205,7 +205,28 @@ namespace AFTests.BlockchainsIntegrationTests
             }
             else
             {
-                blockchainApi.Balances.PostBalances(wallet.PublicAddress);
+                wasError = BuildSignBroadcastEWDW(wallet, wait: wait);
+            }
+            if (wait && !wasError)
+                WaitForBalance(wallet.PublicAddress);
+            if (wasError)
+                wallet.PublicAddress = $"{wallet.PublicAddress}_wasErronWhileFillWalletFromEW";
+        }
+
+        /// <summary>
+        /// Make Build, Sign, Broadcast and return true in case error happend or false otherwise
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <param name="attemptCount"></param>
+        /// <returns></returns>
+        public bool BuildSignBroadcastEWDW(WalletCreationResponse wallet, int attemptCount=5, bool wait = false)
+        {
+            blockchainApi.Balances.PostBalances(wallet.PublicAddress);
+
+            int i = 0;
+
+            while (i < attemptCount)
+            {
                 var model = new BuildSingleTransactionRequest()
                 {
                     Amount = AMOUT_WITH_FEE,
@@ -216,43 +237,47 @@ namespace AFTests.BlockchainsIntegrationTests
                     ToAddress = wallet.PublicAddress,
                     FromAddressContext = EXTERNAL_WALLET_ADDRESS_CONTEXT
                 };
+                BuildTransactionResponse responseTransaction = new BuildTransactionResponse() { TransactionContext = null };
 
-                int i = 1;
-                BuildTransactionResponse responseTransaction = new BuildTransactionResponse() { TransactionContext = null};
-
-                while (i < 6)
+                var singleTransactionResponse = blockchainApi.Operations.PostTransactions(model);
+                if (singleTransactionResponse.StatusCode != HttpStatusCode.OK)
                 {
-                    var singleTransactionResponse = blockchainApi.Operations.PostTransactions(model);
-                    if(singleTransactionResponse.StatusCode == HttpStatusCode.OK)
-                    {
-                        responseTransaction = singleTransactionResponse.GetResponseObject();
-                        break;
-                    }
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds((int)(Math.Pow(3, i))));
                     i++;
+                    continue;
                 }
-                
-                Assert.That(responseTransaction.TransactionContext, Is.Not.Null, "Transaction context is null");
+
+                responseTransaction = singleTransactionResponse.GetResponseObject();
+
                 string operationId = model.OperationId.ToString();
 
                 var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { EXTERNAL_WALLET_KEY }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
-                Assert.That(signResponse.SignedTransaction, Is.Not.Null, "Signed transaction is null");
-
                 var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
 
                 if (response.StatusCode != HttpStatusCode.OK)
-                    wasError = true;
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds((int)(Math.Pow(3, i))));
+                    i++;
+                    continue;
+                }
 
                 var getResponse = blockchainApi.Operations.GetOperationId(operationId);
 
-                if(wait && !wasError)
+                if (getResponse.StatusCode != HttpStatusCode.OK)
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds((int)(Math.Pow(3, i))));
+                    i++;
+                    continue;
+                }
+
+                if (wait)
                     WaitForOperationGotCompleteStatus(operationId);
+
+                return false;
             }
-            if (wait && !wasError)
-                WaitForBalance(wallet.PublicAddress);
-            if (wasError)
-                wallet.PublicAddress = $"{wallet.PublicAddress}_wasErronWhileFillWalletFromEW";
+            
+            return true;
         }
 
         protected void AddCryptoToWalletWithRecieveTransaction(string walletAddress, string walletKey, bool wait = true)

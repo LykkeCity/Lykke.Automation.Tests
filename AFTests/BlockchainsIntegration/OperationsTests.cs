@@ -655,6 +655,11 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var operationId = Guid.NewGuid();
 
+                var extensionReponse = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsPublicAddressExtensionRequired;
+                var includeFee = true;
+                if (extensionReponse.HasValue)
+                    includeFee = !extensionReponse.Value;
+
                 IResponse<BroadcastedSingleTransactionResponse> getResponse = null;
                 Step("Make DW - HW BUILD, SIGN, BROADCAST transactions", () => 
                 {
@@ -663,7 +668,7 @@ namespace AFTests.BlockchainsIntegrationTests
                         Amount = currentBalance,
                         AssetId = ASSET_ID,
                         FromAddress = wallet.PublicAddress,
-                        IncludeFee = true,
+                        IncludeFee = includeFee,
                         OperationId = operationId,
                         ToAddress = HOT_WALLET,
                         FromAddressContext = wallet.AddressContext
@@ -703,12 +708,20 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.That(amountInDecimal, Is.GreaterThan(0), $"current amount '{amountInDecimal}' is not greater than 0");
                 });
 
-                Step($"Validate that Fee is > 0 in '/transactions/broadcast/single/{operationId}' response", () =>
+                if (includeFee)
+                    Step($"Validate that Fee is > 0 in '/transactions/broadcast/single/{operationId}' response", () =>
                 {
                     getResponse = blockchainApi.Operations.GetOperationId(operationId.ToString());
                     var feeInDecimal = decimal.Parse(getResponse.GetResponseObject().Fee);
                     Assert.That(feeInDecimal, Is.GreaterThan(0), $"current fee '{feeInDecimal}' is not greater than 0");
                 });
+                else
+                    Step($"Validate that Fee == 0 in '/transactions/broadcast/single/{operationId}' response", () =>
+                    {
+                        getResponse = blockchainApi.Operations.GetOperationId(operationId.ToString());
+                        var feeInDecimal = decimal.Parse(getResponse.GetResponseObject().Fee);
+                        Assert.That(feeInDecimal, Is.EqualTo(0), $"current fee '{feeInDecimal}' is not expected");
+                    });
             }
         }
 
@@ -739,12 +752,17 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
 
+                var extensionReponse = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsPublicAddressExtensionRequired;
+                var includeFee = true;
+                if (extensionReponse.HasValue)
+                    includeFee = !extensionReponse.Value;
+
                 var model = new BuildSingleTransactionRequest()
                 {
                     Amount = currentBalance,
                     AssetId = ASSET_ID,
                     FromAddress = wallet.PublicAddress,
-                    IncludeFee = true,
+                    IncludeFee = includeFee,
                     OperationId = Guid.NewGuid(),
                     ToAddress = HOT_WALLET,
                     FromAddressContext = wallet.AddressContext
