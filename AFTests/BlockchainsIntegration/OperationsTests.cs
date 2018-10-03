@@ -1476,11 +1476,13 @@ namespace AFTests.BlockchainsIntegrationTests
                         var getResponse = blockchainApi.Operations.GetOperationId(usedOperationId.ToString());
 
                         Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(usedOperationId));
+
+                        WaitForOperationGotCompleteStatus(usedOperationId.ToString());
                     });
 
                     Step("Validate balance records for wallet in GET /balances response. Validate wallet balance", () =>
                     {
-                        Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Count(a => a.Address == wallet.PublicAddress), Is.EqualTo(1), $"Unexpected instances of balance for wallet {wallet.PublicAddress}");
+                        Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Count(a => a.Address == wallet.PublicAddress), Is.EqualTo(1).After(2).Minutes.PollEvery(2).Seconds, $"Unexpected instances of balance for wallet {wallet.PublicAddress}");
                         Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Balance, Is.EqualTo(AMOUT_WITH_FEE), "Balance is not expected");
                     });
                 }
