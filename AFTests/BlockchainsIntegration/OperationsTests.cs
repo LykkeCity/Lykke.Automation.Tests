@@ -1449,7 +1449,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 {
                     Step("Make EW - Dw transfer using /testing/transfers", () =>
                     {
-                        TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUNT, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = wallet.PublicAddress };
+                        TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUT_WITH_FEE, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = wallet.PublicAddress };
                         var response = blockchainApi.Testing.PostTestingTransfer(request);
                     });
                 }
@@ -1459,13 +1459,13 @@ namespace AFTests.BlockchainsIntegrationTests
 
                     Step("Make POST /transactions/broadcast and validate response status", () =>
                     {
-                        var (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(EXTERNAL_WALLET, EXTERNAL_WALLET_ADDRESS_CONTEXT, EXTERNAL_WALLET_KEY, wallet.PublicAddress);
+                        var (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(EXTERNAL_WALLET, EXTERNAL_WALLET_ADDRESS_CONTEXT, EXTERNAL_WALLET_KEY, wallet.PublicAddress, AMOUT_WITH_FEE);
 
                         while (response.StatusCode == HttpStatusCode.BadRequest && response.Content.Contains("buildingShouldBeRepeated") && REBUILD_ATTEMPT_COUNT > 0)
                         {
                             System.Threading.Thread.Sleep(TimeSpan.FromSeconds(5));
                             REBUILD_ATTEMPT_COUNT--;
-                            (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(wallet.PublicAddress, wallet.AddressContext, wallet.PrivateKey, HOT_WALLET);
+                            (response, operationId, transactionContext, signedTransaction) = BuildSignBroadcastSingleTransaction(EXTERNAL_WALLET, EXTERNAL_WALLET_ADDRESS_CONTEXT, EXTERNAL_WALLET_KEY, wallet.PublicAddress, AMOUT_WITH_FEE);
                         }
                         response.Validate.StatusCode(HttpStatusCode.OK);
                         usedOperationId = operationId;
