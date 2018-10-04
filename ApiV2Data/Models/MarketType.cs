@@ -20,7 +20,9 @@ namespace Lykke.Client.ApiV2.Models
         [EnumMember(Value = "Spot")]
         Spot,
         [EnumMember(Value = "Mt")]
-        Mt
+        Mt,
+        [EnumMember(Value = null)]
+        NULL //testing value
     }
     internal static class MarketTypeEnumExtension
     {
@@ -37,6 +39,8 @@ namespace Lykke.Client.ApiV2.Models
                     return "Spot";
                 case MarketType.Mt:
                     return "Mt";
+                case MarketType.NULL:
+                    return null;
             }
             return null;
         }

@@ -8,9 +8,9 @@ namespace ApiV2Data.Api
 {
     public class Markets : ApiBase
     {
-        public IResponse<MarketSlice> GetMarkets()
+        public IResponse<List<MarketSlice>> GetMarkets()
         {
-            return Request.Get("/markets").Build().Execute<MarketSlice>();
+            return Request.Get("/markets").Build().Execute<List<MarketSlice>>();
         }
 
         public IResponse<MarketSlice> GetMarketsAssetPairId(string assetId)

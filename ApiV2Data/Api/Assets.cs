@@ -25,7 +25,7 @@ namespace ApiV2Data.Api
 
         public IResponse<KeyValue> GetAssetAttributeKeyById(string assetId, string assetAttributeKey)
         {
-            return Request.Get($"GET /api/assets/{assetId}/attributes/{assetAttributeKey}").Build().Execute<KeyValue>();
+            return Request.Get($"/assets/{assetId}/attributes/{assetAttributeKey}").Build().Execute<KeyValue>();
         }
 
         public IResponse<AssetDescriptionsModel> GetAssetsDescription()

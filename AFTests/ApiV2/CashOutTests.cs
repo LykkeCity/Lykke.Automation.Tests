@@ -13,7 +13,87 @@ namespace AFTests.ApiV2
 {
     class CashOutTests
     {
-        public class CannotCashoutLessThanMin : ApiV2BaseTest
+        public class CashOutBaseTest : ApiV2BaseTest
+        {
+            #region helpers
+            public (string assetId, string address, string addressExtension, double minCashOut) GetBlockchainCashoutData(BlockchainSettings blockchain)
+            {
+                try
+                {
+                    var currentAsset = lykkePrivateApi.Assets.GetAssets().GetResponseObject().FirstOrDefault(a =>
+                    {
+                        if (a.BlockchainIntegrationLayerId != null)
+                            return a.BlockchainIntegrationLayerId.ToString().ToLower() == blockchain.Type.ToLower();
+                        else
+                            return false;
+                    });
+                    var currentAssetId = currentAsset?.Id;
+                    var minCashout = currentAsset?.CashoutMinimalAmount;
+
+                    blockchain.SignServiceUrl = blockchain.SignServiceUrl.TrimEnd('/');
+                    blockchainSign = new BlockchainSign(blockchain.SignServiceUrl + "/api");
+                    WalletCreationResponse wallet = blockchainSign.PostWallet().GetResponseObject();
+
+                    return (currentAssetId, wallet.PublicAddress, wallet.AddressContext, minCashout.Value);
+                }
+                catch (Exception e)
+                {
+                    return ($"error with {blockchain.Type}", $"error with {blockchain.Type}", $"error with {blockchain.Type}", 0);
+                }
+            }
+
+            public void FillWalletWithAsset(string userEmail, string assetId)
+            {
+                var clientId = lykkePrivateApi.ClientAccount.ClientAccountInformation.
+                    GetClientsByEmail(userEmail).GetResponseObject().FirstOrDefault()?.Id;
+
+                var manualCashIn = new ManualCashInRequestModel
+                {
+                    Amount = 2, // should be enough
+                    AssetId = assetId,
+                    ClientId = clientId,
+                    Comment = "AutotestFund",
+                    UserId = "Autotest user"
+                };
+                var cryptoToWalletResponse = lykkePrivateApi.ExchangeOperation.PostManualCashIn(manualCashIn).GetResponseObject();
+            }
+
+            public void MakeCashOut(string assetId, string destinationAdress, string addressExtension, double volume, string token)
+            {
+                var id = Guid.NewGuid().ToString();
+
+                var currentOperation = apiV2.Operations.PostOperationCashOut(new CreateCashoutRequest
+                {
+                    AssetId = assetId,
+                    DestinationAddress = destinationAdress,
+                    DestinationAddressExtension = addressExtension,
+                    Volume = volume
+                }, id, token);
+
+                if (apiV2.Operations.GetOperationById(currentOperation.Content.Replace("\"", ""), token).GetResponseObject().Status == OperationStatus.Failed)
+                    Assert.Fail("Manual CashIn operation Failed");
+
+                Assert.That(() => apiV2.Operations.GetOperationById(currentOperation.Content.Replace("\"", ""), token).GetResponseObject().Status, Is.EqualTo(OperationStatus.Confirmed).After(60).Seconds.PollEvery(2).Seconds);
+            }
+            #endregion
+
+            #region setup teardown
+
+            protected string token = "";
+
+            [SetUp]
+            public void CashOutSetUp()
+            {
+                token = apiV2.Client.PostClientAuth(new AuthRequestModel
+                {
+                    Email = wallet.WalletAddress,
+                    Password = wallet.WalletKey
+                }).GetResponseObject().AccessToken;
+            }
+            #endregion
+        }
+
+        public class CannotCashoutLessThanMin : CashOutBaseTest
         {
             [Test]
             [Category("ApiV2")]
@@ -58,7 +138,7 @@ namespace AFTests.ApiV2
             }
         }
 
-        public class CannotCashOutMaxWalletBalance : ApiV2BaseTest
+        public class CannotCashOutMaxWalletBalance : CashOutBaseTest
         {
             [Test]
             [Category("ApiV2")]
@@ -115,7 +195,7 @@ namespace AFTests.ApiV2
             }
         }
 
-        public class MakeCashOutIntoExternalWallet : ApiV2BaseTest
+        public class MakeCashOutIntoExternalWallet : CashOutBaseTest
         {
             [Test]
             [Category("ApiV2")]
@@ -150,7 +230,7 @@ namespace AFTests.ApiV2
 
         // cashout to lukke wallet
 
-        public class MakeCashOutIntoInternalWalletEnabled : ApiV2BaseTest
+        public class MakeCashOutIntoInternalWalletEnabled : CashOutBaseTest
         {
             [Test]
             public void MakeCashOutIntoInternalWalletEnabledTest()

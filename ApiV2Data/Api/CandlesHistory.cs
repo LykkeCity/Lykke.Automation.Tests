@@ -8,15 +8,15 @@ namespace ApiV2Data.Api
 {
     public class CandlesHistory : ApiBase
     {
-
         public IResponse<CandleSticksResponseModel> GetCandlesHistory(MarketType Type, string AssetPairId, CandlePriceType PriceType, CandleTimeInterval TimeInterval, DateTime FromMoment, DateTime ToMoment)
         {
             return Request.Get($"/candlesHistory").
-                AddQueryParameter("Type", Type.ToSerializedValue()).
-                AddQueryParameter("PriceType", PriceType.ToSerializedValue()).
-                AddQueryParameter("TimeInterval", TimeInterval.ToSerializedValue()).
-                AddQueryParameter("FromMoment", FromMoment.ToString()).
-                AddQueryParameter("ToMoment", ToMoment.ToString()).Build().Execute<CandleSticksResponseModel>();
+                AddQueryParameterIfNotNull("Type", Type.ToSerializedValue()).
+                AddQueryParameterIfNotNull("AssetPairId", AssetPairId).
+                AddQueryParameterIfNotNull("PriceType", PriceType.ToSerializedValue()).
+                AddQueryParameterIfNotNull("TimeInterval", TimeInterval.ToSerializedValue()).
+                AddQueryParameterIfNotNull("FromMoment", FromMoment.ToString("s")).
+                AddQueryParameterIfNotNull("ToMoment", ToMoment.ToString("s")).Build().Execute<CandleSticksResponseModel>();
         }
     }
 }
