@@ -1,10 +1,7 @@
 ﻿using Lykke.Client.AutorestClient.Models;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 namespace AFTests.HftTests
 {
@@ -62,7 +59,7 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void PostOrdersMarketTest()
             {
-                var request = new PlaceLimitOrderModel() {Price = 10, AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = 3.2 };
+                var request = new PlaceLimitOrderModel() { Price = 10, AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = 3.2 };
 
                 var response = hft.Orders.PostOrdersLimitOrder(request, SecondWalletApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
@@ -85,7 +82,7 @@ namespace AFTests.HftTests
                 var response = hft.Orders.PostOrdersLimitOrder(request, SecondWalletApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
 
-                var requestBuy = new PlaceMarketOrderModel() { Asset = FirstAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 3.1};
+                var requestBuy = new PlaceMarketOrderModel() { Asset = FirstAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 3.1 };
 
                 var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, ApiKey);
                 Assert.That(responseBuy.GetResponseObject().Price, Is.Not.Null);
@@ -149,7 +146,7 @@ namespace AFTests.HftTests
                 requests.Add(new PlaceMarketOrderModel() { Asset = SecondAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Sell });
                 requests.Add(new PlaceMarketOrderModel() { Asset = SecondAssetId, OrderAction = OrderAction.Sell, Volume = 0.5 });
                 requests.Add(new PlaceMarketOrderModel() { AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = 0.5 });
-                Assert.Multiple(() => 
+                Assert.Multiple(() =>
                 {
                     Assert.That(hft.Orders.PostOrdersMarket(requests[0], ApiKey).StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(hft.Orders.PostOrdersMarket(requests[1], ApiKey).StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -164,7 +161,7 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void PostOrdersLimitBuyTest()
             {
-                var request = new PlaceLimitOrderModel() {Price = 1.0, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.1 };
+                var request = new PlaceLimitOrderModel() { Price = 1.0, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = 0.1 };
 
                 var response = hft.Orders.PostOrdersLimitOrder(request, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
@@ -200,7 +197,7 @@ namespace AFTests.HftTests
                 var request4 = new PlaceLimitOrderModel()
                 { };
 
-                Assert.Multiple(() => 
+                Assert.Multiple(() =>
                 {
                     Assert.That(hft.Orders.PostOrdersLimitOrder(request1, ApiKey).StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(hft.Orders.PostOrdersLimitOrder(request2, ApiKey).StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -335,7 +332,7 @@ namespace AFTests.HftTests
 
                 var response = hft.Orders.GetOrderById(id, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(() => hft.Orders.GetOrderById(id, ApiKey).GetResponseObject().Status,Is.EqualTo(OrderStatus.LeadToNegativeSpread).After(1*60*1000, 2*1000));
+                Assert.That(() => hft.Orders.GetOrderById(id, ApiKey).GetResponseObject().Status, Is.EqualTo(OrderStatus.LeadToNegativeSpread).After(1 * 60 * 1000, 2 * 1000));
             }
         }
 
@@ -358,7 +355,77 @@ namespace AFTests.HftTests
 
                 var responseOrder = hft.Orders.GetOrderById(id, ApiKey);
                 response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(() => hft.Orders.GetOrderById(id, ApiKey).GetResponseObject().Status, Is.EqualTo(OrderStatus.Cancelled).After(30*1000, 1*1000));
+                Assert.That(() => hft.Orders.GetOrderById(id, ApiKey).GetResponseObject().Status, Is.EqualTo(OrderStatus.Cancelled).After(30 * 1000, 1 * 1000));
+            }
+        }
+
+        public class PostOrdersStopLimit : HftBaseTest
+        {
+            [Test]
+            [Category("HFT")]
+            [TestCase(OrderAction.Buy)]
+            [TestCase(OrderAction.Sell)]
+            public void PostOrdersStopLimitBuySellTest(OrderAction orderAction)
+            {
+                var request = new PlaceStopLimitOrderModel()
+                {
+                    AssetPairId = AssetPair,
+                    OrderAction = orderAction,
+                    Volume = 0.1,
+                    LowerLimitPrice = 4500,
+                    LowerPrice = 4600,
+                    UpperLimitPrice = 7700,
+                    UpperPrice = 7800
+                };
+
+                var response = hft.Orders.PostOrdersStopLimitOrder(request, ApiKey);
+                var orderId = (string)response.JObject["Id"];
+                var stopLimitOrder = hft.Orders.GetOrderById(orderId, ApiKey);
+
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(stopLimitOrder.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+                Assert.That((string)stopLimitOrder.JObject["AssetPairId"], Is.EqualTo(AssetPair));
+                Assert.That((string)stopLimitOrder.JObject["Type"], Is.EqualTo("StopLimit"));
+                Assert.That((double)stopLimitOrder.JObject["Volume"], Is.EqualTo(request.Volume));
+                Assert.That((double)stopLimitOrder.JObject["LowerLimitPrice"], Is.EqualTo(request.LowerLimitPrice));
+                Assert.That((double)stopLimitOrder.JObject["LowerPrice"], Is.EqualTo(request.LowerPrice));
+                Assert.That((double)stopLimitOrder.JObject["UpperLimitPrice"], Is.EqualTo(request.UpperLimitPrice));
+                Assert.That((double)stopLimitOrder.JObject["UpperPrice"], Is.EqualTo(request.UpperPrice));
+            }
+        }
+
+        public class PostOrdersStopLimitNegativeTests : HftBaseTest
+        {
+            [Test]
+            [Category("HFT")]
+            [TestCase(true, OrderAction.Buy, 0.1, 4500, 4600, 7700, 7800, "InvalidApiKey$%10", ExpectedResult = HttpStatusCode.Unauthorized)]
+            [TestCase(true, OrderAction.Buy, 0.1, 4500, 4600, 7700, 7800, "Test$%€§10", ExpectedResult = HttpStatusCode.BadRequest)]
+            [TestCase(false, OrderAction.Buy, 0.1, 4500, 4600, 7700, 7800, "ApiKey", ExpectedResult = HttpStatusCode.NotFound)]
+            //TODO remove this comment when this issue is fixed //Current response is InternalServerError
+            //[TestCase(true, (OrderAction)10, 0.1, 4500, 4600, 7700, 7800, "ApiKey", ExpectedResult = HttpStatusCode.BadRequest)]
+            [TestCase(true, OrderAction.Buy, 0, 4500, 4600, 7700, 7800, "ApiKey", ExpectedResult = HttpStatusCode.BadRequest)]
+            [TestCase(true, OrderAction.Buy, 0.1, 0, 4600, 7700, 7800, "ApiKey", ExpectedResult = HttpStatusCode.BadRequest)]
+            [TestCase(true, OrderAction.Buy, 0.1, 4500, 0, 7700, 7800, "ApiKey", ExpectedResult = HttpStatusCode.BadRequest)]
+            [TestCase(true, OrderAction.Buy, 0.1, 4500, 4600, 0, 7800, "ApiKey", ExpectedResult = HttpStatusCode.BadRequest)]
+            [TestCase(true, OrderAction.Buy, 0.1, 4500, 4600, 7700, 0, "ApiKey", ExpectedResult = HttpStatusCode.BadRequest)]
+            public HttpStatusCode PostOrdersStopLimitNegativeTest(bool correctAssetPair, OrderAction orderAction, double volume, double lowerLimitPrice, double lowerPrice, double upperLimitPrice, double upperPrice, string apiKey )
+            {
+                var assetPairToUse = correctAssetPair ? AssetPair : "Test$%€§10";
+                var keyToUse = apiKey == "ApiKey" ? ApiKey : apiKey;
+
+                var request = new PlaceStopLimitOrderModel()
+                {
+                    AssetPairId = assetPairToUse,
+                    OrderAction = orderAction,
+                    Volume = volume,
+                    LowerLimitPrice = lowerLimitPrice,
+                    LowerPrice = lowerPrice,
+                    UpperLimitPrice = upperLimitPrice,
+                    UpperPrice = upperPrice
+                };
+
+                return hft.Orders.PostOrdersStopLimitOrder(request, keyToUse).StatusCode;
             }
         }
     }
