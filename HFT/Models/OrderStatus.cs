@@ -17,32 +17,22 @@ namespace Lykke.Client.AutorestClient.Models
     [JsonConverter(typeof(StringEnumConverter))]
     public enum OrderStatus
     {
-        [EnumMember(Value = "Pending")]
-        Pending,
-        [EnumMember(Value = "InOrderBook")]
-        InOrderBook,
-        [EnumMember(Value = "Processing")]
-        Processing,
+        [EnumMember(Value = "Unknown")]
+        Unknown,
+        [EnumMember(Value = "Placed")]
+        Placed,
+        [EnumMember(Value = "PartiallyMatched")]
+        PartiallyMatched,
         [EnumMember(Value = "Matched")]
         Matched,
-        [EnumMember(Value = "NotEnoughFunds")]
-        NotEnoughFunds,
-        [EnumMember(Value = "NoLiquidity")]
-        NoLiquidity,
-        [EnumMember(Value = "UnknownAsset")]
-        UnknownAsset,
+        [EnumMember(Value = "Pending")]
+        Pending,
         [EnumMember(Value = "Cancelled")]
         Cancelled,
-        [EnumMember(Value = "LeadToNegativeSpread")]
-        LeadToNegativeSpread,
-        [EnumMember(Value = "InvalidPriceAccuracy")]
-        InvalidPriceAccuracy,
-        [EnumMember(Value = "ReservedVolumeGreaterThanBalance")]
-        ReservedVolumeGreaterThanBalance,
-        [EnumMember(Value = "TooSmallVolume")]
-        TooSmallVolume,
-        [EnumMember(Value = "Runtime")]
-        Runtime
+        [EnumMember(Value = "Replaced")]
+        Replaced,
+        [EnumMember(Value = "Rejected")]
+        Rejected
     }
     internal static class OrderStatusEnumExtension
     {
@@ -55,32 +45,22 @@ namespace Lykke.Client.AutorestClient.Models
         {
             switch( value )
             {
-                case OrderStatus.Pending:
-                    return "Pending";
-                case OrderStatus.InOrderBook:
-                    return "InOrderBook";
-                case OrderStatus.Processing:
-                    return "Processing";
+                case OrderStatus.Unknown:
+                    return "Unknown";
+                case OrderStatus.Placed:
+                    return "Placed";
+                case OrderStatus.PartiallyMatched:
+                    return "PartiallyMatched";
                 case OrderStatus.Matched:
                     return "Matched";
-                case OrderStatus.NotEnoughFunds:
-                    return "NotEnoughFunds";
-                case OrderStatus.NoLiquidity:
-                    return "NoLiquidity";
-                case OrderStatus.UnknownAsset:
-                    return "UnknownAsset";
+                case OrderStatus.Pending:
+                    return "Pending";
                 case OrderStatus.Cancelled:
                     return "Cancelled";
-                case OrderStatus.LeadToNegativeSpread:
-                    return "LeadToNegativeSpread";
-                case OrderStatus.InvalidPriceAccuracy:
-                    return "InvalidPriceAccuracy";
-                case OrderStatus.ReservedVolumeGreaterThanBalance:
-                    return "ReservedVolumeGreaterThanBalance";
-                case OrderStatus.TooSmallVolume:
-                    return "TooSmallVolume";
-                case OrderStatus.Runtime:
-                    return "Runtime";
+                case OrderStatus.Replaced:
+                    return "Replaced";
+                case OrderStatus.Rejected:
+                    return "Rejected";
             }
             return null;
         }
@@ -89,32 +69,22 @@ namespace Lykke.Client.AutorestClient.Models
         {
             switch( value )
             {
-                case "Pending":
-                    return OrderStatus.Pending;
-                case "InOrderBook":
-                    return OrderStatus.InOrderBook;
-                case "Processing":
-                    return OrderStatus.Processing;
+                case "Unknown":
+                    return OrderStatus.Unknown;
+                case "Placed":
+                    return OrderStatus.Placed;
+                case "PartiallyMatched":
+                    return OrderStatus.PartiallyMatched;
                 case "Matched":
                     return OrderStatus.Matched;
-                case "NotEnoughFunds":
-                    return OrderStatus.NotEnoughFunds;
-                case "NoLiquidity":
-                    return OrderStatus.NoLiquidity;
-                case "UnknownAsset":
-                    return OrderStatus.UnknownAsset;
+                case "Pending":
+                    return OrderStatus.Pending;
                 case "Cancelled":
                     return OrderStatus.Cancelled;
-                case "LeadToNegativeSpread":
-                    return OrderStatus.LeadToNegativeSpread;
-                case "InvalidPriceAccuracy":
-                    return OrderStatus.InvalidPriceAccuracy;
-                case "ReservedVolumeGreaterThanBalance":
-                    return OrderStatus.ReservedVolumeGreaterThanBalance;
-                case "TooSmallVolume":
-                    return OrderStatus.TooSmallVolume;
-                case "Runtime":
-                    return OrderStatus.Runtime;
+                case "Replaced":
+                    return OrderStatus.Replaced;
+                case "Rejected":
+                    return OrderStatus.Rejected;
             }
             return null;
         }

@@ -28,11 +28,8 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         /// <param name="id">Gets or sets the identifier.</param>
         /// <param name="status">The limit order status. Possible values
-        /// include: 'Pending', 'InOrderBook', 'Processing', 'Matched',
-        /// 'NotEnoughFunds', 'NoLiquidity', 'UnknownAsset', 'Cancelled',
-        /// 'LeadToNegativeSpread', 'InvalidPriceAccuracy',
-        /// 'ReservedVolumeGreaterThanBalance', 'TooSmallVolume',
-        /// 'Runtime'</param>
+        /// include: 'Unknown', 'Placed', 'PartiallyMatched', 'Matched',
+        /// 'Pending', 'Cancelled', 'Replaced', 'Rejected'</param>
         /// <param name="assetPairId">The asset pair identifier.</param>
         /// <param name="volume">The volume of the limit order.</param>
         /// <param name="price">The price of the limit order.</param>
@@ -40,7 +37,17 @@ namespace Lykke.Client.AutorestClient.Models
         /// order.</param>
         /// <param name="lastMatchTime">The last match date time.</param>
         /// <param name="createdAt">The created at date time.</param>
-        public LimitOrderStateModel(System.Guid id, OrderStatus status, string assetPairId, double volume, double price, double remainingVolume, System.DateTime? lastMatchTime, System.DateTime createdAt)
+        /// <param name="type">The type of limit order. Possible values
+        /// include: 'Unknown', 'Market', 'Limit', 'StopLimit'</param>
+        /// <param name="lowerLimitPrice">The lower limit price of the limit
+        /// order.</param>
+        /// <param name="lowerPrice">The lower price of the limit
+        /// order.</param>
+        /// <param name="upperLimitPrice">The upper limit price of the limit
+        /// order.</param>
+        /// <param name="upperPrice">The upper price of the limit
+        /// order.</param>
+        public LimitOrderStateModel(System.Guid id, OrderStatus status, string assetPairId, double volume, double price, double remainingVolume, System.DateTime? lastMatchTime, System.DateTime createdAt, OrderType type, double? lowerLimitPrice, double? lowerPrice, double? upperLimitPrice, double? upperPrice)
         {
             Id = id;
             Status = status;
@@ -50,6 +57,11 @@ namespace Lykke.Client.AutorestClient.Models
             RemainingVolume = remainingVolume;
             LastMatchTime = lastMatchTime;
             CreatedAt = createdAt;
+            Type = type;
+            LowerLimitPrice = lowerLimitPrice;
+            LowerPrice = lowerPrice;
+            UpperLimitPrice = upperLimitPrice;
+            UpperPrice = upperPrice;
             CustomInit();
         }
 
@@ -66,10 +78,8 @@ namespace Lykke.Client.AutorestClient.Models
 
         /// <summary>
         /// Gets or sets the limit order status. Possible values include:
-        /// 'Pending', 'InOrderBook', 'Processing', 'Matched',
-        /// 'NotEnoughFunds', 'NoLiquidity', 'UnknownAsset', 'Cancelled',
-        /// 'LeadToNegativeSpread', 'InvalidPriceAccuracy',
-        /// 'ReservedVolumeGreaterThanBalance', 'TooSmallVolume', 'Runtime'
+        /// 'Unknown', 'Placed', 'PartiallyMatched', 'Matched', 'Pending',
+        /// 'Cancelled', 'Replaced', 'Rejected'
         /// </summary>
         [JsonProperty(PropertyName = "Status")]
         public OrderStatus Status { get; set; }
@@ -109,6 +119,37 @@ namespace Lykke.Client.AutorestClient.Models
         /// </summary>
         [JsonProperty(PropertyName = "CreatedAt")]
         public System.DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of limit order. Possible values include:
+        /// 'Unknown', 'Market', 'Limit', 'StopLimit'
+        /// </summary>
+        [JsonProperty(PropertyName = "Type")]
+        public OrderType Type { get; set; }
+
+        /// <summary>
+        /// Gets or sets the lower limit price of the limit order.
+        /// </summary>
+        [JsonProperty(PropertyName = "LowerLimitPrice")]
+        public double? LowerLimitPrice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the lower price of the limit order.
+        /// </summary>
+        [JsonProperty(PropertyName = "LowerPrice")]
+        public double? LowerPrice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the upper limit price of the limit order.
+        /// </summary>
+        [JsonProperty(PropertyName = "UpperLimitPrice")]
+        public double? UpperLimitPrice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the upper price of the limit order.
+        /// </summary>
+        [JsonProperty(PropertyName = "UpperPrice")]
+        public double? UpperPrice { get; set; }
 
         /// <summary>
         /// Validate the object.
