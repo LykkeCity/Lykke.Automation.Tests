@@ -2,9 +2,7 @@
 using Lykke.Client.AutorestClient.Models;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using XUnitTestCommon.Tests;
 using XUnitTestCommon.TestsCore;
 
@@ -33,7 +31,7 @@ namespace AFTests.HftTests
             var take = "100";
             var skip = "0";
 
-            var response = hft.Orders.GetOrders(OrderStatus.InOrderBook, skip, take, ApiKey);
+            var response = hft.Orders.GetOrders(OrderStatusQuery.InOrderBook, skip, take, ApiKey);
             response.Validate.StatusCode(HttpStatusCode.OK);
             hft.Orders.DeleteOrders(ApiKey);
         }

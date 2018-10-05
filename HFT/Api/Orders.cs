@@ -7,7 +7,7 @@
     public class Orders : ApiBase
     {
 
-        public IResponse<List<LimitOrderStateModel>> GetOrders(OrderStatus status, string skip, string take, string apiKey)
+        public IResponse<List<LimitOrderStateModel>> GetOrders(OrderStatusQuery status, string skip, string take, string apiKey)
         {
             return Request.Get("/Orders")
                 .AddQueryParameterIfNotNull("status", status)
