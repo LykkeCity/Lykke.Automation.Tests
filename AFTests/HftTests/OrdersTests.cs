@@ -384,18 +384,19 @@ namespace AFTests.HftTests
                 var response = hft.Orders.PostOrdersStopLimitOrder(request, ApiKey);
                 var orderId = response.GetResponseObject().Id.ToString();
                 var stopLimitOrder = hft.Orders.GetOrderById(orderId, ApiKey);
-                
+                var stopLimitObj = stopLimitOrder.GetResponseObject();
+
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                 Assert.That(stopLimitOrder.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-                Assert.That(stopLimitOrder.GetResponseObject().AssetPairId, Is.EqualTo(AssetPair));
-                Assert.That(stopLimitOrder.GetResponseObject().CreatedAt, Is.EqualTo(DateTime.Now).Within(3).Minutes);
-                Assert.That(stopLimitOrder.GetResponseObject().Type, Is.EqualTo(OrderType.StopLimit));
-                Assert.That(stopLimitOrder.GetResponseObject().Volume, Is.EqualTo(orderAction == OrderAction.Buy ? request.Volume : -request.Volume));
-                Assert.That(stopLimitOrder.GetResponseObject().LowerLimitPrice, Is.EqualTo(request.LowerLimitPrice));
-                Assert.That(stopLimitOrder.GetResponseObject().LowerPrice, Is.EqualTo(request.LowerPrice));
-                Assert.That(stopLimitOrder.GetResponseObject().UpperLimitPrice, Is.EqualTo(request.UpperLimitPrice));
-                Assert.That(stopLimitOrder.GetResponseObject().UpperPrice, Is.EqualTo(request.UpperPrice));
+                Assert.That(stopLimitObj.AssetPairId, Is.EqualTo(AssetPair));
+                Assert.That(stopLimitObj.CreatedAt, Is.EqualTo(DateTime.Now).Within(3).Minutes);
+                Assert.That(stopLimitObj.Type, Is.EqualTo(OrderType.StopLimit));
+                Assert.That(stopLimitObj.Volume, Is.EqualTo(orderAction == OrderAction.Buy ? request.Volume : -request.Volume));
+                Assert.That(stopLimitObj.LowerLimitPrice, Is.EqualTo(request.LowerLimitPrice));
+                Assert.That(stopLimitObj.LowerPrice, Is.EqualTo(request.LowerPrice));
+                Assert.That(stopLimitObj.UpperLimitPrice, Is.EqualTo(request.UpperLimitPrice));
+                Assert.That(stopLimitObj.UpperPrice, Is.EqualTo(request.UpperPrice));
             }
         }
 
