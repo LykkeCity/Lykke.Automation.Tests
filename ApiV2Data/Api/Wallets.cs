@@ -32,6 +32,15 @@ namespace ApiV2Data.Api
         public IResponse<List<ClientBalanceResponseModel>> GetWalletsTradingBalance(string authorization) =>
             Request.Get("/wallets/trading/balances").WithBearerToken(authorization).Build().Execute<List<ClientBalanceResponseModel>>();
 
+        public IResponse<ClientBalanceResponseModel> GetWalletsTradingBalanceAssetId(string assetId, string authorization) =>
+    Request.Get($"/wallets/trading/balances/{assetId}").WithBearerToken(authorization).Build().Execute<ClientBalanceResponseModel>();
+
+        public IResponse<List<ClientBalanceResponseModel>> GetWalletsWalletIdBalance(string walletId, string token) =>
+            Request.Get($"/wallets/{walletId}/balances").WithBearerToken(token).Build().Execute<List<ClientBalanceResponseModel>>();
+
+        public IResponse<List<WalletAssetBalanceModel>> GetWalletsBalancesAssetId(string assetId, string authorization) =>
+            Request.Get($"/wallets/balances/{assetId}").WithBearerToken(authorization).Build().Execute<List<WalletAssetBalanceModel>>();
+
         public IResponse<List<ClientBalanceResponseModel>> GetWalletsBalanceAssetId(string walletId, string assetId, string authorization) =>  Request.Get($"/wallets/{walletId}/balances/{assetId}").WithBearerToken(authorization).Build().Execute<List<ClientBalanceResponseModel>>();
     }
 }

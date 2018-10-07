@@ -8,10 +8,10 @@ namespace ApiV2Data.Api
 {
     public class Watchlists : ApiBase
     {
-        public IResponse<WatchList> GetWatchlists(string token) =>
-            Request.Get("/watchlists").WithBearerToken(token).Build().Execute<WatchList>();
+        public IResponse<List<WatchList>> GetWatchlists(string token) =>
+            Request.Get("/watchlists").WithBearerToken(token).Build().Execute<List<WatchList>>();
 
-        public IResponse<WatchListModel> PostWatchkists(WatchListCreateModel model, string token) =>
+        public IResponse<WatchListModel> PostWatchLists(WatchListCreateModel model, string token) =>
             Request.Post("/watchlists").WithBearerToken(token).AddJsonBody(model).Build().Execute<WatchListModel>();
 
         public IResponse DeleteWatchlists(string id, string token) =>
