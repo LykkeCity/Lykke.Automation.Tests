@@ -89,7 +89,7 @@ namespace AFTests.CandlexHistory
             var take = "100";
             var skip = "0";
 
-            var response = hft.Orders.GetOrders(OrderStatus.InOrderBook, skip, take, ApiKey);
+            var response = hft.Orders.GetOrders(OrderStatusQuery.InOrderBook, skip, take, ApiKey);
             response.Validate.StatusCode(HttpStatusCode.OK);
             hft.Orders.DeleteOrders(ApiKey);
         }

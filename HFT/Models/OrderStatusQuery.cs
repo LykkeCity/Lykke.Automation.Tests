@@ -30,7 +30,9 @@ namespace Lykke.Client.AutorestClient.Models
         [EnumMember(Value = "Cancelled")]
         Cancelled,
         [EnumMember(Value = "Rejected")]
-        Rejected
+        Rejected,
+        [EnumMember(Value = "Replaced")]
+        Replaced
     }
     internal static class OrderStatusQueryEnumExtension
     {
@@ -57,6 +59,8 @@ namespace Lykke.Client.AutorestClient.Models
                     return "Cancelled";
                 case OrderStatusQuery.Rejected:
                     return "Rejected";
+                case OrderStatusQuery.Replaced:
+                    return "Replaced";
             }
             return null;
         }
@@ -79,6 +83,8 @@ namespace Lykke.Client.AutorestClient.Models
                     return OrderStatusQuery.Cancelled;
                 case "Rejected":
                     return OrderStatusQuery.Rejected;
+                case "Replaced":
+                    return OrderStatusQuery.Replaced;
             }
             return null;
         }
