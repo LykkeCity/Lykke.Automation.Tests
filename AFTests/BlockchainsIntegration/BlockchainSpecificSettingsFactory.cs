@@ -353,12 +353,12 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainIntegration = "Steem";
                 BlockchainApi = "http://steem-api.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://steem-signservice.autotests-service.svc.cluster.local/api";
-                AssetId = "STEEM";
+                AssetId = "TESTS";
                 AssetAccuracy = 3;
-                HotWallet = "lykke.auto.hot";
-                HotWalletKey = "5JWxJ2PJg4h5W4d4kxso6Yuji49PjrvsHkUwNRhG4vA27uDE8p9";
-                ExternalWalletAddress = "lykke.auto.ext";
-                ExternalWalletKey = "5K9Gn8i2W7LXcUvJtzZvA91TA7JDERT9iMVHmDsczYF3i9XNbWd";
+                HotWallet = "lykke.test";
+                HotWalletKey = "5JEa5GCmzoS9Zs3yXVLL3WMH6x9qshfEvggEqRM9D794mzu2nxa";
+                ExternalWalletAddress = "lykke.test.ext";
+                ExternalWalletKey = "5KCbH8trGjnwWXZpAi5KMz56nSSCWNMsdiFu1d7yxebqWqZqFS1";
                 BlockchainMiningTime = 10;
             }
         }
