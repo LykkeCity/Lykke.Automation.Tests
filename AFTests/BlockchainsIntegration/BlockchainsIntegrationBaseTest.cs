@@ -18,6 +18,7 @@ using XUnitTestCommon.ServiceSettings;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using XUnitTestCommon.RestRequests.Interfaces;
+using XUnitTestCommon.RestRequests;
 
 namespace AFTests.BlockchainsIntegrationTests
 {
@@ -38,10 +39,32 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Ripple"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Litecoin"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
+
+        protected static string proxyApi = "http://api.autotest-proxy.svc.cluster.local";
+        protected static string blockchainCGI = "http://api.autotest-proxy.svc.cluster.local/cgi-bin2/dash.cgi";
+
+        protected static string CurrentBlockchainCGI { get { return $"http://api.autotest-proxy.svc.cluster.local/cgi-bin2/{BlockChainName.ToLower()}.cgi"; } }
+
+        public static void EnableBLockchainProxy()
+        {
+            Requests.For(CurrentBlockchainCGI).Get("").Build().Execute();
+        }
+
+        public static void DisableBLockchainProxy()
+        {
+            var BlockchainName1 = "ripple";
+            var BlockchainName2 = "zcash";
+            var cgiUrl = $"http://api.autotest-proxy.svc.cluster.local/cgi-bin2/{BlockchainName1.ToLower()}.cgi";
+
+            if(BlockChainName.ToLower() == BlockchainName1)
+                cgiUrl = $"http://api.autotest-proxy.svc.cluster.local/cgi-bin2/{BlockchainName2.ToLower()}.cgi";
+
+            Requests.For(cgiUrl).Get("").Build().Execute();
+        }
 
         protected static string BlockchainApi { get { return _currentSettings.Value.BlockchainApi; } }
         protected static BlockchainApi blockchainApi = new BlockchainApi(BlockchainApi);

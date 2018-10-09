@@ -66,10 +66,14 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public class GetBalancesContinuation : BlockchainsIntegrationBaseTest
         {
-           // [Test]
+            //[Test]
             [Category("BlockchainIntegration")]
             public void GetBalancesContinuationTest()
             {
+                EnableBLockchainProxy();
+
+                var blockchainApi = new BlockchainApi(proxyApi);
+
                 var take = "1";
                 var continuation = TestData.GenerateString();
                 var response = blockchainApi.Balances.GetBalances(take, continuation);
