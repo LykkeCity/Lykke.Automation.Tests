@@ -212,7 +212,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                             if (balances.Items.ToList().Any(a => a.Address == wallet.PublicAddress))
                             {
-                                Assert.That(balances.Items.ToList().Find(w => w.Address == wallet.PublicAddress).Block, Is.LessThan(transactionBlock), "Transaction block is not greater than balance block");
+                                Assert.That(balances.Items.ToList().Find(w => w.Address == wallet.PublicAddress).Block, Is.GreaterThanOrEqualTo(transactionBlock), "Transaction block is not less or equal than latest balance block");
                             }
                             else
                             {
@@ -220,16 +220,13 @@ namespace AFTests.BlockchainsIntegrationTests
                             }
                         }
                         sw.Stop();
-
-                        Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Any(a => a.Address == wallet.PublicAddress),
-                            Is.False, $"Wallet is present in Get Balances after {BLOCKCHAIN_MINING_TIME} minutes");
                     }
                 });
 
                 Step("Validate balance records for wallet in GET /balances response. Validate wallet balance", () => 
                 {
                     Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Count(a => a.Address == wallet.PublicAddress), Is.EqualTo(1), $"Unexpected instances of balance for wallet {wallet.PublicAddress}");
-                    Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Balance, Is.EqualTo(AMOUT_WITH_FEE), "Balance is not expected");
+                    Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Balance, Is.EqualTo((decimal.Parse(AMOUT_WITH_FEE) - decimal.Parse(AMOUNT)).ToString()), "Balance is not expected");
                 });
             }
 
