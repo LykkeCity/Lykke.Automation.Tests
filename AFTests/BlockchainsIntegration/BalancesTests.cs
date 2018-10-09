@@ -158,7 +158,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 {
                     var model = new BuildSingleTransactionRequest()
                     {
-                        Amount = AMOUT_WITH_FEE,
+                        Amount = AMOUNT,
                         AssetId = ASSET_ID,
                         FromAddress = wallet.PublicAddress,
                         IncludeFee = true,
