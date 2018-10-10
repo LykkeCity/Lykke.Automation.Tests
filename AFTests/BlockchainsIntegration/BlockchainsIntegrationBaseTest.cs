@@ -236,6 +236,13 @@ namespace AFTests.BlockchainsIntegrationTests
                 wallet.PublicAddress = $"{wallet.PublicAddress}_wasErronWhileFillWalletFromEW";
         }
 
+        public static string GetWalletCorrectName(string currentName)
+        {
+            if (currentName.Contains("_wasErronWhileFillWalletFromEW"))
+                currentName = currentName.Replace("_wasErronWhileFillWalletFromEW", "");
+            return currentName;
+        }
+
         /// <summary>
         /// Make Build, Sign, Broadcast and return true in case error happend or false otherwise
         /// </summary>
