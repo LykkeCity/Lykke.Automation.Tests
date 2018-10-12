@@ -6,6 +6,7 @@
 
 namespace Lykke.Client.AutorestClient.Models
 {
+    using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
 
@@ -28,10 +29,12 @@ namespace Lykke.Client.AutorestClient.Models
         /// <param name="amount">The fee amount.</param>
         /// <param name="type">The fee type. Possible values include:
         /// 'Unknown', 'Absolute', 'Relative'</param>
-        public FeeModel(double amount, FeeType type)
+        /// <param name="feeAssetId">Asset that was used for fee.</param>
+        public FeeModel(double ?amount, FeeType type, string feeAssetId)
         {
             Amount = amount;
             Type = type;
+            FeeAssetId = feeAssetId;
             CustomInit();
         }
 
@@ -44,7 +47,7 @@ namespace Lykke.Client.AutorestClient.Models
         /// Gets or sets the fee amount.
         /// </summary>
         [JsonProperty(PropertyName = "Amount")]
-        public double Amount { get; set; }
+        public double ?Amount { get; set; }
 
         /// <summary>
         /// Gets or sets the fee type. Possible values include: 'Unknown',
@@ -54,13 +57,20 @@ namespace Lykke.Client.AutorestClient.Models
         public FeeType Type { get; set; }
 
         /// <summary>
+        /// Gets or sets asset that was used for fee.
+        /// </summary>
+        [JsonProperty(PropertyName = "FeeAssetId")]
+        public string FeeAssetId { get; set; }
+
+        /// <summary>
         /// Validate the object.
         /// </summary>
-        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// <exception cref="ValidationException">
         /// Thrown if validation fails
         /// </exception>
         public virtual void Validate()
         {
+
         }
     }
 }

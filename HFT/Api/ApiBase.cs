@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using LykkeAutomationPrivate;
-using XUnitTestCommon.RestRequests;
-using XUnitTestCommon.RestRequests.Interfaces;
-using XUnitTestCommon.TestsCore;
-
-namespace HFT.Api
+﻿namespace HFT.Api
 {
+    using LykkeAutomationPrivate;
+    using System;
+    using XUnitTestCommon.RestRequests;
+    using XUnitTestCommon.RestRequests.Interfaces;
+    using XUnitTestCommon.TestsCore;
+
     public class ApiBase
     {
         protected string URL = 

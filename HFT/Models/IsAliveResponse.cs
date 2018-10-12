@@ -8,35 +8,24 @@ namespace Lykke.Client.AutorestClient.Models
 {
     using Microsoft.Rest;
     using Newtonsoft.Json;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Linq;
 
-    /// <summary>
-    /// Response class for IsAlive request.
-    /// </summary>
-    public partial class IsAliveModel
+    public partial class IsAliveResponse
     {
         /// <summary>
-        /// Initializes a new instance of the IsAliveModel class.
+        /// Initializes a new instance of the IsAliveResponse class.
         /// </summary>
-        public IsAliveModel()
+        public IsAliveResponse()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the IsAliveModel class.
+        /// Initializes a new instance of the IsAliveResponse class.
         /// </summary>
-        /// <param name="version">The version of the service.</param>
-        /// <param name="env">The environment of the service (pod
-        /// name).</param>
-        /// <param name="isDebug">Indicating whether this instance is in debug
-        /// or production mode.</param>
-        /// <param name="issueIndicators">The possible health issues of the
-        /// service.</param>
-        public IsAliveModel(string version, string env, bool isDebug, IList<IssueModel> issueIndicators)
+        public IsAliveResponse(string name, string version, string env, bool isDebug, IList<IssueIndicator> issueIndicators)
         {
+            Name = name;
             Version = version;
             Env = env;
             IsDebug = isDebug;
@@ -50,29 +39,29 @@ namespace Lykke.Client.AutorestClient.Models
         partial void CustomInit();
 
         /// <summary>
-        /// Gets or sets the version of the service.
         /// </summary>
-        [JsonProperty(PropertyName = "Version")]
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "version")]
         public string Version { get; set; }
 
         /// <summary>
-        /// Gets or sets the environment of the service (pod name).
         /// </summary>
-        [JsonProperty(PropertyName = "Env")]
+        [JsonProperty(PropertyName = "env")]
         public string Env { get; set; }
 
         /// <summary>
-        /// Gets or sets indicating whether this instance is in debug or
-        /// production mode.
         /// </summary>
-        [JsonProperty(PropertyName = "IsDebug")]
+        [JsonProperty(PropertyName = "isDebug")]
         public bool IsDebug { get; set; }
 
         /// <summary>
-        /// Gets or sets the possible health issues of the service.
         /// </summary>
-        [JsonProperty(PropertyName = "IssueIndicators")]
-        public IList<IssueModel> IssueIndicators { get; set; }
+        [JsonProperty(PropertyName = "issueIndicators")]
+        public IList<IssueIndicator> IssueIndicators { get; set; }
 
         /// <summary>
         /// Validate the object.
@@ -82,6 +71,10 @@ namespace Lykke.Client.AutorestClient.Models
         /// </exception>
         public virtual void Validate()
         {
+            if (Name == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "Name");
+            }
             if (Version == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "Version");

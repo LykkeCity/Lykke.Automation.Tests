@@ -1,10 +1,7 @@
-﻿using HFT.Api;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HFT
+﻿namespace HFT
 {
+    using HFT.Api;
+
     public class Hft
     {
         public AssetPairs AssetPairs => new AssetPairs();

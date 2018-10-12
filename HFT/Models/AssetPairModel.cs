@@ -8,7 +8,6 @@ namespace Lykke.Client.AutorestClient.Models
 {
     using Microsoft.Rest;
     using Newtonsoft.Json;
-    using System.Linq;
 
     /// <summary>
     /// Asset pair response model for asset pairs requests.

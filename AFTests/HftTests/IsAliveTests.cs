@@ -1,11 +1,8 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-
-namespace AFTests.HftTests
+﻿namespace AFTests.HftTests
 {
+    using NUnit.Framework;
+    using System.Net;
+
     class IsAliveTests
     {
         public class GetIsAlive : HftBaseTest
@@ -14,9 +11,10 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void GetIsAliveTest()
             {
-                var response = hft.IsAlive.GetIsAlive();
-                response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().Version, Is.Not.Null.Or.Empty, "Version is null or empty");
+                var response = hft.IsAlive.GetIsAlive().Validate.StatusCode(HttpStatusCode.OK);
+                Assert.That(response.ResponseObject.Name, Is.EqualTo("Lykke.Service.HFT"));
+                Assert.That(response.ResponseObject.Version, Is.Not.Null.Or.Empty, "Version is null or empty");
+                Assert.That(response.ResponseObject.Env, Is.Not.Null.Or.Empty, "Environment is null or empty");
             }
         }
     }

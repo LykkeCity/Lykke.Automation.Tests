@@ -21,11 +21,21 @@ namespace XUnitTestCommon.RestRequests
 
     public class Response<T> : Response, IResponse<T>
     {
+        private T responseObject;
+
         IValidate<T> IResponse<T>.Validate => new Validate<T>(this);
 
-        public T GetResponseObject()
+        public T ResponseObject
         {
-            return JsonConvert.DeserializeObject<T>(Content);
+            get
+            {
+                if(Equals(responseObject, default(T)))
+                    responseObject = JsonConvert.DeserializeObject<T>(Content);
+
+                return responseObject;
+            }
         }
+
+        public T GetResponseObject() => ResponseObject;
     }
 }

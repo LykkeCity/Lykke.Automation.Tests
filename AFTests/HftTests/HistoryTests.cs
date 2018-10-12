@@ -1,82 +1,102 @@
-﻿using Lykke.Client.AutorestClient.Models;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using System.Linq;
-using System.Diagnostics;
-
-namespace AFTests.HftTests
+﻿namespace AFTests.HftTests
 {
+    using Lykke.Client.AutorestClient.Models;
+    using NUnit.Framework;
+    using System;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Net;
+
     class HistoryTests
     {
-
+        [NonParallelizable]
         public class GetHistoryTradesForAllAssets : HftBaseTest
         {
             [Test]
             [Category("HFT")]
-            public void GetHistoryTradesForAllAssetsTest()
+            public void GetHistoryTradesTest()
             {
-                var assets = hft.AssetPairs.GetAssetPairs();
-                var take = "10";
-                var skip = "0";
+                var volume = 0.1;
+                var skip = 0;
+                var take = 5;
+                var startHistory = hft.History.GetHistory(FirstAssetId, AssetPair, skip, take, ApiKey)
+                    .Validate.StatusCode(HttpStatusCode.OK);
 
-                assets.GetResponseObject().ForEach(pair =>
+                void ValidateHistoryTrade(HistoryTradeModel historyTrade, double tradePrice, bool isBuy)
                 {
-                    Assert.That(hft.History.GetHistory(pair.BaseAssetId, skip, take, ApiKey).StatusCode, Is.EqualTo(HttpStatusCode.OK), $"Unexpected Status code for asset {pair.BaseAssetId}");    
-                });
-            }
-        }
+                    Assert.That(historyTrade.Timestamp.ToUniversalTime(), Is.EqualTo(DateTime.UtcNow).Within(5).Minutes);
+                    Assert.That(historyTrade.BaseVolume, Is.EqualTo(isBuy ? volume : -volume));
+                    Assert.That(historyTrade.BaseAssetId, Is.EqualTo(FirstAssetId));
+                    Assert.That(historyTrade.QuotingAssetId, Is.EqualTo(SecondAssetId));
+                    Assert.That(historyTrade.AssetPairId, Is.EqualTo(AssetPair));
+                    Assert.That(historyTrade.Price, Is.EqualTo(tradePrice));
+                    Assert.That(historyTrade.Fee.Type, Is.Not.Null);
+                }
 
-        public class GetHistoryTradeById : HftBaseTest
-        {
-            [Test]
-            [Category("HFT")]
-            public void GetHistoryTradeByIdTest()
-            {
-                var skip = "0";
-                var take = "500";
+                // Create Limit Order - Sell (SecondApiKey)
+                var responseLOSell = CreateAndValidateLimitOrder(100, AssetPair, OrderAction.Sell, volume, SecondWalletApiKey);
+                var sellOrderId = responseLOSell.ResponseObject.Id;
 
-                var responseBefore = hft.History.GetHistory(FirstAssetId, skip, take, ApiKey);
-                responseBefore.Validate.StatusCode(HttpStatusCode.OK);
-
-                var request = new PlaceMarketOrderModel()
-                { Asset = SecondAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Sell, Volume = 0.2 };
-
-                var response = hft.Orders.PostOrdersMarket(request, ApiKey);
-                response.Validate.StatusCode(HttpStatusCode.OK);
-
-                var amount = 0.01;
-                //buy
-                var requestBuy = new PlaceMarketOrderModel()
-                { Asset = FirstAssetId, AssetPairId = AssetPair, OrderAction = OrderAction.Buy, Volume = amount };
-
-                var responseBuy = hft.Orders.PostOrdersMarket(requestBuy, ApiKey);
-                responseBuy.Validate.StatusCode(HttpStatusCode.OK);
-                var summ = responseBuy.GetResponseObject().Price;
-
-                var responseAfter = hft.History.GetHistory(FirstAssetId, skip, take, ApiKey);
-                responseAfter.Validate.StatusCode(HttpStatusCode.OK);
+                // Create Market Order - Buy (FirstApiKey)
+                var responseMOBuy = CreateAndValidateMarketOrder(FirstAssetId, AssetPair, OrderAction.Buy, volume, ApiKey);
+                var price = responseMOBuy.ResponseObject.Price;
 
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
+
                 while (sw.Elapsed < TimeSpan.FromMinutes(5))
                 {
-                    var currentHistory = hft.History.GetHistory(FirstAssetId, skip, take, ApiKey);
-                    if(currentHistory.StatusCode == HttpStatusCode.OK)
-                    { 
-                        if (responseBefore.GetResponseObject().First().Id != hft.History.GetHistory(FirstAssetId, skip, take, ApiKey).GetResponseObject().First().Id)
+                    var historyAfterUpdate = hft.History.GetHistory(FirstAssetId, AssetPair, skip, take, ApiKey);
+
+                    if (historyAfterUpdate.StatusCode == HttpStatusCode.OK)
+                    {
+                        if (startHistory.ResponseObject.First().Id != historyAfterUpdate.ResponseObject.First().Id)
                             break;
                     }
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3));
                 }
                 sw.Stop();
 
-                var last = hft.History.GetHistory(FirstAssetId, skip, take, ApiKey);
-                Assert.That(responseBefore.GetResponseObject().First().Id, Does.Not.EqualTo(last.GetResponseObject().First().Id), "Orders are not present in response(they havnt been finished in 5 minutes?)");
+                var lastHistory = hft.History.GetHistory(FirstAssetId, AssetPair, skip, take, ApiKey)
+                    .Validate.StatusCode(HttpStatusCode.OK);
+                var lastHistorySecondApiKey = hft.History.GetHistory(FirstAssetId, AssetPair, skip, take, SecondWalletApiKey)
+                    .Validate.StatusCode(HttpStatusCode.OK);
 
-                Assert.That(() => hft.History.GetHistory(FirstAssetId, skip, take, ApiKey).GetResponseObject().Find(t => t.Amount == amount).Price, Is.EqualTo(summ).After(5*60*1000, 2*1000));
+                // Trade's history for the first wallet (ApiKey)
+                var lastTradeBuy = lastHistory.ResponseObject.First();
+
+                Assert.That(startHistory.ResponseObject.First().Id, Does.Not.EqualTo(lastTradeBuy.Id), "Orders are not present in response (they haven't been finished in 5 minutes?)");
+
+                ValidateHistoryTrade(lastTradeBuy, price, isBuy: true);
+
+                // Trade's history for the second wallet (SecondWalletApiKey)
+                var lastTradeSell = lastHistorySecondApiKey.ResponseObject.First();
+
+                Assert.That(lastTradeSell.OrderId, Is.EqualTo(sellOrderId));
+
+                ValidateHistoryTrade(lastTradeSell, price, isBuy: false);
+            }
+        }
+
+        public class GetHistoryTradesNegative : HftBaseTest
+        {
+            private const string CorrectApiKey = "ApiKey";
+
+            [Test]
+            [Category("HFT")]
+            [TestCase("!@^&*(%€§", null, 0, 1, CorrectApiKey, ExpectedResult = HttpStatusCode.NotFound)]
+            [TestCase(null, "!@^&*(%€§", 0, 1, CorrectApiKey, ExpectedResult = HttpStatusCode.NotFound)]
+            [TestCase("!@^&*(%€§", "!@^&*(%€§", 0, 1, CorrectApiKey, ExpectedResult = HttpStatusCode.NotFound)]
+            [TestCase(null, null, -1, 1, CorrectApiKey, ExpectedResult = HttpStatusCode.BadRequest)]
+            [TestCase(null, null, 0, -1, CorrectApiKey, ExpectedResult = HttpStatusCode.BadRequest)]
+            [TestCase(null, null, 0, 1, "!@^&*(%€§", ExpectedResult = HttpStatusCode.BadRequest)]
+            [TestCase(null, null, 0, 1, "invalidApiKey", ExpectedResult = HttpStatusCode.Unauthorized)]
+            [TestCase(null, null, 0, 1, "-125.45", ExpectedResult = HttpStatusCode.Unauthorized)]
+            [TestCase(null, null, 0, 1, " ", ExpectedResult = HttpStatusCode.Unauthorized)]
+            public HttpStatusCode GetHistoryTradesNegativeTest(string assetId, string assetPairId, int skip, int take, string apiKey)
+            {
+                var keyToUse = apiKey == CorrectApiKey ? ApiKey : apiKey;
+                return hft.History.GetHistory(assetId, assetPairId, skip, take, keyToUse).StatusCode;
             }
         }
     }

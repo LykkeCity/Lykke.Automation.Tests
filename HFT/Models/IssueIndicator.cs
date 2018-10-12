@@ -10,26 +10,20 @@ namespace Lykke.Client.AutorestClient.Models
     using Newtonsoft.Json;
     using System.Linq;
 
-    /// <summary>
-    /// Issue description.
-    /// </summary>
-    public partial class IssueModel
+    public partial class IssueIndicator
     {
         /// <summary>
-        /// Initializes a new instance of the IssueModel class.
+        /// Initializes a new instance of the IssueIndicator class.
         /// </summary>
-        public IssueModel()
+        public IssueIndicator()
         {
             CustomInit();
         }
 
         /// <summary>
-        /// Initializes a new instance of the IssueModel class.
+        /// Initializes a new instance of the IssueIndicator class.
         /// </summary>
-        /// <param name="type">Gets or sets the issue type.</param>
-        /// <param name="value">Gets or sets the issue reason, message or
-        /// value.</param>
-        public IssueModel(string type, string value)
+        public IssueIndicator(string type, string value)
         {
             Type = type;
             Value = value;
@@ -42,15 +36,13 @@ namespace Lykke.Client.AutorestClient.Models
         partial void CustomInit();
 
         /// <summary>
-        /// Gets or sets the issue type.
         /// </summary>
-        [JsonProperty(PropertyName = "Type")]
+        [JsonProperty(PropertyName = "type")]
         public string Type { get; set; }
 
         /// <summary>
-        /// Gets or sets the issue reason, message or value.
         /// </summary>
-        [JsonProperty(PropertyName = "Value")]
+        [JsonProperty(PropertyName = "value")]
         public string Value { get; set; }
 
         /// <summary>

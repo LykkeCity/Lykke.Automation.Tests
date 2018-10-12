@@ -27,23 +27,33 @@ namespace Lykke.Client.AutorestClient.Models
         /// Initializes a new instance of the HistoryTradeModel class.
         /// </summary>
         /// <param name="id">The ID of the trade.</param>
-        /// <param name="dateTime">The time the trade was placed.</param>
-        /// <param name="state">The current status of the trade. Possible
-        /// values include: 'Unknown', 'InProgress', 'Finished', 'Canceled',
-        /// 'Failed'</param>
+        /// <param name="orderId">Related order Id.</param>
+        /// <param name="dateTime">The time the trade.</param>
+        /// <param name="timestamp">The time the trade.</param>
+        /// <param name="state">The current status of the trade.</param>
         /// <param name="amount">The trade amount.</param>
         /// <param name="asset">The trade base asset.</param>
+        /// <param name="baseAssetId">The trade base asset.</param>
+        /// <param name="quotingAssetId">The trade quoting asset.</param>
         /// <param name="assetPair">The trading pair.</param>
+        /// <param name="assetPairId">The trading pair.</param>
         /// <param name="price">The trading price.</param>
         /// <param name="fee">The applied trading fee.</param>
-        public HistoryTradeModel(string id, System.DateTime dateTime, TradeStatus state, double amount, string asset, string assetPair, double price, FeeModel fee)
+        public HistoryTradeModel(System.Guid id, System.Guid orderId, System.DateTime dateTime, System.DateTime timestamp, string state, double amount, double baseVolume, double quotingVolume, string asset, string baseAssetId, string quotingAssetId, string assetPair, string assetPairId, double price, FeeModel fee)
         {
             Id = id;
+            OrderId = orderId;
             DateTime = dateTime;
+            Timestamp = timestamp;
             State = state;
             Amount = amount;
+            BaseVolume = baseVolume;
+            QuotingVolume = quotingVolume;
             Asset = asset;
+            BaseAssetId = baseAssetId;
+            QuotingAssetId = quotingAssetId;
             AssetPair = assetPair;
+            AssetPairId = assetPairId;
             Price = price;
             Fee = fee;
             CustomInit();
@@ -58,20 +68,31 @@ namespace Lykke.Client.AutorestClient.Models
         /// Gets or sets the ID of the trade.
         /// </summary>
         [JsonProperty(PropertyName = "Id")]
-        public string Id { get; set; }
+        public System.Guid Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the time the trade was placed.
+        /// Gets or sets related order Id.
+        /// </summary>
+        [JsonProperty(PropertyName = "OrderId")]
+        public System.Guid OrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the time the trade.
         /// </summary>
         [JsonProperty(PropertyName = "DateTime")]
         public System.DateTime DateTime { get; set; }
 
         /// <summary>
-        /// Gets or sets the current status of the trade. Possible values
-        /// include: 'Unknown', 'InProgress', 'Finished', 'Canceled', 'Failed'
+        /// Gets or sets the time the trade.
+        /// </summary>
+        [JsonProperty(PropertyName = "Timestamp")]
+        public System.DateTime Timestamp { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current status of the trade.
         /// </summary>
         [JsonProperty(PropertyName = "State")]
-        public TradeStatus State { get; set; }
+        public string State { get; set; }
 
         /// <summary>
         /// Gets or sets the trade amount.
@@ -80,16 +101,44 @@ namespace Lykke.Client.AutorestClient.Models
         public double Amount { get; set; }
 
         /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "BaseVolume")]
+        public double BaseVolume { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty(PropertyName = "QuotingVolume")]
+        public double QuotingVolume { get; set; }
+
+        /// <summary>
         /// Gets or sets the trade base asset.
         /// </summary>
         [JsonProperty(PropertyName = "Asset")]
         public string Asset { get; set; }
 
         /// <summary>
+        /// Gets or sets the trade base asset.
+        /// </summary>
+        [JsonProperty(PropertyName = "BaseAssetId")]
+        public string BaseAssetId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the trade quoting asset.
+        /// </summary>
+        [JsonProperty(PropertyName = "QuotingAssetId")]
+        public string QuotingAssetId { get; set; }
+
+        /// <summary>
         /// Gets or sets the trading pair.
         /// </summary>
         [JsonProperty(PropertyName = "AssetPair")]
         public string AssetPair { get; set; }
+
+        /// <summary>
+        /// Gets or sets the trading pair.
+        /// </summary>
+        [JsonProperty(PropertyName = "AssetPairId")]
+        public string AssetPairId { get; set; }
 
         /// <summary>
         /// Gets or sets the trading price.
@@ -111,17 +160,25 @@ namespace Lykke.Client.AutorestClient.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (Id == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "Id");
-            }
             if (Asset == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "Asset");
             }
+            if (BaseAssetId == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "BaseAssetId");
+            }
+            if (QuotingAssetId == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "QuotingAssetId");
+            }
             if (AssetPair == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "AssetPair");
+            }
+            if (AssetPairId == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "AssetPairId");
             }
             if (Fee == null)
             {

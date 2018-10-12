@@ -1,11 +1,9 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-
-namespace AFTests.HftTests
+﻿namespace AFTests.HftTests
 {
+    using NUnit.Framework;
+    using System;
+    using System.Net;
+
     class AssetPairsTests
     {
         public class GetAssetPairs : HftBaseTest
@@ -14,9 +12,8 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void GetAssetPairsTest()
             {
-                var response = hft.AssetPairs.GetAssetPairs();
-                response.Validate.StatusCode(HttpStatusCode.OK);
-                Assert.That(response.GetResponseObject().Count, Is.GreaterThan(5), "AssetPairs Count less than 5??");
+                var response = hft.AssetPairs.GetAssetPairs().Validate.StatusCode(HttpStatusCode.OK);
+                Assert.That(response.ResponseObject.Count, Is.GreaterThan(5), "AssetPairs Count less than 5??");
             }
         }
 
@@ -24,12 +21,11 @@ namespace AFTests.HftTests
         {
             [TestCase("123456")]
             [TestCase("testAssetId")]
-            [TestCase("!@%^&(")]
+            [TestCase("!@%^&(&*)$%€§1")]
             [Category("HFT")]
             public void GetAssetPairsInvalidIdTest(string id)
             {
-                var response = hft.AssetPairs.GetAssetPairs(id);
-                response.Validate.StatusCode(HttpStatusCode.NotFound);
+                hft.AssetPairs.GetAssetPairs(id).Validate.StatusCode(HttpStatusCode.NotFound);
             }
         }
 
@@ -39,16 +35,12 @@ namespace AFTests.HftTests
             [Category("HFT")]
             public void GetAssetPairValidateAssetTest()
             {
-                var response = hft.AssetPairs.GetAssetPairs();
-                response.Validate.StatusCode(HttpStatusCode.OK);
+                var response = hft.AssetPairs.GetAssetPairs().Validate.StatusCode(HttpStatusCode.OK);
+                var number = new Random().Next(response.ResponseObject.Count);
+                var assetFromList = response.ResponseObject[number];
+                var assetResponse = hft.AssetPairs.GetAssetPairs(assetFromList.Id).Validate.StatusCode(HttpStatusCode.OK);
 
-                var number = new Random().Next(response.GetResponseObject().Count);
-
-                var assetFromList = response.GetResponseObject()[number];
-
-                var assetResponse = hft.AssetPairs.GetAssetPairs(assetFromList.Id);
-                assetResponse.Validate.StatusCode(HttpStatusCode.OK);
-                AreEqualByJson(assetFromList, assetResponse.GetResponseObject(), $"AssetPair {assetFromList.Id} from /asserPairs and from /assetPairs/assetId does not equal");
+                AreEqualByJson(assetFromList, assetResponse.ResponseObject, $"AssetPair {assetFromList.Id} from /asserPairs and from /assetPairs/assetId does not equal");
             }
         }
     }
