@@ -959,7 +959,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet.PublicAddress));
+                blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
             [Test]
@@ -1131,7 +1131,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-                blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet.PublicAddress));
+                blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
             [Test]

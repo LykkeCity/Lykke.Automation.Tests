@@ -39,7 +39,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Litecoin"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Eos"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -238,7 +238,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public static string GetWalletCorrectName(string currentName)
         {
-            if (currentName.Contains("_wasErronWhileFillWalletFromEW"))
+            if (currentName != null && currentName.Contains("_wasErronWhileFillWalletFromEW"))
                 currentName = currentName.Replace("_wasErronWhileFillWalletFromEW", "");
             return currentName;
         }
