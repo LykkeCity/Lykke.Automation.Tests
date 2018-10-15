@@ -8,7 +8,6 @@ namespace Lykke.Client.AutorestClient.Models
 {
     using Microsoft.Rest;
     using Newtonsoft.Json;
-    using System.Linq;
 
     /// <summary>
     /// Balance response model for the wallets balance request.

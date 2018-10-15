@@ -1,13 +1,11 @@
-﻿using LykkeAutomationPrivate;
-using Newtonsoft.Json;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace AFTests.HftTests
+﻿namespace AFTests.HftTests
 {
+    using LykkeAutomationPrivate;
+    using Newtonsoft.Json;
+    using NUnit.Framework;
+    using System;
+    using System.IO;
+
     public interface IHFTSettingsModel
     {
         string ApiKey { get; }

@@ -1,16 +1,13 @@
-﻿using Lykke.Client.AutorestClient.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using XUnitTestCommon.RestRequests.Interfaces;
-
-namespace HFT.Api
+﻿namespace HFT.Api
 {
+    using Lykke.Client.AutorestClient.Models;
+    using XUnitTestCommon.RestRequests.Interfaces;
+
     public class IsAlive : ApiBase
     {
-        public IResponse<IsAliveModel> GetIsAlive()
+        public IResponse<IsAliveResponse> GetIsAlive()
         {
-            return Request.Get("/IsAlive").Build().Execute<IsAliveModel>();
+            return Request.Get("/IsAlive").Build().Execute<IsAliveResponse>();
         }
     }
 }

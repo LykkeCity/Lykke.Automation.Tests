@@ -1,11 +1,9 @@
-﻿using Lykke.Client.AutorestClient.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using XUnitTestCommon.RestRequests.Interfaces;
-
-namespace HFT.Api
+﻿namespace HFT.Api
 {
+    using Lykke.Client.AutorestClient.Models;
+    using System.Collections.Generic;
+    using XUnitTestCommon.RestRequests.Interfaces;
+
     public class AssetPairs : ApiBase
     {
         public IResponse<List<AssetPairModel>> GetAssetPairs()

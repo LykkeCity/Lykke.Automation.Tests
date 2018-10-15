@@ -8,7 +8,6 @@ namespace Lykke.Client.AutorestClient.Models
 {
     using Microsoft.Rest;
     using Newtonsoft.Json;
-    using System.Linq;
 
     /// <summary>
     /// Response model class for limit order state.

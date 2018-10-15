@@ -16,6 +16,7 @@ namespace XUnitTestCommon.RestRequests.Interfaces
 
     public interface IResponse<T> : IResponse
     {
+        T ResponseObject { get; }
         T GetResponseObject();
         new IValidate<T> Validate { get; }
     }
