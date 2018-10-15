@@ -39,7 +39,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Eos"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Qtum"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -84,7 +84,8 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static long BLOCKCHAIN_MINING_TIME = _currentSettings.Value.BlockchainMiningTime ?? 10;
         protected static long MAX_WALLETS_FOR_CASH_IN = _currentSettings.Value.MaxWalletsForCashIn ?? 30;
         protected static long SIGN_EXPIRATION_SECONDS = _currentSettings.Value.SignExpiration ?? 0;
-        protected int REBUILD_ATTEMPT_COUNT = 5;
+        protected static long REBUILD_ATTEMPT_COUNT = _currentSettings.Value.RebuildAttemptCount ?? 5;
+        protected static long BUILD_SIGN_BROADCAST_EWDW = _currentSettings.Value.BuildSignBroadcastEWDW ?? 5;
 
         #endregion
 
@@ -249,13 +250,13 @@ namespace AFTests.BlockchainsIntegrationTests
         /// <param name="wallet"></param>
         /// <param name="attemptCount"></param>
         /// <returns></returns>
-        public bool BuildSignBroadcastEWDW(WalletCreationResponse wallet, int attemptCount=5, bool wait = false)
+        public bool BuildSignBroadcastEWDW(WalletCreationResponse wallet, bool wait = false)
         {
             blockchainApi.Balances.PostBalances(wallet.PublicAddress);
 
             int i = 0;
 
-            while (i < attemptCount)
+            while (i < BUILD_SIGN_BROADCAST_EWDW)
             {
                 var model = new BuildSingleTransactionRequest()
                 {
@@ -272,11 +273,11 @@ namespace AFTests.BlockchainsIntegrationTests
                 var singleTransactionResponse = blockchainApi.Operations.PostTransactions(model);
                 if (singleTransactionResponse.StatusCode != HttpStatusCode.OK)
                 {
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds((int)(Math.Pow(3, i))));
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
                     i++;
                     continue;
                 }
-
+                
                 responseTransaction = singleTransactionResponse.GetResponseObject();
 
                 string operationId = model.OperationId.ToString();
@@ -287,7 +288,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds((int)(Math.Pow(3, i))));
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
                     i++;
                     continue;
                 }
@@ -337,7 +338,7 @@ namespace AFTests.BlockchainsIntegrationTests
             var broadcastedSendTransaction = blockchainApi.Operations.GetOperationId(operationId).GetResponseObject();
 
             int i = 0;
-            while(i++<150 && broadcastedSendTransaction.State == BroadcastedTransactionState.InProgress)
+            while(i++ < 150 && broadcastedSendTransaction.State == BroadcastedTransactionState.InProgress)
             {
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
                 broadcastedSendTransaction = blockchainApi.Operations.GetOperationId(operationId).GetResponseObject();
