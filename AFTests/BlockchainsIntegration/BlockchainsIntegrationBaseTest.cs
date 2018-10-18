@@ -39,7 +39,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Qtum"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Eos"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -434,6 +434,34 @@ namespace AFTests.BlockchainsIntegrationTests
             return (response, operationId, transactionContext, signedTransaction);
         }
 
+        public void TransferCryptoBetweenWallets(WalletCreationResponse walletFrom, string walletTo)
+        {
+            if (walletFrom == null)
+                return;
+
+            var balance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == walletFrom.PublicAddress)?.Balance;
+
+            if (balance == null)
+                return;
+
+            var model = new BuildSingleTransactionRequest()
+            {
+                Amount = balance,
+                AssetId = ASSET_ID,
+                FromAddress = walletFrom.PublicAddress,
+                IncludeFee = false,
+                OperationId = Guid.NewGuid(),
+                ToAddress = walletTo,
+                FromAddressContext = walletFrom.AddressContext
+            };
+          
+            var singleTransactionResponse = blockchainApi.Operations.PostTransactions(model);
+            var responseTransaction = singleTransactionResponse.GetResponseObject();
+
+            var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { walletFrom.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+            blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+        }
         #endregion
     }
 }

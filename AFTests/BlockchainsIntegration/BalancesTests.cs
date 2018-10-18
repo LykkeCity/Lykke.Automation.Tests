@@ -29,6 +29,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -142,6 +143,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -267,70 +269,8 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
-            }
-
-        //    [Test]
-            [Category("BlockchainIntegration")]
-            [Description("This case validate case when DW got transaction from EW immidiatly after DW-HW transaction and show correct block number after transaction got completed")]
-            public void DWHWandEwDwTransactionsFinalBlockNumberTest()
-            {
-                //create transaction and broadcast it
-
-                long? newBlock = null;
-
-                var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Balance;
-                var startBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Block;
-
-                var model = new BuildSingleTransactionRequest()
-                {
-                    Amount = AMOUT_WITH_FEE,
-                    AssetId = ASSET_ID,
-                    FromAddress = wallet.PublicAddress,
-                    IncludeFee = true,
-                    OperationId = Guid.NewGuid(),
-                    ToAddress = HOT_WALLET,
-                    FromAddressContext = wallet.AddressContext
-                };
-
-                var responseTransaction = blockchainApi.Operations.PostTransactions(model).GetResponseObject();
-                string operationId = model.OperationId.ToString();
-
-                var signResponse = blockchainSign.PostSign(
-                    new SignRequest() {
-                        PrivateKeys = new List<string>()
-                        { wallet.PrivateKey },
-                        TransactionContext = 
-                        responseTransaction.TransactionContext }).GetResponseObject();
-
-                var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
-
-                GetTransactionCompleteStatusTime(operationId, wallet.PublicAddress);
-                WaitForBalanceBlockIncreased(wallet.PublicAddress, startBlock);
-                
-                newBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress)?.Block;
-                
-                if (newBlock == null)
-                {
-                    var completeBlock = blockchainApi.Operations.GetOperationId(model.OperationId.ToString()).GetResponseObject();
-                    Assert.That(completeBlock.Block, Is.GreaterThan(startBlock), "Block when operation got complete status is not greater than block with start balance");
-                    Assert.Pass("Transaction got Complete status and wallet dissapear from GET /balances request");
-                }
-                else
-                {
-                    Assert.That(() => blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State, Is.EqualTo(BroadcastedTransactionState.Completed), $"Request doesnt have Complete status after {BLOCKCHAIN_MINING_TIME} minutes and still in a {blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().State}");
-
-                    var transactionBlock = blockchainApi.Operations.GetOperationId(operationId).GetResponseObject().Block;
-
-                    TestContext.Progress.WriteLine($"old block: {startBlock} \n new block: {newBlock}");
-
-                    Assert.That(newBlock.Value, Is.GreaterThan(startBlock), $"New balance block is not greater than previous");
-
-                    Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(w => w.Address == wallet.PublicAddress).Block, Is.GreaterThanOrEqualTo(transactionBlock).After((int)BLOCKCHAIN_MINING_TIME * 60).Seconds.PollEvery(1).Seconds, "Transaction block is not greater than balance block");
-                }
-
-                Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Count(a => a.Address == wallet.PublicAddress), Is.EqualTo(1), $"Unexpected instances of balance for wallet {wallet.PublicAddress}");
-                Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Balance, Is.EqualTo(AMOUT_WITH_FEE), "Balance is not expected");           
             }
 
             long? GetTransactionCompleteStatusTime(string operationId, string wallet)

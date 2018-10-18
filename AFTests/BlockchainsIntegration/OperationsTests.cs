@@ -31,6 +31,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -206,6 +207,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -243,6 +245,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -293,6 +296,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -382,6 +386,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -469,6 +474,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -536,6 +542,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -587,6 +594,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -637,6 +645,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -741,6 +750,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -804,6 +814,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -898,6 +909,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -959,6 +971,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -1016,6 +1029,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -1073,6 +1087,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -1131,6 +1146,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -1189,7 +1205,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
-
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -1245,6 +1261,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -1294,6 +1311,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [TearDown]
             public void TearDown()
             {
+                TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                 blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
             }
 
@@ -1508,6 +1526,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 [TearDown]
                 public void TearDown()
                 {
+                    TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                     blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
                 }
 
@@ -1589,6 +1608,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 [TearDown]
                 public void TearDown()
                 {
+                    TransferCryptoBetweenWallets(wallet, HOT_WALLET);
                     blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
                 }
 
