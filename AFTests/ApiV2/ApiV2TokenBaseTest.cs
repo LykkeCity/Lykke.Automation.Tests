@@ -11,7 +11,7 @@ namespace AFTests.ApiV2
     {
         #region setup teardown
 
-        protected string token = "";
+        static protected string token = "";
 
         [OneTimeSetUp]
         public void CashOutSetUp()

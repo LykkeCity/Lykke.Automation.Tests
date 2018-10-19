@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
     <PackageReference Include="Lykke.AzureStorage" Version="8.6.0" />
-    <PackageReference Include="NUnit" Version="3.10.1" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
     <PackageReference Include="RestSharp" Version="106.3.1" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.0" />
   </ItemGroup>

@@ -21,5 +21,8 @@ namespace ApiV2Data.Api
 
         public IResponse<List<string>> GetWithdrawalsCryptoAvailable(string token) =>
             Request.Get("/withdrawals/crypto/available").WithBearerToken(token).Build().Execute<List<string>>();
+
+        public IResponse<WithdrawalCryptoInfoModel> GetWithdrawalsCryptoAssetInfo(string assetId, string token) =>
+            Request.Get($"/withdrawals/crypto/{assetId}/info").WithBearerToken(token).Build().Execute<WithdrawalCryptoInfoModel>();
     }
 }
