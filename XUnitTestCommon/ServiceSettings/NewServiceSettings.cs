@@ -22,8 +22,13 @@ namespace XUnitTestCommon.ServiceSettings
         public static JObject Settings()
         {
             string content = "";
-            if(Environment.GetEnvironmentVariable("WalletApiUrl") == "dev" || Environment.GetEnvironmentVariable("WalletApiUrl") == null)
+            if (Environment.GetEnvironmentVariable("WalletApiUrl") == "dev" || Environment.GetEnvironmentVariable("WalletApiUrl") == null)
+            {
+                var response = Requests.For(cfg[devUrl].ToString()).Get(cfg[devToken].ToString()).Build().Execute();
                 content = Requests.For(cfg[devUrl].ToString()).Get(cfg[devToken].ToString()).Build().Execute().Content;
+                Console.WriteLine($"================= CONFIG STATUS CODE: {response.StatusCode}  ===================");
+                Console.WriteLine($"================= CONFIG STATUS CODE: {response.Content}  ===================");
+            }
             else
                 content = Requests.For(cfg[testUrl].ToString()).Get(cfg[testToken].ToString()).Build().Execute().Content;
             if (string.IsNullOrEmpty(content))
