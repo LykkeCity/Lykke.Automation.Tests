@@ -26,6 +26,7 @@ namespace XUnitTestCommon.ServiceSettings
             {
                 var response = Requests.For(cfg[devUrl].ToString()).Get(cfg[devToken].ToString()).Build().Execute();
                 content = Requests.For(cfg[devUrl].ToString()).Get(cfg[devToken].ToString()).Build().Execute().Content;
+                Console.WriteLine($"================= CONFIG URl: {cfg[devUrl]}{cfg[devToken]}  ===================");
                 Console.WriteLine($"================= CONFIG STATUS CODE: {response.StatusCode}  ===================");
                 Console.WriteLine($"================= CONFIG STATUS CODE: {response.Content}  ===================");
             }
