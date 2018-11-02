@@ -295,9 +295,9 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var getResponse = blockchainApi.Operations.GetOperationId(operationId);
 
-                if (getResponse.StatusCode != HttpStatusCode.OK)
+                if (getResponse.StatusCode != HttpStatusCode.OK || getResponse.GetResponseObject().State == BroadcastedTransactionState.Failed || (getResponse.GetResponseObject().ErrorCode.HasValue && getResponse.GetResponseObject().ErrorCode.Value ==  TransactionExecutionError.buildingShouldBeRepeated))
                 {
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds((int)(Math.Pow(3, i))));
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
                     i++;
                     continue;
                 }

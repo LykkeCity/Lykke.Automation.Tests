@@ -22,7 +22,9 @@ namespace Lykke.Client.AutorestClient.Models
         [EnumMember(Value = "amountIsTooSmall")]
         AmountIsTooSmall,
         [EnumMember(Value = "notEnoughtBalance")]
-        NotEnoughtBalance
+        NotEnoughtBalance,
+        [EnumMember(Value = "buildingShouldBeRepeated")]
+        buildingShouldBeRepeated
     }
     internal static class TransactionExecutionErrorEnumExtension
     {
@@ -41,6 +43,8 @@ namespace Lykke.Client.AutorestClient.Models
                     return "amountIsTooSmall";
                 case TransactionExecutionError.NotEnoughtBalance:
                     return "notEnoughtBalance";
+                case TransactionExecutionError.buildingShouldBeRepeated:
+                    return "buildingShouldBeRepeated";
             }
             return null;
         }
@@ -55,6 +59,8 @@ namespace Lykke.Client.AutorestClient.Models
                     return TransactionExecutionError.AmountIsTooSmall;
                 case "notEnoughtBalance":
                     return TransactionExecutionError.NotEnoughtBalance;
+                case "buildingShouldBeRepeated":
+                    return TransactionExecutionError.buildingShouldBeRepeated;
             }
             return null;
         }
