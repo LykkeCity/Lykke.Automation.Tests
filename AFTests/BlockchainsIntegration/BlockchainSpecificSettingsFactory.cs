@@ -304,10 +304,10 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainSign = "http://eos-signservice.autotests-service.svc.cluster.local/api";
                 AssetId = "EOS";
                 AssetAccuracy = 4;
-                HotWallet = "herb";
-                HotWalletKey = "5JcjhSQzfTUnQUXKCZupbBsGj6mkmTRxfzbMxiGBLxw9JjzXo66";
-                ExternalWalletAddress = "insect";
-                ExternalWalletKey = "5JKyVNU65er9y5xLKprVPcdYzqULkMwDKWDX6zokgX5dAAj7dVv";
+                HotWallet = "lykketest111";
+                HotWalletKey = "5JQwrpty3wrET2EqF91bbevU7zqS8GdaCu82w7NTGxW6UTpBUg1";
+                ExternalWalletAddress = "lykketest222";
+                ExternalWalletKey = "5JHW3H4DMB2iknvZrxWub69aUaNk16qNghWcBiPAeSLDRZ1peUv";
                 BlockchainMiningTime = 10;
             }
         }
