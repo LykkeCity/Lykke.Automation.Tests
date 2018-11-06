@@ -198,7 +198,7 @@ namespace AFTests.BlockchainsIntegrationTests
             var broadcastRequset = new BroadcastTransactionRequest() { OperationId = request.OperationId, SignedTransaction = signResponse.GetResponseObject().SignedTransaction };
             var broadcatedResponse = blockchainApi.Operations.PostTransactionsBroadcast(broadcastRequset);
 
-            WaitForBalance(wallets[0].PublicAddress);
+            wallets.ForEach(w => WaitForBalance(w.PublicAddress));
 
             return true;
         }
