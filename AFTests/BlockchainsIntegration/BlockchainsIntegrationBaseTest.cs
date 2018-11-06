@@ -434,7 +434,7 @@ namespace AFTests.BlockchainsIntegrationTests
             return (response, operationId, transactionContext, signedTransaction);
         }
 
-        public void TransferCryptoBetweenWallets(WalletCreationResponse walletFrom, string walletTo)
+        public void TransferCryptoBetweenWallets(WalletCreationResponse walletFrom, string walletTo, bool includeFee = true)
         {
             if (walletFrom == null)
                 return;
@@ -449,7 +449,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 Amount = balance,
                 AssetId = ASSET_ID,
                 FromAddress = walletFrom.PublicAddress,
-                IncludeFee = false,
+                IncludeFee = includeFee,
                 OperationId = Guid.NewGuid(),
                 ToAddress = walletTo,
                 FromAddressContext = walletFrom.AddressContext
