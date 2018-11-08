@@ -39,7 +39,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Eos"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "stellar"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -114,6 +114,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
         #region Helpers methods
 
+        private static bool skipAddBalanceFromEWToDWAfterError = false;
 
         protected Queue<WalletCreationResponse> Wallets()
         {
@@ -208,28 +209,37 @@ namespace AFTests.BlockchainsIntegrationTests
             bool wasError = false;
             var transferSupported = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
             var recieveSupport = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsReceiveTransactionRequired;
-            if (transferSupported != null && transferSupported.Value)
-            {
-                blockchainApi.Balances.PostBalances(wallet.PublicAddress);
-                TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUT_WITH_FEE, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = wallet.PublicAddress };
-                var response = blockchainApi.Testing.PostTestingTransfer(request);
-                if(response.StatusCode != HttpStatusCode.OK)
-                {
-                    System.Threading.Thread.Sleep(5);
-                    response = blockchainApi.Testing.PostTestingTransfer(request);
-                }
-
-                if (response.StatusCode != HttpStatusCode.OK)
-                    wasError = true;
-
-            }
-            else if (BlockChainName == "RaiBlocks" || ( recieveSupport != null && recieveSupport.Value)) //raiblocks - temp. will be removed after capablities enabled
-            {
-                AddCryptoToWalletWithRecieveTransaction(wallet.PublicAddress, wallet.PrivateKey, wait);
-            }
+            if (skipAddBalanceFromEWToDWAfterError)
+                wasError = skipAddBalanceFromEWToDWAfterError;
             else
             {
-                wasError = BuildSignBroadcastEWDW(wallet, wait: wait);
+                if (transferSupported != null && transferSupported.Value)
+                {
+                    blockchainApi.Balances.PostBalances(wallet.PublicAddress);
+                    TestingTransferRequest request = new TestingTransferRequest() { amount = AMOUT_WITH_FEE, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = wallet.PublicAddress };
+                    var response = blockchainApi.Testing.PostTestingTransfer(request);
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        System.Threading.Thread.Sleep(5);
+                        response = blockchainApi.Testing.PostTestingTransfer(request);
+                    }
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        wasError = true;
+                        skipAddBalanceFromEWToDWAfterError = wasError;
+                    }
+
+                }
+                else if (BlockChainName == "RaiBlocks" || (recieveSupport != null && recieveSupport.Value)) //raiblocks - temp. will be removed after capablities enabled
+                {
+                    AddCryptoToWalletWithRecieveTransaction(wallet.PublicAddress, wallet.PrivateKey, wait);
+                }
+                else
+                {
+                    wasError = BuildSignBroadcastEWDW(wallet, wait: wait);
+                    skipAddBalanceFromEWToDWAfterError = wasError;
+                }
             }
             if (wait && !wasError)
                 WaitForBalance(wallet.PublicAddress);
