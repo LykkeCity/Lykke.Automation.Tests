@@ -90,6 +90,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "ethereum")
                 _settings = new EthereumSettings();
 
+            if (blockchain == "kin")
+                _settings = new KinSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -381,6 +384,21 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletAddress = "0x085e36cc33743be10246013d11b8fc1919a242db";
                 ExternalWalletKey = "0x2c0b8b8f59e2ed253bb45c0974852cae982416823eb4f6775192f167e7b15825";
                 BuildSignBroadcastEWDW = 1;
+            }
+        }
+
+        class KinSettings : BlockchainSpecificModel
+        {
+            public KinSettings()
+            {
+                BlockchainIntegration = "Kin";
+                BlockchainApi = "http://kin-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://kin-sign-service.autotests-service.svc.cluster.local/api";
+                HotWallet = "GC3M5TTH53ID4GIVNTFBIOPK6BZ3IKISXST43PC523DRUUGMC2BIYFJH";
+                HotWalletKey = "SDDEEFMHWVVX2W4RKXCL7GZRPK6BNMDM2MR2JW6HAA2PHY6MLBS3O6UR";
+                AssetId = "KIN";
+                ExternalWalletAddress = "GAIAZYQJ2S5V3EJZ4NG23AZTDOEZUYI2EZWMBB3GWXTX4MFSUG6ERABZ";
+                ExternalWalletKey = "SBPX2VTWVPPWCKWZCKWTE73OC4AKQSNE5I76SHANVF5OXGJC74WMCDJS";
             }
         }
 
