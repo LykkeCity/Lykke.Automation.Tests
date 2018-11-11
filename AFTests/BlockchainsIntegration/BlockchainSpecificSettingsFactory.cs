@@ -169,11 +169,11 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainIntegration = "Stellar";
                 BlockchainApi = "http://stellar-api-schnidlo.autotests-service.svc.cluster.local/api";
                 BlockchainSign = "http://stellar-sign-service-schnidlo.autotests-service.svc.cluster.local/api";
-                HotWallet = "GCCWY6MNVWORHO7B3L6W5LULGFR337K5UAATA2Z3FSPQA5MYRW5X33ZP";
-                HotWalletKey = "SBBEPWMAINBQKQFW42L6GTWF73WPP5VRVG6KZHCWZVSVM4DUMWZESK2Z";
+                HotWallet = "GDPTSW3YL75SPFW2WL7AIEMVDSDJPWKBMD5LPZEFYBCSGO6SIFTEWXNV";
+                HotWalletKey = "SD7OPTO74QP7KLWOZ5ISQU6KNHUMTZE6RV5ZZXQPVPUYP5SYHBM2DCRS";
                 AssetId = "XLM";
-                ExternalWalletAddress = "GDTCLM7L3RKSP324DBRROKRLTRU4WLSPLHDEVSC75LAVZFN6ZDQPK7LD";
-                ExternalWalletKey = "SCCSEPSZNHAIJXUVVHAN7ZHBSBSTBJY5Y2W7CJYIP3FALGAFEV5FEGMQ";
+                ExternalWalletAddress = "GD2U3Z3IAFDHVQJGJZY5UHSHQTCAINJ3FXWIB4CW3I5SW2QMBUFCT4UP";
+                ExternalWalletKey = "SB3OVOZJ7TJO3BFACNULKEC2WBFRPXUVLQSWTHOZZ5DEDQW7NG4WNL2S";
             }
         }
 
