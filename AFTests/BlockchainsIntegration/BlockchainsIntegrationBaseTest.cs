@@ -124,7 +124,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 {
                     result = new Queue<WalletCreationResponse>();
 
-                    long maxWallets = 29;
+                    long maxWallets = 30;
                     while(maxWallets > 0)
                     {
                         var cycleWallets = new Queue<WalletCreationResponse>();
@@ -260,9 +260,12 @@ namespace AFTests.BlockchainsIntegrationTests
         /// <param name="wallet"></param>
         /// <param name="attemptCount"></param>
         /// <returns></returns>
-        public bool BuildSignBroadcastEWDW(WalletCreationResponse wallet, bool wait = false)
+        public bool BuildSignBroadcastEWDW(WalletCreationResponse wallet, bool wait = false, string amount=null)
         {
             blockchainApi.Balances.PostBalances(wallet.PublicAddress);
+
+            if (amount == null)
+                amount = AMOUT_WITH_FEE;
 
             int i = 0;
 
@@ -270,7 +273,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 var model = new BuildSingleTransactionRequest()
                 {
-                    Amount = AMOUT_WITH_FEE,
+                    Amount = amount,
                     AssetId = ASSET_ID,
                     FromAddress = EXTERNAL_WALLET,
                     IncludeFee = false,
@@ -403,6 +406,25 @@ namespace AFTests.BlockchainsIntegrationTests
             sw.Stop();
         }
 
+        public void WaitForBalanceOnWallet(string walletAddress, string balance)
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
+            {
+                var currentBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == walletAddress)?.Balance;
+                if (currentBalance == balance)
+                    return;
+
+                else
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+            }
+            sw.Stop();
+        }
+
+        public WalletBalanceContract BalanceResponse(string wallet) => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet);
+
+
         public void WaitForBalance(string wallet)
         {
             Stopwatch sw = new Stopwatch();
@@ -444,19 +466,22 @@ namespace AFTests.BlockchainsIntegrationTests
             return (response, operationId, transactionContext, signedTransaction);
         }
 
-        public void TransferCryptoBetweenWallets(WalletCreationResponse walletFrom, string walletTo, bool includeFee = true)
+        public string TransferCryptoBetweenWallets(WalletCreationResponse walletFrom, string walletTo, bool includeFee = true, string amount = null)
         {
             if (walletFrom == null)
-                return;
+                return null;
 
-            var balance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == walletFrom.PublicAddress)?.Balance;
+            var balance = WalletBalance(walletFrom);
 
             if (balance == null)
-                return;
+                return null;
+
+            if (amount == null)
+                amount = balance;
 
             var model = new BuildSingleTransactionRequest()
             {
-                Amount = balance,
+                Amount = amount,
                 AssetId = ASSET_ID,
                 FromAddress = walletFrom.PublicAddress,
                 IncludeFee = includeFee,
@@ -471,7 +496,11 @@ namespace AFTests.BlockchainsIntegrationTests
             var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { walletFrom.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
 
             blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+            return model.OperationId.ToString();
         }
+
+        public string WalletBalance(WalletCreationResponse wallet) => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
         #endregion
     }
 }

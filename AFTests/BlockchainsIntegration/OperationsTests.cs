@@ -24,8 +24,8 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -200,8 +200,8 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -238,8 +238,8 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -289,8 +289,8 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -379,8 +379,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore("Many outputs are not supported by blockchain");
 
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -394,8 +394,6 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetTransactionsManyOutputsTest()
             {
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null, $"Wallet {wallet.PublicAddress} balance is null. Fail test");
-
                 var transactionContext = "";
 
                 var operationID = Guid.NewGuid();
@@ -467,8 +465,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore("Many inputs are not supported by blockchain");
 
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -535,8 +533,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore("Many inputs not supported by blockchain");
 
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -577,8 +575,6 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-
-
         public class SameOperationIdFoDifferentTransactions : BlockchainsIntegrationBaseTest
         {
             WalletCreationResponse wallet;
@@ -587,8 +583,8 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -638,8 +634,8 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -743,8 +739,8 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -807,8 +803,8 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -902,8 +898,8 @@ namespace AFTests.BlockchainsIntegrationTests
             public void SetUp()
             {
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -964,8 +960,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore($"Blockchain {BlockChainName} does not require recieve transaction");
 
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -1022,8 +1018,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore($"Blockchain {BlockChainName} does not support many-inputs transaction");
 
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -1080,8 +1076,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore($"Blockchain {BlockChainName} does not support many-outputs transaction");
 
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -1139,8 +1135,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore($"Blockchain {BlockChainName} does not support PUT /transaction");
 
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -1198,8 +1194,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore($"Blockchain {BlockChainName} does not support address context");
 
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -1254,8 +1250,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore($"Blockchain {BlockChainName} does not support address context");
 
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
             }
 
             [TearDown]
@@ -1303,8 +1299,8 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.Ignore($"Blockchain {BlockChainName} does not support address context");
 
                 wallet = Wallets().Dequeue();
-                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
                 wallet1 = Wallets().Dequeue();
             }
 
@@ -1519,8 +1515,8 @@ namespace AFTests.BlockchainsIntegrationTests
                 public void SetUp()
                 {
                     wallet = Wallets().Dequeue();
-                    TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                    Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                    TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                    Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
                 }
 
                 [TearDown]
@@ -1601,8 +1597,8 @@ namespace AFTests.BlockchainsIntegrationTests
                 public void SetUp()
                 {
                     wallet = Wallets().Dequeue();
-                    TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance}");
-                    Assert.That(blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                    TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                    Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
                 }
 
                 [TearDown]
@@ -1652,6 +1648,76 @@ namespace AFTests.BlockchainsIntegrationTests
                             Assert.That(getResponse.GetResponseObject().OperationId, Is.EqualTo(usedOperationId));
                         });
                     }
+                }
+            }
+
+            public class EWDWDoubleDifferentsTransfers : BlockchainsIntegrationBaseTest
+            {
+                WalletCreationResponse wallet;
+
+                [SetUp]
+                public void SetUp()
+                {
+                    wallet = Wallets().Dequeue();
+                    TestContext.Out.WriteLine($"wallet {wallet.PublicAddress} balance: {WalletBalance(wallet)}");
+                    Assert.That(WalletBalance(wallet), Is.Not.Null.Or.Empty.And.Not.EqualTo("0"), $"Unxpected balance for wallet {wallet.PublicAddress}");
+                }
+
+                [TearDown]
+                public void TearDown()
+                {
+                    TransferCryptoBetweenWallets(wallet, HOT_WALLET);
+                    blockchainApi.Balances.DeleteBalances(GetWalletCorrectName(wallet?.PublicAddress));
+                }
+
+                [Test]
+                [Category("BlockchainIntegration")]
+                public void EWDWDoubleDifferentsTransfersTest()
+                {
+                    Assert.That(EXTERNAL_WALLET, Is.Not.Null.Or.Empty, "External wallet address and key are empty!");
+
+                    var secondTransferAmount = (Math.Round(decimal.Parse(AMOUT_WITH_FEE) * 1.5m)).ToString();
+                    
+                    var startBalance = WalletBalance(wallet);
+
+                    var finalBalance = (decimal.Parse(startBalance) + decimal.Parse(secondTransferAmount)).ToString();
+
+                    var transferSupported = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsTestingTransfersSupported;
+
+                    long blockBeforeDWHW = -1;
+                    if (transferSupported != null && transferSupported.Value)
+                    {
+                        Step($"Make EW - Dw transfer using /testing/transfers  for {secondTransferAmount} Amount", () =>
+                        {
+                            TestingTransferRequest request = new TestingTransferRequest() { amount = secondTransferAmount, assetId = ASSET_ID, fromAddress = EXTERNAL_WALLET, fromPrivateKey = EXTERNAL_WALLET_KEY, toAddress = wallet.PublicAddress };
+                            var response = blockchainApi.Testing.PostTestingTransfer(request);
+                        });
+                    }
+                    else
+                    {
+                        Step($"Make EW - Dw transaction for {secondTransferAmount} Amount and wait for operation got complete status", () =>
+                        {
+                           var failed = BuildSignBroadcastEWDW(wallet, wait: true, amount: secondTransferAmount);
+                            Assert.That(failed, Is.False, "EW-DW transaction failed");
+                            WaitForBalanceOnWallet(wallet.PublicAddress, finalBalance);
+                            blockBeforeDWHW = BalanceResponse(wallet.PublicAddress).Block;
+                        });
+                    }
+
+                    long DWHWblock = -1;
+
+                    Step($"Make DW - HW with {AMOUT_WITH_FEE} amount transaction and wait for operation got complete status. Get block of DW - HW complete transaction", () => 
+                    {
+                        var operationId = TransferCryptoBetweenWallets(wallet, HOT_WALLET, amount: AMOUT_WITH_FEE);
+                        WaitForOperationGotCompleteStatus(operationId);    
+                        DWHWblock = BalanceResponse(wallet.PublicAddress).Block;
+                    });
+
+                    Step("Validate final balance and block", () => 
+                    {
+                        Assert.That(WalletBalance(wallet), Is.EqualTo(secondTransferAmount), "UnExpected balance");
+                        Assert.That(DWHWblock, Is.GreaterThanOrEqualTo(blockBeforeDWHW), "Balance block after DW-HW TX is Less than in previous TX");
+                    });
                 }
             }
         }
