@@ -92,7 +92,7 @@ namespace AFTests.BlockchainsIntegration
                 AssetId = "LTC";
                 ExternalWalletAddress = "QiKk2wXBuVEARMUkGqKQFyjm1nJayAU8ZC";
                 ExternalWalletKey = "cSARwquJjL3wcaSZhke5u48UkLF7zDJChrHWaLYnWegpQXjER1fZ";
-                ExternalWallerAddressContext ="{\"PubKey\":\"02d02b90654309b5c12abf0789fbc8a113fdd238f863b5692ac9c7b3fa909be34c\"}";
+                ExternalWalletAddressContext ="{\"PubKey\":\"02d02b90654309b5c12abf0789fbc8a113fdd238f863b5692ac9c7b3fa909be34c\"}";
 
                 HotWallet = "QX8BHEUPhKhPgo26QrrvY84FUzpKuhX1Uq";
                 HotWalletKey = "cSS6VUdFTuKfr4uFPT9Vy6CCU5SHsTEKRDNrzEaHQZRrVb3eQUi3";
@@ -174,7 +174,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletAddress = "1.2.22396:06eea045-43ee-4cca-a19d-1356abc2b70e";
                 ExternalWalletKey = "5J5sD5KNh4ArR1VdJNyge2oiE9vSMs2A7VYaJQULUagHrMBXfcj";
                 AssetId = "1.3.0";
-                ExternalWallerAddressContext = "5KJBVnJaiYhVq7x3mF47f5xd6RUisnqjWCdc5fx9uhWSDdrd1MR";
+                ExternalWalletAddressContext = "5KJBVnJaiYhVq7x3mF47f5xd6RUisnqjWCdc5fx9uhWSDdrd1MR";
                 SignExpiration = 90;
             }
         }
@@ -190,7 +190,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWalletKey = "1683C72CD811D066F86CA03873845EDAABA2BE1658179A5B76C699FBF9548156";
                 ExternalWalletAddress = "xrb_1e9pi3r7qa9qpsas68go55rmu7m8ku9np5pw3roeekx671joz7b1eiu1i8zk";
                 ExternalWalletKey = "4CF23CABA08F2C105DE9B80AA5CEBE37CAA3285E015258513F84E41100BDE2A9";
-                ExternalWallerAddressContext = "";
+                ExternalWalletAddressContext = "";
                 AssetId = "XRB";
                 BlockchainMiningTime = 10;
             }
@@ -208,7 +208,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWalletKey = "5sh7zcP4W3jnhTmF7ZnhKVsnpmLDkLn1KUVa94ZwF7Ka";
                 ExternalWalletAddress = "3NBQgiFAYGUAhwsP4iAFBqm9oKdv1ZEvjq2";
                 ExternalWalletKey = "5MGbbqvUvPWLbBLdfQKyvRwFWLktG1P7nC5UtpzahA4i";
-                ExternalWallerAddressContext = "";
+                ExternalWalletAddressContext = "";
                 AssetId = "WAVES";
                 BlockchainMiningTime = 25;
             }
@@ -225,7 +225,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWalletKey = "cUXBjJxK5KNf8xvx3UYKZi1WASGPYqZLjBsat7spFY48QHezJRmR";
                 ExternalWalletAddress = "mnXmzoZEN8jc3xn5WJXwWV9jc4P9xeLi2C";
                 ExternalWalletKey = "cMmDCGs1TKLf3VUBSiULr7Pj4xsiWyNUnMpUMdxrTZtb174fLfaS";
-                ExternalWallerAddressContext = "";
+                ExternalWalletAddressContext = "";
                 AssetId = "BCH";
             }
         }
@@ -242,7 +242,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWalletAddressContext = "{\"PubKey\":\"0399a51d0fb3e8b92c40f3859b252b142f5c818042f32f9ed6f23e269c3b9e2cfb\"}";
                 ExternalWalletAddress = "2N6qkRBg7sVoygCgs2s7gJoSpGgFPQdbAHC";
                 ExternalWalletKey = "cUqJUTKQayhJb5VfHhyNnw6Xb8vGrn9ccbP6goMPyEVv2j1maeXo";
-                ExternalWallerAddressContext = "{\"PubKey\":\"0373d33c98cf7c2259e62194eb4937e5fcbf92f911e667320cd1741c86267087f8\"}";
+                ExternalWalletAddressContext = "{\"PubKey\":\"0373d33c98cf7c2259e62194eb4937e5fcbf92f911e667320cd1741c86267087f8\"}";
                 AssetId = "BTG";
                 BlockchainMiningTime = 40;
             }
@@ -260,7 +260,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWalletAddressContext = "";
                 ExternalWalletAddress = "9wytGvzosJ73Jvy5AvwkMSeQvocaWzjDTammvDZBLmb24KvkCyxoxAbMvJ8zrqGvMDjkJSjMCGtKJMFHzcVRmJMGPVjQ4FP";
                 ExternalWalletKey = "ea7581947da5c6f27203531322830fd40f2e89ebc6729ca7a4ffda2b029e6708";
-                ExternalWallerAddressContext = "";
+                ExternalWalletAddressContext = "";
                 AssetId = "XMR";
                 BlockchainMiningTime = 7;
             }
@@ -277,7 +277,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWalletKey = "PtWUCdaSMrJ2et41GdUm125kPmN5n9gxKdVfm5ZLkcLeuJFVpuN8m";
                 ExternalWalletAddress = "TsjGG5ybrDLeoeAvkxbZLVHyzBYr27Pb13W";
                 ExternalWalletKey = "PtWUd45tMVbhvdWRubAutbWrrm5gfr7iA1fhi37n1xPeytYRHaG6N";
-                ExternalWallerAddressContext = "";
+                ExternalWalletAddressContext = "";
                 AssetId = "DCR";
                 BlockchainMiningTime = 10;
             }
@@ -322,7 +322,7 @@ namespace AFTests.BlockchainsIntegration
         public byte? AssetAccuracy { get; set; }
         public string ExternalWalletAddress { get; set; }
         public string ExternalWalletKey { get; set; }
-        public string ExternalWallerAddressContext { get; set; }
+        public string ExternalWalletAddressContext { get; set; }
         public long? BlockchainMiningTime { get; set; }
         public long? MaxWalletsForCashIn { get; set; }
         public long? SignExpiration { get; set; }
