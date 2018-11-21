@@ -66,6 +66,9 @@ namespace AFTests.BlockchainsIntegration
             if(blockchain == "bitcoincash")
                 _settings = new BitcoinCashSettings();
 
+            if (blockchain == "bitcoincashsv")
+                _settings = new BitcoinCashSvSettings();
+
             if (blockchain == "bitcoingold")
                 _settings = new BitcoinGoldSettings();
 
@@ -242,6 +245,22 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "cMmDCGs1TKLf3VUBSiULr7Pj4xsiWyNUnMpUMdxrTZtb174fLfaS";
                 ExternalWallerAddressContext = "";
                 AssetId = "BCH";
+            }
+        }
+
+        public class BitcoinCashSvSettings : BlockchainSpecificModel
+        {
+            public BitcoinCashSvSettings()
+            {
+                BlockchainIntegration = "BitcoinCashSv";
+                BlockchainApi = "http://bitcoincashsv-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://bitcoincashsv-sign.autotests-service.svc.cluster.local/api";
+                HotWallet = "mo2NRoxmmDk5op65gFhUaatM3YkNBQU46e";
+                HotWalletKey = "cNYf8ghMpQ5LhEjZY7vaawf4HumDntdbh76QZXgwkjQPMwgbZj9Z";
+                ExternalWalletAddress = "muN2yJgd4xoAZGsQ6VrNT6S8uqv4wcznwW";
+                ExternalWalletKey = "cV5nmu7gdQJAPyS43puNnv88FHrbakDdWPQreg2RTSabJJT3cBRc";
+                ExternalWallerAddressContext = "";
+                AssetId = "BCHSV";
             }
         }
 
