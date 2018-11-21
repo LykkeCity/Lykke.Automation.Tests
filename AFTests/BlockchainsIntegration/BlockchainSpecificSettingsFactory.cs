@@ -245,6 +245,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "cMmDCGs1TKLf3VUBSiULr7Pj4xsiWyNUnMpUMdxrTZtb174fLfaS";
                 ExternalWallerAddressContext = "";
                 AssetId = "BCH";
+                BuildSignBroadcastEWDW = 10;
             }
         }
 
@@ -261,6 +262,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "cV5nmu7gdQJAPyS43puNnv88FHrbakDdWPQreg2RTSabJJT3cBRc";
                 ExternalWallerAddressContext = "";
                 AssetId = "BCHSV";
+                BuildSignBroadcastEWDW = 10;
             }
         }
 
