@@ -22,7 +22,7 @@ using XUnitTestCommon.RestRequests;
 
 namespace AFTests.BlockchainsIntegrationTests
 {
-    //[NonParallelizable]
+    [NonParallelizable]
     class BlockchainsIntegrationBaseTest : BaseTest
     {
         private static object _lock = new object();
@@ -39,7 +39,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "kin"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "BitcoinCash"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
