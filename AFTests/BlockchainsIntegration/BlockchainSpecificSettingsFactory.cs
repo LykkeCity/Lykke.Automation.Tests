@@ -105,8 +105,8 @@ namespace AFTests.BlockchainsIntegration
         {
             public LitecoinSettings()
             {
-                BlockchainApi = "http://litecoin-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://litecoin-sign.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://litecoin-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://litecoin-sign.bcn-autotests.svc.cluster.local/api";
                 AssetId = "LTC";
                 ExternalWalletAddress = "QiKk2wXBuVEARMUkGqKQFyjm1nJayAU8ZC";
                 ExternalWalletKey = "cSARwquJjL3wcaSZhke5u48UkLF7zDJChrHWaLYnWegpQXjER1fZ";
@@ -126,8 +126,8 @@ namespace AFTests.BlockchainsIntegration
             public DashSettings()
             {
                 BlockchainIntegration = "DASH";
-                BlockchainApi = "http://dash-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://dash-sign.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://dash-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://dash-sign.bcn-autotests.svc.cluster.local/api";
                 AssetId = "DASH";
             }
         }
@@ -137,8 +137,8 @@ namespace AFTests.BlockchainsIntegration
             public ZcashSettings()
             {
                 BlockchainIntegration = "Zcash";
-                BlockchainApi = "http://zcash-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://zcash-sign-service.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://zcash-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://zcash-sign.bcn-autotests.svc.cluster.local/api";
                 AssetId = "ZEC";
                 HotWallet = "tmCd9qu9ffg2LX1Hsc87gNBFHrQH1F994aF";
                 HotWalletKey = "cU5b5pAnSBE4DoUtTVMQx5U8RTd3SaXjmVPSN8afDXCvGNayYKqa";
@@ -170,8 +170,8 @@ namespace AFTests.BlockchainsIntegration
             public StellarSettings()
             {
                 BlockchainIntegration = "Stellar";
-                BlockchainApi = "http://stellar-api-schnidlo.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://stellar-sign-service-schnidlo.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://stellar-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://stellar-sign.bcn-autotests.svc.cluster.local/api";
                 HotWallet = "GDPTSW3YL75SPFW2WL7AIEMVDSDJPWKBMD5LPZEFYBCSGO6SIFTEWXNV";
                 HotWalletKey = "SD7OPTO74QP7KLWOZ5ISQU6KNHUMTZE6RV5ZZXQPVPUYP5SYHBM2DCRS";
                 AssetId = "XLM";
@@ -185,8 +185,8 @@ namespace AFTests.BlockchainsIntegration
             public BitsharesSettings()
             {
                 BlockchainIntegration = "Bitshares";
-                BlockchainApi = "http://lykke-service-bitshares-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://lykke-service-bitshares-sign.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://bitshares-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://bitshares-sign.bcn-autotests.svc.cluster.local/api";
                 HotWallet = "1.2.20477:e91757da-6a69-43f4-8283-b2612703af59";
                 HotWalletKey = "5JdCrsRQrW1nTgDjTEeVXt7AQ95Kre9w6TQqAz4dKmEF4k8RfLk";
                 ExternalWalletAddress = "1.2.22396:06eea045-43ee-4cca-a19d-1356abc2b70e";
@@ -237,8 +237,8 @@ namespace AFTests.BlockchainsIntegration
             public BitcoinCashSettings()
             {
                 BlockchainIntegration = "BitcoinCash";
-                BlockchainApi = "http://bitcoincash-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://bitcoincash-sign.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://bitcoincash-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://bitcoincash-sign.bcn-autotests.svc.cluster.local/api";
                 HotWallet = "mnKfRMF5R5x3qY2sNkUymhaj5WSNNHB9EF";
                 HotWalletKey = "cUXBjJxK5KNf8xvx3UYKZi1WASGPYqZLjBsat7spFY48QHezJRmR";
                 ExternalWalletAddress = "mnXmzoZEN8jc3xn5WJXwWV9jc4P9xeLi2C";
@@ -254,8 +254,8 @@ namespace AFTests.BlockchainsIntegration
             public BitcoinCashSvSettings()
             {
                 BlockchainIntegration = "BitcoinCashSv";
-                BlockchainApi = "http://bitcoincashsv-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://bitcoincashsv-sign.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://bitcoincashsv-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://bitcoincashsv-sign.bcn-autotests.svc.cluster.local/api";
                 HotWallet = "mo2NRoxmmDk5op65gFhUaatM3YkNBQU46e";
                 HotWalletKey = "cNYf8ghMpQ5LhEjZY7vaawf4HumDntdbh76QZXgwkjQPMwgbZj9Z";
                 ExternalWalletAddress = "muN2yJgd4xoAZGsQ6VrNT6S8uqv4wcznwW";
@@ -271,8 +271,8 @@ namespace AFTests.BlockchainsIntegration
             public BitcoinGoldSettings()
             {
                 BlockchainIntegration = "BitcoinGold";
-                BlockchainApi = "http://bitcoingold-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://bitcoingold-sign.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://bitcoingold-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://bitcoingold-sign.bcn-autotests.svc.cluster.local/api";
                 HotWallet = "2MyuBCFAEhiAgN33N9RH1Hg4Zvsauuz8s2u";
                 HotWalletKey = "cMy8jYimCPqVsanrx28uCZJqi6Qmx2tkyiKyUDQsErwpX6s4tKAg";
                 HotWalletAddressContext = "{\"PubKey\":\"0399a51d0fb3e8b92c40f3859b252b142f5c818042f32f9ed6f23e269c3b9e2cfb\"}";
@@ -341,8 +341,8 @@ namespace AFTests.BlockchainsIntegration
             public BitcoinSettings()
             {
                 BlockchainIntegration = "Bitcoin";
-                BlockchainApi = "http://bitcoin-bil-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://bitcoin-bil-sign.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://bitcoin-bil-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://bitcoin-bil-sign.bcn-autotests.svc.cluster.local/api";
                 HotWallet = "2MwsEPnRBsYcqqvLSHkKodFEmn4sotLikf3";
                 HotWalletKey = "cNfGePxvd13CFh5iGwUWStkJ2tLefs8Q1ZQipKc9XL198bYrFjz3";
                 HotWalletAddressContext = "{\"PubKey\":\"02952dce2922b6e3638d9118541e2b2d50765d35691a8d4885396278f6f6d4a4cc\"}";
@@ -360,8 +360,8 @@ namespace AFTests.BlockchainsIntegration
             public QtumSettings()
             {
                 BlockchainIntegration = "QTUM";
-                BlockchainApi = "http://qtum-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://qtum-sign.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://qtum-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://qtum-sign.bcn-autotests.svc.cluster.local/api";
                 HotWallet = "qg3uFoqA5nFFvx4N6avNUaRw6ppdRpXfwg";
                 HotWalletKey = "cUfNTJiPcsCbj4RdxLWE1vnBBn8k5fwem14JBSBnSWoAzKhTzGVa";
                 HotWalletAddressContext = "";
