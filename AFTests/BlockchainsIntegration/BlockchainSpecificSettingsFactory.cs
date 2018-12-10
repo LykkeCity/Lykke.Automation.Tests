@@ -175,6 +175,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWallet = "GDPTSW3YL75SPFW2WL7AIEMVDSDJPWKBMD5LPZEFYBCSGO6SIFTEWXNV";
                 HotWalletKey = "SD7OPTO74QP7KLWOZ5ISQU6KNHUMTZE6RV5ZZXQPVPUYP5SYHBM2DCRS";
                 AssetId = "XLM";
+                AssetAccuracy = 7;
                 ExternalWalletAddress = "GD2U3Z3IAFDHVQJGJZY5UHSHQTCAINJ3FXWIB4CW3I5SW2QMBUFCT4UP";
                 ExternalWalletKey = "SB3OVOZJ7TJO3BFACNULKEC2WBFRPXUVLQSWTHOZZ5DEDQW7NG4WNL2S";
             }
