@@ -96,6 +96,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "kin")
                 _settings = new KinSettings();
 
+            if (blockchain == "dynamic")
+                _settings = new DynamicSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -246,6 +249,23 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "cMmDCGs1TKLf3VUBSiULr7Pj4xsiWyNUnMpUMdxrTZtb174fLfaS";
                 ExternalWallerAddressContext = "";
                 AssetId = "BCH";
+                BuildSignBroadcastEWDW = 30;
+            }
+        }
+
+        public class DynamicSettings : BlockchainSpecificModel
+        {
+            public DynamicSettings()
+            {
+                BlockchainIntegration = "Dynamic";
+                BlockchainApi = "http://dynamic-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://dynamic-sign.bcn-autotests.svc.cluster.local/api";
+                HotWallet = "DS7BHYT6UEP86AsjXy8qxcxKQLc1eNLcdq";
+                HotWalletKey = "QTEZi6Vv3XuCa6rs5YmYHyRPA61V3R7hqJqWbcY3WhGYh4sxbXxz";
+                ExternalWalletAddress = "DNMkbse4GY4wygwVQtJZdtGuuJ9orz26wD";
+                ExternalWalletKey = "QVafiaf51gf7peRFfmviitHKNu9o3PwqnV6v6W8nq3t4g2SLBNNg";
+                ExternalWallerAddressContext = "";
+                AssetId = "DYN";
                 BuildSignBroadcastEWDW = 30;
             }
         }
