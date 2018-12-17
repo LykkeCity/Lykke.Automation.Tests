@@ -267,6 +267,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWallerAddressContext = "";
                 AssetId = "DYN";
                 BuildSignBroadcastEWDW = 30;
+                AssetAccuracy = 6;
             }
         }
 
