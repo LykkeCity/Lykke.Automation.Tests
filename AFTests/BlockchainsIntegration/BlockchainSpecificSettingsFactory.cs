@@ -459,7 +459,7 @@ namespace AFTests.BlockchainsIntegration
                 AssetId = "NEO";
                 ExternalWalletAddress = "miJ5FiroRRg4PzWrWmc4wEvtZ7yMc6Vff7";
                 ExternalWalletKey = "cNkRCzJQtVs2LRsDbT5ozN6jrp5sSEasxRyn7vkPtk8Swi4pbRkH";
-                BuildSignBroadcastEWDW = 15;
+                BuildSignBroadcastEWDW = 30;
                 AssetAccuracy = 0;
             }
         }
