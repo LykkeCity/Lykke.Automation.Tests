@@ -99,6 +99,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "dynamic")
                 _settings = new DynamicSettings();
 
+            if (blockchain == "neo")
+                _settings = new NeoSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -441,6 +444,23 @@ namespace AFTests.BlockchainsIntegration
                 AssetId = "KIN";
                 ExternalWalletAddress = "GAIAZYQJ2S5V3EJZ4NG23AZTDOEZUYI2EZWMBB3GWXTX4MFSUG6ERABZ";
                 ExternalWalletKey = "SBPX2VTWVPPWCKWZCKWTE73OC4AKQSNE5I76SHANVF5OXGJC74WMCDJS";
+            }
+        }
+
+        class NeoSettings : BlockchainSpecificModel
+        {
+            public NeoSettings()
+            {
+                BlockchainIntegration = "NEO";
+                BlockchainApi = "http://neo-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://neo-sign-service.autotests-service.svc.cluster.local/api";
+                HotWallet = "mr8wRnMVMNKwVE8VUyJiGa5PXsFXY4eBui";
+                HotWalletKey = "cP9YakrrhSH7xLw3cfvVf4B3f9Lmy6YrBy3pC9K6Q7xxX7RBLpBq";
+                AssetId = "NEO";
+                ExternalWalletAddress = "miJ5FiroRRg4PzWrWmc4wEvtZ7yMc6Vff7";
+                ExternalWalletKey = "cNkRCzJQtVs2LRsDbT5ozN6jrp5sSEasxRyn7vkPtk8Swi4pbRkH";
+                BuildSignBroadcastEWDW = 15;
+                AssetAccuracy = 0;
             }
         }
 
