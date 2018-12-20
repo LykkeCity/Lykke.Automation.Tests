@@ -144,7 +144,7 @@ namespace AFTests.BlockchainsIntegration
             {
                 BlockchainIntegration = "Zcash";
                 BlockchainApi = "http://zcash-api.bcn-autotests.svc.cluster.local/api";
-                BlockchainSign = "http://zcash-sign.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://zcash-sign-service.bcn-autotests.svc.cluster.local/api";
                 AssetId = "ZEC";
                 HotWallet = "tmCd9qu9ffg2LX1Hsc87gNBFHrQH1F994aF";
                 HotWalletKey = "cU5b5pAnSBE4DoUtTVMQx5U8RTd3SaXjmVPSN8afDXCvGNayYKqa";
@@ -159,8 +159,8 @@ namespace AFTests.BlockchainsIntegration
             public RippleSettings()
             {
                 BlockchainIntegration = "Ripple";
-                BlockchainApi = "http://ripple-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://ripple-sign-service.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://ripple-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://ripple-sign-service.bcn-autotests.svc.cluster.local/api";
                 ExternalWalletAddress = "rJ2zMCyShMsjHf7tHptVy7qCWt6dYv8B7r";
                 ExternalWalletKey = "sndT9kLXjNv7L1HWfr6Lo5N6pmEvU";
                 HotWallet = "rG1Zu2dm2Ty9pQrnGJux1RuKZA6qhjWwMc";
@@ -349,8 +349,8 @@ namespace AFTests.BlockchainsIntegration
             public EosSettings()
             {
                 BlockchainIntegration = "Eos";
-                BlockchainApi = "http://eos-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://eos-signservice.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://eos-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://eos-signservice.bcn-autotests.svc.cluster.local/api";
                 AssetId = "EOS";
                 AssetAccuracy = 4;
                 HotWallet = "lykketest111";
@@ -404,8 +404,8 @@ namespace AFTests.BlockchainsIntegration
             public SteemSettings()
             {
                 BlockchainIntegration = "Steem";
-                BlockchainApi = "http://steem-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://steem-signservice.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://steem-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://steem-signservice.bcn-autotests.svc.cluster.local/api";
                 AssetId = "STEEM";
                 AssetAccuracy = 3;
                 HotWallet = "lykke.dev.test01";
