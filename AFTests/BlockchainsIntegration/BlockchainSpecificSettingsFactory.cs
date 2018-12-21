@@ -438,13 +438,13 @@ namespace AFTests.BlockchainsIntegration
             public KinSettings()
             {
                 BlockchainIntegration = "Kin";
-                BlockchainApi = "http://kin-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://kin-sign-service.autotests-service.svc.cluster.local/api";
-                HotWallet = "GC3M5TTH53ID4GIVNTFBIOPK6BZ3IKISXST43PC523DRUUGMC2BIYFJH";
-                HotWalletKey = "SDDEEFMHWVVX2W4RKXCL7GZRPK6BNMDM2MR2JW6HAA2PHY6MLBS3O6UR";
+                BlockchainApi = "http://kin-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://kin-sign-service.bcn-autotests.svc.cluster.local/api";
+                HotWallet = "GCLZNVV3L3WRFMMDUSPTN2ILAFDT6MOP4R4GAPMD5VAOPYBRWGLQXTZ4";
+                HotWalletKey = "SBTBBISVKNNE2X3N4TRVVTFN4WNZ5IA2J5RFOO5P2ZQJ7RYVDS4DQ6AY";
                 AssetId = "KIN";
-                ExternalWalletAddress = "GAIAZYQJ2S5V3EJZ4NG23AZTDOEZUYI2EZWMBB3GWXTX4MFSUG6ERABZ";
-                ExternalWalletKey = "SBPX2VTWVPPWCKWZCKWTE73OC4AKQSNE5I76SHANVF5OXGJC74WMCDJS";
+                ExternalWalletAddress = "GDQGFEYA7MR2IM3ISA3RZNANYVO3IPRZABFD4PTMMRUNFTVKAO3ZH5W7";
+                ExternalWalletKey = "SB7GZMGXPQYGANHDA62SBMKOEBZNBELJD2JYHSUWPHA23QKVFDZ27K5M";
             }
         }
 
