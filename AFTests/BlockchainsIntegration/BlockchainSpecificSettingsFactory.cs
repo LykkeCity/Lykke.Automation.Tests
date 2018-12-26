@@ -453,8 +453,8 @@ namespace AFTests.BlockchainsIntegration
             public NeoSettings()
             {
                 BlockchainIntegration = "NEO";
-                BlockchainApi = "http://neo-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://neo-sign-service.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://neo-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://neo-sign.bcn-autotests.svc.cluster.local/api";
                 HotWallet = "mr8wRnMVMNKwVE8VUyJiGa5PXsFXY4eBui";
                 HotWalletKey = "cP9YakrrhSH7xLw3cfvVf4B3f9Lmy6YrBy3pC9K6Q7xxX7RBLpBq";
                 AssetId = "NEO";
