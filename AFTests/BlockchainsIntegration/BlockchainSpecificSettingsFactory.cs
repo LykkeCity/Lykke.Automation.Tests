@@ -332,8 +332,8 @@ namespace AFTests.BlockchainsIntegration
             {
                 BlockchainIntegration = "Decred";
 
-                BlockchainApi = "http://lykke-service-decred-api.autotests-service.svc.cluster.local/api";
-                BlockchainSign = "http://lykke-service-decred-sign.autotests-service.svc.cluster.local/api";
+                BlockchainApi = "http://dcr-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://dcr-signservice.bcn-autotests.svc.cluster.local/api";
                 HotWallet = "TsgbAonAUgtgGhTdi6qYwUDcL45ZuNnMFuK";
                 HotWalletKey = "PtWUCdaSMrJ2et41GdUm125kPmN5n9gxKdVfm5ZLkcLeuJFVpuN8m";
                 ExternalWalletAddress = "TsjGG5ybrDLeoeAvkxbZLVHyzBYr27Pb13W";
