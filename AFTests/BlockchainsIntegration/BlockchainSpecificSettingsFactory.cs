@@ -430,7 +430,7 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletAddress = "0x085e36cc33743be10246013d11b8fc1919a242db";
                 ExternalWalletKey = "0x2c0b8b8f59e2ed253bb45c0974852cae982416823eb4f6775192f167e7b15825";
                 BuildSignBroadcastEWDW = 1;
-                AssetAccuracy = 11;
+                AssetAccuracy = 15;
             }
         }
         
