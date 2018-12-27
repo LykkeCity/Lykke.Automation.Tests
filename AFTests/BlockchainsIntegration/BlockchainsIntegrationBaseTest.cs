@@ -39,7 +39,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "BitcoinCash"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Neo"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -79,8 +79,10 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static string EXTERNAL_WALLET = _currentSettings.Value.ExternalWalletAddress;
         protected static string EXTERNAL_WALLET_KEY = _currentSettings.Value.ExternalWalletKey;
         protected static string EXTERNAL_WALLET_ADDRESS_CONTEXT = _currentSettings.Value.ExternalWallerAddressContext;
-        protected static string AMOUNT = Convert.ToInt64(0.20000001 * Math.Pow(10, ASSET_ACCURACY)).ToString();
-        protected static string AMOUT_WITH_FEE = Convert.ToInt64(0.29000001 * Math.Pow(10, ASSET_ACCURACY)).ToString();
+        private static double BASE_AMOUNT = _currentSettings.Value.BaseAmount ?? 0.20000001;
+        private static double BASE_AMOUNT_WITH_FEE = _currentSettings.Value.BaseAmountWithFee ?? 0.29000001;
+        protected static string AMOUNT = Convert.ToInt64(BASE_AMOUNT * Math.Pow(10, ASSET_ACCURACY)).ToString();
+        protected static string AMOUT_WITH_FEE = Convert.ToInt64(BASE_AMOUNT_WITH_FEE * Math.Pow(10, ASSET_ACCURACY)).ToString();
         protected static long BLOCKCHAIN_MINING_TIME = _currentSettings.Value.BlockchainMiningTime ?? 10;
         protected static long MAX_WALLETS_FOR_CASH_IN = _currentSettings.Value.MaxWalletsForCashIn ?? 30;
         protected static long SIGN_EXPIRATION_SECONDS = _currentSettings.Value.SignExpiration ?? 0;
@@ -116,7 +118,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
         private static bool skipAddBalanceFromEWToDWAfterError = false;
 
-        protected Queue<WalletCreationResponse> Wallets()
+        protected Queue<WalletCreationResponse> Wallets(long wallets  = 2)
         {
             lock (_lock)
             {
@@ -124,7 +126,7 @@ namespace AFTests.BlockchainsIntegrationTests
                 {
                     result = new Queue<WalletCreationResponse>();
 
-                    long maxWallets = 30;
+                    long maxWallets = wallets;
                     while(maxWallets > 0)
                     {
                         var cycleWallets = new Queue<WalletCreationResponse>();
@@ -501,6 +503,70 @@ namespace AFTests.BlockchainsIntegrationTests
         }
 
         public string WalletBalance(WalletCreationResponse wallet) => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
+
+        public bool BuildSignBroadcastBetweenWallets(WalletCreationResponse walletFrom, string walletTo, int attemptCount=10,bool wait = false, string amount = null)
+        {
+            blockchainApi.Balances.PostBalances(walletFrom.PublicAddress);
+
+            if (amount == null)
+                amount = AMOUNT;
+
+            int i = 0;
+
+            while (i < attemptCount)
+            {
+                var model = new BuildSingleTransactionRequest()
+                {
+                    Amount = amount,
+                    AssetId = ASSET_ID,
+                    FromAddress = walletFrom.PublicAddress,
+                    IncludeFee = false,
+                    OperationId = Guid.NewGuid(),
+                    ToAddress = walletTo,
+                    FromAddressContext = walletFrom.AddressContext
+                };
+                BuildTransactionResponse responseTransaction = new BuildTransactionResponse() { TransactionContext = null };
+
+                var singleTransactionResponse = blockchainApi.Operations.PostTransactions(model);
+                if (singleTransactionResponse.StatusCode != HttpStatusCode.OK)
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
+                    i++;
+                    continue;
+                }
+
+                responseTransaction = singleTransactionResponse.GetResponseObject();
+
+                string operationId = model.OperationId.ToString();
+
+                var signResponse = blockchainSign.PostSign(new SignRequest() { PrivateKeys = new List<string>() { walletFrom.PrivateKey }, TransactionContext = responseTransaction.TransactionContext }).GetResponseObject();
+
+                var response = blockchainApi.Operations.PostTransactionsBroadcast(new BroadcastTransactionRequest() { OperationId = model.OperationId, SignedTransaction = signResponse.SignedTransaction });
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
+                    i++;
+                    continue;
+                }
+
+                var getResponse = blockchainApi.Operations.GetOperationId(operationId);
+
+                if (getResponse.StatusCode != HttpStatusCode.OK || getResponse.GetResponseObject().State == BroadcastedTransactionState.Failed || (getResponse.GetResponseObject().ErrorCode.HasValue && getResponse.GetResponseObject().ErrorCode.Value == TransactionExecutionError.buildingShouldBeRepeated))
+                {
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
+                    i++;
+                    continue;
+                }
+
+                if (wait)
+                    WaitForOperationGotCompleteStatus(operationId);
+
+                return false;
+            }
+
+            return true;
+        }
         #endregion
     }
 }

@@ -462,7 +462,9 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletAddress = "miJ5FiroRRg4PzWrWmc4wEvtZ7yMc6Vff7";
                 ExternalWalletKey = "cNkRCzJQtVs2LRsDbT5ozN6jrp5sSEasxRyn7vkPtk8Swi4pbRkH";
                 BuildSignBroadcastEWDW = 30;
-                AssetAccuracy = 1;
+                AssetAccuracy = 0;
+                BaseAmount = 1;
+                BaseAmountWithFee = 2;
             }
         }
 
@@ -495,5 +497,7 @@ namespace AFTests.BlockchainsIntegration
         public long? BuildSignBroadcastAttemptCount { get; set; }
         public long? RebuildAttemptCount { get; set; }
         public long? BuildSignBroadcastEWDW { get; set; }
+        public double? BaseAmount { get; set; }
+        public double? BaseAmountWithFee { get; set; }
     }
 }
