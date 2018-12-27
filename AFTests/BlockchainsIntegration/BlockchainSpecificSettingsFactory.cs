@@ -456,11 +456,11 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainIntegration = "NEO";
                 BlockchainApi = "http://neo-api.bcn-autotests.svc.cluster.local/api";
                 BlockchainSign = "http://neo-sign.bcn-autotests.svc.cluster.local/api";
-                HotWallet = "ARCBq8E9U9Q5mNEr5i8mKTbGfcwrhG22Yb";
-                HotWalletKey = "L1jWSvqN1ix17Hk94ftQSHxynnEKJkVGpQSnKNcaCRJH7ugA7wyj";
+                HotWallet = "AHcpWnhDuNmHu2oidfp6czjwUYTMmBMgM9";
+                HotWalletKey = "L4GhVsEAiEFhf7FDPrHGZz6EjjYCzMpJpvoNVPHXP2PToedkfqwM";
                 AssetId = "NEO";
-                ExternalWalletAddress = "Aeh3Mc26VAuD3yDFgKyFcS83oND3FFNtzf";
-                ExternalWalletKey = "KwcPUFj4XjBD9rahD2JWNYDxs6H2vxcis5CemF9w4whBwQTCviBe";
+                ExternalWalletAddress = "AKZne44EVeuqvrq2aYaxZkoytT9SyhB21D";
+                ExternalWalletKey = "L3Cy53zR75sAr2RcKmiP5hUajx2Wtzkgm8qePKaRrzAGpeLjTjeV";
                 BuildSignBroadcastEWDW = 30;
                 AssetAccuracy = 1;
             }
