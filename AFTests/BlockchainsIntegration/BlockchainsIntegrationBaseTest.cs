@@ -140,7 +140,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
         private static bool skipAddBalanceFromEWToDWAfterError = false;
 
-        protected Queue<WalletCreationResponse> Wallets(long wallets  = 2)
+        protected Queue<WalletCreationResponse> Wallets(long wallets  = 30)
         {
             lock (_lock)
             {
