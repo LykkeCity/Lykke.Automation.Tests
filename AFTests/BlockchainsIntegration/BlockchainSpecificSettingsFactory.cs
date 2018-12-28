@@ -465,6 +465,7 @@ namespace AFTests.BlockchainsIntegration
                 AssetAccuracy = 0;
                 BaseAmount = 1;
                 BaseAmountWithFee = 2;
+                IsIncludeFee = false;
             }
         }
 
@@ -499,5 +500,6 @@ namespace AFTests.BlockchainsIntegration
         public long? BuildSignBroadcastEWDW { get; set; }
         public double? BaseAmount { get; set; }
         public double? BaseAmountWithFee { get; set; }
+        public bool? IsIncludeFee { get; set; }
     }
 }

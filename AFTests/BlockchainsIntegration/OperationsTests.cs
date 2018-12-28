@@ -660,11 +660,6 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var operationId = Guid.NewGuid();
 
-                var extensionReponse = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsPublicAddressExtensionRequired;
-                var includeFee = true;
-                if (extensionReponse.HasValue)
-                    includeFee = !extensionReponse.Value;
-
                 IResponse<BroadcastedSingleTransactionResponse> getResponse = null;
                 Step("Make DW - HW BUILD, SIGN, BROADCAST transactions", () => 
                 {
@@ -673,7 +668,7 @@ namespace AFTests.BlockchainsIntegrationTests
                         Amount = currentBalance,
                         AssetId = ASSET_ID,
                         FromAddress = wallet.PublicAddress,
-                        IncludeFee = includeFee,
+                        IncludeFee = INCLUDE_FEE,
                         OperationId = operationId,
                         ToAddress = HOT_WALLET,
                         FromAddressContext = wallet.AddressContext
@@ -713,7 +708,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     Assert.That(amountInDecimal, Is.GreaterThan(0), $"current amount '{amountInDecimal}' is not greater than 0");
                 });
 
-                if (includeFee)
+                if (INCLUDE_FEE)
                     Step($"Validate that Fee is > 0 in '/transactions/broadcast/single/{operationId}' response", () =>
                 {
                     getResponse = blockchainApi.Operations.GetOperationId(operationId.ToString());
@@ -758,17 +753,12 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
 
-                var extensionReponse = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsPublicAddressExtensionRequired;
-                var includeFee = true;
-                if (extensionReponse.HasValue)
-                    includeFee = !extensionReponse.Value;
-
                 var model = new BuildSingleTransactionRequest()
                 {
                     Amount = currentBalance,
                     AssetId = ASSET_ID,
                     FromAddress = wallet.PublicAddress,
-                    IncludeFee = includeFee,
+                    IncludeFee = INCLUDE_FEE,
                     OperationId = Guid.NewGuid(),
                     ToAddress = HOT_WALLET,
                     FromAddressContext = wallet.AddressContext
@@ -884,8 +874,10 @@ namespace AFTests.BlockchainsIntegrationTests
                 Step("Validate balance after second DW - HW transaction", () => 
                 {
                    var balanceAfterTransaction = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
-
-                    Assert.That(balanceAfterTransaction, Is.EqualTo(Math.Round(decimal.Parse(currentBalance) - partialBalance * 2m).ToString()), "Unexpected Balance after partial transaction");
+                    if (Math.Round(decimal.Parse(currentBalance) - partialBalance * 2m) > 0)
+                        Assert.That(balanceAfterTransaction, Is.EqualTo(Math.Round(decimal.Parse(currentBalance) - partialBalance * 2m).ToString()), "Unexpected Balance after partial transaction");
+                    else
+                        Assert.That(balanceAfterTransaction, Is.Null, "Balance of wallet is 0, but it still present in GET /balances");
                 }); 
             }
         }

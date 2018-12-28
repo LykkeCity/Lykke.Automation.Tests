@@ -39,7 +39,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Neo"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "RaiBlocks"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -88,6 +88,28 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static long SIGN_EXPIRATION_SECONDS = _currentSettings.Value.SignExpiration ?? 0;
         protected static long REBUILD_ATTEMPT_COUNT = _currentSettings.Value.RebuildAttemptCount ?? 5;
         protected static long BUILD_SIGN_BROADCAST_EWDW = _currentSettings.Value.BuildSignBroadcastEWDW ?? 5;
+
+        protected static bool INCLUDE_FEE
+        {
+            get
+            {
+                if (_currentSettings.Value.IsIncludeFee.HasValue)
+                    return _currentSettings.Value.IsIncludeFee.Value;
+                var includeFee = true;
+
+                try
+                {
+                    var extensionReponse = blockchainApi.Capabilities.GetCapabilities().GetResponseObject().IsPublicAddressExtensionRequired;
+
+                    if (extensionReponse.HasValue)
+                        includeFee = !extensionReponse.Value;
+                } catch(Exception e)
+                {
+                    TestContext.Progress.WriteLine($"Exception in request for Public address Extension: {e.Message}. {e.StackTrace} ");
+                }
+                return includeFee;
+            }
+        }
 
         #endregion
 
