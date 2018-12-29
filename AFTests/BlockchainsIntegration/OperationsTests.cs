@@ -1696,19 +1696,16 @@ namespace AFTests.BlockchainsIntegrationTests
                         });
                     }
 
-                    long DWHWblock = -1;
-
                     Step($"Make DW - HW with {AMOUT_WITH_FEE} amount transaction and wait for operation got complete status. Get block of DW - HW complete transaction", () => 
                     {
                         var operationId = TransferCryptoBetweenWallets(wallet, HOT_WALLET, amount: AMOUT_WITH_FEE);
-                        WaitForOperationGotCompleteStatus(operationId);    
-                        DWHWblock = BalanceResponse(wallet.PublicAddress).Block;
+                        WaitForOperationGotCompleteStatus(operationId);
                     });
 
                     Step("Validate final balance and block", () => 
                     {
-                        Assert.That(WalletBalance(wallet), Is.EqualTo(secondTransferAmount), "UnExpected balance");
-                        Assert.That(DWHWblock, Is.GreaterThanOrEqualTo(blockBeforeDWHW), "Balance block after DW-HW TX is Less than in previous TX");
+                        Assert.That(() => WalletBalance(wallet), Is.EqualTo(secondTransferAmount).After((int)BLOCKCHAIN_MINING_TIME * 60 * 1000, 2 * 1000), "UnExpected balance");
+                        Assert.That(BalanceResponse(wallet.PublicAddress).Block, Is.GreaterThanOrEqualTo(blockBeforeDWHW), "Balance block after DW-HW TX is Less than in previous TX");
                     });
                 }
             }
