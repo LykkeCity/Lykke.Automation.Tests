@@ -102,6 +102,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "neo")
                 _settings = new NeoSettings();
 
+            if (blockchain == "nem")
+                _settings = new NemSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -466,6 +469,23 @@ namespace AFTests.BlockchainsIntegration
                 BaseAmount = 1;
                 BaseAmountWithFee = 2;
                 IsIncludeFee = false;
+            }
+        }
+
+        class NemSettings : BlockchainSpecificModel
+        {
+            public NemSettings()
+            {
+                BlockchainIntegration = "Nem";
+                BlockchainApi = "http://nem-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://nem-signservice.bcn-autotests.svc.cluster.local/api";
+                HotWallet = "TBEUNFVOS2SMZLADUDE5FID3FRLCKBVI22EJFUIE";
+                HotWalletKey = "3BB74D5BA33483D4F0B7896DB8E40BB510B6CBA568F3192674092957CE7C8E89";
+                AssetId = "nem:xem";
+                ExternalWalletAddress = "TCBPVIDJRSXNFEZ5UWFAEKVTXX73FWNS7CTZMLD2";
+                ExternalWalletKey = "BEC2E62007860D5573476EC98941F9473A45BA0BEFAB9C570CCD7C08DDD5BDA0";
+                AssetAccuracy = 6;
+                BlockchainMiningTime = 30;
             }
         }
 
