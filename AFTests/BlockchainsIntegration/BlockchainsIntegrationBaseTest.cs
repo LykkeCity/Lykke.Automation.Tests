@@ -88,6 +88,7 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static long SIGN_EXPIRATION_SECONDS = _currentSettings.Value.SignExpiration ?? 0;
         protected static long REBUILD_ATTEMPT_COUNT = _currentSettings.Value.RebuildAttemptCount ?? 5;
         protected static long BUILD_SIGN_BROADCAST_EWDW = _currentSettings.Value.BuildSignBroadcastEWDW ?? 5;
+        protected static bool SKIP_HISTORY_TESTS = _currentSettings.Value.SkipHistoryTests ?? true;
 
         protected static bool INCLUDE_FEE
         {

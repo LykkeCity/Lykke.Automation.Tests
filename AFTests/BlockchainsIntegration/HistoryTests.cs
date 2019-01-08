@@ -11,7 +11,16 @@ namespace AFTests.BlockchainsIntegrationTests
 {
     class HistoryTests
     {
-        public class GetHistoryFromTakeIsRequiredRequest : BlockchainsIntegrationBaseTest
+        public class HistoryBaseTest : BlockchainsIntegrationBaseTest
+        {
+            [SetUp]
+            public void SkipHistoryTests()
+            {
+                if (SKIP_HISTORY_TESTS)
+                    Assert.Ignore("History tests are skipped. if you want to run - set 'SkipHistoryTests' blockChain option to 'false'");
+            }
+        }
+        public class GetHistoryFromTakeIsRequiredRequest : HistoryBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]
@@ -27,7 +36,7 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class GetHistoryFrom : BlockchainsIntegrationBaseTest
+        public class GetHistoryFrom : HistoryBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]
@@ -43,7 +52,7 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class GetHistoryTo : BlockchainsIntegrationBaseTest
+        public class GetHistoryTo : HistoryBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]
@@ -62,7 +71,7 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class PostHistoryToConflict : BlockchainsIntegrationBaseTest
+        public class PostHistoryToConflict : HistoryBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]
@@ -79,7 +88,7 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class PostHistoryTo : BlockchainsIntegrationBaseTest
+        public class PostHistoryTo : HistoryBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]
@@ -95,7 +104,7 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class PostHistoryFromConflict : BlockchainsIntegrationBaseTest
+        public class PostHistoryFromConflict : HistoryBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]
@@ -112,7 +121,7 @@ namespace AFTests.BlockchainsIntegrationTests
             }
         }
 
-        public class PostHistoryFrom : BlockchainsIntegrationBaseTest
+        public class PostHistoryFrom : HistoryBaseTest
         {
             [Test]
             [Category("BlockchainIntegration")]

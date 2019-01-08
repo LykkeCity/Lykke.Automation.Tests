@@ -544,5 +544,6 @@ namespace AFTests.BlockchainsIntegration
         public double? BaseAmount { get; set; }
         public double? BaseAmountWithFee { get; set; }
         public bool? IsIncludeFee { get; set; }
+        public bool? SkipHistoryTests { get; set; }
     }
 }
