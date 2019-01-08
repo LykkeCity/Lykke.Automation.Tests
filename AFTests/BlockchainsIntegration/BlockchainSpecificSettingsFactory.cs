@@ -468,8 +468,10 @@ namespace AFTests.BlockchainsIntegration
                 HotWallet = "GBHU4Y36P3CBFIHNRLBQX77FL2AL3ZUM2JWBJOKABEVYPZS2DXQU76XP";
                 HotWalletKey = "SAFPNCO2QXUELIBSBEGFTC6EKVZKEJJXBJHBO34NJZEQP3P2KQPJCFGQ";
                 AssetId = "KIN";
-                ExternalWalletAddress = "GD5TNZERJ73SXPLZUYBBI6IKZK23HBIU2KUPGXXGEVNOK42KWHB2GJZ3";
-                ExternalWalletKey = "SDCGDYZMD4XGW3QSX4Z26J6SGFZ3XP4VIWY227ZUE2NN6ET4ZJHGMCHM";
+                BaseAmount = 1;
+                BaseAmountWithFee = 3;
+                ExternalWalletAddress = "GA2JRV7KOKFFKLCOBRD52KHMFRKWP2JZKQU5UVASOHEC7AUT6SQMXRIH";
+                ExternalWalletKey = "SDYKPMGFCY2KXCVVMQRJT6QJMYTLNBI2XW6PYP54RJCNSHUBFG732DTL";
             }
         }
 
