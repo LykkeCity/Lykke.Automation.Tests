@@ -107,6 +107,9 @@ namespace AFTests.BlockchainsIntegration
 
             if (blockchain == "nem")
                 _settings = new NemSettings();
+            
+            if (blockchain == "rootstock")
+                _settings = new RootstockSettings();
 
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
@@ -509,6 +512,23 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "BEC2E62007860D5573476EC98941F9473A45BA0BEFAB9C570CCD7C08DDD5BDA0";
                 AssetAccuracy = 6;
                 BlockchainMiningTime = 30;
+            }
+        }
+        
+        class RootstockSettings : BlockchainSpecificModel
+        {
+            public RootstockSettings()
+            {
+                BlockchainIntegration = "Rootstock";
+                BlockchainApi = "http://rbtc-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://rbtc-signservice.bcn-autotests.svc.cluster.local/api";
+                BlockchainMiningTime = 5;
+                HotWallet = "0x8251d72e0c0b4e5d4c3787eae851c01445147efb";
+                HotWalletKey = "0x52a48c911e9e87c2ba7a567b729ac4815b4823dbda742b90d65dc44a7b4b26e0";
+                AssetId = "RBTC";
+                ExternalWalletAddress = "0x1fd443b40bbc3f5d23da3c4d651e64cdb8e20a9f";
+                ExternalWalletKey = "0x6e5ef59ea5941c2b9119b17521fb81f4fbdebf8ca9a13ccde0adfab80c607445";
+                BuildSignBroadcastEWDW = 1;
             }
         }
 
