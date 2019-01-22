@@ -111,6 +111,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "rootstock")
                 _settings = new RootstockSettings();
 
+            if (blockchain == "icon")
+                _settings = new IconSettings();
+
             TestContext.Progress.WriteLine($"propeties.json: {JsonConvert.SerializeObject(_settings)}");
 
             return _settings;
@@ -529,6 +532,23 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletAddress = "0x1fd443b40bbc3f5d23da3c4d651e64cdb8e20a9f";
                 ExternalWalletKey = "0x6e5ef59ea5941c2b9119b17521fb81f4fbdebf8ca9a13ccde0adfab80c607445";
                 BuildSignBroadcastEWDW = 1;
+            }
+        }
+
+        class IconSettings : BlockchainSpecificModel
+        {
+            public IconSettings()
+            {
+                BlockchainIntegration = "Icon";
+                BlockchainApi = "http://icon-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://icon-signservice.bcn-autotests.svc.cluster.local/api";
+                HotWallet = "hxe8db3bc33564f5b07cd52e37e2d762d3073a2c1d";
+                HotWalletKey = "0x0097c4f4d729383129fa305616e95ba3aca86f8ddb069cadeab4ae9c3d4f57fa3d";
+                AssetId = "ICX";
+                ExternalWalletAddress = "hxa0c8aad540a8b85175b59d98585e0f79ffbc2502";
+                ExternalWalletKey = "0x00847549f225a48531c16b89ac6057734e07cc174f43dd9d8616014ea6c1044e70";
+                BaseAmount = 1;
+                BaseAmountWithFee = 3;
             }
         }
 
