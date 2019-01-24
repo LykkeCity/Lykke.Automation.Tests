@@ -549,8 +549,8 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "0x00847549f225a48531c16b89ac6057734e07cc174f43dd9d8616014ea6c1044e70";
                 AssetAccuracy = 18;
                 MaxWalletsForCashIn = 5;
-                BaseAmount = 0.001;
-                BaseAmountWithFee = 0.002;
+                BaseAmount = 0.008;
+                BaseAmountWithFee = 0.009;
             }
         }
 
