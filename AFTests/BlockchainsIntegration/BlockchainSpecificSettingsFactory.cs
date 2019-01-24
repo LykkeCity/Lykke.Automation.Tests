@@ -547,8 +547,10 @@ namespace AFTests.BlockchainsIntegration
                 AssetId = "ICX";
                 ExternalWalletAddress = "hxa0c8aad540a8b85175b59d98585e0f79ffbc2502";
                 ExternalWalletKey = "0x00847549f225a48531c16b89ac6057734e07cc174f43dd9d8616014ea6c1044e70";
-                BaseAmount = 1;
-                BaseAmountWithFee = 3;
+                AssetAccuracy = 18;
+                MaxWalletsForCashIn = 5;
+                BaseAmount = 0.001;
+                BaseAmountWithFee = 0.002;
             }
         }
 
