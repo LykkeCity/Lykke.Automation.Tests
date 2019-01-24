@@ -549,8 +549,8 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "0x00847549f225a48531c16b89ac6057734e07cc174f43dd9d8616014ea6c1044e70";
                 AssetAccuracy = 18;
                 MaxWalletsForCashIn = 5;
-                BaseAmount = 0.008;
-                BaseAmountWithFee = 0.009;
+                BaseAmount = 0.008m;
+                BaseAmountWithFee = 0.009m;
             }
         }
 
@@ -583,8 +583,8 @@ namespace AFTests.BlockchainsIntegration
         public long? BuildSignBroadcastAttemptCount { get; set; }
         public long? RebuildAttemptCount { get; set; }
         public long? BuildSignBroadcastEWDW { get; set; }
-        public double? BaseAmount { get; set; }
-        public double? BaseAmountWithFee { get; set; }
+        public decimal? BaseAmount { get; set; }
+        public decimal? BaseAmountWithFee { get; set; }
         public bool? IsIncludeFee { get; set; }
         public bool? SkipHistoryTests { get; set; }
     }

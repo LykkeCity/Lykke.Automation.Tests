@@ -17,6 +17,7 @@ using System.Net;
 using XUnitTestCommon.ServiceSettings;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.Numerics;
 using XUnitTestCommon.RestRequests.Interfaces;
 using XUnitTestCommon.RestRequests;
 
@@ -39,7 +40,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "kin"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "icon"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -79,10 +80,10 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static string EXTERNAL_WALLET = _currentSettings.Value.ExternalWalletAddress;
         protected static string EXTERNAL_WALLET_KEY = _currentSettings.Value.ExternalWalletKey;
         protected static string EXTERNAL_WALLET_ADDRESS_CONTEXT = _currentSettings.Value.ExternalWallerAddressContext;
-        private static double BASE_AMOUNT = _currentSettings.Value.BaseAmount ?? 0.20000001;
-        private static double BASE_AMOUNT_WITH_FEE = _currentSettings.Value.BaseAmountWithFee ?? 0.29000001;
-        protected static string AMOUNT = Convert.ToInt64(BASE_AMOUNT * Math.Pow(10, ASSET_ACCURACY)).ToString();
-        protected static string AMOUT_WITH_FEE = Convert.ToInt64(BASE_AMOUNT_WITH_FEE * Math.Pow(10, ASSET_ACCURACY)).ToString();
+        private static decimal BASE_AMOUNT = _currentSettings.Value.BaseAmount ?? 0.20000001m;
+        private static decimal BASE_AMOUNT_WITH_FEE = _currentSettings.Value.BaseAmountWithFee ?? 0.29000001m;
+        protected static string AMOUNT = new BigInteger(BASE_AMOUNT * (decimal)Math.Pow(10, ASSET_ACCURACY)).ToString();
+        protected static string AMOUT_WITH_FEE = new BigInteger(BASE_AMOUNT_WITH_FEE * (decimal)Math.Pow(10, ASSET_ACCURACY)).ToString();
         protected static long BLOCKCHAIN_MINING_TIME = _currentSettings.Value.BlockchainMiningTime ?? 10;
         protected static long MAX_WALLETS_FOR_CASH_IN = _currentSettings.Value.MaxWalletsForCashIn ?? 30;
         protected static long SIGN_EXPIRATION_SECONDS = _currentSettings.Value.SignExpiration ?? 0;
