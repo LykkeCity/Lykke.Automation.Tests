@@ -378,8 +378,8 @@ namespace AFTests.BlockchainsIntegration
             public BitcoinSettings()
             {
                 BlockchainIntegration = "Bitcoin";
-                BlockchainApi = "http://bitcoin-bil-api.bcn-autotests.svc.cluster.local/api";
-                BlockchainSign = "http://bitcoin-bil-sign.bcn-autotests.svc.cluster.local/api";
+                BlockchainApi = "http://bitcoin-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://bitcoin-sign.bcn-autotests.svc.cluster.local/api";
                 HotWallet = "2MwsEPnRBsYcqqvLSHkKodFEmn4sotLikf3";
                 HotWalletKey = "cNfGePxvd13CFh5iGwUWStkJ2tLefs8Q1ZQipKc9XL198bYrFjz3";
                 HotWalletAddressContext = "{\"PubKey\":\"02952dce2922b6e3638d9118541e2b2d50765d35691a8d4885396278f6f6d4a4cc\"}";
