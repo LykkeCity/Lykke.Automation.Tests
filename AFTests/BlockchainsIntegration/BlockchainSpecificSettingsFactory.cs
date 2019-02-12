@@ -587,5 +587,6 @@ namespace AFTests.BlockchainsIntegration
         public decimal? BaseAmountWithFee { get; set; }
         public bool? IsIncludeFee { get; set; }
         public bool? SkipHistoryTests { get; set; }
+        public string GetBalancesTakeValue { get; set; }
     }
 }

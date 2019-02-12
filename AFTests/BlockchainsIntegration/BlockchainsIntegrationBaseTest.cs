@@ -40,7 +40,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "icon"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Icon"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -91,6 +91,7 @@ namespace AFTests.BlockchainsIntegrationTests
         protected static long BUILD_SIGN_BROADCAST_EWDW = _currentSettings.Value.BuildSignBroadcastEWDW ?? 5;
         protected static bool SKIP_HISTORY_TESTS = _currentSettings.Value.SkipHistoryTests ?? true;
 
+        protected static string TAKE = _currentSettings.Value.GetBalancesTakeValue == null ? "500" : _currentSettings.Value.GetBalancesTakeValue;
         protected static bool INCLUDE_FEE
         {
             get
@@ -174,7 +175,7 @@ namespace AFTests.BlockchainsIntegrationTests
                         maxWallets -= MAX_WALLETS_FOR_CASH_IN;
                     }
                 }
-                var balances = blockchainApi.Balances.GetBalances("500", null).GetResponseObject();
+                var balances = Balances();
 
                 result.ToList().ForEach(w =>
                 {
@@ -422,7 +423,7 @@ namespace AFTests.BlockchainsIntegrationTests
             sw.Start();
             while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
             {
-                var currentBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == walletAddress)?.Block;
+                var currentBlock = WalletBalanceBlock(walletAddress);
                 if (startBlock  < currentBlock)
                     return;
                     
@@ -438,7 +439,7 @@ namespace AFTests.BlockchainsIntegrationTests
             sw.Start();
             while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
             {
-                var currentBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == walletAddress)?.Balance;
+                var currentBalance = WalletBalance(walletAddress);
                 if (currentBalance == balance)
                     return;
 
@@ -448,7 +449,7 @@ namespace AFTests.BlockchainsIntegrationTests
             sw.Stop();
         }
 
-        public WalletBalanceContract BalanceResponse(string wallet) => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet);
+        public WalletBalanceContract BalanceResponse(string wallet) => GetWalletBalanceInstance(new WalletCreationResponse { PublicAddress = wallet });
 
 
         public void WaitForBalance(string wallet)
@@ -457,7 +458,7 @@ namespace AFTests.BlockchainsIntegrationTests
             sw.Start();
             while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
             {
-                if (!blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.Any(w => w.Address == wallet))
+                if (GetWalletBalanceInstance(new WalletCreationResponse { PublicAddress = wallet }) == null)
                 {
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
                 }
@@ -526,7 +527,31 @@ namespace AFTests.BlockchainsIntegrationTests
             return model.OperationId.ToString();
         }
 
-        public string WalletBalance(WalletCreationResponse wallet) => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
+        public PaginationResponseWalletBalanceContract Balances()
+        {
+            var balances = blockchainApi.Balances.GetBalances(TAKE, null).GetResponseObject();
+            var continuationToken = balances.Continuation;
+            while(continuationToken != null)
+            {
+                var newBalances = blockchainApi.Balances.GetBalances(TAKE, continuationToken).GetResponseObject();
+                continuationToken = newBalances.Continuation;
+                newBalances.Items.ToList().ForEach(item => balances.Items.Add(item));
+            }
+            return balances;
+        }
+
+        public WalletBalanceContract GetWalletBalanceInstance(WalletCreationResponse wallet)
+        {
+            return Balances().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress);
+        }
+
+        public string WalletBalance(WalletCreationResponse wallet) => GetWalletBalanceInstance(wallet)?.Balance;
+
+        public string WalletBalance(string walletAddress) => GetWalletBalanceInstance(new WalletCreationResponse { PublicAddress = walletAddress})?.Balance;
+
+        public long? WalletBalanceBlock(WalletCreationResponse wallet) => GetWalletBalanceInstance(wallet)?.Block;
+
+        public long? WalletBalanceBlock(string walletAddress) => GetWalletBalanceInstance(new WalletCreationResponse { PublicAddress = walletAddress })?.Block;
 
         public bool BuildSignBroadcastBetweenWallets(WalletCreationResponse walletFrom, string walletTo, int attemptCount=10,bool wait = false, string amount = null)
         {

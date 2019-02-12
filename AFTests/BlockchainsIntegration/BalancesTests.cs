@@ -37,14 +37,12 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void GetBalancesTest()
             {
-                var take = "500";
-
-                Step($"Make GET /balances&take=500 and validate {wallet.PublicAddress} is present in response", () => 
+                Step($"Make GET /balances&take={TAKE} and validate {wallet.PublicAddress} is present in response", () => 
                 {
-                    blockchainApi.Balances.GetBalances(take, null).Validate.StatusCode(HttpStatusCode.OK);
+                    blockchainApi.Balances.GetBalances(TAKE, null).Validate.StatusCode(HttpStatusCode.OK);
 
-                    Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.ToList().Any(a => a.Address == wallet.PublicAddress),
-                        Is.True.After(60).Seconds.PollEvery(1).Seconds, $"Wallet {wallet.PublicAddress} is not present in Get Balances after {BLOCKCHAIN_MINING_TIME} minutes");
+                    Assert.That(() => WalletBalance(wallet),
+                        Is.Not.Null.After(60).Seconds.PollEvery(1).Seconds, $"Wallet {wallet.PublicAddress} is not present in Get Balances after {BLOCKCHAIN_MINING_TIME} minutes");
                 });
             }
         }
@@ -154,8 +152,8 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 long? newBlock = null;
 
-                var startBalance = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Balance;
-                var startBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Block;
+                var startBalance = WalletBalance(wallet);
+                var startBlock = WalletBalanceBlock(wallet);
 
                 string operationId = "default operation id";
 
@@ -183,10 +181,10 @@ namespace AFTests.BlockchainsIntegrationTests
                 Step($"Wait for Transaction got Complete status(operationId: {operationId}) and for Balance block will be increased", () => 
                 {
                     GetTransactionCompleteStatusTime(operationId, wallet.PublicAddress);
-                    WaitForBalanceBlockIncreased(wallet.PublicAddress, startBlock);
+                    WaitForBalanceBlockIncreased(wallet.PublicAddress, startBlock.Value);
                 });
   
-                newBlock = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress)?.Block;
+                newBlock = WalletBalanceBlock(wallet);
                 Step("Validate that final balance block is greater than start balance block", () =>
                 {
                     if (newBlock == null)
@@ -209,7 +207,7 @@ namespace AFTests.BlockchainsIntegrationTests
                         sw.Start();
                         while (sw.Elapsed < TimeSpan.FromMinutes(BLOCKCHAIN_MINING_TIME))
                         {
-                            var balances = blockchainApi.Balances.GetBalances("500", null).GetResponseObject();
+                            var balances = Balances();
 
                             if (balances.Items.ToList().Any(a => a.Address == wallet.PublicAddress))
                             {
@@ -226,8 +224,8 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 Step("Validate balance records for wallet in GET /balances response. Validate wallet balance", () => 
                 {
-                    Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Count(a => a.Address == wallet.PublicAddress), Is.EqualTo(1), $"Unexpected instances of balance for wallet {wallet.PublicAddress}");
-                    Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Balance, Is.EqualTo((decimal.Parse(AMOUT_WITH_FEE) - decimal.Parse(AMOUNT)).ToString()), "Balance is not expected");
+                    Assert.That(() => Balances().Items.ToList().Count(a => a.Address == wallet.PublicAddress), Is.EqualTo(1), $"Unexpected instances of balance for wallet {wallet.PublicAddress}");
+                    Assert.That(() => WalletBalance(wallet), Is.EqualTo((decimal.Parse(AMOUT_WITH_FEE) - decimal.Parse(AMOUNT)).ToString()), "Balance is not expected");
                 });
             }
 
@@ -284,7 +282,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     {
                         if (r.GetResponseObject().State == BroadcastedTransactionState.Failed)
                             Assert.Fail("Operation got 'Failed status'");
-                        block = blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().FirstOrDefault(a => a.Address == wallet)?.Block;
+                        block = WalletBalanceBlock(wallet);
                         break;
                     }
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));

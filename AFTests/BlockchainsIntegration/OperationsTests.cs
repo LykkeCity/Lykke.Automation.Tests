@@ -652,9 +652,7 @@ namespace AFTests.BlockchainsIntegrationTests
             {
                 Assert.That(HOT_WALLET, Is.Not.Null.Or.Empty, "Hot wallet address and key are empty!");
 
-                var take = "500";
-
-                var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
+                var currentBalance = WalletBalance(wallet);
 
                 Assert.That(currentBalance, Is.Not.Null, $"{wallet.PublicAddress} does not present in GetBalances or its balance is null");
 
@@ -692,12 +690,12 @@ namespace AFTests.BlockchainsIntegrationTests
                 {
                     if (getResponse.GetResponseObject().State == BroadcastedTransactionState.Completed)
                     {
-                        Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.EqualTo("0").Or.Null.After((int)BLOCKCHAIN_MINING_TIME * 60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
+                        Assert.That(() => WalletBalance(wallet), Is.EqualTo("0").Or.Null.After((int)BLOCKCHAIN_MINING_TIME * 60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
                     }
                     else
                     {
                         //validate balance is 0 or null
-                        Assert.That(() => blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance, Is.EqualTo("0").Or.Null.After((int)BLOCKCHAIN_MINING_TIME * 60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
+                        Assert.That(() => WalletBalance(wallet), Is.EqualTo("0").Or.Null.After((int)BLOCKCHAIN_MINING_TIME * 60 * 1000, 2 * 1000), $"Unexpected balance for wallet {wallet.PublicAddress}");
                     }
                 });
 
@@ -749,9 +747,7 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DWHWTransferDoubleBroadcastTest()
             {
-                string take = "500";
-
-                var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
+                var currentBalance = WalletBalance(wallet);
 
                 var model = new BuildSingleTransactionRequest()
                 {
@@ -808,11 +804,9 @@ namespace AFTests.BlockchainsIntegrationTests
             [Category("BlockchainIntegration")]
             public void DWHWPartialTransferDoubleBroadcastTest()
             {
-                string take = "500";
+                var currentBalance = WalletBalance(wallet);
 
-                var currentBalance = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
-
-                var startBlock = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Block;
+                var startBlock = WalletBalanceBlock(wallet);
                 
                 var partialBalance = Math.Round(Decimal.Parse(currentBalance) * 0.4m);
 
@@ -843,7 +837,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 Step("Validate DW balance after transaction", () => 
                 {
-                    var balanceAfterTransaction = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
+                    var balanceAfterTransaction = WalletBalance(wallet);
 
                     Assert.That(balanceAfterTransaction, Is.EqualTo((decimal.Parse(currentBalance) - partialBalance).ToString()), "Unexpected Balance after partial transaction");
                 });
@@ -873,7 +867,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
                 Step("Validate balance after second DW - HW transaction", () => 
                 {
-                   var balanceAfterTransaction = blockchainApi.Balances.GetBalances(take, null).GetResponseObject().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress)?.Balance;
+                   var balanceAfterTransaction = WalletBalance(wallet);
                     if (Math.Round(decimal.Parse(currentBalance) - partialBalance * 2m) > 0)
                         Assert.That(balanceAfterTransaction, Is.EqualTo(Math.Round(decimal.Parse(currentBalance) - partialBalance * 2m).ToString()), "Unexpected Balance after partial transaction");
                     else
@@ -1489,8 +1483,8 @@ namespace AFTests.BlockchainsIntegrationTests
 
                     Step("Validate balance records for wallet in GET /balances response. Validate wallet balance", () =>
                     {
-                        Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Count(a => a.Address == wallet.PublicAddress), Is.EqualTo(1).After(2).Minutes.PollEvery(2).Seconds, $"Unexpected instances of balance for wallet {wallet.PublicAddress}");
-                        Assert.That(() => blockchainApi.Balances.GetBalances("500", null).GetResponseObject().Items.ToList().Find(a => a.Address == wallet.PublicAddress).Balance, Is.EqualTo(AMOUT_WITH_FEE), "Balance is not expected");
+                        //Assert.That(() => blockchainApi.Balances.GetBalances(TAKE, null).GetResponseObject().Items.ToList().Count(a => a.Address == wallet.PublicAddress), Is.EqualTo(1).After(2).Minutes.PollEvery(2).Seconds, $"Unexpected instances of balance for wallet {wallet.PublicAddress}");
+                        Assert.That(() => WalletBalance(wallet), Is.EqualTo(AMOUT_WITH_FEE), "Balance is not expected");
                     });
                 }
             }
