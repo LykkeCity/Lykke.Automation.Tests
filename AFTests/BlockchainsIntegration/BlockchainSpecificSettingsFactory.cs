@@ -105,6 +105,9 @@ namespace AFTests.BlockchainsIntegration
             if (blockchain == "neo")
                 _settings = new NeoSettings();
 
+            if (blockchain == "neogas")
+                _settings = new NeoGasSettings();
+
             if (blockchain == "nem")
                 _settings = new NemSettings();
             
@@ -497,6 +500,24 @@ namespace AFTests.BlockchainsIntegration
                 AssetAccuracy = 0;
                 BaseAmount = 1;
                 BaseAmountWithFee = 2;
+                IsIncludeFee = false;
+            }
+        }
+
+        class NeoGasSettings : BlockchainSpecificModel
+        {
+            public NeoGasSettings()
+            {
+                BlockchainIntegration = "Gas";
+                BlockchainApi = "http://neo-api.bcn-autotests.svc.cluster.local/api";
+                BlockchainSign = "http://neo-sign.bcn-autotests.svc.cluster.local/api";
+                HotWallet = "APLgnEwjrACiPBHQ1B4HX1yG48C2Kcx1Z7";
+                HotWalletKey = "KxagYyVtdaq1c2NgD9JgSjDyn1eyPcog5mLJRK2rapGmkgy4YFQP";
+                AssetId = "Gas";
+                ExternalWalletAddress = "AJgum3HvPQFLHUvan62s7UqTsZ6eTKgB1c";
+                ExternalWalletKey = "L3Wi7GzVxtmQdypHZcahYRsTkshQsiXigCjUSZWGCrengfwQNzim";
+                BuildSignBroadcastEWDW = 30;
+                AssetAccuracy = 8;
                 IsIncludeFee = false;
             }
         }
