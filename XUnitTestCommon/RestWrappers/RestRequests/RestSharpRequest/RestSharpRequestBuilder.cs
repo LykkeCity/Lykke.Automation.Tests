@@ -27,6 +27,36 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
         }
 
         #region Methods
+        public IRequestBuilder Post(string resourse, bool redirect = true)
+        {
+            request = new RestSharpRequest(Method.POST, baseUrl, resourse, redirect);
+            return this;
+        }
+
+        public IRequestBuilder Patch(string resourse, bool redirect = true)
+        {
+            request = new RestSharpRequest(Method.PATCH, baseUrl, resourse, redirect);
+            return this;
+        }
+
+        public IRequestBuilder Get(string resourse, bool redirect = true)
+        {
+            request = new RestSharpRequest(Method.GET, baseUrl, resourse, redirect);
+            return this;
+        }
+
+        public IRequestBuilder Delete(string resourse, bool redirect = true)
+        {
+            request = new RestSharpRequest(Method.DELETE, baseUrl, resourse, redirect);
+            return this;
+        }
+
+        public IRequestBuilder Put(string resourse, bool redirect = true)
+        {
+            request = new RestSharpRequest(Method.PUT, baseUrl, resourse, redirect);
+            return this;
+        }
+
         public IRequestBuilder Post(string resourse)
         {
             request = new RestSharpRequest(Method.POST, baseUrl, resourse);
@@ -112,6 +142,12 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
         public IRequestBuilder Accept(string mediaType)
         {
             request.AddHeader("Accept", mediaType);
+            return this;
+        }
+
+        public IRequestBuilder AddTextBody(string text)
+        {
+            request.AddTextBody(text);
             return this;
         }
         #endregion

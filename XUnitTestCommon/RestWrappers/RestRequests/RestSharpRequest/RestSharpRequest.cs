@@ -22,17 +22,19 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
         public object JsonBody { get; private set; }
         public Dictionary<string, string> Headers { get; set; }
         public Dictionary<string, object> QueryParams { get; set; }
+        public IList<Parameter> Cookies { get; set; }
 
         private IRestClient client;
         private IRestRequest request;
 
-        public RestSharpRequest(Method method, string baseUrl, string resource)
+        public RestSharpRequest(Method method, string baseUrl, string resource, bool autoredirect = true)
         {
             Method = method;
             BaseUrl = baseUrl;
             Resource = resource;
 
             client = new RestClient(BaseUrl);
+            client.FollowRedirects = autoredirect;
             request = new RestRequest(Resource, Method);
 
             //set proxy for local debug
@@ -45,23 +47,49 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
             {
                 //do nothing
             }
-            
+
             Headers = new Dictionary<string, string>();
             QueryParams = new Dictionary<string, object>();
         }
+
+        //public RestSharpRequest(Method method, string baseUrl, string resource)
+        //{
+        //    Method = method;
+        //    BaseUrl = baseUrl;
+        //    Resource = resource;
+
+        //    client = new RestClient(BaseUrl);
+        //    request = new RestRequest(Resource, Method);
+
+        //    //set proxy for local debug
+        //    try
+        //    {
+        //        new TcpClient().Connect("127.0.0.1", 8888);
+        //        client.Proxy = new WebProxy("127.0.0.1", 8888);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        //do nothing
+        //    }
+            
+        //    Headers = new Dictionary<string, string>();
+        //    QueryParams = new Dictionary<string, object>();
+        //}
 
         public IResponse Execute()
         {
             var response = client.Execute(request);
             Log(response);
-            return new Response() { StatusCode = response.StatusCode, Content = response.Content };
+            return new Response()
+            { StatusCode = response.StatusCode, Content = response.Content, Headers = response.Headers, ResponseURI = response.ResponseUri, Cookies = response.Headers.ToList().FindAll(h => h.Name == "Set-Cookie") };
         }
 
         public IResponse<T> Execute<T>()
         {
             var response = client.Execute(request);
             Log(response);
-            return new Response<T>() { StatusCode = response.StatusCode, Content = response.Content };
+            return new Response<T>()
+            { StatusCode = response.StatusCode, Content = response.Content, Headers = response.Headers, ResponseURI = response.ResponseUri, Cookies = response.Headers.ToList().FindAll(h => h.Name == "Set-Cookie") };
         }
 
         public void AddHeader(string name, string value)
@@ -74,6 +102,11 @@ namespace XUnitTestCommon.RestRequests.RestSharpRequest
         {
             QueryParams.Add(name, value);
             request.AddParameter(name, value, ParameterType.QueryString);
+        }
+
+        public void AddTextBody(string text)
+        {
+            request.AddParameter("text/xml", text, ParameterType.RequestBody);
         }
 
         public void AddObject(object body)

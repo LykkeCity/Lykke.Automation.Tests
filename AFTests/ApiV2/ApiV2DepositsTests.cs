@@ -239,7 +239,7 @@ namespace AFTests.ApiV2
         [Category("ApiV2")]
         public void GetDepositsSwiftAssetIdRequisitesTest()
         {
-            Step("Make GET /api/Deposits/swift/{assetId}/requisites and validate response", () => 
+            Step("Make GET /api/Deposits/swift/{assetId}/requisites and validate response", () =>
             {
                 var response = apiV2.Deposits.GetSwiftAssetIdRequisites("BTC", token);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -258,5 +258,87 @@ namespace AFTests.ApiV2
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
             });
         }
-    }
+
+        [Test]
+        [Category("ApiV2")]
+        public void GetDepositsSwiftAssetIdRequisitesInvalidAssedIdTest()
+        {
+            Step("Make GET /api/Deposits/swift/{assetId}/requisites with invalid assetId and validate response", () =>
+            {
+                var response = apiV2.Deposits.GetSwiftAssetIdRequisites(Guid.NewGuid().ToString(), token);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            });
+        }
+
+        [Test]
+        [Category("ApiV2")]
+        public void PostDepositsCryptoAssetIdAddressTest()
+        {
+            Step("Make GET /api/Deposits/crypto/{assetId}/address and validate response", () =>
+            {
+                var response = apiV2.Deposits.PostCryptoAssetIdAddress("BTC", token);
+
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            });
+        }
+
+        [Test]
+        [Category("ApiV2")]
+        public void PostDepositsCryptoAssetIdAddressInvalidTokenTest()
+        {
+            Step("Make GET /api/Deposits/crypto/{assetId}/address and validate response", () =>
+            {
+                var response = apiV2.Deposits.PostCryptoAssetIdAddress("BTC", Guid.NewGuid().ToString());
+
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+            });
+        }
+
+        [Test]
+        [Category("ApiV2")]
+        public void PostDepositsCryptoAssetIdAddressInvalidAssetIdTest()
+        {
+            Step("Make GET /api/Deposits/crypto/{assetId}/address with invalid assetId and validate response", () =>
+            {
+                var response = apiV2.Deposits.PostCryptoAssetIdAddress(Guid.NewGuid().ToString(), token);
+
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            });
+        }
+
+        [Test]
+        [Category("ApiV2")]
+        public void GetDepositsCryptoAssetIdAddress()
+        {
+            Step("Make GET /api/Deposits/crypto/{assetId}/address and validate response", () => 
+            {
+                var response = apiV2.Deposits.GetCryptoAssetIdAddress("BTC", token);
+
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(response.ResponseObject, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [Category("ApiV2")]
+        public void GetDepositsCryptoAssetIdAddressInvalidAssetTest()
+        {
+            Step("Make GET /api/Deposits/crypto/{assetId}/address with invalid assetId and validate response ", () => 
+            {
+                var response = apiV2.Deposits.GetCryptoAssetIdAddress(Guid.NewGuid().ToString(), token);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            });
+        }
+
+        [Test]
+        [Category("ApiV2")]
+        public void GetDepositsCryptoAssetIdAddressInvalidAssetInvalidToken()
+        {
+            Step("Make GET /api/Deposits/crypto/{assetId}/address with invalid token and validate response ", () =>
+            {
+                var response = apiV2.Deposits.GetCryptoAssetIdAddress("BTC", Guid.NewGuid().ToString());
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+            });
+        }
+}
 }

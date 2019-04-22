@@ -24,6 +24,6 @@ namespace WalletApi.Api
             Request.Post("/HotWallet/cashout").WithBearerToken(token).WithHeaders("SignatureVerificationToken", accessToken)
                 .AddJsonBody(operation).Build().Execute<ResponseModel>();
 
-        //TODO: Add other
+        public IResponse<BlockchainAddressValidityResponseModel> GetHotWalletAddressValidity(string destinationAddress, string assetId, string addressExtension, string token) => Request.Get($"/HotWallet/addresses/{destinationAddress}/{assetId}/validity").AddQueryParameter("addressExtension", addressExtension).WithBearerToken(token).Build().Execute<BlockchainAddressValidityResponseModel>();
     }
 }

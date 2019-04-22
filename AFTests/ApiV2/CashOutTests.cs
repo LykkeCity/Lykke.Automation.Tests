@@ -87,7 +87,8 @@ namespace AFTests.ApiV2
                 token = apiV2.Client.PostClientAuth(new AuthRequestModel
                 {
                     Email = wallet.WalletAddress,
-                    Password = wallet.WalletKey
+                    Password = wallet.WalletKey,
+                    PartnerId = "lykke"
                 }).GetResponseObject().AccessToken;
             }
             #endregion

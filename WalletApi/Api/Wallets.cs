@@ -8,7 +8,7 @@ namespace WalletApi.Api
 {
     public class Wallets : ApiBase
     {
-        public IResponse<ResponseModelGetWaletsRespModel> GetWalltes(string token)
+        public IResponse<ResponseModelGetWaletsRespModel> GetWallets(string token)
         {
             return Request.Get("/Wallets").WithBearerToken(token)
                 .Build().Execute<ResponseModelGetWaletsRespModel>();

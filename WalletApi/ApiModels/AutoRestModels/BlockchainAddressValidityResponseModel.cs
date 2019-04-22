@@ -11,34 +11,15 @@ namespace Lykke.Client.AutorestClient.Models
 
     public partial class BlockchainAddressValidityResponseModel
     {
-        /// <summary>
-        /// Initializes a new instance of the
-        /// BlockchainAddressValidityResponseModel class.
-        /// </summary>
         public BlockchainAddressValidityResponseModel()
-        {
-            CustomInit();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the
-        /// BlockchainAddressValidityResponseModel class.
-        /// </summary>
-        public BlockchainAddressValidityResponseModel(bool? isValid = default(bool?))
-        {
-            IsValid = isValid;
-            CustomInit();
-        }
-
-        /// <summary>
-        /// An initialization method that performs custom operations like setting defaults
-        /// </summary>
-        partial void CustomInit();
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty(PropertyName = "IsValid")]
-        public bool? IsValid { get; set; }
-
+        { }
+        public Result Result { get; set; }
+        public object Error { get; set; }
     }
+
+    public class Result
+    {
+        public bool IsValid { get; set; }
+    }
+
 }

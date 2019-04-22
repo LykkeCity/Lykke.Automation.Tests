@@ -1,7 +1,10 @@
-FROM microsoft/aspnetcore-build:2.0
+FROM microsoft/dotnet
 
-EXPOSE 22
-ADD startup.sh /root/
-RUN chmod 750 /root/startup.sh
+WORKDIR /app
 COPY . .
-CMD ["bash","/root/startup.sh"]
+
+RUN dotnet restore
+
+
+# run tests on docker run
+ENTRYPOINT ["dotnet", "test", "./AFTests/AFTests.csproj", "--filter", "TestCategory=E2E"]

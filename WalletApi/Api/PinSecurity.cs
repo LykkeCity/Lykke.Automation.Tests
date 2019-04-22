@@ -21,5 +21,12 @@ namespace WalletApi.Api
                 .AddJsonBody(pinSecurityChange)
                 .Build().Execute<ResponseModel>();
         }
+
+        public IResponse<PinSecurityCheckResultModel> PostCheckPinSecurity(PinSecurityCheckRequestModel pinSecurityCheck, string token)
+        {
+            return Request.Post("/PinSecurity/checkPinCode").WithBearerToken(token)
+                .AddJsonBody(pinSecurityCheck)
+                .Build().Execute<PinSecurityCheckResultModel>();
+        }
     }
 }

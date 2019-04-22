@@ -12,6 +12,9 @@ namespace XUnitTestCommon.RestRequests.Interfaces
         string Content { get; }
         JObject JObject { get; }
         IValidate Validate { get; }
+        IList<RestSharp.Parameter> Headers { get; }
+        List<RestSharp.Parameter> Cookies { get; }
+        Uri ResponseURI { get; set; }
     }
 
     public interface IResponse<T> : IResponse

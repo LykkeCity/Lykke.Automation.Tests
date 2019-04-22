@@ -1,0 +1,1 @@
+..\..\..\..\XUnitTestCommon\Reports\allure-cli\bin\allure generate --clean

@@ -333,7 +333,7 @@ namespace AFTests.ApiRegression
             //TODO: ADD
 
             //STEP 21 GET https://api-test.lykkex.net/api/Wallets
-            var getWallets = walletApi.Wallets.GetWalltes(token)
+            var getWallets = walletApi.Wallets.GetWallets(token)
                 .Validate.StatusCode(HttpStatusCode.OK)
                 .Validate.NoApiError();
             //TODO: Add asserts

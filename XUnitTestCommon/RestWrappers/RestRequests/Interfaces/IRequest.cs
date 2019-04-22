@@ -18,6 +18,7 @@ namespace XUnitTestCommon.RestRequests.Interfaces
         void AddHeader(string name, string value);
         void AddQueryParameter(string name, object value);
         void AddJsonBody(object json);
+        void AddTextBody(string text);
 
         IResponse Execute();
         IResponse<T> Execute<T>();

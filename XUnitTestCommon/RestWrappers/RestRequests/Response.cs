@@ -17,6 +17,11 @@ namespace XUnitTestCommon.RestRequests
         public JObject JObject => JObject.Parse(Content);
 
         public IValidate Validate => new Validate(this);
+
+        public IList<RestSharp.Parameter> Headers { get; set; }
+        public List<RestSharp.Parameter> Cookies { get; set; }
+
+        public Uri ResponseURI { get; set; }
     }
 
     public class Response<T> : Response, IResponse<T>

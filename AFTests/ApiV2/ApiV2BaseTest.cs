@@ -34,6 +34,9 @@ namespace AFTests.ApiV2
         protected Wallet wallet = new Wallet();
         protected LykkeApi lykkePrivateApi = new LykkeApi();
         protected BlockchainSign blockchainSign;
+        protected LykkeTechAPI lykkeTechAPI = new LykkeTechAPI();
+        protected IronCladApi ironCladApi = new IronCladApi();
+        protected WalletApi.Api.WalletApi WalletApi = new WalletApi.Api.WalletApi();
     }
 
     public class Wallet
@@ -42,7 +45,7 @@ namespace AFTests.ApiV2
         {
             get
             {
-                return "lykke_autotest_021b074415@lykke.com";// ;"dev_dev@dev.com"
+                return "cashoutbil@autotest.com";//"lykke_autotest_021b074415@lykke.com";// ;"dev_dev@dev.com"
             }
         }
 
@@ -50,7 +53,7 @@ namespace AFTests.ApiV2
         {
             get
             {
-                return "0fc1dbf03917f8eeb8d5e0722cf473141ba2fe048e1820b5743ba054d090f425";//;"123456789qQ"
+                return "Qwaszx@1";// "123456789qQ";//"0fc1dbf03917f8eeb8d5e0722cf473141ba2fe048e1820b5743ba054d090f425";//;"123456789qQ"
             }
         }
 

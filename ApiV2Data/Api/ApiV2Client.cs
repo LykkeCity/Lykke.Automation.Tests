@@ -29,5 +29,7 @@ namespace ApiV2Data.Api
         public Wallets wallets => new Wallets();
         public Watchlists Watchlists => new Watchlists();
         public Withdrawals Withdrawals => new Withdrawals();
+
+        public CustomRequests CustomRequests => new CustomRequests();
     }
 }

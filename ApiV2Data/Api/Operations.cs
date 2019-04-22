@@ -22,7 +22,7 @@ namespace ApiV2Data.Api
 
         public IResponse PostOperationCashOut(CreateCashoutRequest cashoutRequest, string id, string authorization)
         {
-            return Request.Post($"operations/cashout/{id}")
+            return Request.Post($"operations/cashout/crypto/{id}")
                 .WithBearerToken(authorization)
                 .AddJsonBody(cashoutRequest).Build().Execute();
         }
