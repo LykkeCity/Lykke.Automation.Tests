@@ -1,0 +1,16 @@
+version: '3.5'
+
+services:
+
+  webapplication:
+    image: lykke-autotests-framework
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  e2e-tests:
+    image: e2e-tests
+    build:
+      context: ./AFtests
+      dockerfile: Dockerfile      
+      target: test

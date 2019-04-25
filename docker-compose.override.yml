@@ -1,0 +1,18 @@
+version: '3.5'
+
+services:
+
+  webapplication:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8080:80"
+
+  webapplication-tests:
+    entrypoint:
+      - dotnet
+      - test
+      - --filter
+      - --filter TestCategory=E2E
+    volumes: 
+      - ${BUILD_ARTIFACTSTAGINGDIRECTORY:-./tests/}:C:/docker-folder
