@@ -67,5 +67,5 @@ RUN chmod 750 /root/startupe2e.sh
 COPY . .
 
 RUN dotnet restore
-RUN chmod +x ./startupe2e.sh 
-RUN ./startupe2e.sh
+CMD chmod +x ./startupe2e.sh 
+CMD ./startupe2e.sh
