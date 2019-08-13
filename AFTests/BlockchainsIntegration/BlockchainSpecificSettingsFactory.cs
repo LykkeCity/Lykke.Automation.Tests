@@ -278,10 +278,10 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainIntegration = "Dynamic";
                 BlockchainApi = "http://dynamic-api.bcn-autotests.svc.cluster.local/api";
                 BlockchainSign = "http://dynamic-sign.bcn-autotests.svc.cluster.local/api";
-                HotWallet = "DS7BHYT6UEP86AsjXy8qxcxKQLc1eNLcdq";
-                HotWalletKey = "QTEZi6Vv3XuCa6rs5YmYHyRPA61V3R7hqJqWbcY3WhGYh4sxbXxz";
-                ExternalWalletAddress = "DNMkbse4GY4wygwVQtJZdtGuuJ9orz26wD";
-                ExternalWalletKey = "QVafiaf51gf7peRFfmviitHKNu9o3PwqnV6v6W8nq3t4g2SLBNNg";
+                HotWallet = "DU7GMsQKTE7RBXqjNcGFQVYmKX1bms94As"; //"DS7BHYT6UEP86AsjXy8qxcxKQLc1eNLcdq";
+                HotWalletKey = "MmapGVkWYsQEo1oEqWGyY5ydzhr1QMxrNDvPHWU2XKfwsAKQHMzQ"; //"QTEZi6Vv3XuCa6rs5YmYHyRPA61V3R7hqJqWbcY3WhGYh4sxbXxz";
+                ExternalWalletAddress = "DPfsWEPkcicRfC6vYt8c62NC5HPTBWFe68"; //"DNMkbse4GY4wygwVQtJZdtGuuJ9orz26wD";
+                ExternalWalletKey = "MrWGHVZAm5KpHwMGApPnJRCLw7bLsC9MWuRuqjxG7UFpc3Cebogy"; //"QVafiaf51gf7peRFfmviitHKNu9o3PwqnV6v6W8nq3t4g2SLBNNg";
                 ExternalWallerAddressContext = "";
                 AssetId = "DYN";
                 BuildSignBroadcastEWDW = 10;
