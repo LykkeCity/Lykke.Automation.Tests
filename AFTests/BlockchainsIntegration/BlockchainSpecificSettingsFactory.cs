@@ -286,6 +286,8 @@ namespace AFTests.BlockchainsIntegration
                 AssetId = "DYN";
                 BuildSignBroadcastEWDW = 10;
                 BlockchainMiningTime = 10;
+                BaseAmount = 0.001M;
+                BaseAmountWithFee = 0.002M;
             }
         }
 
