@@ -284,10 +284,10 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "MrWGHVZAm5KpHwMGApPnJRCLw7bLsC9MWuRuqjxG7UFpc3Cebogy"; //"QVafiaf51gf7peRFfmviitHKNu9o3PwqnV6v6W8nq3t4g2SLBNNg";
                 ExternalWallerAddressContext = "";
                 AssetId = "DYN";
-                BuildSignBroadcastEWDW = 10;
-                BlockchainMiningTime = 10;
-                BaseAmount = 0.001M;
-                BaseAmountWithFee = 0.002M;
+                BuildSignBroadcastEWDW = 30;
+                BlockchainMiningTime = 30;
+                BaseAmount = 0.002M;
+                BaseAmountWithFee = 0.003M;
             }
         }
 
