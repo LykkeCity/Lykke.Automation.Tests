@@ -556,8 +556,8 @@ namespace AFTests.BlockchainsIntegration
                 ExternalWalletKey = "0x6e5ef59ea5941c2b9119b17521fb81f4fbdebf8ca9a13ccde0adfab80c607445";
                 BuildSignBroadcastEWDW = 1;
                 AssetAccuracy = 18;
-                BaseAmount = 0.000000007m;
-                BaseAmountWithFee = 0.000001267m;
+                BaseAmount = 0.00000252m;
+                BaseAmountWithFee = 0.00000378m;
             }
         }
 
