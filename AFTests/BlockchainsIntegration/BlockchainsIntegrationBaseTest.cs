@@ -40,7 +40,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "Rootstock"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "stellar"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -542,7 +542,10 @@ namespace AFTests.BlockchainsIntegrationTests
 
         public WalletBalanceContract GetWalletBalanceInstance(WalletCreationResponse wallet)
         {
-            return Balances().Items.FirstOrDefault(w => w.Address == wallet.PublicAddress);
+            var items = Balances().Items;
+            var walletBalanceContract = items.FirstOrDefault(w => w.Address == wallet.PublicAddress);
+
+            return walletBalanceContract;
         }
 
         public string WalletBalance(WalletCreationResponse wallet) => GetWalletBalanceInstance(wallet)?.Balance;
