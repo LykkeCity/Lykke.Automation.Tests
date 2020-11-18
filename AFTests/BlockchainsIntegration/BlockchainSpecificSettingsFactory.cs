@@ -150,6 +150,12 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainApi = "http://dash-api.bcn-autotests.svc.cluster.local/api";
                 BlockchainSign = "http://dash-sign.bcn-autotests.svc.cluster.local/api";
                 AssetId = "DASH";
+                
+                ExternalWalletAddress = "yUxfKGuF2RNDZERju3XHw5Hq7VcPCvfrVM";
+                ExternalWalletKey = "cW9HyVvJnZJRMHRWod2Jw2YdsBR7ziXh4oQhx5USAsJHhMmmD2wB";
+                
+                HotWallet = "yS86Bea1Y9UX4FZMNn8Uhcp1Dd3vqYvWWL";
+                HotWalletKey = "cPjbiB55NXBBE3bRexQy3Tw1Gy2RrRt3kXjZTriPhYGodaRAroLW";
             }
         }
 
