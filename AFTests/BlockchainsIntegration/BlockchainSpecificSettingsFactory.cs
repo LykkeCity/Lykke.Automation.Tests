@@ -156,6 +156,11 @@ namespace AFTests.BlockchainsIntegration
                 
                 HotWallet = "yS86Bea1Y9UX4FZMNn8Uhcp1Dd3vqYvWWL";
                 HotWalletKey = "cPjbiB55NXBBE3bRexQy3Tw1Gy2RrRt3kXjZTriPhYGodaRAroLW";
+
+                BlockchainMiningTime = 20;
+                BaseAmount = 0.002M;
+                BaseAmountWithFee = 0.0021m;
+                MaxWalletsForCashIn = 15;
             }
         }
 
