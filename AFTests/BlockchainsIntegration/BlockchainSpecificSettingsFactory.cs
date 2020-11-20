@@ -160,7 +160,8 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainMiningTime = 20;
                 BaseAmount = 0.002M;
                 BaseAmountWithFee = 0.0021m;
-                MaxWalletsForCashIn = 15;
+                BuildSignBroadcastEWDW = 40;
+                
             }
         }
 

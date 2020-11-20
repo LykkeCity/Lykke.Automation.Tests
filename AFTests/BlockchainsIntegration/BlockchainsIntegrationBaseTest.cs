@@ -40,7 +40,7 @@ namespace AFTests.BlockchainsIntegrationTests
 
        protected static string SpecificBlockchain()
        {
-            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "stellar"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
+            return Environment.GetEnvironmentVariable("BlockchainIntegration") ?? "dash"; //"monero"; //"RaiBlocks";//"bitshares";// "stellar-v2";//"Zcash"; //"Ripple";// "Dash"; "Litecoin";
         }
 
         #region test values
@@ -428,7 +428,7 @@ namespace AFTests.BlockchainsIntegrationTests
                     return;
                     
                 else
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(10));
             }
             sw.Stop();
         }
