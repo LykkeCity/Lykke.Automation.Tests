@@ -158,8 +158,8 @@ namespace AFTests.BlockchainsIntegration
                 HotWalletKey = "cPjbiB55NXBBE3bRexQy3Tw1Gy2RrRt3kXjZTriPhYGodaRAroLW";
 
                 BlockchainMiningTime = 20;
-                BaseAmount = 0.002M;
-                BaseAmountWithFee = 0.0021m;
+                BaseAmount = 0.0021M;
+                BaseAmountWithFee = 0.0022m;
                 BuildSignBroadcastEWDW = 40;
                 
             }
