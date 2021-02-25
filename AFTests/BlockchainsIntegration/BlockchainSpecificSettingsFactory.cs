@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using XUnitTestCommon.TestsCore;
 
 namespace AFTests.BlockchainsIntegration
 {
@@ -157,7 +154,7 @@ namespace AFTests.BlockchainsIntegration
                 HotWallet = "yS86Bea1Y9UX4FZMNn8Uhcp1Dd3vqYvWWL";
                 HotWalletKey = "cPjbiB55NXBBE3bRexQy3Tw1Gy2RrRt3kXjZTriPhYGodaRAroLW";
 
-                BlockchainMiningTime = 20;
+                BlockchainMiningTime = 5;
                 BaseAmount = 0.0021M;
                 BaseAmountWithFee = 0.0022m;
                 BuildSignBroadcastEWDW = 40;
