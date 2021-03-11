@@ -450,8 +450,8 @@ namespace AFTests.BlockchainsIntegration
             public EthereumSettings()
             {
                 BlockchainIntegration = "Ethereum";
-                BlockchainApi = "http://eth-api.bcn-autotests.svc.cluster.local/api";
-                BlockchainSign = "http://eth-signservice.bcn-autotests.svc.cluster.local/api";
+                BlockchainApi = "http://ethereum-api.autotests-service.svc.cluster.local/api";
+                BlockchainSign = "http://ethereum-signapi.autotests-service.svc.cluster.local/api";
                 BlockchainMiningTime = 5;
                 HotWallet = "0xec31eafd3818fbd7c14a423ee09090351d864ba1";
                 HotWalletKey = "0x2df14f93b65c7fbe6623aef1f09183d704f7f24ad2d615eaecc9fd44f725b269";
