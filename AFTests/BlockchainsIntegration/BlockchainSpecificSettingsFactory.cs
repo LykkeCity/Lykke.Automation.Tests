@@ -204,11 +204,11 @@ namespace AFTests.BlockchainsIntegration
                 BlockchainSign = "http://stellar-sign.bcn-autotests.svc.cluster.local/api";
                 //BlockchainApi = "http://localhost:5000/api";
                 //BlockchainSign = "http://localhost:5002/api";
-                HotWallet = "GBEYZIXXXP6NBLCL2EIKHUZTZ4AZIMML2PTJTN2YGQBKHQN2FHGQCFZQ";
-                HotWalletKey = "SCYQV23L3YS4MBZWXVUWXSYGKG6JJ7EMJ5WMT2UU4CRRIOBFTLEQXSOJ";
+                HotWallet = "GBYUGAHDYLSE4MENXQ5JJ5TOED2FHV7S3MBLDJJP5WXH5ERA52SDJCPF";
+                HotWalletKey = "SAD3AJQAMF56UJ3JNZAEZGB2NAJ44EPKDNBD4V3JP3PJ3R2GTOQPLFQI";
                 AssetId = "XLM";
                 AssetAccuracy = 7;
-                ExternalWalletAddress = "GCGI6ZUBEUPSJQV6IFKULKT2YRRUARF74RL5BSBUXEVIZASMXKX5FNVR";
+                ExternalWalletAddress = "GBEYZIXXXP6NBLCL2EIKHUZTZ4AZIMML2PTJTN2YGQBKHQN2FHGQCFZQ";
                 ExternalWalletKey = "SDUN73GY773CWUWO5HYZGQTU7KDCTIJW777JHZ2DO27ANKEU4MZW7XVW";
                 BlockchainMiningTime = 3;
             }
