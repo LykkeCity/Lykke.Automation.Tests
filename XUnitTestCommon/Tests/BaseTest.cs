@@ -62,7 +62,7 @@ namespace XUnitTestCommon.Tests
             isStepOpened.Value--;
 
             if (throwException && stepException != null )
-                throw stepException;      
+                throw new Exception("Wrapping step exception", stepException);
         }
 
         #region response info
